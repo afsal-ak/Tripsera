@@ -1,8 +1,8 @@
 import { Request,Response } from "express";
 import { BannerMangementUseCases } from "@domain/usecases/admin/bannerUseCases";
-import { uploadCloudinary } from "@infrastructure/services/cloudinary/cloudinaryService";
+import { uploadCloudinary ,deleteImageFromCloudinary} from "@infrastructure/services/cloudinary/cloudinaryService";
 import { MongoBannerRepository } from "@infrastructure/repositories/MongoBannerRepository";
-
+import { IBanner } from "@domain/entities/IBanner";
 // const bannerRepository=new MongoBannerRepository()
 // const bannerMangementUseCases=new BannerMangementUseCases(bannerRepository)
 
@@ -19,8 +19,13 @@ export class BannerMangementController {
               return
         }
 
-        const imageUrl=await uploadCloudinary(imagePath)
-        const banner=await this.bannerMangementUseCases.createNewBanner(title,description,imageUrl)
+    const { url, public_id } = await uploadCloudinary(imagePath, 'banners');
+       const banner: IBanner = {
+      title,
+      description,
+      image: { url, public_id },
+    };
+        const createdBanner=await this.bannerMangementUseCases.createNewBanner(banner)
          res.status(201).json({message:'Banner Created Successfully',banner});
 
 

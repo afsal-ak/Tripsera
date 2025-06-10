@@ -13,10 +13,14 @@ const BannerSchema = new Schema<IBannerDocument>({
         type:String,
         required:false
     },
-    imageUrl: {
-        type: String,
-        required: true
-    }
+    // imageUrl: {
+    //     type: String,
+    //     required: true
+    // }
+    image: {
+  url: { type: String, required: true },
+  public_id: { type: String, required: true }
+}
 },
     {
         timestamps: true

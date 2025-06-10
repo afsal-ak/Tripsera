@@ -5,7 +5,7 @@ import { CategoryUseCases } from "@domain/usecases/admin/categoryUseCases";
 export class CategoryController {
   constructor(private categoryUseCase: CategoryUseCases) {}
 
-  async createCategory(req: Request, res: Response) {
+  createCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const category = req.body;
       const created = await this.categoryUseCase.createCategory(category);
@@ -13,9 +13,9 @@ export class CategoryController {
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
-  }
+  };
 
-  async editCategory(req: Request, res: Response) {
+  editCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
       const categoryData = req.body;
@@ -24,9 +24,9 @@ export class CategoryController {
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
-  }
+  };
 
-  async blockCategory(req: Request, res: Response) {
+  blockCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
       await this.categoryUseCase.blockCategory(id);
@@ -34,9 +34,9 @@ export class CategoryController {
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
-  }
+  };
 
-  async unblockCategory(req: Request, res: Response) {
+  unblockCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
       await this.categoryUseCase.unblockCategory(id);
@@ -44,14 +44,14 @@ export class CategoryController {
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
-  }
+  };
 
-  async getAllCategories(req: Request, res: Response) {
+  getAllCategories = async (req: Request, res: Response): Promise<void> => {
     try {
       const categories = await this.categoryUseCase.getAllCategory();
       res.status(200).json(categories);
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
-  }
+  };
 }

@@ -43,7 +43,8 @@ export class UserAuthController {
       res.status(200).json({
         message: 'Login successful',
         user,
-        accessToken
+        accessToken,
+      //  refreshToken
       });
     } catch (error: any) {
       res.status(401).json({ message: error.message });
@@ -71,4 +72,19 @@ export class UserAuthController {
       res.status(401).json({ message: error.message });
     }
   };
+
+  
+  userLogout=async(req:Request,res:Response):Promise<void>=>{
+  try {
+     res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
+    });
+
+    res.status(200).json({ message: "Admin logout successful" });
+  } catch (error:any) {
+    res.status(401).json({message:error.message})
+  }
+}
 }

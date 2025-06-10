@@ -17,11 +17,12 @@ export class AdminAuthController {
         sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
-
+console.log({accessToken,refreshToken})
       res.status(200).json({
         message: 'Login successful',
         admin,
         accessToken,
+        refreshToken
       });
     } catch (error: any) {
       res.status(401).json({ message: error.message });
@@ -48,4 +49,19 @@ export class AdminAuthController {
       res.status(401).json({ message: error.message });
     }
   };
+
+  adminLogout=async(req:Request,res:Response):Promise<void>=>{
+  try {
+     res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
+    });
+
+    res.status(200).json({ message: "Admin logout successful" });
+  } catch (error:any) {
+    res.status(401).json({message:error.message})
+  }
+}
+
 }

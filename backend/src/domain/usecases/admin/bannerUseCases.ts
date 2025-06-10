@@ -7,9 +7,13 @@ export class BannerMangementUseCases{
         private bannerRepository:IBannerRepository
     ){}
 
-    async createNewBanner(title:string,description:string,imageUrl:string):Promise<IBanner>{
-        return await this.bannerRepository.createBanner({title,description,imageUrl})
-    }
+    // async createNewBanner(title:string,description:string,  image: { url: string; public_id: string }):Promise<IBanner>{
+    //     return await this.bannerRepository.createBanner({title,description,image})
+    // }
+    // usecases/BannerManagementUseCases.ts
+async createNewBanner(banner: IBanner): Promise<IBanner> {
+  return await this.bannerRepository.createBanner(banner);
+}
 
     async getBanners():Promise<IBanner[]>{
         return await this.bannerRepository.getAllBanners()

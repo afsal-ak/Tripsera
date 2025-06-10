@@ -4,7 +4,7 @@ import { verifyRefreshToken,generateAccessToken,generateRefreshToken } from "@sh
 
 export const refreshToken = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Read refresh token from cookie (you can also read from headers/body if you want)
+    // Read refresh token from cookie  
     const oldRefreshToken = req.cookies.refreshToken;
     if (!oldRefreshToken) {
        res.status(401).json({ message: 'No refresh token provided' });
@@ -22,7 +22,7 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
     const newAccessToken = generateAccessToken({ id: payload.id, role: payload.role });
     const newRefreshToken = generateRefreshToken({ id: payload.id, role: payload.role });
 
-    // Send new refresh token as cookie (httpOnly, secure recommended)
+    // Send new refresh token as cookie 
     res.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,
       secure:false,
