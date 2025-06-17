@@ -8,14 +8,36 @@ export class UserManagementUseCases{
         private userRepository:IUserRepository
     ){}
 
-     async getUsers(): Promise<IUserPreview[]> {
-    const users = await this.userRepository.findAll(); 
-    if (!users || users.length === 0) {
-      throw new Error("No users found");
-    }
-    return users;
+//      async getUsers(): Promise<IUserPreview[]> {
+//     const users = await this.userRepository.findAll(); 
+//     if (!users || users.length === 0) {
+//       throw new Error("No users found");
+//     }
+//     return users;
+//   }
+
+async getUsers(page: number, limit: number): Promise<{
+  users: IUser[];
+  totalUsers: number;
+  totalPages: number;
+}> {
+  const skip = (page - 1) * limit;
+
+  const [users, totalUsers] = await Promise.all([
+    this.userRepository.findAll(skip, limit),
+    this.userRepository.countAll()
+  ]);
+
+  if (!users || users.length === 0) {
+    throw new Error("No users found");
   }
 
+  return {
+    users,
+    totalUsers,
+    totalPages: Math.ceil(totalUsers / limit)
+  };
+}
     async getSingleUser(userId:string):Promise<IUser>{
           const user=await this.userRepository.findById(userId)
         if(!user){

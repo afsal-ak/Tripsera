@@ -54,33 +54,37 @@ router.post('/forgotPasswordChange',adminAuthController.forgotPasswordChange)
 router.post('/logout',adminAuthController.adminLogout)
 
 //user router
-router.get('/users',userManagementController.getAllUser)
-router.get('/users/:userId', userManagementController.getSingleUser);
-router.patch('/users/:userId/block', userManagementController.blockUser);
-router.patch('/users/:userId/unblock', userManagementController.unblockUser)
+router.get('/users',adminAuthMiddleware,userManagementController.getAllUser)
+router.get('/users/:userId',adminAuthMiddleware, userManagementController.getSingleUser);
+router.patch('/users/:userId/block',adminAuthMiddleware, userManagementController.blockUser);
+router.patch('/users/:userId/unblock',adminAuthMiddleware, userManagementController.unblockUser)
 
 //banner router
 
-router.post('/banner',upload.single('image'),bannerMangementController.createBanner)
-router.get('/getBanner',bannerMangementController.getBanner)
-router.delete('/banner/:bannerId/delete',bannerMangementController.deleteBanner)
+router.post('/addBanner',adminAuthMiddleware,upload.single('image'),bannerMangementController.createBanner)
+router.get('/banners',adminAuthMiddleware,bannerMangementController.getBanner)
+router.patch('/banners/:bannerId/unblock',adminAuthMiddleware,bannerMangementController.unblockBanner)
+router.patch('/banners/:bannerId/block',adminAuthMiddleware,bannerMangementController.blockBanner)
+router.delete('/banners/:bannerId/delete',adminAuthMiddleware,bannerMangementController.deleteBanner)
 
 //category router
 
-router.get("/category", categoryController.getAllCategories);
-router.post("/addCategory", categoryController.createCategory);
-router.put("/category/:id", categoryController.editCategory);
-router.patch("/category/:id/block", categoryController.blockCategory);
-router.patch("/category/:id/unblock", categoryController.unblockCategory);
+router.get("/categories",adminAuthMiddleware, categoryController.getAllCategories);
+router.get("/category/active",adminAuthMiddleware, categoryController.getActiveCategory);
+router.get("/category/:id",adminAuthMiddleware, categoryController.getCategoryById);
+router.post("/addCategory",adminAuthMiddleware, categoryController.createCategory);
+router.put("/category/:id",adminAuthMiddleware, categoryController.editCategory);
+router.patch("/category/:id/block", adminAuthMiddleware,categoryController.blockCategory);
+router.patch("/category/:id/unblock",adminAuthMiddleware, categoryController.unblockCategory);
 
 //package router 
 router.get('/packages',adminAuthMiddleware,packageController.getFullPackage)
-router.get('/packages/:id',packageController.getPackagesById)
-router.post('/addPackage',upload.array('images',2),packageController.createPackage)
-router.put('/packages/:id/edit',upload.array('images',2),packageController.editPackage)
-router.patch('/packages/:id/block',packageController.blockPackage)
-router.patch('/packages/:id/unblock',packageController.unblockPackage)
-router.patch('/packages/:id/delete',packageController.deletePackage)
+router.get('/packages/:id',adminAuthMiddleware,packageController.getPackagesById)
+router.post('/addPackage',adminAuthMiddleware,upload.array('images',4),packageController.createPackage)
+router.put('/packages/:id/edit',adminAuthMiddleware,upload.array('images',4),packageController.editPackage)
+router.patch('/packages/:id/block',adminAuthMiddleware,packageController.blockPackage)
+router.patch('/packages/:id/unblock',adminAuthMiddleware,packageController.unblockPackage)
+router.patch('/packages/:id/delete',adminAuthMiddleware,packageController.deletePackage)
 
 
 

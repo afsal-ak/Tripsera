@@ -11,10 +11,14 @@ export interface IPackageRepository{
   ): Promise<IPackage | null>;
 
     findById(id:string):Promise<IPackage|null>
-    findAll():Promise<IPackage[]>
+    findAll(skip:number,limit:number):Promise<IPackage[]>
+    countDocument():Promise<number>
+    getActivePackages(filters:any,skip:number,limit:number,sort:any):Promise<IPackage[]>
+    countActivePackages(filters: any): Promise<number>;
+
     delete(id: string): Promise<void>;
     block(id:string):Promise<void>
     unblock(id:string):Promise<void>
-
+    getHomeData():Promise<IPackage[]>
 
 }

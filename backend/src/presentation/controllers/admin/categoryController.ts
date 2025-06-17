@@ -9,6 +9,7 @@ export class CategoryController {
     try {
       const category = req.body;
       const created = await this.categoryUseCase.createCategory(category);
+      console.log(created,'creat')
       res.status(201).json(created);
     } catch (err: any) {
       res.status(400).json({ message: err.message });
@@ -30,6 +31,7 @@ export class CategoryController {
     try {
       const { id } = req.params;
       await this.categoryUseCase.blockCategory(id);
+      console.log(id,'catid')
       res.status(200).json({ message: "Category blocked successfully" });
     } catch (err: any) {
       res.status(400).json({ message: err.message });
@@ -46,12 +48,54 @@ export class CategoryController {
     }
   };
 
+  // getAllCategories = async (req: Request, res: Response): Promise<void> => {
+  //   try {
+  //     const categories = await this.categoryUseCase.getAllCategory();
+  //    // console.log(categories,'cat')
+  //     res.status(200).json(categories);
+
+  //   } catch (err: any) {
+  //     res.status(400).json({ message: err.message });
+  //   }
+  // };
   getAllCategories = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 8;
+
+    const result = await this.categoryUseCase.getAllCategory({ page, limit });
+//console.log({result})
+    res.status(200).json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+  getActiveCategory = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await this.categoryUseCase.getActiveCategory();
+  //  console.log({result})
+    res.status(200).json(result);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+
+
+
+  getCategoryById=async(req:Request,res:Response):Promise<void>=>{
     try {
-      const categories = await this.categoryUseCase.getAllCategory();
-      res.status(200).json(categories);
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
+      const {id}=req.params
+      const categories=await this.categoryUseCase.findById(id)
+      //console.log({categories})
+        res.status(200).json(categories);
+
+    } catch (error:any) {
+       res.status(400).json({ message: error.message });
+
     }
-  };
+  }
 }
+
+

@@ -10,7 +10,7 @@ export class AdminAuthController {
       const { email, password } = req.body;
       const { admin, accessToken, refreshToken } =
         await this.adminAuthUseCases.adminLogin(email, password);
-
+console.log(req.body,'admin')
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
@@ -25,6 +25,7 @@ console.log({accessToken,refreshToken})
         refreshToken
       });
     } catch (error: any) {
+      console.log(error)
       res.status(401).json({ message: error.message });
     }
   };

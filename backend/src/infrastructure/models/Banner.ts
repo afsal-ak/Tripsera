@@ -13,6 +13,10 @@ const BannerSchema = new Schema<IBannerDocument>({
         type:String,
         required:false
     },
+    isBlocked:{
+        type:Boolean,
+        default:false
+    },
     // imageUrl: {
     //     type: String,
     //     required: true

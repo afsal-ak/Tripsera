@@ -14,10 +14,10 @@ import { generateAccessToken,generateRefreshToken } from '@shared/utils/jwt';
     async preRegistration(email:string,username:string):Promise<void>{
         const existingEmail=await this.userRepository.findByEmail(email)
         if(existingEmail){
-            throw new Error('Email already in use')
+            throw new Error('Email already taken')
         }
 
-        const existingUsername=await this.userRepository.findByUsername(username)
+         const existingUsername=await this.userRepository.findByUsername(username)
         if(existingUsername){
             throw new Error('Username already taken')
         }
@@ -43,6 +43,18 @@ import { generateAccessToken,generateRefreshToken } from '@shared/utils/jwt';
        await this.userRepository.createUser(newUser)
        await this.otpRepository.deleteOtp(email)
     }
+async resendOtp(email: string): Promise<void> {
+    const existingUser = await this.userRepository.findByEmail(email);
+    if (existingUser) {
+        throw new Error("Email already registered");
+    }
+
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await this.otpRepository.saveOtp(email, otp, expiresAt);
+    await sendOtpMail(email, otp);
+}
 
 async login(email:string,password:string):Promise<{ user: IUser; accessToken: string; refreshToken: string }>{
     const user=await this.userRepository.findByEmail(email)
@@ -51,6 +63,10 @@ async login(email:string,password:string):Promise<{ user: IUser; accessToken: st
           console.log(email,password,'em')
 
       throw new Error('Incorrect email or password');
+    }
+    if(user.isBlocked==true){
+      throw new Error('user is blocked please contact support');
+
     }
 
     const isPasswordMatch=await comparePassword(password,user?.password)

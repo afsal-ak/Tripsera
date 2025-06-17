@@ -1,44 +1,133 @@
-//  import mongoose,{Schema,Document} from "mongoose";
-// import { Coordinates } from "@domain/entities/IPackage";
-// import { Location } from "@domain/entities/IPackage"; 
+// //  import mongoose,{Schema,Document} from "mongoose";
+// // import { Coordinates } from "@domain/entities/IPackage";
+// // import { Location } from "@domain/entities/IPackage"; 
+// // import { IPackage } from "@domain/entities/IPackage";
+
+
+// // const coordinatesSchema = new Schema<Coordinates>({
+// //     lat: {
+// //         type: Number,
+// //         required: true
+// //     },
+// //     lng: {
+// //         type: Number,
+// //         required: true
+// //     }
+// // },
+// //     { _id: false }
+// // )
+
+// import mongoose, { Schema, Document } from "mongoose";
 // import { IPackage } from "@domain/entities/IPackage";
-
-
-// const coordinatesSchema = new Schema<Coordinates>({
-//     lat: {
-//         type: Number,
-//         required: true
+// // Offer Schema (percentage or flat)
+// const offerSchema = new Schema(
+//   {
+//     type: {
+//       type: String,
+//       enum: ["percentage", "flat"],
+//       required: true
 //     },
-//     lng: {
-//         type: Number,
+//     value: {
+//       type: Number,
+//       required: true
+//     },
+//     validUntil: {
+//       type: Date,
+//       required: true
+//     },
+//     isActive: {
+//       type: Boolean,
+//       default: true
+//     }
+//   },
+//   { _id: false }
+// );
+
+// // GeoJSON Location Schema
+// const locationSchema = new Schema(
+//   {
+//     name: { type: String, required: true },
+//     geo: {
+//       type: {
+//         type: String,
+//         enum: ["Point"],
+//         default: "Point",
+//         required: true
+//       },
+//       coordinates: {
+//         type: [Number], // [lng, lat]
+//         required: true
+//       }
+//     }
+//   },
+//   { _id: false }
+// );
+
+// // Main Package Schema
+// const packageSchema = new Schema(
+//   {
+//     title: { type: String, required: true },
+//     description: { type: String },
+//     price: { type: Number, required: true },
+//     duration: { type: String, required: true }, 
+//     ///imageUrls: [{ type: String }],
+//     imageUrls: [
+//   {
+//     url: String,
+//     public_id: String
+//   }
+// ],
+//     category: [
+//     {
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: "Category",
 //         required: true
 //     }
-// },
-//     { _id: false }
-// )
+//     ],
+//     location: {
+//       type: [locationSchema],
+//       required: true
+//     },
+//     offer: { type: offerSchema },
+//     isBlocked:{
+//         type:Boolean,
+//         default:false
+//     }
+//   },
+//   { timestamps: true }
+// );
 
+// // Add 2dsphere index for geo queries
+// packageSchema.index({ "location.geo": "2dsphere" });
+
+// // Mongoose Model
+// export const PackageModel = mongoose.model<IPackage & Document>(
+//   "Package",
+//   packageSchema
+// );
 import mongoose, { Schema, Document } from "mongoose";
 import { IPackage } from "@domain/entities/IPackage";
-// Offer Schema (percentage or flat)
+
+// Offer Schema
 const offerSchema = new Schema(
   {
     type: {
       type: String,
       enum: ["percentage", "flat"],
-      required: true
+      required: true,
     },
     value: {
       type: Number,
-      required: true
+      required: true,
     },
     validUntil: {
       type: Date,
-      required: true
+      required: true,
     },
     isActive: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   { _id: false }
 );
@@ -52,13 +141,23 @@ const locationSchema = new Schema(
         type: String,
         enum: ["Point"],
         default: "Point",
-        required: true
+        required: true,
       },
       coordinates: {
         type: [Number], // [lng, lat]
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
+  },
+  { _id: false }
+);
+
+// Itinerary Day Schema
+const itinerarySchema = new Schema(
+  {
+    day: { type: Number, required: true },
+    title: { type: String, required: true },
+    activities: [{ type: String, required: true }],
   },
   { _id: false }
 );
@@ -69,30 +168,43 @@ const packageSchema = new Schema(
     title: { type: String, required: true },
     description: { type: String },
     price: { type: Number, required: true },
-    duration: { type: String, required: true }, 
-    ///imageUrls: [{ type: String }],
+    duration: { type: String, required: true },
+
     imageUrls: [
-  {
-    url: String,
-    public_id: String
-  }
-],
+      {
+        url: { type: String },
+        public_id: { type: String },
+      },
+    ],
+
     category: [
-    {
+      {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
-        required: true
-    }
+        required: true,
+      },
     ],
+
     location: {
       type: [locationSchema],
-      required: true
+      required: true,
     },
+
     offer: { type: offerSchema },
-    isBlocked:{
-        type:Boolean,
-        default:false
-    }
+
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+
+    startDate: { type: Date },
+    endDate: { type: Date },
+
+    itinerary: [itinerarySchema],
+    importantDetails: { type: String },
+
+    included: [{ type: String }],
+    notIncluded: [{ type: String }],
   },
   { timestamps: true }
 );
@@ -100,7 +212,6 @@ const packageSchema = new Schema(
 // Add 2dsphere index for geo queries
 packageSchema.index({ "location.geo": "2dsphere" });
 
-// Mongoose Model
 export const PackageModel = mongoose.model<IPackage & Document>(
   "Package",
   packageSchema

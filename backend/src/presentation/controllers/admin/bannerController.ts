@@ -25,6 +25,7 @@ export class BannerMangementController {
       description,
       image: { url, public_id },
     };
+    console.log(req.body,'nbanner')
         const createdBanner=await this.bannerMangementUseCases.createNewBanner(banner)
          res.status(201).json({message:'Banner Created Successfully',banner});
 
@@ -37,17 +38,53 @@ export class BannerMangementController {
 
     getBanner=async (req:Request,res:Response):Promise<void>=>{
         try {
-            const banners=await this.bannerMangementUseCases.getBanners()
-            res.status(200).json({message:'Banner fetched successfully',banners})
+             const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 8;
+
+             const { banners, totalBanner, totalPages } = await this.bannerMangementUseCases.getBanners(page, limit);
+
+    res.status(200).json({
+      message: "Bannner fetched successfully",
+      data: banners,
+      totalBanner,
+      totalPages,
+      currentPage: page
+    });
         } catch (error:any) {
             res.status(500).json({ message: error.message || "Something went wrong" });
 
         }
     }
 
+    blockBanner=async(req:Request,res:Response):Promise<void>=>{
+        try {
+            const {bannerId}=req.params
+            await this.bannerMangementUseCases.blockBanner(bannerId)
+            console.log({bannerId})
+          res.status(200).json({message:'Banner blocked successfully'})
+
+        } catch (error:any) {
+            res.status(500).json({ message: error.message || "Something went wrong" });
+
+        }
+    }
+       unblockBanner=async(req:Request,res:Response):Promise<void>=>{
+        try {
+            const {bannerId}=req.params
+            await this.bannerMangementUseCases.unblockBanner(bannerId)
+          res.status(200).json({message:'Banner unblocked successfully'})
+
+        } catch (error:any) {
+            res.status(500).json({ message: error.message || "Something went wrong" });
+
+        }
+    }
+
+
     deleteBanner=async(req:Request,res:Response):Promise<void>=>{
         try {
             const {bannerId}=req.params
+            console.log({bannerId},'deleet')
             await this.bannerMangementUseCases.deleteBanner(bannerId)
           res.status(200).json({message:'Banner deleted successfully'})
 

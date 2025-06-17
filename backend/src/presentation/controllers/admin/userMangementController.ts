@@ -6,16 +6,35 @@ export class UserManagementController{
         private userManagementUseCases:UserManagementUseCases
     ){}
 
-     getAllUser = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const users = await this.userManagementUseCases.getUsers();
-      res.status(200).json({ message: "Users fetched successfully", users });
-    } catch (error: any) {
-      console.error("Error fetching users:", error);
-      res.status(500).json({ message: error.message || "Something went wrong" });
-    }
-  };
+  //    getAllUser = async (req: Request, res: Response): Promise<void> => {
+  //   try {
+  //     const users = await this.userManagementUseCases.getUsers();
+  //     res.status(200).json({ message: "Users fetched successfully", users });
+  //   } catch (error: any) {
+  //     console.error("Error fetching users:", error);
+  //     res.status(500).json({ message: error.message || "Something went wrong" });
+  //   }
+  // };
 
+getAllUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const { users, totalUsers, totalPages } = await this.userManagementUseCases.getUsers(page, limit);
+
+    res.status(200).json({
+      message: "Users fetched successfully",
+      data: users,
+      totalUsers,
+      totalPages,
+      currentPage: page
+    });
+  } catch (error: any) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: error.message || "Something went wrong" });
+  }
+};
 
     getSingleUser=async(req:Request,res:Response):Promise<void>=>{
        try {

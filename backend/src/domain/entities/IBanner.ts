@@ -8,5 +8,6 @@ export interface IBanner{
  image: {
     url: string;
     public_id: string;
-  };    
+  };
+  isBlocked?:boolean    
 }

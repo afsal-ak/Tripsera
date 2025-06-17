@@ -10,10 +10,13 @@ export class UserAuthController {
   preRegister = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, username } = req.body;
+      console.log(req.body,'body')
       await this.userAuthUseCases.preRegistration(email, username);
       res.status(200).json({ message: "OTP send to your email" });
     } catch (error: any) {
+      console.log(error.message)
       res.status(400).json({ message: error.message });
+
     }
   };
 
@@ -21,12 +24,23 @@ export class UserAuthController {
     try {
       const { email, username, password, otp } = req.body;
       const userData: IUser = { email, username, password };
+            console.log(req.body,'body')
+
       await this.userAuthUseCases.verifyOtpAndRegister(userData, otp);
       res.status(200).json({ message: 'User registered successfully' });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
   };
+resendOtp = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+    await this.userAuthUseCases.resendOtp(email);
+    res.status(200).json({ message: 'OTP resent to your email' });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
   login = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -44,9 +58,10 @@ export class UserAuthController {
         message: 'Login successful',
         user,
         accessToken,
-      //  refreshToken
+       refreshToken
       });
     } catch (error: any) {
+      console.log(error.message,'login')
       res.status(401).json({ message: error.message });
     }
   };

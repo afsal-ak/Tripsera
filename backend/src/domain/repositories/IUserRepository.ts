@@ -7,7 +7,8 @@ export interface IUserRepository{
     createUser(user:IUser):Promise<IUser>
     updateUserPassword (email:string,password:string):Promise<IUser|null>
     findById(id:string):Promise<IUser|null>
-    findAll(): Promise<IUserPreview[]>
+    findAll(skip:number,limit:number): Promise<IUser[]>
+    countAll():Promise<number>
     updateUserStatus(id:string,isBlocked:boolean):Promise<void>
 
 }

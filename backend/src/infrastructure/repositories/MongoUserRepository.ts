@@ -36,13 +36,24 @@ export class MongoUserRepository implements IUserRepository{
     return user ? user.toObject() : null;
   }
 
-  async findAll(): Promise<IUserPreview[]> {
- const users = await UserModel.find()
-    .select("username email phoneNumber isBlocked")  
-    .lean();
-     return users as IUserPreview[]
-  }
+//   async findAll(): Promise<IUserPreview[]> {
+//  const users = await UserModel.find()
+//     .select("username email phoneNumber isBlocked")  
+//     .lean();
+//      return users as IUserPreview[]
+//   }
 
+async findAll(skip: number, limit: number): Promise<IUser[]> {
+  return UserModel.find({})
+    .skip(skip)
+    .limit(limit)
+    .select("-password") 
+    .lean();
+}
+
+async countAll(): Promise<number> {
+  return UserModel.countDocuments();
+}
 
   async updateUserStatus(id: string, isBlocked: boolean): Promise<void> {
       const user=await UserModel.findByIdAndUpdate(id,{isBlocked})

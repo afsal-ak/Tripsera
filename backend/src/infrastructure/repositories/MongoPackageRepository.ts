@@ -51,15 +51,62 @@ if (newImages.length > 0) {
 
 
 
-    async findAll(): Promise<IPackage[]> {
-        const updatedPkg=await PackageModel.find().populate("category").lean()
-        return updatedPkg
-    }
+ async findAll(skip: number, limit: number): Promise<IPackage[]> {
+   return PackageModel.find({})
+     .skip(skip)
+     .populate('category')
+     .limit(limit)
+      .lean();
+ }
+ 
+ async countDocument(): Promise<number> {
+   return PackageModel.countDocuments()
+ }
 
    async findById(id: string): Promise<IPackage | null> {
         const pkg=await PackageModel.findById(id)
       return pkg ?.toObject()||null
     }
+
+    // async getActivePackages():Promise<IPackage[]>{
+    //   const pkgs=await PackageModel.find({isBlocked:false}).populate("category").lean()
+    //   return pkgs
+    // }
+
+//  async getActivePackages(filters: any={}, skip: number, limit: number): Promise<IPackage[]> {
+//     const query={...filters,isBlocked:false}
+
+//     return await PackageModel.find(query)
+//     .populate("category")
+//     .sort({createdAt:-1})
+//     .skip(skip)
+//     .limit(limit)
+//     .lean()
+//   }
+async getHomeData(): Promise<IPackage[]> {
+  const pkg=await PackageModel.find({isBlocked:false}).limit(4).lean()
+  return pkg
+}
+
+async getActivePackages(filters: any = {}, skip: number, limit: number, sortBy: string): Promise<IPackage[]> {
+    const query = { ...filters, isBlocked: false };
+
+    // const sortOption: any = { createdAt: -1 };
+    // if (sort === "price_asc") sortOption.price = 1;
+    // else if (sort === "price_desc") sortOption.price = -1;
+
+    return await PackageModel.find(query)
+      .populate("category")
+      .sort(sortBy)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+  }
+
+  async countActivePackages(filters: any): Promise<number> {
+    const query={...filters,isBlocked:false}
+    return await PackageModel.countDocuments(query)
+  }
 
   async block(id: string): Promise<void> {
         const updatedPkg =await PackageModel.findByIdAndUpdate(id,{isBlocked:true})

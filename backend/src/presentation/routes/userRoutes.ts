@@ -34,14 +34,26 @@ import { Router } from "express";
 import { UserAuthUsecases } from "@domain/usecases/user/userAuthUseCases";
 import { MongoUserRepository } from "@infrastructure/repositories/MongoUserRepository";
 import { MongoOtpRepository } from "@infrastructure/repositories/MongoOtpRepository";
-import { UserAuthController } from "@presentation/controllers/user/UserAuthController";
 import { refreshToken } from "@presentation/controllers/token/refreshToken";
+import { UserAuthController } from "@presentation/controllers/user/userAuthController";
 import { userAuthMiddleware } from "@presentation/middlewares/userAuthMiddleware";
+import { HomeUseCases } from "@domain/usecases/user/homeUseCases";
+ import { HomeController } from "@presentation/controllers/user/homeController";
+import { MongoBannerRepository } from "@infrastructure/repositories/MongoBannerRepository";
+import { MongoPackageRepository } from "@infrastructure/repositories/MongoPackageRepository";
+import { PackageUseCases } from "@domain/usecases/admin/packageUseCases";
+
+
 
 const userRepository = new MongoUserRepository();
 const otpRepository = new MongoOtpRepository();
 const userAuthUseCases = new UserAuthUsecases(userRepository, otpRepository);
 const userAuthController = new UserAuthController(userAuthUseCases);
+
+const bannerRepository=new MongoBannerRepository()
+const packageRepository=new MongoPackageRepository()
+const homeUseCases=new HomeUseCases(packageRepository,bannerRepository)
+ const homeController=new HomeController(homeUseCases)
 
 const router = Router();
 
@@ -104,6 +116,7 @@ router.post('/pre-register', userAuthController.preRegister);
  *         description: User registered successfully
  */
 router.post('/register', userAuthController.register);
+router.post("/resend-otp",  userAuthController.resendOtp);
 
 /**
  * @swagger
@@ -186,6 +199,85 @@ router.post('/forgotPasswordChange', userAuthController.forgotPasswordChange);
  *       200:
  *         description: Logged out successfully
  */
-router.post('/logout', userAuthMiddleware, userAuthController.userLogout);
+
+
+router.post('/logout', userAuthController.userLogout);
+
+
+router.get('/home',homeController.getHome)
+/**
+ * @swagger
+ * /api/user/packages:
+ *   get:
+ *     summary: Get Active Packages
+ *     tags: [Packages]
+ *     description: Get paginated, filtered, and sorted list of active packages
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 8
+ *         description: Number of packages per page
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [newest, oldest, price_asc, price_desc]
+ *           default: newest
+ *         description: Sorting order
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by title or location
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Filter by category ID
+ *       - in: query
+ *         name: duration
+ *         schema:
+ *           type: string
+ *         description: Filter by duration in days
+ *     responses:
+ *       200:
+ *         description: Successfully fetched packages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Active packages fetched successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Package'
+ *                 total:
+ *                   type: integer
+ *                   example: 40
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 5
+ *                 currentPage:
+ *                   type: integer
+ *                   example: 1
+ *       500:
+ *         description: Server error
+ */
+
+router.get('/packages',homeController.getActivePackage)
+router.get('/packages/:id',homeController.getPackagesById)
+
+
 
 export default router;
