@@ -26,7 +26,7 @@ export class HomeController{
 getActivePackage = async (req: Request, res: Response): Promise<void> => {
   try {
     const { page, limit, sort, search, ...restFilters } = req.query;
-console.log("Query received:", req.query);
+   console.log("Query received:", req.query);
 
     const pageNum = parseInt(page as string) || 1;
     const limitNum = parseInt(limit as string) || 9;

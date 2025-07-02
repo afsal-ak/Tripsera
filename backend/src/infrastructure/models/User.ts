@@ -10,7 +10,7 @@ const UserSchema = new Schema<IUserDocument>({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   phone: { type: Number },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
  // followers: [{ type: Schema.Types.ObjectId, ref: 'Users' }],
   //following: [{ type: Schema.Types.ObjectId, ref: 'Users' }],
@@ -23,6 +23,11 @@ const UserSchema = new Schema<IUserDocument>({
  // secondName: String,
  // location: String,
   googleId: String,
+  isGoogleUser: {
+  type: Boolean,
+  default: false
+}
+
 },
 {
     timestamps: true,  

@@ -70,7 +70,7 @@ router.delete('/banners/:bannerId/delete',adminAuthMiddleware,bannerMangementCon
 //category router
 
 router.get("/categories",adminAuthMiddleware, categoryController.getAllCategories);
-router.get("/category/active",adminAuthMiddleware, categoryController.getActiveCategory);
+router.get("/category/active", categoryController.getActiveCategory);
 router.get("/category/:id",adminAuthMiddleware, categoryController.getCategoryById);
 router.post("/addCategory",adminAuthMiddleware, categoryController.createCategory);
 router.put("/category/:id",adminAuthMiddleware, categoryController.editCategory);
@@ -84,7 +84,7 @@ router.post('/addPackage',adminAuthMiddleware,upload.array('images',4),packageCo
 router.put('/packages/:id/edit',adminAuthMiddleware,upload.array('images',4),packageController.editPackage)
 router.patch('/packages/:id/block',adminAuthMiddleware,packageController.blockPackage)
 router.patch('/packages/:id/unblock',adminAuthMiddleware,packageController.unblockPackage)
-router.patch('/packages/:id/delete',adminAuthMiddleware,packageController.deletePackage)
+//router.patch('/packages/:id/delete',adminAuthMiddleware,packageController.deletePackage)
 
 
 

@@ -41,7 +41,7 @@ async createPackage(pkg: IPackage): Promise<IPackage> {
   try {
     console.log(" Calling repository with pkg:", pkg);
     const result = await this.packageRepo.create(pkg);
-    console.log("✅ Created package:", result);
+    console.log(" Created package:", result);
     return result;
   } catch (error) {
     console.error(" UseCase Error:", error);
@@ -60,12 +60,12 @@ async editPackageData(
 
   const oldImages = packageData.imageUrls || [];
 
-  // 🔥 Find which images to delete (not included in existingImages)
+  //  Find which images to delete (not included in existingImages)
   const deletedImages = oldImages.filter(
     oldImg => !existingImages.some(img => img.public_id === oldImg.public_id)
   );
 
-  // ❌ Delete them from Cloudinary
+  //  Delete them from Cloudinary
   for (const img of deletedImages) {
     await deleteImageFromCloudinary(img.public_id);
   }

@@ -84,7 +84,7 @@ if (newImages.length > 0) {
 //     .lean()
 //   }
 async getHomeData(): Promise<IPackage[]> {
-  const pkg=await PackageModel.find({isBlocked:false}).limit(4).lean()
+  const pkg=await PackageModel.find({isBlocked:false,startDate:{$gte:Date.now()}}).limit(4).lean()
   return pkg
 }
 

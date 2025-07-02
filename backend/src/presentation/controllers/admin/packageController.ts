@@ -218,12 +218,12 @@ editPackage = async (req: Request, res: Response): Promise<void> => {
       endDate: body.endDate ? new Date(body.endDate) : undefined
     };
 
-    // ✅ Upload new images
+    //  Upload new images
     const newImages = files?.length
       ? await Promise.all(files.map(file => uploadCloudinary(file.path, 'packages')))
       : [];
 
-    // ✅ Pass correct data to use case
+    //  Pass correct data to use case
     await this.packageUseCase.editPackageData(id, pkgData, existingImageUrls, newImages);
 
     res.status(200).json({ message: 'Package updated successfully' });
@@ -235,79 +235,6 @@ editPackage = async (req: Request, res: Response): Promise<void> => {
 };
 
 
-
-// editPackage = async (req: Request, res: Response): Promise<void> => {
-//   try {
-//     const { id } = req.params;
-//     const body = req.body;
-//     const files = req.files as Express.Multer.File[];
-
-//     const existingImageUrls: string[] = body.existingImageUrls
-//       ? JSON.parse(body.existingImageUrls)
-//       : [];
-
-//     const pkg = await this.packageUseCase.getPackageById(id); // Get existing package
-//     const originalUrls = pkg.imageUrls.map((img: any) => img.url);
-
-//     // Find deleted images
-//     const deletedUrls = originalUrls.filter(url => !existingImageUrls.includes(url));
-
-//     const deletedImages = deletedUrls.map((url) => ({
-//       public_id: this.extractPublicIdFromUrl(url),
-//     }));
-
-//     const pkgData: Partial<IPackage> = {
-//       title: body.title,
-//       description: body.description,
-//       duration: body.duration,
-//       price: body.price ? Number(body.price) : undefined,
-//       location: body.location ? JSON.parse(body.location) : undefined,
-//       category: body.category ? JSON.parse(body.category) : undefined,
-//       included: body.included ? JSON.parse(body.included) : undefined,
-//       notIncluded: body.notIncluded ? JSON.parse(body.notIncluded) : undefined,
-//       itinerary: body.itinerary ? JSON.parse(body.itinerary) : undefined,
-//       startDate: body.startDate ? new Date(body.startDate) : undefined,
-//       endDate: body.endDate ? new Date(body.endDate) : undefined,
-//     };
-
-//     const newImages = files?.length
-//       ? await Promise.all(files.map(file => uploadCloudinary(file.path, 'packages')))
-//       : [];
-
-//     await this.packageUseCase.editPackageData(id, pkgData, deletedImages, newImages);
-//     res.status(200).json({ message: 'Package updated successfully' });
-//   } catch (error: any) {
-//     res.status(500).json({ message: error.message || 'Something went wrong' });
-//   }
-// };
-
-// // Utility function
-// private extractPublicIdFromUrl(url: string): string {
-//   const parts = url.split('/');
-//   const filename = parts[parts.length - 1]; // example: "abc123.jpg"
-//   return filename.split('.')[0]; // "abc123"
-// }
-  //  editPackage = async (req: Request, res: Response): Promise<void> => {
-  //     try {
-  //        const {id}=req.params
-  //        const pkgData:any=req.body
-  //       const files=req.files as Express.Multer.File[]
-
-  //       const deletedImages=pkgData.deletedImages?JSON.parse(pkgData.deletedImages):[]
-
-  //       const newImages=files?.length
-  //          ?await Promise.all(files.map(file=>uploadCloudinary(file.path,'packages'))):[]
-
-  //       await this.packageUseCase.updatePackage(id,pkgData,deletedImages,newImages)
-
-  //      res.status(200).json({ message: 'Package updated successfully' });
-
-
-  //     } catch (error:any) {
-  //       res.status(500).json({ message: error.message || 'Something went wrong' });
-
-  //     }
-  //  }
 
 
   xeditPackage = async (req: Request, res: Response): Promise<void> => {

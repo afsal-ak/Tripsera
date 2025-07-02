@@ -8,10 +8,22 @@ const OtpSchema=new Schema<IOtpDocument>({
         type:String,
         required:true
     },
+    username: { 
+        type: String,
+         required: false 
+        },
+  password: { 
+    type: String, 
+    required: false 
+},
     otp:{
         type:String,
         required:true
     },
+    attempts: {
+         type: Number,
+          default: 0
+         },
     createdAt:{
         type:Date,
         default:Date.now

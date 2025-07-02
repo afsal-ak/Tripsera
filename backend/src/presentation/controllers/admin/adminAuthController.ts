@@ -14,16 +14,17 @@ console.log(req.body,'admin')
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'none',
+        sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
+
+  console.log(req.cookies,'k')
 console.log({accessToken,refreshToken})
       res.status(200).json({
         message: 'Login successful',
         admin,
         accessToken,
-        refreshToken
-      });
+       });
     } catch (error: any) {
       console.log(error)
       res.status(401).json({ message: error.message });

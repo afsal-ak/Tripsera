@@ -3,46 +3,80 @@ import { IOtpRepository } from '../../repositories/IOtpRepository';
 import { sendOtpMail } from '@infrastructure/services/mail/mailer';
 import { hashPassword,comparePassword } from '@shared/utils/hash';
 import { IUser } from '../../entities/IUser';
+import { IOTP } from '@domain/entities/IOTP';
 import { generateOtp } from '@shared/utils/generateOtp';
-import { generateAccessToken,generateRefreshToken } from '@shared/utils/jwt';
+import { verifyGoogleToken } from '@infrastructure/services/googleAuth/googleAuthService';
+import { generateAccessToken,generateRefreshToken, verifyAccessToken } from '@shared/utils/jwt';
  export class UserAuthUsecases{
     constructor(
         private userRepository:IUserRepository,
         private otpRepository:IOtpRepository,
     ){}
 
-    async preRegistration(email:string,username:string):Promise<void>{
-        const existingEmail=await this.userRepository.findByEmail(email)
-        if(existingEmail){
-            throw new Error('Email already taken')
-        }
+    async preRegistration(userData: IOTP): Promise<void> {
+  const { email, username, password } = userData;
 
-         const existingUsername=await this.userRepository.findByUsername(username)
-        if(existingUsername){
-            throw new Error('Username already taken')
-        }
+  const existingEmail = await this.userRepository.findByEmail(email);
+  if (existingEmail){
+   throw new Error('Email already taken');
+  } 
 
-        const otp=generateOtp()
-        const expiresAt=new Date(Date.now()+5*60*1000)
+  const existingUsername = await this.userRepository.findByUsername(username!);
+  if (existingUsername){
+    throw new Error('Username already taken');
+  } 
 
-        await this.otpRepository.saveOtp(email,otp,expiresAt)
-        await sendOtpMail(email,otp)
+  const hashedPassword =await hashPassword(password!); 
 
-    }
+  const otp = generateOtp();
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    async verifyOtpAndRegister(userData:IUser,otp:string):Promise<void>{
-       const {email,password}=userData
+  if (!email || !username || !password) {
+    throw new Error('Missing required fields');
+  }
+
+  await this.otpRepository.saveOtp({
+    email,
+    username,
+    password: hashedPassword,
+    otp,
+    expiresAt,
+    attempts: 0,
+  });
+
+  await sendOtpMail(email, otp);
+}
+
+
+    async verifyOtpAndRegister(email:string,otp:string):Promise<void>{
+        
 
        const isValidOtp=await this.otpRepository.verifyOtp(email,otp)
        if(!isValidOtp){
-        throw new Error('Invalid or Expired OTP')
+        throw new Error('Invalid OTP')
        }
-       const hashedPassword=await hashPassword(password)
-       const newUser={...userData,password:hashedPassword}
+       const otpDoc=await this.otpRepository.getOtpByEmail(email)
+         if (!otpDoc || !otpDoc.username || !otpDoc.password) {
+         throw new Error("Incomplete registration data");
+    }
+       const existing = await this.userRepository.findByEmail(email);
+       
+        if (existing){
+        throw new Error("User already registered");
+
+        } 
+       const newUser:IUser={
+        email,
+        username:otpDoc.username,
+        password:otpDoc.password
+       }
 
        await this.userRepository.createUser(newUser)
        await this.otpRepository.deleteOtp(email)
     }
+
+    
+
 async resendOtp(email: string): Promise<void> {
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
@@ -52,7 +86,7 @@ async resendOtp(email: string): Promise<void> {
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    await this.otpRepository.saveOtp(email, otp, expiresAt);
+    await this.otpRepository.saveOtp({email, otp, expiresAt});
     await sendOtpMail(email, otp);
 }
 
@@ -69,12 +103,20 @@ async login(email:string,password:string):Promise<{ user: IUser; accessToken: st
 
     }
 
+    if(!user.password){
+       throw new Error('Incorrect email or password');
+
+    }
+
     const isPasswordMatch=await comparePassword(password,user?.password)
     if(!isPasswordMatch){
 
         throw new Error('Incorrect email or password')
     }
-     const payload = { id: user._id, role: user.role };
+    const payload = {
+        id: user._id,
+        role: user.role
+    };
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(payload);
   //console.log(user._id,'id')
@@ -83,7 +125,8 @@ async login(email:string,password:string):Promise<{ user: IUser; accessToken: st
         _id: user._id,
     email: user.email,
     username: user.username,
-    role: user.role
+    role: user.role,
+    isBlocked:user.isBlocked
     }as IUser
   return { user:publicUser, accessToken, refreshToken };
 
@@ -97,22 +140,60 @@ async login(email:string,password:string):Promise<{ user: IUser; accessToken: st
         const otp=generateOtp()
         const expiresAt=new Date(Date.now()+5*60*1000)
 
-        await this.otpRepository.saveOtp(email,otp,expiresAt)
+        await this.otpRepository.saveOtp({email,otp,expiresAt})
         await sendOtpMail(email,otp)
 
     }
-
-    async forgotPasswordChange(userData:IUser,otp:string):Promise<void>{
-       const {email,password}=userData
-
-       const isValidOtp=await this.otpRepository.verifyOtp(email,otp)
-       if(!isValidOtp){
-        throw new Error('Invalid or Expired OTP')
+     async verifyOtpForForgotPassword(email:string,otp:string):Promise<{token:string}>{
+        const isValidOtp=await this.otpRepository.verifyOtp(email,otp)
+        console.log({email,otp},'y')
+        if(!isValidOtp){
+        throw new Error('Invalid OTP')
        }
+       const payload={
+        email:email
+       }
+       const token=generateAccessToken(payload)
+       console.log(token,'token')
+       //await this.otpRepository.deleteOtp(email)
+       return {token}
+       
+    }
+
+    async forgotPasswordChange(token:string,password:string):Promise<void>{
+      
+        const verifyToken=verifyAccessToken(token)
+        if(!verifyToken){
+            throw new Error('Expired or Invalid Token')
+        }
+
+        const email=verifyToken.email
+        console.log({email},'from forgotPassword')
        const hashedPassword=await hashPassword(password)
  
        await this.userRepository.updateUserPassword (email,hashedPassword)
-       await this.otpRepository.deleteOtp(email)
+    }
+
+
+    async loginWithGoole(token:string){
+      const {email,name,picture,googleId}=await verifyGoogleToken(token)
+console.log(email,'google')
+console.log(token,'google token')
+      let user=await this.userRepository.findByEmail(email)
+
+      if(!user){
+        user=await this.userRepository.createUser({
+          email,
+          username:name,
+          profilePic:picture,
+          googleId:googleId,
+          isGoogleUser:true,
+          
+        })
+      }
+      const accessToken=generateAccessToken({id:user._id,email:user.email})
+    
+      return {accessToken,user}
     }
 
 

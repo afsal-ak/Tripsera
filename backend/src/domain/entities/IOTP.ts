@@ -1,6 +1,9 @@
 export interface IOTP {
    email: string;
-  otp: string;
-  expiresAt: Date;
+   username?:string;
+   password?:string;
+   attempts?:number;
+  otp?: string;
+  expiresAt?: Date;
   createdAt?: Date;
 }

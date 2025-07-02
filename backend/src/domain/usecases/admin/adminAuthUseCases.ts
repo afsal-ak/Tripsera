@@ -23,7 +23,7 @@ export class AdminAuthUseCases{
         if (!admin || admin.role !== 'admin') {
             throw new Error('Incorrect email or password')
         }
-        const isPasswordMatch = await comparePassword(password, admin?.password)
+        const isPasswordMatch = await comparePassword(password, admin?.password!)
         if (!isPasswordMatch) {
             throw new Error('Incorrect email or password')
         }
@@ -55,7 +55,7 @@ export class AdminAuthUseCases{
             const otp=generateOtp()
             const expiresAt=new Date(Date.now()+5*60*1000)
     
-            await this.otpRepository.saveOtp(email,otp,expiresAt)
+            await this.otpRepository.saveOtp({email,otp,expiresAt})
             await sendOtpMail(email,otp)
     
         }
@@ -67,7 +67,7 @@ export class AdminAuthUseCases{
            if(!isValidOtp){
             throw new Error('Invalid or Expired OTP')
            }
-           const hashedPassword=await hashPassword(password)
+           const hashedPassword=await hashPassword(password!)
      
            await this.adminRepository.updateUserPassword (email,hashedPassword)
            await this.otpRepository.deleteOtp(email)

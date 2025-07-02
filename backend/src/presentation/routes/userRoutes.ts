@@ -140,6 +140,8 @@ router.post("/resend-otp",  userAuthController.resendOtp);
  *         description: Login successful
  */
 router.post('/login', userAuthController.login);
+router.post('/google-login',userAuthController.googleLogin)
+
 
 /**
  * @swagger
@@ -161,6 +163,7 @@ router.post('/login', userAuthController.login);
  *         description: OTP sent for reset
  */
 router.post('/forgotPassword', userAuthController.forgotPassword);
+router.post('/verify-otp', userAuthController.verifyOtpForForgotPassword);
 
 /**
  * @swagger
@@ -205,77 +208,78 @@ router.post('/logout', userAuthController.userLogout);
 
 
 router.get('/home',homeController.getHome)
-/**
- * @swagger
- * /api/user/packages:
- *   get:
- *     summary: Get Active Packages
- *     tags: [Packages]
- *     description: Get paginated, filtered, and sorted list of active packages
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number for pagination
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 8
- *         description: Number of packages per page
- *       - in: query
- *         name: sort
- *         schema:
- *           type: string
- *           enum: [newest, oldest, price_asc, price_desc]
- *           default: newest
- *         description: Sorting order
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: Search by title or location
- *       - in: query
- *         name: category
- *         schema:
- *           type: string
- *         description: Filter by category ID
- *       - in: query
- *         name: duration
- *         schema:
- *           type: string
- *         description: Filter by duration in days
- *     responses:
- *       200:
- *         description: Successfully fetched packages
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Active packages fetched successfully
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Package'
- *                 total:
- *                   type: integer
- *                   example: 40
- *                 totalPages:
- *                   type: integer
- *                   example: 5
- *                 currentPage:
- *                   type: integer
- *                   example: 1
- *       500:
- *         description: Server error
- */
+ 
+// /**
+//  * @swagger
+//  * /api/user/packages:
+//  *   get:
+//  *     summary: Get Active Packages
+//  *     tags: [Packages]
+//  *     description: Get paginated, filtered, and sorted list of active packages
+//  *     parameters:
+//  *       - in: query
+//  *         name: page
+//  *         schema:
+//  *           type: integer
+//  *           default: 1
+//  *         description: Page number for pagination
+//  *       - in: query
+//  *         name: limit
+//  *         schema:
+//  *           type: integer
+//  *           default: 8
+//  *         description: Number of packages per page
+//  *       - in: query
+//  *         name: sort
+//  *         schema:
+//  *           type: string
+//  *           enum: [newest, oldest, price_asc, price_desc]
+//  *           default: newest
+//  *         description: Sorting order
+//  *       - in: query
+//  *         name: search
+//  *         schema:
+//  *           type: string
+//  *         description: Search by title or location
+//  *       - in: query
+//  *         name: category
+//  *         schema:
+//  *           type: string
+//  *         description: Filter by category ID
+//  *       - in: query
+//  *         name: duration
+//  *         schema:
+//  *           type: string
+//  *         description: Filter by duration in days
+//  *     responses:
+//  *       200:
+//  *         description: Successfully fetched packages
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: Active packages fetched successfully
+//  *                 data:
+//  *                   type: array
+//  *                   items:
+//  *                     $ref: '#/components/schemas/Package'
+//  *                 total:
+//  *                   type: integer
+//  *                   example: 40
+//  *                 totalPages:
+//  *                   type: integer
+//  *                   example: 5
+//  *                 currentPage:
+//  *                   type: integer
+//  *                   example: 1
+//  *       500:
+//  *         description: Server error
+//  */
 
-router.get('/packages',homeController.getActivePackage)
+router.get('/packages',userAuthMiddleware,homeController.getActivePackage)
 router.get('/packages/:id',homeController.getPackagesById)
 
 

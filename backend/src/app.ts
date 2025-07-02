@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser'
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 
+
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -27,7 +28,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-
+app.use(cookieParser());
  const connectMongoDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/picnigo');
@@ -43,16 +44,14 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
-//app.use(cors());
 
  app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend origin
-    credentials: true, // allow cookies/auth headers
+    origin: "http://localhost:5173", 
+    credentials: true, 
   })
 );
 app.use(bodyParser.json());
-app.use(cookieParser());
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
  
@@ -60,6 +59,6 @@ app.use('/api/admin', adminRoutes);
 
 connectMongoDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(` Server running on port ${PORT}`);
   });
 });
