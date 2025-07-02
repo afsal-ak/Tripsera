@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import { Link } from "react-router-dom";
 import { Menu, Search, User, X } from "lucide-react";
@@ -11,9 +11,19 @@ import { toast } from "sonner";
 const Navbar = () => {
      const dispatch = useDispatch<AppDispatch>();
   
-    const {  isAuthenticated } = useSelector(
-      (state: RootState) => state.userAuth
-    );
+    // const {  isAuthenticated } = useSelector(
+    //   (state: RootState) => state.userAuth
+    // );
+    const {isAuthenticated,accessToken} =useSelector((state:RootState)=>state.userAuth)
+   useEffect(()=>{
+    console.log(isAuthenticated,'fromnavbar')
+    const token=localStorage.getItem("accessToken")
+        console.log(accessToken,'fromnavbar tokrn')
+
+     if(!accessToken){
+      dispatch(logoutUser())
+    }
+   },[])
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -25,8 +35,7 @@ const Navbar = () => {
               <span className="text-orange">Picnigo</span>
             </Link>
 
-            {/* Desktop Menu */}
-            <nav className="hidden md:flex items-center space-x-8">
+             <nav className="hidden md:flex items-center space-x-8">
               <Link to="/" className="text-foreground hover:text-orange transition-colors">Home</Link>
               <Link to="/packages" className="text-foreground hover:text-orange transition-colors">Packages</Link>
               <Link to="/blog" className="text-foreground hover:text-orange transition-colors">Blog</Link>
@@ -35,8 +44,7 @@ const Navbar = () => {
             </nav>
           </div>
 
-          {/* Right Side */}
-          <div className="flex items-center space-x-4">
+           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="icon" className="hidden md:flex">
               <Search className="h-4 w-4" />
             </Button>
@@ -87,22 +95,35 @@ const Navbar = () => {
             <Link to="/about" className="block text-foreground hover:text-orange" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
             <Link to="/contact" className="block text-foreground hover:text-orange" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
    {isAuthenticated ? (
-  <Link
-    to="/login"
-    className="block text-orange font-semibold"
-    onClick={() => setIsMobileMenuOpen(false)}
+  <button
+    onClick={() => {
+      dispatch(logoutUser());
+      toast.success("Logout successful");
+      setIsMobileMenuOpen(false);
+    }}
+    className="block text-red-500 font-semibold"
   >
-    Login
-  </Link>
+    Logout
+  </button>
 ) : (
-  <Link
-    to="/signup"
-    className="block text-orange font-semibold"
-    onClick={() => setIsMobileMenuOpen(false)}
-  >
-    Sign Up
-  </Link>
+  <>
+    <Link
+      to="/login"
+      className="block text-orange font-semibold"
+      onClick={() => setIsMobileMenuOpen(false)}
+    >
+      Login
+    </Link>
+    <Link
+      to="/signup"
+      className="block text-orange font-semibold"
+      onClick={() => setIsMobileMenuOpen(false)}
+    >
+      Sign Up
+    </Link>
+  </>
 )}
+
 
           </div>
         )}

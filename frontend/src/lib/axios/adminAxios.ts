@@ -1,24 +1,13 @@
-// import axios from "axios";
 
-// const adminApi=axios.create({
-//     baseURL:import.meta.env.VITE_API_BASE_URL+"/admin",
-//     withCredentials:true,
-//     headers: {
-//     "Content-Type": "application/json",
-//     // Add Authorization header if using token-based auth
-//     // Authorization: `Bearer ${adminToken}`
-//   },
-// })
-
-// export default adminApi;
 import axios from "axios";
+import { toast } from "sonner";
 
 const adminApi = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL + "/admin",
   withCredentials: true,
 });
 
-// ✅ Attach access token to every admin request
+// Attach access token to every admin request
 adminApi.interceptors.request.use(
   (config) => {
     const adminToken = localStorage.getItem("adminAccessToken");
@@ -30,7 +19,7 @@ adminApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Auto refresh token on 401
+//  Auto refresh token on 401
 adminApi.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -39,16 +28,18 @@ adminApi.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url.includes("/admin-login") &&
-      !originalRequest.url.includes("/refresh-token")
+      !originalRequest.url.includes("/admin/admin-login") &&
+      !originalRequest.url.includes("/admin/refresh-token")
+      
     ) {
       originalRequest._retry = true;
 
       try {
+ 
        const res = await axios.post(
   `${import.meta.env.VITE_API_BASE_URL}/admin/refresh-token`,
-  {}, // empty body
-  { withCredentials: true } // ✅ this ensures cookies are sent
+  {}, 
+  { withCredentials: true } //  this ensures cookies are sent
 );
 
         const { accessToken } = res.data;

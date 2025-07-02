@@ -97,6 +97,7 @@ console.log({accessToken})
               </label>
               <input
                 type="email"
+                name='email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange"

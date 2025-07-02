@@ -67,9 +67,9 @@ const UserList = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
+            {users.map((user,index) => (
               <TableRow key={user._id}>
-                <TableCell>{user._id}</TableCell>
+      <TableCell>{(currentPage - 1) * 5 + index + 1}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>

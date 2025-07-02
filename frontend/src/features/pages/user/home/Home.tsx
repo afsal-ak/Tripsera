@@ -50,6 +50,7 @@ setPackages(packages)
             {/* {packages.map((pkg) => (
               <PackageCard key={pkg._id} {...pkg} />
             ))} */}
+            
             {packages.map((pkg) => (
   <PackageCard key={pkg._id} pkg={pkg} />
 ))}

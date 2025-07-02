@@ -1,21 +1,20 @@
+
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
- import { useDispatch } from "react-redux";
- import type { AppDispatch, RootState } from '@/redux/store';
-
+ import { handlePreRegister } from "@/features/services/auth/authService"; 
+import GoogleLoginButton from "@/features/components/GoogleLoginButton";
 import { toast } from "sonner";
- import { preRegisterUser } from "@/redux/slices/signupSlice";
-
+ 
 const Signup = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
+   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-  });
+   const [email,setEmail]=useState<string>('')
+   const [username,setUsername]=useState<string>('')
+   const [password,setPassword]=useState<string>('')
+   const [confirmPassword,setConfirmPassword]=useState<string>('')
+  const [loading,setLoading]=useState(false)
+
 
   const [errors, setErrors] = useState({
     email: "",
@@ -32,24 +31,35 @@ const Signup = () => {
       confirmPassword: "",
     };
 
-    if (!formData.email.includes("@")) {
+    if (!email.includes("@")) {
       newErrors.email = "Invalid email";
     }
 
-   //
+ 
+if (!username.trim()) {
+  newErrors.username = "Username is required";
+} else if (username.length < 3 || username.length > 20) {
+  newErrors.username = "Username must be 3–20 characters long";
+} else if (!/^[a-zA-Z0-9._]+$/.test(username)) {
+  newErrors.username = "Username can only contain letters, numbers, dot (.), or underscore (_)";
+} else if (/^[._]/.test(username)) {
+  newErrors.username = "Username cannot start with a dot (.) or underscore (_)";
+} else if (/[._]$/.test(username)) {
+  newErrors.username = "Username cannot end with a dot (.) or underscore (_)";
+} else if (/([._])\1/.test(username)) {
+  newErrors.username = "Username cannot contain consecutive dots or underscores";
+}
+ 
 
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
-    }
 
     const passwordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
-    if (!passwordRegex.test(formData.password)) {
+    if (!passwordRegex.test(password)) {
       newErrors.password =
         "Minimum 6 characters with one letter, one number, and one special character";
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
@@ -57,44 +67,35 @@ const Signup = () => {
     return Object.values(newErrors).every((e) => e === "");
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
-  };
-
+   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-
+    if (!validate()){
+      return;
+    } 
+setLoading(true)
     try {
-      const result = await dispatch(
-        preRegisterUser({
-          email: formData.email,
-          username: formData.username,
-          password: formData.password, // ✅ pass password
-
-        })
-      ).unwrap();
-
+      const result = await handlePreRegister(email,username,password)
+      localStorage.setItem('signupEmail',email)
       toast.success( "OTP sent to your email");
-      navigate("/verify-otp", {
-        state: {
-          email: formData.email,
-          username: formData.username,
-          password: formData.password,
-        },
-      });
-    } catch (err: any) {
-      console.log(err,'front')
-      toast.error(err || "Signup failed");
+      console.log(email,'preregistration')
+ 
+      navigate("/verify-otp");
+ 
+     } catch (error: any) {
+      console.log(error,'front')
+      toast.error(error.response?.data?.message || "Signup failed");
+    }finally{
+      setLoading(false)
+
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center font-poppins bg-gray-50 px-4">
       <div className="flex w-full max-w-5xl shadow-lg rounded-lg overflow-hidden bg-white">
-        {/* Left Side - Only on md+ */}
-        <div className="hidden md:flex md:w-1/2 bg-orange items-center justify-center p-8">
+        
+         <div className="hidden md:flex md:w-1/2 bg-orange items-center justify-center p-8">
           <div className="text-center text-white">
             <h2 className="text-3xl font-bold mb-4">Join Picnigo Today</h2>
             <p className="text-base">
@@ -104,22 +105,21 @@ const Signup = () => {
           </div>
         </div>
 
-        {/* Right Side - Signup Form */}
-        <div className="w-full md:w-1/2 flex items-center justify-center p-8">
+         <div className="w-full md:w-1/2 flex items-center justify-center p-8">
           <form onSubmit={handleSubmit} className="w-full max-w-md">
             <h2 className="text-2xl font-bold text-orange mb-6 text-center">
               Create an Account
             </h2>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Full Name</label>
+              <label className="block text-sm font-medium mb-1">Username</label>
               <input
                 name="username"
                 type="text"
                 className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange"
-                placeholder="Enter your name"
-                value={formData.username}
-                onChange={handleChange}
+                placeholder="Enter username"
+                value={username}
+                onChange={(e)=>setUsername(e.target.value)}
               />
               {errors.username && (
                 <p className="text-red-500 text-sm">{errors.username}</p>
@@ -133,8 +133,8 @@ const Signup = () => {
                 type="email"
                 className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange"
                 placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
               />
               {errors.email && (
                 <p className="text-red-500 text-sm">{errors.email}</p>
@@ -148,8 +148,8 @@ const Signup = () => {
                 type="password"
                 className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange"
                 placeholder="Create a password"
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e)=>setPassword(e.target.value)}
               />
               {errors.password && (
                 <p className="text-red-500 text-sm">{errors.password}</p>
@@ -165,22 +165,28 @@ const Signup = () => {
                 type="password"
                 className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange"
                 placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                value={confirmPassword}
+                onChange={(e)=>setConfirmPassword(e.target.value)}
               />
               {errors.confirmPassword && (
                 <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
               )}
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-orange text-white py-2 rounded hover:bg-orange-dark transition mb-4"
-            >
-              Sign Up
-            </button>
+                <button
+        type="submit"
+        className="w-full bg-orange text-white py-2 rounded hover:bg-orange-dark transition mb-4 flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        disabled={loading}
+      >
+        {loading && (
+          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        )}
+        {loading ? "Processing..." : "Sign Up"}
+      </button>
 
-            <button
+
+
+            {/* <button
               type="button"
               className="w-full flex items-center justify-center border border-gray-300 py-2 rounded hover:bg-gray-100 transition"
             >
@@ -190,8 +196,13 @@ const Signup = () => {
                 className="w-5 h-5 mr-2"
               />
               Sign up with Google
-            </button>
-
+            </button> */}
+            <div className="my-4 text-center text-sm text-muted-foreground">
+  or
+</div>
+<div className="w-64 mx-auto flex items-center justify-center py-2 rounded  transition">
+  <GoogleLoginButton />
+</div>
             <p className="mt-4 text-sm text-center">
               Already have an account?{" "}
               <Link to="/login" className="text-orange underline">

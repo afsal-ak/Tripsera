@@ -1,4 +1,3 @@
-// src/redux/slices/signupSlice.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   handlePreRegister,
@@ -18,13 +17,13 @@ interface SignupState {
 const initialState: SignupState = {
   email: null,
   username: null,
-  password: null, // ✅ include password
+  password: null, 
   step: "idle",
   loading: false,
   error: null,
 };
 
-// ✅ 1. Add password to thunk payload
+// 1. Add password to thunk payload
 export const preRegisterUser = createAsyncThunk(
   "signup/preRegisterUser",
   async (
@@ -36,8 +35,8 @@ export const preRegisterUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      await handlePreRegister(email, username);
-      return { email, username, password }; // ✅ return password
+      await handlePreRegister(email, username,password);
+      return { email, username, password };  
     } catch (error: any) {
       const message =
         error?.response?.data?.message || error.message || "Failed to send OTP";
@@ -120,7 +119,7 @@ const signupSlice = createSlice({
       .addCase(verifyAndRegisterUser.fulfilled, (state) => {
         state.loading = false;
         state.step = "success";
-        state.password = null; // ✅ optionally clear after success
+        state.password = null; 
       })
       .addCase(verifyAndRegisterUser.rejected, (state, action) => {
         state.loading = false;

@@ -25,7 +25,7 @@ export interface IPackage {
   description: string;
   price: number;
   duration: string;
-    location: string[];
+  //  location: string[];
 
   imageUrls: { url: string }[];
   isBlocked: boolean;

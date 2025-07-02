@@ -74,9 +74,9 @@ useEffect(() => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.map((cat) => (
+            {categories.map((cat,index) => (
               <TableRow key={cat._id}>
-                <TableCell>{cat._id}</TableCell>
+      <TableCell>{(currentPage - 1) * totalPages + index + 1}</TableCell>
                 <TableCell>{cat.name}</TableCell>
                 <TableCell>
                   {cat.isBlocked ? (

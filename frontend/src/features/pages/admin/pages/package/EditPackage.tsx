@@ -13,12 +13,13 @@ import { Button } from '@/features/components/Button';
 import { Label } from '@//components/ui/label';
 import Select from 'react-select';
 import { useParams } from 'react-router-dom';
+import { ConfirmDialog } from "@/features/components/ui/ConfirmDialog";
 
 const EditPackageForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-
+  const [loading,setLoading]=useState(false)
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -27,7 +28,7 @@ const EditPackageForm = () => {
   const [endDate, setEndDate] = useState('');
   const [included, setIncluded] = useState<string[]>(['']);
   const [notIncluded, setNotIncluded] = useState<string[]>(['']);
-  const [location, setLocation] = useState([{ name: '', lat: '', lng: '' }]);
+  const [location, setLocation] = useState([{ name: '', lat: 0, lng: 0 }]);
   const [itinerary, setItinerary] = useState([{ day: 1, title: '', description: '', activities: [''] }]);
   const [category, setCategory] = useState<string[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ _id: string; name: string }[]>([]);
@@ -44,7 +45,9 @@ console.log(existingImageUrls,'exst')
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!id) return;
+        if (!id) {
+          return;
+        }
         const data = await getPackageById(id);
         setTitle(data.title);
         setDescription(data.description);
@@ -93,8 +96,8 @@ setExistingImageUrls(
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (images.length + existingImageUrls.length >= 5) {
-      toast.error('Maximum 5 images allowed');
+    if (images.length + existingImageUrls.length >= 4) {
+      toast.error('Maximum 4 images allowed');
       return;
     }
 
@@ -103,6 +106,11 @@ setExistingImageUrls(
       toast.error('Only JPG, PNG, or WEBP images are allowed.');
       return;
     }
+      const MAX_SIZE_MB = 2;
+  if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+    toast.error(`Image exceeds ${MAX_SIZE_MB}MB size limit`);
+    return;
+  }
 
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -135,93 +143,69 @@ setExistingImageUrls(
     setExistingImageUrls(updated);
   };
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (!title || !price || !duration || (images.length + existingImageUrls.length === 0)) {
-//       toast.error('Fill all required fields and upload at least one image');
-//       return;
-//     }
 
-//     const priceValue = Number(price);
-//     const durationValue = Number(duration);
 
-//     if (priceValue <= 0 || durationValue <= 0) {
-//       toast.error('Price and duration must be positive');
-//       return;
-//     }
-
-//     const formData = new FormData();
-//     formData.append('title', title);
-//     formData.append('description', description);
-//     formData.append('price', price);
-//     formData.append('duration', duration);
-//     formData.append('startDate', startDate);
-//     formData.append('endDate', endDate);
-//     formData.append('category', JSON.stringify(category));
-//     formData.append(
-//       'location',
-//       JSON.stringify(
-//         location.map(loc => ({
-//           name: loc.name,
-//           geo: {
-//             type: 'Point',
-//             coordinates: [parseFloat(loc.lng), parseFloat(loc.lat)],
-//           },
-//         }))
-//       )
-//     );
-//     formData.append('included', JSON.stringify(included));
-//     formData.append('notIncluded', JSON.stringify(notIncluded));
-//     formData.append('itinerary', JSON.stringify(itinerary));
-//     console.log("EXISTING IMAGE URLS SENT:", existingImageUrls);
-
-//     formData.append('existingImageUrls', JSON.stringify(existingImageUrls));
-//     images.forEach(file => formData.append('images', file));
-
-//     try {
-//       if (!id) return;
-//       await updatePackage(id, formData);
-//       toast.success('Package updated successfully');
-//     } catch {
-//       toast.error('Failed to update package');
-//     }
-//   };
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  // Trimmed values
-  const trimmedTitle = title.trim();
+   const trimmedTitle = title.trim();
   const trimmedDescription = description.trim();
   const priceValue = Number(price);
   const durationValue = Number(duration);
 
-  // Field validations
-  if (!trimmedTitle) return toast.error("Title is required");
+   if (!trimmedTitle) return toast.error("Title is required");
   if (!trimmedDescription) return toast.error("Description is required");
   if (!price || isNaN(priceValue) || priceValue <= 0) return toast.error("Price must be a positive number");
   if (!duration || isNaN(durationValue) || durationValue <= 0) return toast.error("Duration must be a positive number");
   if (!startDate || !endDate) return toast.error("Start and end dates are required");
   if (category.length === 0) return toast.error("Select at least one category");
-  if (location.length === 0) return toast.error("Add at least one location");
-  if (images.length + existingImageUrls.length === 0) return toast.error("Upload at least one image");
+  if (location.length === 0) { 
+   return toast.error("Add at least one location")
 
-  // ✅ Included validation
+  }
+   for (let i = 0; i < location.length; i++) {
+    const { name, lat, lng } = location[i];
+
+    if (!name.trim()) {
+      return toast.error(`location name cant be empty`);
+    }
+
+    if (!lat||lat<0) {
+      return toast.error(`location latitute cant be empty and must be positive`);
+    }
+    if (!lng||lng<0) {
+       return toast.error(`location longitude cant be empty must be positive`);
+    }
+
+    // if (activities.some(a => !a.trim())) {
+    //   return toast.error(`Itinerary Day ${i + 1}: Activities cannot have empty values`);
+    // }
+  }
+
+  
+  if (images.length + existingImageUrls.length === 0) {
+    return toast.error("Upload at least one image");
+  }
+     
+  //  Included validation
   const cleanedIncluded = included.map(i => i.trim()).filter(Boolean);
   if (cleanedIncluded.length === 0) return toast.error("Add at least one 'Included' item");
   if (included.some(i => !i.trim())) return toast.error("Included items cannot be empty");
 
-  // ✅ Not Included validation
+  //  Not Included validation
   const cleanedNotIncluded = notIncluded.map(i => i.trim()).filter(Boolean);
   if (cleanedNotIncluded.length === 0) return toast.error("Add at least one 'Not Included' item");
   if (notIncluded.some(i => !i.trim())) return toast.error("Not Included items cannot be empty");
 
-  // ✅ Itinerary validation
+  //  Itinerary validation
   if (itinerary.length === 0) return toast.error("Add at least one itinerary day");
 
   for (let i = 0; i < itinerary.length; i++) {
-    const { day, title, description, activities } = itinerary[i];
+    const { day, title, activities } = itinerary[i];
 
-    if (!day || isNaN(Number(day))) return toast.error(`Itinerary Day ${i + 1}: Invalid or missing day`);
+    if (!day || isNaN(Number(day))) {
+      return toast.error(`Itinerary Day ${i + 1}: Invalid or missing day`);
+    }
     if (!title.trim()) return toast.error(`Itinerary Day ${i + 1}: Title is required`);
 
     if (activities.some(a => !a.trim())) {
@@ -245,7 +229,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         name: loc.name,
         geo: {
           type: "Point",
-          coordinates: [parseFloat(loc.lng), parseFloat(loc.lat)],
+          coordinates: [(loc.lng), (loc.lat)],
         },
       }))
     )
@@ -256,17 +240,31 @@ const handleSubmit = async (e: React.FormEvent) => {
   formData.append("existingImageUrls", JSON.stringify(existingImageUrls));
   images.forEach(file => formData.append("images", file));
 
+    setLoading(true)
+
   try {
-    if (!id) return;
+    if (!id) {
+      return;
+    }
     await updatePackage(id, formData);
     toast.success("Package updated successfully");
     navigate("/admin/packages");
 
   } catch (err) {
     toast.error("Failed to update package");
+  }finally{
+    setLoading(true)
   }
 };
 
+  const addLocation = () => {
+    setLocation([...location, { name: "", lat: 0, lng: 0 }]);
+  };
+  const removeLocation=(index:number)=>{
+    if(location.length>1){
+      setLocation(location.filter((_,i)=>i!==index))
+    }
+  }
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
@@ -288,13 +286,25 @@ const handleSubmit = async (e: React.FormEvent) => {
           <Label>Duration</Label>
           <Input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} />
         </div>
+        <br />
         <div>
           <Label>Start Date</Label>
-          <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)
+            
+          } 
+           min={new Date().toISOString().split("T")[0]}
+
+          
+/>
         </div>
         <div>
           <Label>End Date</Label>
-          <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
+           min={
+    startDate
+      ? startDate
+      : new Date().toISOString().split("T")[0]
+  }  className="w-full border border-border rounded px-3 py-2 text-sm" />
         </div>
       </div>
 
@@ -337,7 +347,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 <button
   type="button"
   onClick={() => setIncluded([...included, ""])}
-  className="bg-black text-white px-4 py-1 rounded mb-6"
+  className="bg-orange text-white px-4 py-1 rounded mb-6"
 >
   + Add Included
 </button>
@@ -370,7 +380,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 <button
   type="button"
   onClick={() => setNotIncluded([...notIncluded, ""])}
-  className="bg-black text-white px-4 py-1 rounded mb-6"
+  className="bg-orange text-white px-4 py-1 rounded mb-6"
 >
   + Add Not Included
 </button>
@@ -405,7 +415,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       />
     </div>
 
-    <div className="mb-2">
+    {/* <div className="mb-2">
       <Label>Description</Label>
       <Textarea
         className="w-full border rounded p-2"
@@ -416,7 +426,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           setItinerary(updated);
         }}
       />
-    </div>
+    </div> */}
 
     <div className="mb-2">
       <Label>Activities</Label>
@@ -451,7 +461,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           updated[index].activities.push("");
           setItinerary(updated);
         }}
-        className="bg-black text-white px-3 py-1 rounded mt-2"
+        className="bg-orange text-white px-3 py-1 rounded mt-2"
       >
         + Add Activity
       </button>
@@ -478,43 +488,147 @@ const handleSubmit = async (e: React.FormEvent) => {
       { day: itinerary.length + 1, title: "", description: "", activities: [""] },
     ])
   }
-  className="bg-black text-white px-5 py-2 rounded mb-8"
+  className="bg-orange text-white px-5 py-2 rounded mb-8"
 >
   + Add Itinerary Day
 </button>
 
 
 
-      <div>
+      {location.map((loc, index) => (
+        <div
+          key={index}
+          className="grid grid-cols-12 gap-2 items-center border border-border p-4 rounded-md"
+        >
+          <input
+            type="text"
+            placeholder="Location name"
+            value={loc.name}
+      onChange={(e) => {
+              const updated = [...location];
+              updated[index].name = e.target.value;
+              //updated[index].lng = e.target.value;
+               //updated[index].day = Number(e.target.value);
+              setLocation(updated);
+            }}            className="col-span-4 px-3 py-2 border rounded text-sm"
+          />
+          <input
+            type="number"
+            placeholder="Latitude"
+            value={loc.lat}
+            // onChange={(e) => handleChange(index, "latitude", e.target.value)}
+           // min={0}
+              onChange={(e) => {
+              const updated = [...location];
+              updated[index].lat =Number(e.target.value);
+              //updated[index].lng = e.target.value;
+               //updated[index].day = Number(e.target.value);
+              setLocation(updated);
+            }} 
+            className="col-span-3 px-3 py-2 border rounded text-sm"
+          />
+          <input
+            type="number"
+            placeholder="Longitude"
+            value={loc.lng}
+          //  onChange={(e) => handleChange(index, "longitude", e.target.value)}
+
+            onChange={(e) => {
+              const updated = [...location];
+              updated[index].lng =Number(e.target.value);
+              //updated[index].lng = e.target.value;
+               //updated[index].day = Number(e.target.value);
+              setLocation(updated);
+            }} 
+            className="col-span-3 px-3 py-2 border rounded text-sm"
+          />
+          {location.length > 0 && (
+            <button
+              type="button"
+              onClick={() => removeLocation(index)}
+              className="col-span-2 text-red-500 hover:underline text-sm"
+            >
+              ✖ Remove
+            </button>
+          )}
+        </div>
+      ))}
+
+       <button
+        type="button"
+        onClick={addLocation}
+  className="bg-orange text-white px-5 py-2 rounded mb-8"
+      >
+         Add More Location
+      </button>
+ <div>
+        
+      </div>
+       <div>
+
+
         <Label>Images</Label>
         <div className="flex flex-wrap gap-4 mb-2">
          {existingImageUrls.map((img, index) => (
   <div key={index} className="relative w-32 h-32">
     <img src={img.url} className="object-cover w-full h-full rounded" />
-    <button
-      type="button"
-      onClick={() => removeExistingImage(index)}
-      className="absolute top-0 right-0 bg-red-600 text-white p-1 rounded"
-    >
-      ✕
-    </button>
+    
+    <div className="absolute top-0 right-0 m-1">
+      <ConfirmDialog
+        title="Delete this image?"
+        actionLabel="Delete"
+        onConfirm={() => removeExistingImage(index)}
+      >
+        <Button size="icon" variant="destructive" className="p-1 text-xs">
+          ✕
+        </Button>
+      </ConfirmDialog>
+    </div>
   </div>
 ))}
 
-          {images.map((file, index) => (
-            <div key={`new-${index}`} className="relative w-32 h-32">
-              <img src={URL.createObjectURL(file)} className="object-cover w-full h-full rounded" />
-              <button
-                type="button"
-                onClick={() => removeNewImage(index)}
-                className="absolute top-0 right-0 bg-red-600 text-white p-1 rounded"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
+        {images.map((file, index) => (
+  <div key={`new-${index}`} className="relative w-32 h-32">
+    <img
+      src={URL.createObjectURL(file)}
+      className="object-cover w-full h-full rounded"
+    />
+
+    <div className="absolute top-0 right-0 m-1">
+      <ConfirmDialog
+        title="Delete this image?"
+        actionLabel="Delete"
+        onConfirm={() => removeNewImage(index)}
+      >
+        <Button size="icon" variant="destructive" className="p-1 text-xs">
+          ✕
+        </Button>
+      </ConfirmDialog>
+    </div>
+  </div>
+))}
+
         </div>
-        <Input type="file" accept="image/*" onChange={handleImageChange} />
+ {/* {(images.length + existingImageUrls.length) < 4 && (
+  <Input type="file" accept="image/*" onChange={handleImageChange} />
+)} */}
+<div>
+  <input
+    type="file"
+    id="fileUpload"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="hidden"
+  />
+  
+  <label
+    htmlFor="fileUpload"
+    className="inline-block cursor-pointer bg-orange text-white px-4 py-2 rounded shadow hover:bg-orange-dark transition text-sm"
+  >
+    Upload Image
+  </label>
+</div>
+
       </div>
 
       {showCropper && (
@@ -536,7 +650,17 @@ const handleSubmit = async (e: React.FormEvent) => {
         </Modal>
       )}
 
-      <Button type="submit">Update Package</Button>
+      {/* <Button className='bg-orange' type="submit">Update Package</Button> */}
+             <button
+        type="submit"
+        className="w-full bg-orange text-white py-2 rounded hover:bg-orange-dark transition mb-4 flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        disabled={loading}
+      >
+        {loading && (
+          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        )}
+        {loading ? "updating..." : "Update"}
+      </button>
     </form>
   );
 };

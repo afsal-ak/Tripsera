@@ -1,5 +1,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '@/lib/utils/cropUtils';
 import { Input } from '@/features/components/ui/Input';
@@ -13,6 +14,7 @@ import Select from 'react-select';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const AddPackageForm = () => {
+  const navigate=useNavigate()
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -34,6 +36,8 @@ const [itinerary, setItinerary] = useState([{ day: 1, title: '', description: ''
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [imageToCrop, setImageToCrop] = useState<File | null>(null);
+
+  const [loading,setLoading]=useState(false)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -90,41 +94,6 @@ const [itinerary, setItinerary] = useState([{ day: 1, title: '', description: ''
     setImages(reordered);
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!title || !price || !duration || images.length === 0) {
-  //     toast.error('Please fill all required fields and upload at least one image.');
-  //     return;
-  //   }
-  //   const formData = new FormData();
-  //   formData.append('title', title);
-  //   formData.append('description', description);
-  //   formData.append('price', price);
-  //   formData.append('duration', duration);
-  //   formData.append('startDate', startDate);
-  //   formData.append('endDate', endDate);
-  //   images.forEach((img) => formData.append("images", img));
-  //   formData.append('category', JSON.stringify(category));
-  //   formData.append('location', JSON.stringify(
-  //     location.map(loc => ({
-  //       name: loc.name,
-  //       geo: {
-  //         type: 'Point',
-  //         coordinates: [parseFloat(loc.lng), parseFloat(loc.lat)],
-  //       },
-  //     }))
-  //   ));
-  //   formData.append('included', JSON.stringify(included));
-  //   formData.append('notIncluded', JSON.stringify(notIncluded));
-  //   formData.append('itinerary', JSON.stringify(itinerary));
-
-  //   try {
-  //     await addPackage(formData);
-  //     toast.success('Package created successfully');
-  //   } catch(error) {
-  //     toast.error('Failed to create package');
-  //   }
-  // };
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
@@ -211,13 +180,18 @@ const handleSubmit = async (e: React.FormEvent) => {
       activities: day.activities.map(act => act.trim()),
     }))
   ));
-
+  setLoading(true)
   try {
     await addPackage(formData);
+    navigate("/admin/packages");
+    
     toast.success('Package created successfully');
     // Optionally: reset form here
   } catch (error:any) {
-    toast.error(error?.response?.data?.message || 'Failed to create package');
+    toast.error( 'Failed to create package');
+  }finally{
+      setLoading(false)
+
   }
 };
 
@@ -487,7 +461,27 @@ const handleSubmit = async (e: React.FormEvent) => {
         {/* Images */}
         <div>
           <Label>Package Images</Label>
-          <Input type="file" accept="image/*" onChange={handleImageChange} />
+          {/* <Input type="file" accept="image/*" onChange={handleImageChange} /> */}
+          {/* {images.length < 4 && (
+  <Input type="file" accept="image/*" onChange={handleImageChange} />
+)} */}
+<div>
+  <input
+    type="file"
+    id="fileUpload"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="hidden"
+  />
+  
+  <label
+    htmlFor="fileUpload"
+    className="inline-block cursor-pointer bg-orange text-white px-4 py-2 rounded shadow hover:bg-orange-dark transition text-sm"
+  >
+    Upload Image
+  </label>
+</div>
+
           <DragDropContext onDragEnd={handleImageReorder}>
             <Droppable droppableId="images" direction="horizontal">
               {(provided) => (
@@ -509,8 +503,16 @@ const handleSubmit = async (e: React.FormEvent) => {
           </DragDropContext>
         </div>
 
-        <Button type="submit">Submit</Button>
-      </form>
+             <button
+        type="submit"
+        className="w-full bg-orange text-white py-2 rounded hover:bg-orange-dark transition mb-4 flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        disabled={loading}
+      >
+        {loading && (
+          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        )}
+        {loading ? "updating..." : "Update"}
+      </button>      </form>
 
       {showCropper && (
         <Modal onClose={() => setShowCropper(false)}>

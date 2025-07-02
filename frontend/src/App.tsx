@@ -14,8 +14,7 @@ function App() {
     <>
     <UserRoutes/>
     <AdminRoutes/>
-          <Toaster position="top-right" richColors /> {/* Mounts the toast system */}
-
+          <Toaster position="top-right" richColors /> 
         {/* <Packages/> */}
 {/* <PackageDetails/> */}
     {/* <Home/> */}
