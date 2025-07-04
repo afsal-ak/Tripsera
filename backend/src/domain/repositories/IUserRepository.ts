@@ -1,5 +1,4 @@
-import { IUserPreview } from '@domain/entities/IUserPreview ';
-import { IUser } from '../entities/IUser'
+ import { IUser } from '../entities/IUser'
  
 export interface IUserRepository{
     findByEmail(email:string):Promise<IUser|null>

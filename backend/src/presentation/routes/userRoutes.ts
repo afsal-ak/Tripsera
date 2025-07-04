@@ -1,26 +1,3 @@
-// import { Router } from "express";
-// import { UserAuthUsecases } from "@domain/usecases/user/userAuthUseCases";
-// import { MongoUserRepository } from "@infrastructure/repositories/MongoUserRepository";
-// import { MongoOtpRepository } from "@infrastructure/repositories/MongoOtpRepository";
-// import { UserAuthController } from "@presentation/controllers/user/UserAuthController";
-// import { refreshToken } from "@presentation/controllers/token/refreshToken";
-// import { userAuthMiddleware } from "@presentation/middlewares/userAuthMiddleware";
-
-// const userRepository=new MongoUserRepository();
-// const otpRepository=new MongoOtpRepository();
-// const userAuthUseCases=new UserAuthUsecases(userRepository,otpRepository)
-// const userAuthController=new UserAuthController(userAuthUseCases)
-
-// const router=Router()
-// router.post('/refresh-token',refreshToken)
-// router.post('/pre-register',userAuthController.preRegister)
-// router.post('/register',  userAuthController.register);
-// router.post('/login', userAuthController.login);
-// router.post('/forgotPassword',userAuthController.forgotPassword)
-// router.post('/forgotPasswordChange',userAuthController.forgotPasswordChange)
-// router.post("/logout", userAuthMiddleware, userAuthController.userLogout);
-
-// export default router;
 
 
 /**
@@ -43,7 +20,9 @@ import { MongoBannerRepository } from "@infrastructure/repositories/MongoBannerR
 import { MongoPackageRepository } from "@infrastructure/repositories/MongoPackageRepository";
 import { PackageUseCases } from "@domain/usecases/admin/packageUseCases";
 
-
+import { WishlistController } from "@presentation/controllers/user/wishlistController";
+import { WishlistUseCases } from "@domain/usecases/user/wishlistUseCases";
+import { MongoWishlistRepository } from "@infrastructure/repositories/MongoWishlistRepository";
 
 const userRepository = new MongoUserRepository();
 const otpRepository = new MongoOtpRepository();
@@ -54,6 +33,10 @@ const bannerRepository=new MongoBannerRepository()
 const packageRepository=new MongoPackageRepository()
 const homeUseCases=new HomeUseCases(packageRepository,bannerRepository)
  const homeController=new HomeController(homeUseCases)
+
+ const wishlistRepository=new MongoWishlistRepository()
+ const wishlistUseCases=new WishlistUseCases(wishlistRepository)
+ const wishlistController=new WishlistController(wishlistUseCases)
 
 const router = Router();
 
@@ -282,6 +265,8 @@ router.get('/home',homeController.getHome)
 router.get('/packages',userAuthMiddleware,homeController.getActivePackage)
 router.get('/packages/:id',homeController.getPackagesById)
 
-
+router.get('/wishlist',userAuthMiddleware,wishlistController.getAllWishlist)
+router.post('/wishlistAdd',userAuthMiddleware,wishlistController.addToWishlist)
+router.delete('/wishlist/delete',userAuthMiddleware,wishlistController.removeFromWishlist)
 
 export default router;
