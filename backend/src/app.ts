@@ -3,27 +3,12 @@ import express from 'express';
 import mongoose from 'mongoose';
 import userRoutes from '@presentation/routes/userRoutes';
 import adminRoutes from '@presentation/routes/adminRoutes';
+import { errorHandler } from '@presentation/middlewares/errorHandler';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser'
  import cors from "cors";
-import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
 
-
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Picnigo Travel API',
-      version: '1.0.0',
-      description: 'User authentication routes for Picnigo',
-    },
-  },
- // apis: ['./src/presentation/routes/userRoutes.ts'], // update path if needed
-   apis: ['./src/presentation/routes/**/*.ts'], // Include all route files
-
-};
 
 
 dotenv.config();
@@ -42,10 +27,6 @@ app.use(cookieParser());
 };
 
 
-const swaggerSpec = swaggerJSDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-
 
  app.use(
   cors({
@@ -56,9 +37,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(bodyParser.json());
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
- 
 
 
+app.use(errorHandler)
 connectMongoDB().then(() => {
   app.listen(PORT, () => {
     console.log(` Server running on port ${PORT}`);

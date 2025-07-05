@@ -185,7 +185,7 @@ console.log(token,'google token')
         user=await this.userRepository.createUser({
           email,
           username:name,
-          profilePic:picture,
+          profileImage:picture,
           googleId:googleId,
           isGoogleUser:true,
           

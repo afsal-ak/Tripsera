@@ -11,13 +11,28 @@ export interface IUser {
  // followers?: string[];     
  // following?: string[];
  // bio?: string;
-  profilePic?: string;
- // interests?: string[];
+  // interests?: string[];
   isBlocked?: boolean;
+  fullName?: string;
   dob?: Date;
-  firstName?: string;
-  secondName?: string;
-  location?: string;
+  gender?: 'male' | 'female' ;
+  profileImage?: string;
+  bio?: string;
+ links?: {
+    platform: string;
+    url: string;
+  }[];
+  followers?: string[];
+following?: string[];
+
+  interests?: string[];
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+    country?: string;
+  };
   googleId?: string;
   isGoogleUser?: boolean;
 
