@@ -20,7 +20,9 @@ const swaggerOptions = {
       description: 'User authentication routes for Picnigo',
     },
   },
-  apis: ['./src/presentation/routes/userRoutes.ts'], // update path if needed
+ // apis: ['./src/presentation/routes/userRoutes.ts'], // update path if needed
+   apis: ['./src/presentation/routes/**/*.ts'], // Include all route files
+
 };
 
 

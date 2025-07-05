@@ -21,6 +21,13 @@ import { PackageUseCases } from "@domain/usecases/admin/packageUseCases";
 import { PackageController } from "@presentation/controllers/admin/packageController";
 import { MongoPackageRepository } from "@infrastructure/repositories/MongoPackageRepository";
 
+import { CouponUseCases } from "@domain/usecases/admin/couponUseCases";
+import { MongoCouponRepository } from "@infrastructure/repositories/MongoCouponRepository";
+import { CouponController } from "@presentation/controllers/admin/couponController";
+
+
+
+
 const adminRepository=new MongoUserRepository();
 const otpRepository=new MongoOtpRepository();
 
@@ -41,7 +48,10 @@ const categoryController = new CategoryController(categoryUseCase);
 const packageRepository=new MongoPackageRepository()
 const packageUseCase=new PackageUseCases(packageRepository)
 const packageController=new PackageController(packageUseCase)
- 
+
+const couponRepository=new MongoCouponRepository()
+const couponUseCase=new CouponUseCases(couponRepository)
+const couponController=new CouponController(couponUseCase)
 
 
 const router=Router()
@@ -86,7 +96,11 @@ router.patch('/packages/:id/block',adminAuthMiddleware,packageController.blockPa
 router.patch('/packages/:id/unblock',adminAuthMiddleware,packageController.unblockPackage)
 //router.patch('/packages/:id/delete',adminAuthMiddleware,packageController.deletePackage)
 
+//coupon router
 
-
-
+router.get('/coupons',adminAuthMiddleware,couponController.getAllCoupon)
+router.post('/coupon/add',adminAuthMiddleware,couponController.createCoupon)
+router.put('/coupon/edit/:id',adminAuthMiddleware,couponController.editCoupon)
+router.patch('/coupon/status/:id',adminAuthMiddleware,couponController.updateCouponStatus)
+router.delete('/coupon/delete/:id',adminAuthMiddleware,couponController.deleteCoupon)
 export default router;
