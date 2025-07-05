@@ -3,6 +3,7 @@ import { IUser } from "@domain/entities/IUser";
 import { UserModel } from "@infrastructure/models/User";
 import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { IUserPreview } from "@domain/entities/IUserPreview ";
+import { AppError } from "@shared/utils/AppError";
 export class MongoUserRepository implements IUserRepository{
     
     async findByEmail(email: string): Promise<IUser | null> {
@@ -58,6 +59,21 @@ async countAll(): Promise<number> {
   async updateUserStatus(id: string, isBlocked: boolean): Promise<void> {
       const user=await UserModel.findByIdAndUpdate(id,{isBlocked})
       return
+  }
+
+
+  async updateUserEmail(id: string, email: string): Promise<IUser | null> {
+    const checkEmail=await UserModel.findOne({email:email})
+    if(checkEmail){
+      throw new AppError(400,"Email Already taken")
+    }
+    const newEmail=await UserModel.findByIdAndUpdate(id,{email:email},{ new: true })
+    return newEmail
+
+  }
+
+  async changePassword(id: string, newPassword: string): Promise<IUser | null> {
+    return await UserModel.findByIdAndUpdate(id,{password:newPassword})
   }
 
 

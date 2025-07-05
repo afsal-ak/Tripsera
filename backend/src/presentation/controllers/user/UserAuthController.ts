@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserAuthUsecases } from "@domain/usecases/user/userAuthUseCases";
 
 
@@ -21,19 +21,6 @@ export class UserAuthController {
 
     }
   };
-
-  // register = async (req: Request, res: Response): Promise<void> => {
-  //   try {
-  //     const { email, username, password, otp } = req.body;
-  //     const userData: IUser = { email, username, password };
-  //           console.log(req.body,'body')
-
-  //     await this.userAuthUseCases.verifyOtpAndRegister(userData, otp);
-  //     res.status(200).json({ message: 'User registered successfully' });
-  //   } catch (error: any) {
-  //     res.status(400).json({ message: error.message });
-  //   }
-  // };
 
   register=async(req:Request,res:Response):Promise<void> =>{
     try {
@@ -146,4 +133,55 @@ resendOtp = async (req: Request, res: Response): Promise<void> => {
     res.status(401).json({message:error.message})
   }
 }
+
+
+  requestEmailChange=async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const userId = req.user?._id
+        if (!userId) {
+             res.status(401).json({ message: "unauthorised" })
+             return
+           }
+        const {newEmail}=req.body
+
+        await this.userAuthUseCases.requestEmailChange(userId.toString(),newEmail)
+        res.status(200).json({ message: "OTP sent to new email" });
+    } catch (error) {
+      next(error)
+    }
+  } 
+
+  verifyAndUpdateEmail=async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+      const userId=req.user?._id
+         if (!userId) {
+             res.status(401).json({ message: "unauthorised" })
+             return
+           }
+      const{newEmail,otp}=req.body
+     const user= await this.userAuthUseCases.verifyAndUpdateEmail(userId.toString(),newEmail,otp)
+    res.status(200).json({ message: "Email updated successfully", user });
+
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  changePassword = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?._id;
+    if(!userId){
+      res.status(401).json({ message: "unauthorised" })
+       return
+    }
+
+    await this.userAuthUseCases.changePassword(userId?.toString(), currentPassword, newPassword);
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    next(error)
+  }
+
+  }
+
 }

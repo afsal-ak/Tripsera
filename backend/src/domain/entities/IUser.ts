@@ -8,10 +8,6 @@ export interface IUser {
   phone?: number;
   password?: string;
   role?: 'user' | 'admin';
- // followers?: string[];     
- // following?: string[];
- // bio?: string;
-  // interests?: string[];
   isBlocked?: boolean;
   fullName?: string;
   dob?: Date;

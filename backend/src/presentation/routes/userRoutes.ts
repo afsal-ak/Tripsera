@@ -52,6 +52,13 @@ router.post('/forgotPassword', userAuthController.forgotPassword);
 router.post('/verify-otp', userAuthController.verifyOtpForForgotPassword);
 router.post('/forgotPasswordChange', userAuthController.forgotPasswordChange);
 router.post('/logout', userAuthController.userLogout);
+router.post("/email/request-change", userAuthMiddleware, userAuthController.requestEmailChange);
+router.post("/email/verify-change", userAuthMiddleware, userAuthController.verifyAndUpdateEmail);
+router.post("/password/change", userAuthMiddleware, userAuthController.changePassword);
+
+
+
+//
 router.get('/home',homeController.getHome)
 router.get('/packages',userAuthMiddleware,homeController.getActivePackage)
 router.get('/packages/:id',homeController.getPackagesById)
