@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserAuthUsecases } from "@domain/usecases/user/userAuthUseCases";
-
+import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 
 export class UserAuthController {
   constructor(
@@ -137,14 +137,11 @@ resendOtp = async (req: Request, res: Response): Promise<void> => {
 
   requestEmailChange=async(req:Request,res:Response,next:NextFunction)=>{
     try {
-        const userId = req.user?._id
-        if (!userId) {
-             res.status(401).json({ message: "unauthorised" })
-             return
-           }
+      const userId=getUserIdFromRequest(req)
+        
         const {newEmail}=req.body
 
-        await this.userAuthUseCases.requestEmailChange(userId.toString(),newEmail)
+        await this.userAuthUseCases.requestEmailChange(userId,newEmail)
         res.status(200).json({ message: "OTP sent to new email" });
     } catch (error) {
       next(error)
@@ -153,13 +150,10 @@ resendOtp = async (req: Request, res: Response): Promise<void> => {
 
   verifyAndUpdateEmail=async(req:Request,res:Response,next:NextFunction)=>{
     try {
-      const userId=req.user?._id
-         if (!userId) {
-             res.status(401).json({ message: "unauthorised" })
-             return
-           }
+      const userId=getUserIdFromRequest(req)
+         
       const{newEmail,otp}=req.body
-     const user= await this.userAuthUseCases.verifyAndUpdateEmail(userId.toString(),newEmail,otp)
+     const user= await this.userAuthUseCases.verifyAndUpdateEmail(userId,newEmail,otp)
     res.status(200).json({ message: "Email updated successfully", user });
 
     } catch (error) {
@@ -170,13 +164,9 @@ resendOtp = async (req: Request, res: Response): Promise<void> => {
   changePassword = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
   try {
     const { currentPassword, newPassword } = req.body;
-    const userId = req.user?._id;
-    if(!userId){
-      res.status(401).json({ message: "unauthorised" })
-       return
-    }
+      const userId=getUserIdFromRequest(req)
 
-    await this.userAuthUseCases.changePassword(userId?.toString(), currentPassword, newPassword);
+    await this.userAuthUseCases.changePassword(userId, currentPassword, newPassword);
     res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
     next(error)
