@@ -186,7 +186,11 @@ export class UserAuthUsecases {
       user = await this.userRepository.createUser({
         email,
         username: name,
-        profileImage: picture,
+       // profileImage: picture,
+        profileImage: picture
+    ? { url: picture, public_id: 'google-oauth' }
+    : undefined,
+
         googleId: googleId,
         isGoogleUser: true,
 

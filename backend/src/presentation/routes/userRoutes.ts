@@ -1,5 +1,7 @@
 
 import { Router } from "express";
+import { upload } from "@presentation/middlewares/upload";
+
 import { UserAuthUsecases } from "@domain/usecases/user/userAuthUseCases";
 import { MongoUserRepository } from "@infrastructure/repositories/MongoUserRepository";
 import { MongoOtpRepository } from "@infrastructure/repositories/MongoOtpRepository";
@@ -18,6 +20,8 @@ import { MongoWishlistRepository } from "@infrastructure/repositories/MongoWishl
 import { CouponController } from "@presentation/controllers/user/couponController";
 import { CouponUseCases } from "@domain/usecases/user/couponUseCases";
 import { MongoCouponRepository } from "@infrastructure/repositories/MongoCouponRepository";
+import { ProfileUseCases } from "@domain/usecases/user/profileUseCases";
+import { ProfileController } from "@presentation/controllers/user/profileController";
 
 
 const userRepository = new MongoUserRepository();
@@ -38,6 +42,9 @@ const couponRepository=new MongoCouponRepository()
 const couponUseCases=new CouponUseCases(couponRepository)
 const couponController=new CouponController(couponUseCases)
 
+const profileRepository=new MongoUserRepository()
+const profileUseCases=new ProfileUseCases(profileRepository)
+const profileController=new ProfileController(profileUseCases)
 
 const router = Router();
 
@@ -62,6 +69,11 @@ router.post("/password/change", userAuthMiddleware, userAuthController.changePas
 router.get('/home',homeController.getHome)
 router.get('/packages',userAuthMiddleware,homeController.getActivePackage)
 router.get('/packages/:id',homeController.getPackagesById)
+
+//profileRoutes
+router.get('/profile',userAuthMiddleware,profileController.getUserProfile)
+router.put('/profile/update',userAuthMiddleware,profileController.updateUserProfile)
+router.put('/profile/uploadProfileImage',userAuthMiddleware,upload.single('image'),profileController.updateProfileImage)
 
 //wishlist routes
 router.get('/wishlist',userAuthMiddleware,wishlistController.getAllWishlist)

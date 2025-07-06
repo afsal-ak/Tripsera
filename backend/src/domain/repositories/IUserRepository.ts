@@ -12,8 +12,8 @@ export interface IUserRepository {
    updateUserEmail(id: string, email: string): Promise<IUser | null>
     changePassword(id: string, newPassword: string): Promise<IUser | null>
 
-   // updateUserProfile(id: string, profileData: Partial<IUser>): Promise<IUser | null>
-   // updateProfileImage(id: string, imageUrl: string): Promise<IUser | null>;
-  //  getUserProfile(id: string): Promise<IUser | null>
+   updateUserProfile(id: string, profileData: Partial<IUser>): Promise<IUser | null>
+   updateProfileImage(id: string,  profileImage: { url: string; public_id: string }): Promise<IUser | null>;
+   getUserProfile(id: string): Promise<IUser | null>
 
 }

@@ -12,8 +12,11 @@ export interface IUser {
   fullName?: string;
   dob?: Date;
   gender?: 'male' | 'female' ;
-  profileImage?: string;
-  bio?: string;
+ profileImage?: {
+    url: string;
+    public_id: string;
+  };
+    bio?: string;
  links?: {
     platform: string;
     url: string;

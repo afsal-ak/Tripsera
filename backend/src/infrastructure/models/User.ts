@@ -37,7 +37,10 @@ const UserSchema = new Schema<IUserDocument>({
   fullName: { type: String },
   dob: { type: Date },
   gender: { type: String, enum: ['male', 'female'] },
-  profileImage: { type: String },
+    profileImage: {
+  url: { type: String, required: false },
+  public_id: { type: String, required: false }
+},
   bio: { type: String },
   links: [
     {
