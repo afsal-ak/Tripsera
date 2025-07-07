@@ -6,7 +6,7 @@ import { UserAuthUsecases } from "@domain/usecases/user/userAuthUseCases";
 import { MongoUserRepository } from "@infrastructure/repositories/MongoUserRepository";
 import { MongoOtpRepository } from "@infrastructure/repositories/MongoOtpRepository";
 import { refreshToken } from "@presentation/controllers/token/refreshToken";
-import { UserAuthController } from "@presentation/controllers/user/userAuthController";
+import { UserAuthController } from "@presentation/controllers/user/UserAuthController";
 import { userAuthMiddleware } from "@presentation/middlewares/userAuthMiddleware";
 import { HomeUseCases } from "@domain/usecases/user/homeUseCases";
  import { HomeController } from "@presentation/controllers/user/homeController";
@@ -67,7 +67,7 @@ router.post("/password/change", userAuthMiddleware, userAuthController.changePas
 
 //
 router.get('/home',homeController.getHome)
-router.get('/packages',userAuthMiddleware,homeController.getActivePackage)
+router.get('/packages',homeController.getActivePackage)
 router.get('/packages/:id',homeController.getPackagesById)
 
 //profileRoutes
