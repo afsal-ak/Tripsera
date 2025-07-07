@@ -100,6 +100,7 @@ router.patch('/packages/:id/unblock',adminAuthMiddleware,packageController.unblo
 
 router.get('/coupons',adminAuthMiddleware,couponController.getAllCoupon)
 router.post('/coupon/add',adminAuthMiddleware,couponController.createCoupon)
+router.get('/coupon/:id',adminAuthMiddleware,couponController.getCouponById)
 router.put('/coupon/edit/:id',adminAuthMiddleware,couponController.editCoupon)
 router.patch('/coupon/status/:id',adminAuthMiddleware,couponController.updateCouponStatus)
 router.delete('/coupon/delete/:id',adminAuthMiddleware,couponController.deleteCoupon)

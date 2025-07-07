@@ -21,6 +21,20 @@ export class CouponController{
 
     }
 
+    getCouponById=async(req:Request,res:Response):Promise<void>=>{
+        try {
+           const {id}=req.params
+           const coupon=await this.couponUseCase.getCouponById(id)
+             res.status(200).json({
+            coupon,
+            message:'coupon fetched successfully'
+           })
+        } catch (error:any) {
+          res.status(400).json({ message: error.message });
+
+        }
+    }
+
     editCoupon=async (req:Request,res:Response):Promise<void>=>{
         try {
             const {id}=req.params
