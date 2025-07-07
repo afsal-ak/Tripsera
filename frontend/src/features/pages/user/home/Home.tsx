@@ -1,11 +1,10 @@
-import React,{useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import type { IPackage,IBanner } from "@/features/types/homeTypes";
 
 import Hero from "../../../components/Hero";
 import { Button } from "../../../components/Button";
 import PackageCard from "../../../components/PackageCard"; 
 import { fetchHomeData } from "@/features/services/user/HomeService";
-import  UserLayout from "@/layouts/UserLayout";
 const Home = () => {
   const [packages, setPackages] = useState<IPackage[]>([]);
   const [banners, setBanners] = useState<IBanner[]>([]);
@@ -31,8 +30,7 @@ setPackages(packages)
   
   return (
     <>
-      <UserLayout >
-      <Hero banners={banners} />
+       <Hero banners={banners} />
 
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
@@ -69,51 +67,8 @@ setPackages(packages)
         </div>
       </section>
 
-      </UserLayout>
-    </>
+     </>
   );
 };
 
 export default Home;
-
-// const Home = () => {
-//   useEffect(() => {
-//     const loadData = async () => {
-//       try {
-        
-//       const {result}=await fetchHomeData()
-//       const { banners, packages } = result;     
-//         console.log("Banners:", banners);
-//         console.log("Packages:", packages);    
-//         } catch (err) {
-//         console.error("Failed to load home data:", err);
-//       }
-//     };
-//     loadData();
-//   }, []);
-// }
-//export default Home;
-
-
-// import React, { useEffect, useState } from "react";
-// import { fetchHomeData } from "@/features/services/user/HomeService";
-
-// const Home = () => {
-//   useEffect(() => {
-//     const loadData = async () => {
-//       try {
-//         const { result } = await fetchHomeData();  // ⬅️ grab `result` first
-//         const { banners, packages } = result;     // ⬅️ then extract
-//         console.log("Banners:", banners);
-//         console.log("Packages:", packages);
-//       } catch (err) {
-//         console.error("Failed to load home data:", err);
-//       }
-//     };
-//     loadData();
-//   }, []);
-
-//   return <div>Home page</div>; // temp JSX to avoid crash
-// };
-
-// export default Home;

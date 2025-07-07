@@ -1,7 +1,6 @@
 
-import React, { useState, useEffect } from "react";
-import Navbar from "@/features/components/Navbar";
-import Footer from "@/features/components/Footer";
+import  { useState, useEffect } from "react";
+
 import PackageFilterSidebar from "@/features/components/PackageFilterSidebar";
 import PackageCard from "@/features/components/PackageCard";
 import type { IPackage } from "@/features/types/homeTypes";
@@ -98,8 +97,7 @@ const Packages = () => {
   }
   return (
     <>
-      <Navbar />
-      
+       
       <div className="bg-background min-h-screen py-8">
         <div className="container mx-auto px-4 flex flex-col md:flex-row gap-6">
           <PackageFilterSidebar
@@ -215,8 +213,7 @@ const Packages = () => {
           </div>
         </div>
       </div>
-      <Footer />
-    </>
+     </>
   );
 };
 

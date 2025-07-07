@@ -1,40 +1,4 @@
-// import React from 'react';
-// import { Link } from 'react-router-dom';
 
-// const Footer = () => {
-//   return (
-//     <footer className="bg-primary text-white py-8 mt-10 font-poppins">
-//       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
-//         <div>
-//           <h3 className="text-xl font-bold mb-2">Picnigo</h3>
-//           <p>Your trusted travel partner for unforgettable journeys.</p>
-//         </div>
-
-//         <div>
-//           <h4 className="font-semibold mb-2">Quick Links</h4>
-//           <ul className="space-y-1">
-//             <li><Link to="/">Home</Link></li>
-//             <li><Link to="/packages">Packages</Link></li>
-//             <li><Link to="/about">About</Link></li>
-//             <li><Link to="/contact">Contact</Link></li>
-//           </ul>
-//         </div>
-
-//         <div>
-//           <h4 className="font-semibold mb-2">Contact Us</h4>
-//           <p>Email: support@picnigo.com</p>
-//           <p>Phone: +91 98765 43210</p>
-//         </div>
-//       </div>
-
-//       <div className="text-center mt-8 text-sm text-white/80">
-//         &copy; {new Date().getFullYear()} Picnigo. All rights reserved.
-//       </div>
-//     </footer>
-//   );
-// };
-
-// export default Footer;
 const Footer = () => {
   return (
     <footer className="bg-foreground text-white">

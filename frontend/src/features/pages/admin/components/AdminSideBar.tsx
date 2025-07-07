@@ -1,6 +1,6 @@
 import { Button } from "@/features/components/Button";
 import { cn } from "@/lib/utils";
-import { Menu, X, Plus, Table, Edit } from "lucide-react";
+import { Menu, X, Table } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 interface AdminSidebarProps {
@@ -13,7 +13,6 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
     { path: "dashboard", label: "Dashboard", icon: Table },
     { path: "users", label: "Users", icon: Table },
     { path: "categories", label: "Categories", icon: Table },
-
     { path: "banners", label: "Banners", icon: Table },
     { path: "packages", label: "Packages", icon: Table },
     { path: "coupons", label: "Coupons", icon: Table },
@@ -21,7 +20,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {/* Overlay for mobile */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
@@ -30,15 +29,14 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
       )}
 
       {/* Sidebar */}
-      <div
+      <aside
         className={cn(
-          "fixed left-0 top-0 h-full bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out",
-          "lg:static lg:translate-x-0",
+          "fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full",
-          "w-64"
+          "lg:translate-x-0"
         )}
       >
-        {/* Header */}
+        {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-bold text-orange">Admin Panel</h2>
           <Button
@@ -66,7 +64,10 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                         : "hover:bg-orange/10 hover:text-orange"
                     )
                   }
-                  onClick={onToggle}
+                  onClick={() => {
+                    // Close sidebar only on mobile
+                    if (window.innerWidth < 1024) onToggle();
+                  }}
                 >
                   <Icon className="h-4 w-4" />
                   {label}
@@ -75,7 +76,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
             ))}
           </ul>
         </nav>
-      </div>
+      </aside>
     </>
   );
 };

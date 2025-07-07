@@ -63,8 +63,7 @@ const [category,setCategory]=useState([])
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-       {/* Hero Section with Image Gallery */}
+        {/* Hero Section with Image Gallery */}
       <div className="bg-white">
         <div className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
@@ -309,8 +308,7 @@ const [category,setCategory]=useState([])
         </div>
       </div>
 
-      <Footer />
-    </div>
+     </div>
   );
 };
 

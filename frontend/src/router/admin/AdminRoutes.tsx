@@ -1,7 +1,9 @@
  import { Routes, Route } from "react-router-dom";
 import AdminLogin from "@/features/pages/admin/pages/AdminLogin";
-import AdminLayout from "@/features/pages/admin/components/AdminLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 import AdminPrivateRoute from "./AdminPrivateRoute";
+import NotFoundPage from "@/features/components/NotFoundPage";
+
 // Admin pages
 import AdminDashboard from "@/features/pages/admin/pages/AdminDashboard";
 import UserList from "@/features/pages/admin/pages/UsersList";
@@ -19,10 +21,10 @@ import EditCouponForm from "@/features/pages/admin/pages/coupon/EditCouponForm";
 const AdminRoutes = () => {
   return (
     <Routes>
-      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/login" element={<AdminLogin />} />
 
       {/*  Protected Admin Routes */}
-      <Route path="/admin" element={<AdminPrivateRoute />}>
+      <Route element={<AdminPrivateRoute />}>
         <Route element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<UserList />} />
@@ -47,6 +49,8 @@ const AdminRoutes = () => {
 
         </Route>
       </Route>
+       <Route path="*" element={<NotFoundPage />} />
+
     </Routes>
   );
 };
