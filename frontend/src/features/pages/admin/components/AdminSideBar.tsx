@@ -13,10 +13,10 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
     { path: "dashboard", label: "Dashboard", icon: Table },
     { path: "users", label: "Users", icon: Table },
     { path: "categories", label: "Categories", icon: Table },
-     { path: "categories/add", label: "Add Category", icon: Plus },
 
     { path: "banners", label: "Banners", icon: Table },
     { path: "packages", label: "Packages", icon: Table },
+    { path: "coupons", label: "Coupons", icon: Table },
   ];
 
   return (
