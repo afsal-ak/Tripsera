@@ -11,7 +11,7 @@ type Props = {
   user?: IUser;
   loading: boolean;
 };
-const Dashboared = ({user,loading}:Props) => {
+const Dashboard = ({user,loading}:Props) => {
  
  
 
@@ -189,4 +189,4 @@ const Dashboared = ({user,loading}:Props) => {
   );
 };
 
-export default Dashboared;
+export default Dashboard;

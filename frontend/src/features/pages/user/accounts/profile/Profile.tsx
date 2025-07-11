@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import EditProfileTab from "./EditProfileTab";
 import SecurityTab from "./SecurityTab";
 import AddressTab from "./AddressTab";
-import Dashboared from "./Dashboared";
+import Dashboard from "./Dashboard";
 
 const Profile = () => {
   const [user, setUser] = useState<IUser>();
@@ -43,7 +43,7 @@ const Profile = () => {
         </TabsList>
 
         <TabsContent value="overview">
-          <Dashboared user={user} loading={loading} />
+          <Dashboard user={user} loading={loading} />
         </TabsContent>
         <TabsContent value="edit">
           <EditProfileTab user={user} loading={loading} />
