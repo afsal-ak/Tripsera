@@ -148,13 +148,17 @@ resendOtp = async (req: Request, res: Response): Promise<void> => {
     }
   } 
 
-  verifyAndUpdateEmail=async(req:Request,res:Response,next:NextFunction)=>{
+  verifyAndUpdateEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId=getUserIdFromRequest(req)
-         
-      const{newEmail,otp}=req.body
-     const user= await this.userAuthUseCases.verifyAndUpdateEmail(userId,newEmail,otp)
-    res.status(200).json({ message: "Email updated successfully", user });
+      const userId = getUserIdFromRequest(req)
+
+      const { newEmail, otp } = req.body
+      console.log(newEmail, otp, 'email change')
+      const user = await this.userAuthUseCases.verifyAndUpdateEmail(userId, newEmail, otp)
+      res.status(200).json({
+        message: "Email updated successfully",
+        email: user?.email
+      });
 
     } catch (error) {
       next(error)

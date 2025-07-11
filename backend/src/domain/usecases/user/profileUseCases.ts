@@ -16,6 +16,10 @@ export class ProfileUseCases{
         return await this.userRepo.updateUserProfile(userId,profileData)
     }
 
+    async updateUserAddress(userId:string,addressData:Partial<IUser>):Promise<IUser|null>{
+        return await this.userRepo.updateUserAddress(userId,addressData)
+    }
+
 
 
 

@@ -78,7 +78,9 @@ export class MongoUserRepository implements IUserRepository {
 
   async getUserProfile(id: string): Promise<IUser | null> {
     const userProfile = await UserModel.findById(id)
-    return userProfile ? userProfile.toObject() : null
+      .select('-password')
+      .lean();
+    return userProfile ||null
 
   }
 
@@ -100,17 +102,52 @@ export class MongoUserRepository implements IUserRepository {
     const checkUsername = await UserModel.findOne({
       _id: { $ne: id },
       username: new RegExp(`^${profileData.username}$`, 'i')
-    })
+    });
 
     if (checkUsername) {
-      throw new AppError(400, "Username is taken please try new one")
+      throw new AppError(400, "Username is taken please try new one");
     }
-    const updated = await UserModel.findByIdAndUpdate(id, profileData, { new: true }).lean();
+
+    const updated = await UserModel.findByIdAndUpdate(id, profileData, {
+      new: true
+    })
+      .select("username email profileImage bio fullName gender dob phone")
+      .lean();
+
+    if (!updated) {
+      throw new AppError(404, "User not found");
+    }
+
+    return updated;
+  }
+
+
+  // async updateUserProfile(id: string, profileData: Partial<IUser>): Promise<IUser | null> {
+  //   const checkUsername = await UserModel.findOne({
+  //     _id: { $ne: id },
+  //     username: new RegExp(`^${profileData.username}$`, 'i')
+  //   })
+
+  //   if (checkUsername) {
+  //     throw new AppError(400, "Username is taken please try new one")
+  //   }
+  //   const updated = await UserModel.findByIdAndUpdate(id, profileData, { new: true }).select('username email profileImage bio fullName gender dob phone').lean();
+  //   if (!updated) {
+  //     throw new AppError(404, "User not found");
+  //   }
+  //   return updated;
+  // }
+
+  async updateUserAddress(id: string, addressData: Partial<IUser>): Promise<IUser | null> {
+
+    const updated = await UserModel.findByIdAndUpdate(id,
+      { $set: { address: addressData } },
+      { new: true })
+      .lean();
+
     if (!updated) {
       throw new AppError(404, "User not found");
     }
     return updated;
   }
-
-
 }

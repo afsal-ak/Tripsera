@@ -5,7 +5,7 @@ import { IUser } from "@domain/entities/IUser";
 import { uploadCloudinary } from "@infrastructure/services/cloudinary/cloudinaryService";
 
 export class ProfileController {
-    constructor(private profileUseCases: ProfileUseCases) { }
+    constructor(private profileUseCases: ProfileUseCases) {}
 
     getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
@@ -29,11 +29,29 @@ export class ProfileController {
             const { profileData }: { profileData: Partial<IUser> } = req.body
             console.log(profileData, 'profile data')
             const updatedProfile = await this.profileUseCases.updateUserProfile(userId, profileData)
-
+console.log(updatedProfile,'upadted profile')
             res.status(200).json({
                 success: true,
                 message: "User profile updated successfully",
                 userProfile: updatedProfile,
+            });
+
+        } catch (error) {
+            next(error)
+        }
+    } 
+    
+    updateUserAddress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const userId = getUserIdFromRequest(req)
+          const { address } = req.body;
+           // console.log(address, 'adress data')
+            const updatedAddress = await this.profileUseCases.updateUserAddress(userId, address)
+
+            res.status(200).json({
+                success: true,
+                message: "User profile updated successfully",
+                userProfile: updatedAddress,
             });
 
         } catch (error) {

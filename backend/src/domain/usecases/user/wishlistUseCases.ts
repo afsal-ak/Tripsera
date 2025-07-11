@@ -6,11 +6,15 @@ export class WishlistUseCases{
     constructor( private wishlistRepo:MongoWishlistRepository ){}
 
     async addToWishlist(userId:string,packageId:string):Promise<void>{
-        await this.wishlistRepo.addToWishlist(userId,packageId)
+        return await this.wishlistRepo.addToWishlist(userId,packageId)
     }
 
-    async removeFromWishList(userId:string,packageId:string){
-        await this.wishlistRepo.removeFromWishlist(userId,packageId)
+    async removeFromWishList(userId:string,packageId:string):Promise<void>{
+       return await this.wishlistRepo.removeFromWishlist(userId,packageId)
+    }
+
+    async checkPackageInWishlist(userId:string,packageId:string){
+       return await this.wishlistRepo.checkPackageInWishlist(userId,packageId)
     }
 
     async getUserWishlist(userId:string,page:number,limit:number):Promise<{

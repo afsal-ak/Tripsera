@@ -1,6 +1,7 @@
 import { WishlistModel } from "@infrastructure/models/Wishlist";
 import { IWishlist } from "@domain/entities/IWishlist";
 import { IWishlistRepository } from "@domain/repositories/IWishlistRepository";
+import { UserModel } from "@infrastructure/models/User";
 
 export class MongoWishlistRepository implements IWishlistRepository {
     async addToWishlist(userId: string, packageId: string): Promise<void> {
@@ -15,6 +16,11 @@ export class MongoWishlistRepository implements IWishlistRepository {
             })
          
 
+    }
+
+    async checkPackageInWishlist(userId: string, packageId: string): Promise<boolean> {
+        const existing=await WishlistModel.exists({userId,packageId})
+      return !!existing;
     }
 
     async getUserWishlist(userId: string,page:number,limit:number): Promise<IWishlist[]> {

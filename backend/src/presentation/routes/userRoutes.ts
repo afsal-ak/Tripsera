@@ -74,10 +74,12 @@ router.get('/packages/:id',homeController.getPackagesById)
 router.get('/profile',userAuthMiddleware,profileController.getUserProfile)
 router.put('/profile/update',userAuthMiddleware,profileController.updateUserProfile)
 router.put('/profile/uploadProfileImage',userAuthMiddleware,upload.single('image'),profileController.updateProfileImage)
+router.put('/profile/updateAddress',userAuthMiddleware,profileController.updateUserAddress)
 
 //wishlist routes
 router.get('/wishlist',userAuthMiddleware,wishlistController.getAllWishlist)
-router.post('/wishlistAdd',userAuthMiddleware,wishlistController.addToWishlist)
+router.get('/wishlist/check',userAuthMiddleware, wishlistController.checkPackageInWishlist);
+router.post('/wishlist/add',userAuthMiddleware,wishlistController.addToWishlist)
 router.delete('/wishlist/delete',userAuthMiddleware,wishlistController.removeFromWishlist)
 
 //coupon routes

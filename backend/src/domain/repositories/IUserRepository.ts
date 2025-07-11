@@ -13,6 +13,7 @@ export interface IUserRepository {
     changePassword(id: string, newPassword: string): Promise<IUser | null>
 
    updateUserProfile(id: string, profileData: Partial<IUser>): Promise<IUser | null>
+   updateUserProfile(id: string, addressData: Partial<IUser>): Promise<IUser | null>
    updateProfileImage(id: string,  profileImage: { url: string; public_id: string }): Promise<IUser | null>;
    getUserProfile(id: string): Promise<IUser | null>
 
