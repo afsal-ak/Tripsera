@@ -1,5 +1,6 @@
 import adminApi from "@/lib/axios/adminAxios";
 import type { CouponFormSchema } from "@/features/schemas/CouponFormSchema";
+
 export const fetchCouponData=async(page:number,limit:number)=>{
     const response=await adminApi.get(`/coupons?page=${page}&limit=${limit}`)
     console.log(response.data,'coupons')

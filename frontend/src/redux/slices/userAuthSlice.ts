@@ -33,7 +33,7 @@ export const loginUser = createAsyncThunk(
   ) => {
     try {
       const { user, accessToken } = await handleLogin(email, password);
-  
+  console.log('user from redux',user)
       return { user, accessToken };
 
     } catch (error: any) {

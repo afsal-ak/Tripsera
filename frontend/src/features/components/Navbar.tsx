@@ -14,10 +14,11 @@ const Navbar = () => {
     // const {  isAuthenticated } = useSelector(
     //   (state: RootState) => state.userAuth
     // );
-    const {isAuthenticated,accessToken} =useSelector((state:RootState)=>state.userAuth)
+    const {isAuthenticated,accessToken,user} =useSelector((state:RootState)=>state.userAuth)
    useEffect(()=>{
     console.log(isAuthenticated,'fromnavbar')
-    const token=localStorage.getItem("accessToken")
+    console.log(user,'from redux navbar')
+    //const token=localStorage.getItem("accessToken")
         console.log(accessToken,'fromnavbar tokrn')
 
      if(!accessToken){
@@ -25,6 +26,10 @@ const Navbar = () => {
     }
    },[])
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const profileImage = user?.profileImage?.url
+  ? user.profileImage.url.replace("/upload/", "/upload/f_webp,q_auto/")
+  : "/profile-default.jpg";
 
   return (
     <header className="bg-background shadow-sm border-b sticky top-0 z-50">
@@ -45,22 +50,53 @@ const Navbar = () => {
           </div>
 
            <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="hidden md:flex">
+            {/* <Button variant="ghost" size="icon" className="hidden md:flex">
               <Search className="h-4 w-4" />
-            </Button>
-          {isAuthenticated ? (
-  <Button
-    onClick={() => {
-            toast.success('Logout successfull')
+            </Button> */}
 
-      dispatch(logoutUser());
-    }}
-    className="bg-red-500 hover:bg-red-600 text-white hidden sm:flex"
-  >
-    Logout
-  </Button>
+
+{isAuthenticated ? (
+  <div className="relative hidden sm:flex items-center group">
+    {/*  Icon */}
+    <button className="flex items-center space-x-2 focus:outline-none">
+      <div className="flex items-center justify-center">
+  <img
+    src={profileImage}
+    alt="Profile"
+    className="w-10 h-10 rounded-full object-cover border"
+  />
+</div>
+
+    </button>
+
+    {/* Dropdown Menu */}
+    <div className="absolute top-full right-0 mt-2 w-44 bg-white shadow-md rounded-md border opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-all duration-200 z-50">
+      <Link
+        to="/account/profile"
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+      >
+        My Account
+      </Link>
+      <Link
+        to="/account/wishlist"
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+      >
+        Wishlist
+      </Link>
+      <button
+        onClick={() => {
+          dispatch(logoutUser());
+          toast.success("Logout successful");
+        }}
+        className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-100"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
 ) : (
   <>
+    {/* Login & Sign Up Buttons */}
     <Link to="/login">
       <Button
         variant="outline"
@@ -79,6 +115,7 @@ const Navbar = () => {
 )}
 
 
+
             {/* Mobile Menu Button */}
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -94,6 +131,7 @@ const Navbar = () => {
             <Link to="/blog" className="block text-foreground hover:text-orange" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
             <Link to="/about" className="block text-foreground hover:text-orange" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
             <Link to="/contact" className="block text-foreground hover:text-orange" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
+            <Link to="/account/profile" className="block text-foreground hover:text-orange" onClick={() => setIsMobileMenuOpen(false)}>Account</Link>
    {isAuthenticated ? (
   <button
     onClick={() => {

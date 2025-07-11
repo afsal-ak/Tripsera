@@ -10,7 +10,15 @@ function App() {
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/*" element={<UserRoutes />} />
       </Routes>
-      <Toaster position="top-right" richColors />
+      {/* <Toaster position="top-right" richColors /> */}
+      <Toaster
+  position="top-right"
+  expand={true}
+  duration={2000}
+  theme="dark"
+  richColors
+/>
+
     </>
   );
 }

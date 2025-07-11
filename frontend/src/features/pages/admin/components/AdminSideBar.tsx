@@ -1,6 +1,15 @@
 import { Button } from "@/features/components/Button";
 import { cn } from "@/lib/utils";
-import { Menu, X, Table } from "lucide-react";
+import { 
+  LayoutDashboard,
+   X, 
+   Table,
+   User,
+   Image ,
+   Briefcase,
+   FolderKanban,
+  BadgePercent, 
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 interface AdminSidebarProps {
@@ -10,12 +19,12 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
   const menuItems = [
-    { path: "dashboard", label: "Dashboard", icon: Table },
-    { path: "users", label: "Users", icon: Table },
-    { path: "categories", label: "Categories", icon: Table },
-    { path: "banners", label: "Banners", icon: Table },
-    { path: "packages", label: "Packages", icon: Table },
-    { path: "coupons", label: "Coupons", icon: Table },
+    { path: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { path: "users", label: "Users", icon: User },
+    { path: "categories", label: "Categories", icon: FolderKanban  },
+    { path: "banners", label: "Banners", icon: Image  },
+    { path: "packages", label: "Packages", icon: Briefcase  },
+    { path: "coupons", label: "Coupons", icon: BadgePercent  },
   ];
 
   return (

@@ -35,10 +35,7 @@ const NewPasswordPage = () => {
       errors.password =
         "Password must be at least 6 characters, include one letter, one number, and one special character.";
     }
-    // if(trimmedPassword.length!=7){
-    //  // errors.password='password must be atleast 7 cahracter'
-    //  toast.error('7 length')
-    // }
+   
 
     if (trimmedPassword !== trimmedConfirm) {
       errors.confirm = "Passwords do not match.";

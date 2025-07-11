@@ -1,25 +1,27 @@
 
-import { useParams,Link } from "react-router-dom";
+import { useParams,Link,useSearchParams } from "react-router-dom";
 import { useState,useEffect } from "react";
 
-import Navbar from "@/features/components/Navbar";
-import Footer from "@/features/components/Footer";
 import { Button } from "@/features/components/Button";
 import { Badge } from "@/features/components/ui/Badge"
-import { Star, MapPin, Clock, Users, Calendar, Check, Heart, Share2 } from "lucide-react";
+import { Star, MapPin, Clock, Users, Calendar, Check, Heart,HeartOff , Share2 } from "lucide-react";
 import { Card,CardContent } from "@/features/components/ui/Card";
 
 import type { IPackage } from "@/features/types/IPackage";
 import { fetchPackgeById } from "@/features/services/user/PackageService"; 
 import { getCategory } from "@/features/services/admin/packageService";
-
-const PackageDetails = () => {
+import { addToWishlist,deleteFromWishlist ,checkPackageInWishlist} from "@/features/services/user/wishlistService";
+import { toast } from "sonner";
+ const PackageDetails = () => {
  
 
   const { id } = useParams();
 const [pkg, setPkg] = useState<IPackage | null>(null);
+const [loading,setLoading]=useState(false)
 const [category,setCategory]=useState([])
+const [isWishlisted,setWishlisted]=useState(false)
    const [selectedImage, setSelectedImage] = useState(0);
+  const [wishListParams, setWishlistParams] = useSearchParams();
 
    useEffect(()=>{
     const loadCat=async()=>{
@@ -42,8 +44,10 @@ const [category,setCategory]=useState([])
       }
       try {
         const data=await fetchPackgeById(id)
+        const checkWishlist=await checkPackageInWishlist(id)
+     //   console.log(checkWishlist.result,'check')
         setPkg(data)
-      // console.log(data,'data')
+        setWishlisted(checkWishlist.result)
       } catch (error) {
         console.error("Failed to fetch package details", error);
 
@@ -51,12 +55,35 @@ const [category,setCategory]=useState([])
     };
     loadPackage()
    },[id])
+
+
+
+const handleWishlist = async () => {
+  if (!id || loading) return;
+  setLoading(true);
+
+  try {
+    if (isWishlisted) {
+      await deleteFromWishlist(id);
+      toast.success("Removed from wishlist!");
+    } else {
+      await addToWishlist(id);
+      toast.success("Added to wishlist!");
+    }
+    setWishlisted((prev) => !prev);
+  } catch (error:any) {
+    toast.error(error?.response?.data?.message||"Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+ 
+
  if (!pkg) {
   return <div className="h-screen flex items-center justify-center">Loading...</div>;
 }
 
-  //  Simplified data access
-  const imageObjects = pkg.imageUrls ?? [];
+   const imageObjects = pkg.imageUrls ?? [];
   const allImages = imageObjects.map((imgObj) => imgObj.url.replace("/upload","/upload/f_auto,q_auto"));
   const currentImage = allImages[selectedImage] ?? "/fallback.jpg";
   const locationLabel = pkg.location?.map((l) => l.name).join(", ") ?? "Unknown";
@@ -94,9 +121,25 @@ const [category,setCategory]=useState([])
               <Button variant="outline" size="icon" className="border-orange text-orange hover:bg-orange hover:text-white">
                 <Share2 className="w-4 h-4" />
               </Button>
-              <Button variant="outline" size="icon" className="border-orange text-orange hover:bg-orange hover:text-white">
+              
+              {/* <Button onClick={handleAddToWishlist}
+              variant="outline" size="icon" className="border-orange text-orange hover:bg-orange hover:text-white">
                 <Heart className="w-4 h-4" />
-              </Button>
+              </Button> */}
+      <Button
+  onClick={handleWishlist}
+  disabled={loading}
+  variant={isWishlisted ? "default" : "outline"}
+  size="icon"
+  className={
+    isWishlisted
+      ? "bg-orange text-white hover:bg-orange/90"
+      : "border-orange text-orange hover:bg-orange hover:text-white"
+  }
+>
+  <Heart className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""}`} />
+</Button>
+
             </div>
           </div>
 {/* Image Gallery */}
