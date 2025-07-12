@@ -1,6 +1,7 @@
 import { IUserRepository } from '../../repositories/IUserRepository';
 import { IOtpRepository } from '../../repositories/IOtpRepository';
 import { sendOtpMail } from '@infrastructure/services/mail/mailer';
+import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { hashPassword, comparePassword } from '@shared/utils/hash';
 import { IUser } from '../../entities/IUser';
 import { IOTP } from '@domain/entities/IOTP';
@@ -12,6 +13,7 @@ export class UserAuthUsecases {
   constructor(
     private userRepository: IUserRepository,
     private otpRepository: IOtpRepository,
+    private walletRepository:IWalletRepository
   ) { }
 
   async preRegistration(userData: IOTP): Promise<void> {
@@ -72,8 +74,12 @@ export class UserAuthUsecases {
       password: otpDoc.password
     }
 
-    await this.userRepository.createUser(newUser)
+   const user= await this.userRepository.createUser(newUser)
+   if (!user || !user._id) {
+    throw new Error("User creation failed: missing user ID");
+  }
     await this.otpRepository.deleteOtp(email)
+ await this.walletRepository.createWallet(user._id.toString());
   }
 
 

@@ -23,10 +23,18 @@ import { MongoCouponRepository } from "@infrastructure/repositories/MongoCouponR
 import { ProfileUseCases } from "@domain/usecases/user/profileUseCases";
 import { ProfileController } from "@presentation/controllers/user/profileController";
 
+import { WalletController } from "@presentation/controllers/user/walletController";
+import { WalletUseCases } from "@domain/usecases/user/walletUseCases";
+import { MongoWalletRepository } from "@infrastructure/repositories/MongoWalletRepository ";
+
+const walletRepository=new MongoWalletRepository()
+const walletUseCases=new WalletUseCases(walletRepository)
+const walletController=new WalletController(walletUseCases)
+
 
 const userRepository = new MongoUserRepository();
 const otpRepository = new MongoOtpRepository();
-const userAuthUseCases = new UserAuthUsecases(userRepository, otpRepository);
+const userAuthUseCases = new UserAuthUsecases(userRepository, otpRepository,walletRepository);
 const userAuthController = new UserAuthController(userAuthUseCases);
 
 const bannerRepository=new MongoBannerRepository()
@@ -45,6 +53,7 @@ const couponController=new CouponController(couponUseCases)
 const profileRepository=new MongoUserRepository()
 const profileUseCases=new ProfileUseCases(profileRepository)
 const profileController=new ProfileController(profileUseCases)
+
 
 const router = Router();
 
@@ -85,5 +94,11 @@ router.delete('/wishlist/delete',userAuthMiddleware,wishlistController.removeFro
 //coupon routes
 router.get('/coupons',userAuthMiddleware,couponController.getActiveCoupons)
 router.post('/coupon/apply',userAuthMiddleware,couponController.applyCoupon)
+
+//wallet routes
+router.get('/wallet',userAuthMiddleware,walletController.getUserWallet)
+router.post('/wallet/credit',userAuthMiddleware,walletController.creditWallet)
+router.post('/wallet/debit',userAuthMiddleware,walletController.debitWallet)
+
 
 export default router;
