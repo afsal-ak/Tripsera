@@ -20,7 +20,7 @@ export class WalletController{
             const limit=parseInt(req.query.limit as string)||9
               const sort = req.query.sort === "oldest" ? "oldest" : "newest";
 
-
+       //     console.log(req.query,'from wallet')
           
             const {balance,transactions,total}=await this.walletUseCases.getUserWallet(userId, { page, limit, sort })
 
