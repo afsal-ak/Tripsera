@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { User, Heart, Calendar, Settings, X ,BadgePercent} from "lucide-react";
+import { User, Heart, Calendar, Settings, X ,BadgePercent,Wallet} from "lucide-react";
 import { cn } from "@/lib/utils";
  
 
@@ -12,6 +12,7 @@ const menuItems = [
   { path: "profile", label: "Profile", icon: User },
   { path: "wishlist", label: "Wishlist", icon: Heart },
     { path: "coupon", label: "Coupon", icon: BadgePercent },
+    { path: "wallet", label: "Wallet", icon: Wallet },
   { path: "bookings", label: "Bookings", icon: Calendar },
 ];
 

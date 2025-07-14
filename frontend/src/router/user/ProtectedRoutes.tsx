@@ -6,6 +6,7 @@ import Profile from "@/features/pages/user/accounts/profile/Profile";
 import EmailOtpPage from "@/features/pages/user/accounts/profile/EmailOtpPage";
 import Wishlist from "@/features/pages/user/accounts/Wishlist";
 import CouponList from "@/features/pages/user/accounts/coupons/CouponList";
+import WalletPage from "@/features/pages/user/accounts/wallet/WalletPage";
  const ProtectedRoutes = (
 
   <Route element={<UserProtectedRoutes />}>
@@ -15,6 +16,7 @@ import CouponList from "@/features/pages/user/accounts/coupons/CouponList";
         <Route path='verify-otp' element={<EmailOtpPage/>}/>
       <Route path="wishlist" element={<Wishlist/>}/>
       <Route path="coupon" element={<CouponList/>}/>
+      <Route path="wallet" element={<WalletPage/>}/>
       </Route>
   </Route>
 );
