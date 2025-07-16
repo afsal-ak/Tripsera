@@ -33,6 +33,7 @@ export class CouponController{
 
     //     }
     // }
+    
     applyCoupon = async (req: Request, res: Response): Promise<void> => {
   try {
     const { code, totalAmount }:{code:string,totalAmount:number} = req.body;

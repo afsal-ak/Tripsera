@@ -25,8 +25,9 @@ import { CouponUseCases } from "@domain/usecases/admin/couponUseCases";
 import { MongoCouponRepository } from "@infrastructure/repositories/MongoCouponRepository";
 import { CouponController } from "@presentation/controllers/admin/couponController";
 
-
-
+import { BookingUseCases } from "@domain/usecases/admin/bookingUseCases";
+import { MongoBookingRepository } from "@infrastructure/repositories/MongoBookingRepository";
+import { BookingController } from "@presentation/controllers/admin/bookingController";
 
 const adminRepository=new MongoUserRepository();
 const otpRepository=new MongoOtpRepository();
@@ -52,6 +53,12 @@ const packageController=new PackageController(packageUseCase)
 const couponRepository=new MongoCouponRepository()
 const couponUseCase=new CouponUseCases(couponRepository)
 const couponController=new CouponController(couponUseCase)
+
+
+
+const bookingRepository=new MongoBookingRepository()
+const bookingUseCase=new BookingUseCases(bookingRepository)
+const bookingController=new BookingController(bookingUseCase)
 
 
 const router=Router()
@@ -104,4 +111,12 @@ router.get('/coupon/:id',adminAuthMiddleware,couponController.getCouponById)
 router.put('/coupon/edit/:id',adminAuthMiddleware,couponController.editCoupon)
 router.patch('/coupon/status/:id',adminAuthMiddleware,couponController.updateCouponStatus)
 router.delete('/coupon/delete/:id',adminAuthMiddleware,couponController.deleteCoupon)
+
+//booking route
+router.get('/booking',adminAuthMiddleware,bookingController.getAllBooking)
+router.get('/booking/:id',adminAuthMiddleware,bookingController.getBookingByIdForAdmin)
+router.patch('/booking/cancel/:id',adminAuthMiddleware,bookingController.cancelBookingByAdmin)
+
+
+
 export default router;

@@ -27,6 +27,10 @@ import { WalletController } from "@presentation/controllers/user/walletControlle
 import { WalletUseCases } from "@domain/usecases/user/walletUseCases";
 import { MongoWalletRepository } from "@infrastructure/repositories/MongoWalletRepository ";
 
+import { MongoBookingRepository } from "@infrastructure/repositories/MongoBookingRepository";
+import { BookingUseCases } from "@domain/usecases/user/bookingUseCases";
+import { BookingController } from "@presentation/controllers/user/bookingController";
+import { RazorpayService } from "@infrastructure/services/razorpay/razorpayService";
 const walletRepository=new MongoWalletRepository()
 const walletUseCases=new WalletUseCases(walletRepository)
 const walletController=new WalletController(walletUseCases)
@@ -54,7 +58,10 @@ const profileRepository=new MongoUserRepository()
 const profileUseCases=new ProfileUseCases(profileRepository)
 const profileController=new ProfileController(profileUseCases)
 
-
+const bookingRepository=new MongoBookingRepository()
+const razorpayService=new RazorpayService()
+const bookingUseCases=new BookingUseCases(bookingRepository,walletRepository,couponRepository,razorpayService)
+const bookingController=new BookingController(bookingUseCases)
 const router = Router();
 
 //auth routes
@@ -101,4 +108,13 @@ router.post('/wallet/credit',userAuthMiddleware,walletController.creditWallet)
 router.post('/wallet/debit',userAuthMiddleware,walletController.debitWallet)
 
 
+// booking routes
+router.get('/booking',userAuthMiddleware,bookingController.getUserBookings)
+router.get('/booking/:id',userAuthMiddleware,bookingController.getBookingById)
+router.patch('/booking/cancel/:id',userAuthMiddleware,bookingController.cancelBooking)
+
+router.post('/booking/online',userAuthMiddleware,bookingController.createBookingWithOnlinePayment)
+router.post('/booking/verify', userAuthMiddleware, bookingController.verifyRazorpayPayment);
+
+router.post('/booking/wallet',userAuthMiddleware,bookingController.createBookingWithWalletPayment)
 export default router;
