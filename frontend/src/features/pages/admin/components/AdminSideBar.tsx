@@ -8,8 +8,8 @@ import {
    Image ,
    Briefcase,
    FolderKanban,
-  BadgePercent, 
-} from "lucide-react";
+  BadgePercent,
+ } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 interface AdminSidebarProps {
@@ -25,6 +25,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
     { path: "banners", label: "Banners", icon: Image  },
     { path: "packages", label: "Packages", icon: Briefcase  },
     { path: "coupons", label: "Coupons", icon: BadgePercent  },
+    { path: "bookings", label: "Bookings", icon: Table  },
   ];
 
   return (

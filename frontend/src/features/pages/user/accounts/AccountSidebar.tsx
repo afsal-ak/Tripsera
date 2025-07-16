@@ -13,7 +13,7 @@ const menuItems = [
   { path: "wishlist", label: "Wishlist", icon: Heart },
     { path: "coupon", label: "Coupon", icon: BadgePercent },
     { path: "wallet", label: "Wallet", icon: Wallet },
-  { path: "bookings", label: "Bookings", icon: Calendar },
+  { path: "my-bookings", label: "My Bookings", icon: Calendar },
 ];
 
 const AccountSidebar = ({ isOpen, onToggle }: Props) => {

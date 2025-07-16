@@ -18,6 +18,8 @@ import EditPackageForm from "@/features/pages/admin/pages/package/EditPackage";
 import CouponList from "@/features/pages/admin/pages/coupon/CouponList";
 import AddCouponForm from "@/features/pages/admin/pages/coupon/AddCouponForm";
 import EditCouponForm from "@/features/pages/admin/pages/coupon/EditCouponForm";
+import BookingList from "@/features/pages/admin/pages/booking/BookingsList";
+import BookingDetail from "@/features/pages/admin/pages/booking/BookingDetails";
 const AdminRoutes = () => {
   return (
     <Routes>
@@ -46,6 +48,8 @@ const AdminRoutes = () => {
           <Route path="coupon/add" element={<AddCouponForm />} />
           <Route path="coupon/edit/:id" element={<EditCouponForm />} />
           <Route path="coupon/status/:id" element={<CouponList />} />
+          <Route path="bookings" element={<BookingList />} />
+          <Route path="bookings/:id" element={<BookingDetail />} />
 
         </Route>
       </Route>

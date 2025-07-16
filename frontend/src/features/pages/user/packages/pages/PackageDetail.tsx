@@ -1,5 +1,5 @@
 
-import { useParams,Link,useSearchParams } from "react-router-dom";
+import { useParams,Link,useSearchParams, useNavigate } from "react-router-dom";
 import { useState,useEffect } from "react";
 
 import { Button } from "@/features/components/Button";
@@ -77,7 +77,11 @@ const handleWishlist = async () => {
     setLoading(false);
   }
 };
+ const navigate=useNavigate()
  
+    const handleClick=()=>{
+    navigate(`/checkout/${pkg?._id}`)
+  }
 
  if (!pkg) {
   return <div className="h-screen flex items-center justify-center">Loading...</div>;
@@ -313,7 +317,7 @@ const handleWishlist = async () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Button className="w-full bg-orange hover:bg-orange-dark text-white py-3 text-lg font-semibold">
+                  <Button onClick={handleClick} className="w-full bg-orange hover:bg-orange-dark text-white py-3 text-lg font-semibold">
                     Book Now
                   </Button>
                   <Button variant="outline" className="w-full border-orange text-orange hover:bg-orange hover:text-white py-3">

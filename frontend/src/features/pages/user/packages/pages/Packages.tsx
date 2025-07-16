@@ -36,7 +36,7 @@ const Packages = () => {
     try {
       const res = await fetchActivePackages({
         page: currentPage,
-        limit: 3,
+        limit: 1,
         //    location: filters.location,
         category: filters.category,
         duration: filters.duration,
