@@ -51,11 +51,13 @@ resendOtp = async (req: Request, res: Response): Promise<void> => {
       const { email, password } = req.body;
       const { user, accessToken, refreshToken } = await this.userAuthUseCases.login(email, password);
 
-      res.cookie('refreshToken', refreshToken, {
+      res.cookie('userRefreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+         path:'/',
+
       });
    
       res.status(200).json({

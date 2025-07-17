@@ -10,12 +10,14 @@ export class AdminAuthController {
       const { email, password } = req.body;
       const { admin, accessToken, refreshToken } =
         await this.adminAuthUseCases.adminLogin(email, password);
-console.log(req.body,'admin')
-      res.cookie('refreshToken', refreshToken, {
+//console.log(req.body,'admin')
+      res.cookie('adminRefreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        path:'/',
+
       });
 
   console.log(req.cookies,'k')

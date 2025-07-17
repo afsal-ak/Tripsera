@@ -5,7 +5,7 @@ import { upload } from "@presentation/middlewares/upload";
 import { UserAuthUsecases } from "@domain/usecases/user/userAuthUseCases";
 import { MongoUserRepository } from "@infrastructure/repositories/MongoUserRepository";
 import { MongoOtpRepository } from "@infrastructure/repositories/MongoOtpRepository";
-import { refreshToken } from "@presentation/controllers/token/refreshToken";
+import {  userRefreshToken } from "@presentation/controllers/token/userRefreshToken";
 import { UserAuthController } from "@presentation/controllers/user/UserAuthController";
 import { userAuthMiddleware } from "@presentation/middlewares/userAuthMiddleware";
 import { HomeUseCases } from "@domain/usecases/user/homeUseCases";
@@ -65,7 +65,7 @@ const bookingController=new BookingController(bookingUseCases)
 const router = Router();
 
 //auth routes
-router.post('/refresh-token', refreshToken);
+router.post('/refresh-token', userRefreshToken);
 router.post('/pre-register', userAuthController.preRegister);
 router.post('/register', userAuthController.register);
 router.post("/resend-otp",  userAuthController.resendOtp);

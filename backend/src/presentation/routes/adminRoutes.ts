@@ -4,7 +4,7 @@ import { AdminAuthUseCases } from "@domain/usecases/admin/adminAuthUseCases";
 import { AdminAuthController } from "@presentation/controllers/admin/adminAuthController";
 import { MongoUserRepository } from "@infrastructure/repositories/MongoUserRepository";
 import { MongoOtpRepository } from "@infrastructure/repositories/MongoOtpRepository";
-import { refreshToken } from "@presentation/controllers/token/refreshToken";
+import { adminRefreshToken } from "@presentation/controllers/token/adminRefreshToken";
 import { UserManagementUseCases } from "@domain/usecases/admin/userManagementUseCases";
 import { UserManagementController } from "@presentation/controllers/admin/userMangementController";
 
@@ -64,7 +64,7 @@ const bookingController=new BookingController(bookingUseCase)
 const router=Router()
 
 //admin router
-router.post('/refresh-token',refreshToken)
+router.post('/refresh-token',adminRefreshToken)
 router.post('/admin-login',adminAuthController.adminLogin)
 router.post('/forgotPassword',adminAuthController.forgotPassword)
 router.post('/forgotPasswordChange',adminAuthController.forgotPasswordChange)
