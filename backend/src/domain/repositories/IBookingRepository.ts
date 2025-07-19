@@ -1,7 +1,14 @@
 import { IBooking } from "@domain/entities/IBooking";
 import { IBookingInput } from "@domain/entities/IBookingInput";
 export interface IBookingRepository{
-    getAllBooking(page:number,limit:number):Promise<{bookings:IBooking[],total:number}>
+getAllBooking(filters: {
+  page: number;
+  limit: number;
+  packageSearch?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+}): Promise<{ bookings: IBooking[]; total: number }>;
     getAllBookingOfUser(userId:string,page:number,limit:number):Promise<{bookings:IBooking[],total:number}>
     getBookingById(userId:string,bookingId:string):Promise<IBooking|null>
     getBookingByIdForAdmin(bookingId:string):Promise<IBooking|null>

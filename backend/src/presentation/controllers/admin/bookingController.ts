@@ -3,29 +3,61 @@ import { BookingUseCases } from "@domain/usecases/admin/bookingUseCases";
 
 export class BookingController {
     constructor(private bookingUseCases: BookingUseCases) { }
+getAllBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
 
-    getAllBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        try {
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
+    const packageSearch = req.query.package as string; // optional search
+    const status = req.query.status as string;         // e.g., 'cancelled'
+    const startDate = req.query.startDate as string;
+    const endDate = req.query.endDate as string;
 
-            const {bookings,total} = await this.bookingUseCases.getAllBookings(page, limit)
-            // res.status(200).json({
-            //     bookings: result.bookings,
-            //     totalPages: Math.ceil(result.total / limit),
-            //     message: "Bookings fetched successfully",
-            // });
-            res.status(200).json({
-                bookings: bookings,
-                total: total,
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
-                message: "Bookings fetched successfully",
-            });
-        } catch (error) {
-            next(error)
-        }
-    }
+    const { bookings, total } = await this.bookingUseCases.getAllBookings({
+      page,
+      limit,
+      packageSearch,
+      status,
+      startDate,
+      endDate,
+    });
+
+    res.status(200).json({
+      bookings,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      message: "Bookings fetched successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+    // getAllBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    //     try {
+    //         const page = parseInt(req.query.page as string) || 1;
+    //         const limit = parseInt(req.query.limit as string) || 10;
+
+    //         const {bookings,total} = await this.bookingUseCases.getAllBookings(page, limit)
+    //         // res.status(200).json({
+    //         //     bookings: result.bookings,
+    //         //     totalPages: Math.ceil(result.total / limit),
+    //         //     message: "Bookings fetched successfully",
+    //         // });
+    //         res.status(200).json({
+    //             bookings: bookings,
+    //             total: total,
+    //             currentPage: page,
+    //             totalPages: Math.ceil(total / limit),
+    //             message: "Bookings fetched successfully",
+    //         });
+    //     } catch (error) {
+    //         next(error)
+    //     }
+    // }
 
     getBookingByIdForAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {

@@ -4,21 +4,109 @@ import { IBookingRepository } from "@domain/repositories/IBookingRepository";
 import { BookingModel } from "@infrastructure/models/Booking";
 import { UserModel } from "@infrastructure/models/User";
 export class MongoBookingRepository implements IBookingRepository {
-  async getAllBooking(page: number, limit: number): Promise<{ bookings: IBooking[]; total: number; }> {
-    const skip = (page - 1) * limit
+  // async getAllBooking(page: number, limit: number): Promise<{ bookings: IBooking[]; total: number; }> {
+  //   const skip = (page - 1) * limit
 
-    const [bookings, total] = await Promise.all([
-      BookingModel.find()
-        .populate('packageId', 'title imageUrls')
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .lean(),
+  //   const [bookings, total] = await Promise.all([
+  //     BookingModel.find()
+  //       .populate('packageId', 'title imageUrls')
+  //       .skip(skip)
+  //       .limit(limit)
+  //       .sort({ createdAt: -1 })
+  //       .lean(),
 
-      BookingModel.countDocuments()
-    ])
-    return { bookings, total }
+  //     BookingModel.countDocuments()
+  //   ])
+  //   return { bookings, total }
+  // }
+  async getAllBooking({
+  page,
+  limit,
+  packageSearch,
+  status,
+  startDate,
+  endDate,
+}: {
+  page: number;
+  limit: number;
+  packageSearch?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+}): Promise<{ bookings: IBooking[]; total: number }> {
+  const skip = (page - 1) * limit;
+  const match: any = {};
+
+  // Status filter
+ if (status && status !== 'all') {
+  match.bookingStatus = status;
+}
+
+  // Date range filter
+  if (startDate && endDate) {
+    match.createdAt = {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    };
   }
+
+  // Initial query
+  let aggregatePipeline: any[] = [
+    { $match: match },
+    {
+      $lookup: {
+        from: 'packages',
+        localField: 'packageId',
+        foreignField: '_id',
+        as: 'package',
+      },
+    },
+    { $unwind: '$package' },
+  ];
+
+  // Package search
+if (packageSearch) {
+  aggregatePipeline.push({
+    $match: {
+      $or: [
+        { 'package.title': { $regex: packageSearch, $options: 'i' } },
+        { 'package.location': { $regex: packageSearch, $options: 'i' } },
+        { 'package.category': { $regex: packageSearch, $options: 'i' } },
+      ],
+    },
+  });
+}
+
+  // Count first
+  const totalResult = await BookingModel.aggregate([...aggregatePipeline, { $count: 'total' }]);
+  const total = totalResult[0]?.total || 0;
+
+  // Add pagination and sorting
+  aggregatePipeline.push(
+    { $sort: { createdAt: -1 } },
+    { $skip: skip },
+    { $limit: limit },
+    {
+      $project: {
+        _id: 1,
+        bookingStatus: 1,
+        createdAt: 1,
+        totalAmount: 1,
+        amountPaid:1,
+        bookedAt:1,
+        travelers: 1,
+        packageId: '$package._id',
+        packageTitle: '$package.title',
+        packageImage: { $arrayElemAt: ['$package.imageUrls', 0] },
+      },
+    }
+  );
+
+  const bookings = await BookingModel.aggregate(aggregatePipeline);
+
+  return { bookings, total };
+}
+
   async getAllBookingOfUser(userId: string, page: number, limit: number): Promise<{
     bookings: IBooking[],
     total: number
