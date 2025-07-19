@@ -51,4 +51,6 @@ amountPaid:number;
   updatedAt:Date;
   bookedAt?: Date;
   travelDate?: Date;
+  packageTitle?:string,
+  packageImage?: { url: string; public_id?: string };
 }

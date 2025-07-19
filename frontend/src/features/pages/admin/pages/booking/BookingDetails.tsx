@@ -86,6 +86,8 @@ const BookingDetail = () => {
 
           {/* Booking Summary */}
           <div className="grid grid-cols-2 gap-4">
+              <p><strong>Package:</strong> {booking.bookingCode}</p>
+
             <p><strong>Package:</strong> {booking.packageId?.title}</p>
             {/* <p><strong>Travel Date:</strong> {new Date(booking.travelDate).toLocaleDateString()}</p> */}
             <p>
