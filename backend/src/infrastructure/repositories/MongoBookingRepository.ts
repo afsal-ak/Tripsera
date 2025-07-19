@@ -75,7 +75,7 @@ export class MongoBookingRepository implements IBookingRepository {
     return booking ? booking : null
   }
 
-  async packageBooking(userId: string, data: IBookingInput): Promise<IBooking> {
+  async createBooking(userId: string, data: IBookingInput): Promise<IBooking> {
     const newBooking = await BookingModel.create({ userId, ...data })
     return newBooking.toObject();
 

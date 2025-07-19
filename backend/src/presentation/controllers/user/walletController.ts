@@ -13,6 +13,25 @@ export class WalletController{
     //     }
     // }
 
+    //  async walletBalance(userId:string):Promise<{balance:number}>{
+    //     return await this.walletRepo.walletBalance(userId)
+    // }
+
+    walletBalance=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+      try {
+         const userId=getUserIdFromRequest(req)
+
+            const {balance}=await this.walletUseCases.getUserWallet(userId)
+
+            res.status(200).json({
+                balance,
+                message:'Wallet balance fetched successfully'
+            })
+      } catch (error) {
+        next(error)
+      }
+    }
+
     getUserWallet=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
         try {
             const userId=getUserIdFromRequest(req)

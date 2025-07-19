@@ -9,6 +9,7 @@ export interface ITraveler {
 
 export interface IBooking {
   _id?: string | Types.ObjectId;
+  bookingCode:string;
   userId: Types.ObjectId | string;
   packageId: Types.ObjectId | string;
     travelers: ITraveler[];
@@ -16,11 +17,12 @@ export interface IBooking {
   totalAmount: number;
   discount?: number;
   couponCode?: string;
-  paymentMethod: "razorpay" | "wallet";
+  paymentMethod: "razorpay" | "wallet"|"wallet+razorpay";
   paymentStatus: "paid" | "pending" | "failed";
   bookingStatus: "confirmed"|"booked" | "cancelled" |"pending";
   cancelReason?: string;
   walletUsed?:number;
+    walletAmountUsed?:number;
 amountPaid:number;
  contactDetails: {
     name: string;

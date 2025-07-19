@@ -17,6 +17,11 @@ const TravelerSchema = new Schema(
 
 
 const BookingSchema = new Schema<IBookingDocument>({
+  bookingCode:{
+    type:String,
+    required:true,
+    unique:true
+  },
     userId: { type: Schema.Types.ObjectId, ref: "Users", required: true },
     packageId: { type: Schema.Types.ObjectId, ref: "Package", required: true },
        travelers: {
@@ -35,7 +40,7 @@ const BookingSchema = new Schema<IBookingDocument>({
     couponCode: { type: String },
     paymentMethod: {
         type: String,
-        enum: ["razorpay", "wallet"],
+        enum: ["razorpay", "wallet","wallet+razorpay"],
         required: true
     },
     paymentStatus: {
@@ -49,6 +54,10 @@ const BookingSchema = new Schema<IBookingDocument>({
         default: "pending"
     },
     walletUsed: {
+  type: Number,
+  default: 0,
+}, 
+  walletAmountUsed: {
   type: Number,
   default: 0,
 },

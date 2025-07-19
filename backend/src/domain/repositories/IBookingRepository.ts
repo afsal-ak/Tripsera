@@ -8,7 +8,7 @@ export interface IBookingRepository{
     
     cancelBooking(userId:string,bookingId:string,reason:string):Promise<IBooking|null>
     cancelBookingByAdmin(bookingId:string,reason:string):Promise<IBooking|null>
-    packageBooking(userId:string,data:IBookingInput):Promise<IBooking>
+    createBooking(userId:string,data:IBookingInput):Promise<IBooking>
     
  updateBooking(id: string, updateData: Partial<IBooking>): Promise<IBooking | null>  
  

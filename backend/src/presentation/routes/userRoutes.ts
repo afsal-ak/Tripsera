@@ -60,7 +60,7 @@ const profileController=new ProfileController(profileUseCases)
 
 const bookingRepository=new MongoBookingRepository()
 const razorpayService=new RazorpayService()
-const bookingUseCases=new BookingUseCases(bookingRepository,walletRepository,couponRepository,razorpayService)
+const bookingUseCases=new BookingUseCases(bookingRepository,walletRepository,razorpayService)
 const bookingController=new BookingController(bookingUseCases)
 const router = Router();
 
@@ -104,6 +104,7 @@ router.post('/coupon/apply',userAuthMiddleware,couponController.applyCoupon)
 
 //wallet routes
 router.get('/wallet',userAuthMiddleware,walletController.getUserWallet)
+router.get('/wallet-balance',userAuthMiddleware,walletController.walletBalance)
 router.post('/wallet/credit',userAuthMiddleware,walletController.creditWallet)
 router.post('/wallet/debit',userAuthMiddleware,walletController.debitWallet)
 
@@ -115,6 +116,9 @@ router.patch('/booking/cancel/:id',userAuthMiddleware,bookingController.cancelBo
 
 router.post('/booking/online',userAuthMiddleware,bookingController.createBookingWithOnlinePayment)
 router.post('/booking/verify', userAuthMiddleware, bookingController.verifyRazorpayPayment);
+
+router.patch("/payment-cancel/:id", userAuthMiddleware, bookingController.cancelUnpaidBooking);
+router.post("/retry-payment/:id", userAuthMiddleware, bookingController.retryBookingPayment);
 
 router.post('/booking/wallet',userAuthMiddleware,bookingController.createBookingWithWalletPayment)
 export default router;

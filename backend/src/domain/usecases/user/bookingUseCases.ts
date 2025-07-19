@@ -6,11 +6,11 @@ import { ICouponRepository } from "@domain/repositories/ICouponRepository";
 
 import { RazorpayService } from "@infrastructure/services/razorpay/razorpayService";
 import { AppError } from "@shared/utils/AppError";
+import { generateBookingCode } from "@shared/utils/generateBookingCode";
 export class BookingUseCases {
   constructor(
     private bookingRepo: IBookingRepository,
     private walletRepo: IWalletRepository,
-    private couponRepo: ICouponRepository,
     private razorpayService: RazorpayService
   ) { }
 
@@ -28,21 +28,21 @@ export class BookingUseCases {
   // }
 
   async cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null> {
-  const booking = await this.bookingRepo.getBookingById(userId, bookingId);
-  if (!booking){
-throw new AppError(404, "Booking not found");
-  } 
+    const booking = await this.bookingRepo.getBookingById(userId, bookingId);
+    if (!booking) {
+      throw new AppError(404, "Booking not found");
+    }
 
-  if (booking.bookingStatus === 'cancelled') {
-    throw new AppError(400, "Booking already cancelled");
+    if (booking.bookingStatus === 'cancelled') {
+      throw new AppError(400, "Booking already cancelled");
+    }
+
+    if (booking.paymentStatus === 'paid' && booking.amountPaid > 0) {
+      await this.walletRepo.creditWallet(userId, booking.amountPaid, `Refund for cancelled booking`);
+    }
+
+    return await this.bookingRepo.cancelBooking(userId, bookingId, reason);
   }
-
-   if (booking.paymentStatus === 'paid' && booking.amountPaid > 0) {
-    await this.walletRepo.creditWallet(userId, booking.amountPaid, `Refund for cancelled booking`);
-  }
-
-   return await this.bookingRepo.cancelBooking(userId, bookingId, reason);
-}
 
 
   async createBookingWithOnlinePayment(
@@ -62,17 +62,22 @@ throw new AppError(404, "Booking not found");
       travelers,
       contactDetails,
       totalAmount,
+      amountPaid,
       couponCode,
       travelDate,
       paymentMethod,
-      useWallet = false,
+      walletAmountUsed,
+      discount,
+      useWallet,
+
     } = data;
+    console.log(data, 'booking data ')
+    let finalAmount = amountPaid;
+    const bookingCode = await generateBookingCode();
 
-    let finalAmount = totalAmount;
-    let discount = 0;
-    let walletAmountUsed = 0;
 
-   
+
+
     const bookingData: IBookingInput = {
       packageId: packageId.toString(),
       //  userId,
@@ -82,16 +87,17 @@ throw new AppError(404, "Booking not found");
       totalAmount,
       discount,
       couponCode,
-      walletUsed: walletAmountUsed,
+      walletAmountUsed,
       amountPaid: finalAmount,
       paymentMethod,
-      bookingStatus: finalAmount === 0 ? "confirmed" : "pending",
-      paymentStatus: finalAmount === 0 ? "paid" : "pending",
+      bookingCode: bookingCode,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    const booking = await this.bookingRepo.packageBooking(userId, bookingData);
+
+
+    const booking = await this.bookingRepo.createBooking(userId, bookingData);
 
 
 
@@ -130,8 +136,13 @@ throw new AppError(404, "Booking not found");
 
   async confirmBookingAfterPayment(orderId: string, paymentId: string, signature: string): Promise<void> {
     const booking = await this.bookingRepo.findByRazorpayOrderId(orderId);
-    if (!booking) throw new AppError(404, "Booking not found");
-
+    if (!booking) {
+      throw new AppError(404, "Booking not found");
+    }
+    if (booking.walletAmountUsed && booking.walletAmountUsed > 0) {
+      await this.walletRepo.debitWallet(booking.userId.toString(), booking.walletAmountUsed);
+      console.log("wallet debited from user")
+    }
     booking.paymentStatus = "paid";
     booking.bookingStatus = "confirmed";
     booking.updatedAt = new Date();
@@ -144,13 +155,73 @@ throw new AppError(404, "Booking not found");
     await this.bookingRepo.updateBooking(booking._id!.toString(), booking);
   }
 
+
+  async cancelUnpaidBooking(userId: string, bookingId: string): Promise<void> {
+    const booking = await this.bookingRepo.getBookingById(userId, bookingId)
+    if (!booking) {
+
+      throw new AppError(404, "Booking not found");
+    }
+    if (booking.paymentStatus === "paid") {
+      throw new AppError(400, "Cannot cancel a paid booking");
+    }
+
+    booking.bookingStatus = "pending";
+    booking.paymentStatus = "failed";
+    booking.updatedAt = new Date();
+
+    await this.bookingRepo.updateBooking(bookingId, booking);
+  }
+
+async retryBookingPayment(userId: string, bookingId: string): Promise<{
+  booking: IBooking;
+  razorpayOrder: {
+    id: string;
+    amount: number;
+    currency: string;
+    receipt: string;
+  };
+}> {
+  const booking = await this.bookingRepo.getBookingById(userId, bookingId);
+
+  if (!booking) {
+    throw new AppError(404, "Booking not found");
+  }
+
+  if (booking.paymentStatus === "paid") {
+    throw new AppError(400, "Booking already paid");
+  }
+  if (!booking._id) {
+  throw new Error("Booking ID missing");
+}
+
+  const finalAmount = booking.amountPaid;
+  const receipt = `retry-${booking._id.toString().slice(0, 30)}`;
+
+  const razorpayOrder = await this.razorpayService.createOrder(
+    finalAmount,
+    receipt
+  );
+
+   await this.bookingRepo.updateBooking(booking._id.toString(), {
+    razorpay: {
+      orderId: razorpayOrder.id,
+    },
+    updatedAt: new Date(),
+  });
+
+  return {
+    booking,
+    razorpayOrder,
+  };
+}
+
+
+
   async createBookingWithWalletPayment(
     userId: string,
     data: IBookingInput & { useWallet?: boolean }
-  ): Promise<{
-    booking?: IBooking;
-    remainingAmountToPay?: number
-  }> {
+  ): Promise<{ booking?: IBooking }> {
     const {
       packageId,
       travelers,
@@ -158,59 +229,56 @@ throw new AppError(404, "Booking not found");
       totalAmount,
       couponCode,
       travelDate,
-      // paymentMethod,
       useWallet = false,
     } = data;
 
-    let remainingAmountToPay = totalAmount;
     let discount = 0;
-    let walletAmountUsed = 0;
 
-    if (useWallet) {
-      const wallet = await this.walletRepo.getUserWallet(userId);
-      if (!wallet) {
-        throw new AppError(404, "Wallet not found");
-
-      }
-      console.log(wallet.balance, 'wallet balance')
-      walletAmountUsed = Math.min(wallet.balance, remainingAmountToPay);
-      if (walletAmountUsed > 0) {
-        await this.walletRepo.debitWallet(userId, walletAmountUsed, "Used for booking");
-        remainingAmountToPay -= walletAmountUsed;
-      }
-    }
-    if (remainingAmountToPay <= 0) {
-      const bookingData: IBookingInput = {
-        packageId: packageId.toString(),
-        //  userId,
-        travelers,
-        contactDetails,
-        travelDate,
-        totalAmount,
-        discount,
-        couponCode,
-        walletUsed: walletAmountUsed,
-        amountPaid: remainingAmountToPay,
-        paymentMethod: 'wallet',
-        bookingStatus: remainingAmountToPay === 0 ? "confirmed" : "pending",
-        paymentStatus: remainingAmountToPay === 0 ? "paid" : "pending",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      const booking = await this.bookingRepo.packageBooking(userId, bookingData);
-      return { booking };
-
-
-    } else {
-      return {
-        remainingAmountToPay,
-      };
+    if (!useWallet) {
+      // If user didn't select wallet, skip this route
+      throw new AppError(400, "Wallet usage not requested");
     }
 
+    const wallet = await this.walletRepo.getUserWallet(userId);
+    if (!wallet) {
+      throw new AppError(404, "Wallet not found");
+    }
+    const walletBalance = wallet.balance;
+
+    if (walletBalance < totalAmount) {
+      // Wallet not enough, should redirect to Razorpay flow
+      throw new AppError(400, "Insufficient wallet balance");
+    }
+
+    // Wallet fully covers booking
+    await this.walletRepo.debitWallet(userId, totalAmount, "Used for booking");
+
+
+    const bookingCode = await generateBookingCode()
+
+    const bookingData: IBookingInput = {
+      packageId: packageId.toString(),
+      travelers,
+      contactDetails,
+      travelDate,
+      totalAmount,
+      discount,
+      couponCode,
+      walletUsed: totalAmount,
+      amountPaid: 0,
+      paymentMethod: "wallet",
+      bookingStatus: "confirmed",
+      paymentStatus: "paid",
+      bookingCode,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const booking = await this.bookingRepo.createBooking(userId, bookingData);
+    return { booking };
   }
 
 
 
 }
-
 

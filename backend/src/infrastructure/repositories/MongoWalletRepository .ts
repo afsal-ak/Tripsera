@@ -5,6 +5,11 @@ import { AppError } from "@shared/utils/AppError";
 
 export class MongoWalletRepository implements IWalletRepository {
 
+    async walletBalance(userId: string): Promise<{balance:number}> {
+        const wallet=await WalletModel.findOne({userId}).lean()
+        return { balance: wallet?.balance || 0 };
+    }
+
     async getUserWallet(
         userId: string,
         options?: { page?: number; limit?: number; sort?: "newest" | "oldest" }

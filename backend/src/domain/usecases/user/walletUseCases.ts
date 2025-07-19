@@ -10,6 +10,10 @@ export class WalletUseCases {
         return await this.walletRepo.createWallet(userId)
     }
 
+    async walletBalance(userId:string):Promise<{balance:number}>{
+        return await this.walletRepo.walletBalance(userId)
+    }
+
     async getUserWallet(
         userId: string,
         options?: {page: number; limit: number; sort: "newest" | "oldest"

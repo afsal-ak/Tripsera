@@ -8,7 +8,7 @@ export const razorpay = new Razorpay({
 
 export class RazorpayService implements IRazorpayService{
     async createOrder(amount: number, receipt: string): Promise<{ id: string; amount: number; currency: string; receipt: string; }> {
-        const amountInPaise = Number(amount) * 100; // Ensures it's a number
+        const amountInPaise = Number(amount) * 100;  
        const receiptId = String(receipt); 
 
         const order=await razorpay.orders.create({

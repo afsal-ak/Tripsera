@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 import { BookingUseCases } from "@domain/usecases/user/bookingUseCases";
+import { AppError } from "@shared/utils/AppError";
 
 
 
@@ -29,7 +30,7 @@ export class BookingController {
   verifyRazorpayPayment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-
+console.log(req.body,'verify raxorpay')
       const isValid = await this.bookingUseCases.verifyRazorpaySignature(
         razorpay_order_id,
         razorpay_payment_id,
@@ -53,39 +54,70 @@ export class BookingController {
     }
   };
 
-   
+
+
+
+  // Cancel unpaid booking
+  cancelUnpaidBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req)
+      const bookingId = req.params.id;
+
+      await this.bookingUseCases.cancelUnpaidBooking(userId, bookingId);
+
+      res.status(200).json({
+        message: "Booking cancelled successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Retry payment for unpaid booking
+  retryBookingPayment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req)
+      const bookingId = req.params.id;
+      console.log(bookingId,'retyr payment')
+
+      const result = await this.bookingUseCases.retryBookingPayment(userId, bookingId);
+
+      res.status(200).json({
+        message: "New Razorpay order created",
+        booking: result.booking,
+        razorpayOrder: result.razorpayOrder || null,
+      
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
 
   createBookingWithWalletPayment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req)
       const data = req.body
-      console.log(data, 'wallet apyment')
-      const result = await this.bookingUseCases.createBookingWithWalletPayment(userId, data)
-      //       res.status(201).json({
-      //   message: "Booking created successfully",
-      //   booking: result.booking||result.remainingAmountToPay,
-      //   //razorpayOrder: result.razorpayOrder || null,
-      // });
-      if (result.booking) {
-        res.status(201).json({
-          message: "Booking created successfully using wallet",
-          booking: result.booking,
-        });
+      console.log(data, 'wallet payment')
+
+      const { booking } = await this.bookingUseCases.createBookingWithWalletPayment(userId, data)
+
+      if (!booking) {
+        throw new AppError(500, "Booking creation failed");
       }
-      else if (result.remainingAmountToPay) {
-        res.status(200).json({
-          message: "Partial wallet used, payment still required",
-          remainingAmountToPay: result.remainingAmountToPay,
-          // razorpayOrder: result.razorpayOrder ?? null,
-        });
-      }
+      res.status(201).json({
+        message: "Booking created successfully using wallet",
+        booking,
+      });
+
+
     } catch (error) {
       next(error);
 
     }
   }
 
+  
 
   //   // Get all bookings of a user with pagination
   getUserBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -94,15 +126,15 @@ export class BookingController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-            const {bookings,total} = await this.bookingUseCases.getAllUserBooking(userId,page, limit)
+      const { bookings, total } = await this.bookingUseCases.getAllUserBooking(userId, page, limit)
 
-       res.status(200).json({
-                bookings: bookings,
-                total: total,
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
-                message: "Bookings fetched successfully",
-            });
+      res.status(200).json({
+        bookings: bookings,
+        total: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        message: "Bookings fetched successfully",
+      });
     } catch (error) {
       next(error);
     }
@@ -125,13 +157,13 @@ export class BookingController {
     }
   };
 
-     // Cancel a booking
+  // Cancel a booking
   cancelBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
       const bookingId = req.params.id;
-      console.log(req.body,'cancel reason')
-      const  {reason}  = req.body;
+      console.log(req.body, 'cancel reason')
+      const { reason } = req.body;
 
       const booking = await this.bookingUseCases.cancelBooking(userId, bookingId, reason);
 
