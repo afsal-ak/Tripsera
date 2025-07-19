@@ -1,8 +1,8 @@
 
-import { ObjectId,Types } from 'mongoose';
+import { ObjectId, Types } from 'mongoose';
 
 export interface IUser {
-  _id?:  Types.ObjectId|string;
+  _id?: Types.ObjectId | string;
   username?: string;
   email: string;
   phone?: number;
@@ -11,18 +11,22 @@ export interface IUser {
   isBlocked?: boolean;
   fullName?: string;
   dob?: Date;
-  gender?: 'male' | 'female' ;
- profileImage?: {
+  gender?: 'male' | 'female';
+  profileImage?: {
     url: string;
     public_id: string;
   };
-    bio?: string;
- links?: {
+  coverImage?: {
+    url: string;
+    public_id: string;
+  };
+  bio?: string;
+  links?: {
     platform: string;
     url: string;
   }[];
   followers?: string[];
-following?: string[];
+  following?: string[];
 
   interests?: string[];
   address?: {
@@ -34,5 +38,7 @@ following?: string[];
   };
   googleId?: string;
   isGoogleUser?: boolean;
+  profileVisibility?: 'public' | 'followers-only' | 'private';
+  publicFields?: string[];
 
 }

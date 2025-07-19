@@ -33,14 +33,18 @@ const UserSchema = new Schema<IUserDocument>({
     type: Boolean,
     default: false
   },
-  
+
   fullName: { type: String },
   dob: { type: Date },
   gender: { type: String, enum: ['male', 'female'] },
-    profileImage: {
-  url: { type: String, required: false },
-  public_id: { type: String, required: false }
-},
+  profileImage: {
+    url: { type: String, required: false },
+    public_id: { type: String, required: false }
+  },
+  coverImage: {
+    url: { type: String, required: false },
+    public_id: { type: String, required: false }
+  },
   bio: { type: String },
   links: [
     {
@@ -48,10 +52,10 @@ const UserSchema = new Schema<IUserDocument>({
       url: { type: String }
     }
   ],
- interests: {
-  type: [String],
-  required: false
-},
+  interests: {
+    type: [String],
+    required: false
+  },
 
   address: {
     street: {
@@ -80,7 +84,18 @@ const UserSchema = new Schema<IUserDocument>({
   isGoogleUser: {
     type: Boolean,
     default: false
-  }
+  },
+
+  profileVisibility: {
+    type: String,
+    enum: ['public', 'followers-only', 'private'],
+    default: 'public',
+  },
+  publicFields: {
+    type: [String],
+    default: ['username', 'bio', 'profileImage'],
+  },
+
 
 },
   {
