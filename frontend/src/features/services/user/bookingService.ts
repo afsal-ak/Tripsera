@@ -1,5 +1,6 @@
 import type { BookingFormSchema } from "@/features/schemas/BookingSchema";
 import userApi from "@/lib/axios/userAxios";
+import type { IBooking } from "@/features/types/IBooking";
 
 
 
@@ -46,4 +47,16 @@ export const verifyRazorpayPayment = async (data: {
 }) => {
   const res = await userApi.post("/booking/verify", data);
   return res.data.success;
+};
+
+
+export const retryBookingPayment = async (bookingId: string): Promise<IBooking> => {
+  const response = await userApi.post(`/retry-payment/${bookingId}`);
+  console.log(response,'retry')
+  return response.data;
+};
+ 
+export const cancelUnpaidBooking = async (bookingId: string): Promise<{ message: string }> => {
+  const response = await userApi.patch(`/payment-cancel/${bookingId}`);
+  return response.data;
 };

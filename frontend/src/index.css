@@ -13,11 +13,11 @@
   --brand-dark: 24 100% 45%;
 }
 
-/* ✅ Use Tailwind class for font */
-body {
+ body {
   @apply font-poppins;
+ 
 }
-
+ 
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -78,7 +78,6 @@ body {
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+  
+  
 }

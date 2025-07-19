@@ -68,11 +68,14 @@ export const BookingSchema = z.object({
     .min(1, "Total amount must be at least 1"),
 
   couponCode: z.string().optional(),
+  discount: z.number().optional(),
   useWallet: z.boolean().optional(),
+   walletAmountUsed:z.number().optional(),
+  amountPaid: z.number().optional(),  
 
-  paymentMethod: z.enum(["razorpay", "wallet"], {
+  paymentMethod: z.enum(["wallet", "razorpay", "wallet+razorpay",''], {
     required_error: "Please select a payment method",
   }),
-});
+})
 
 export type BookingFormSchema = z.infer<typeof BookingSchema>;

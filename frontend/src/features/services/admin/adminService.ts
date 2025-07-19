@@ -8,12 +8,11 @@ export const handleAdminLogin = async (email: string, password: string) => {
       throw new Error("Invalid response format");
     }
 
-    return res.data; // ✅ expected: { admin, accessToken, refreshToken }
-
+    return res.data;  
   } catch (error: any) {
     const message =
       error?.response?.data?.message || error.message || "Login failed";
-    throw new Error(message); // ✅ throw this to handle in Redux or UI
+    throw new Error(message); 
   }
 };
 

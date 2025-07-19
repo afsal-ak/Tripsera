@@ -3,13 +3,12 @@ import Home from "@/features/pages/user/home/Home";
 import Packages from "@/features/pages/user/packages/pages/Packages";
 import PackageDetails from "@/features/pages/user/packages/pages/PackageDetail";
 import { Fragment } from "react/jsx-runtime";
-
-const CommonRoutes = (
+ const CommonRoutes = (
   <Fragment>
     <Route path="/" element={<Home />} />
     <Route path="/packages" element={<Packages />} />
     <Route path="/packages/:id" element={<PackageDetails />} />
-  </Fragment>
+   </Fragment>
 );
 
 export default CommonRoutes;

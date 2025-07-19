@@ -1,9 +1,26 @@
-import { useParams } from "react-router-dom";
+
+import { useParams ,useNavigate} from "react-router-dom";
 import { useEffect, useState } from "react";
+//import { CheckCircle, Calendar, Users, CreditCard, MapPin, Package, Download, Share } from "lucide-react";
+import {
+  CheckCircle,
+  CreditCard,
+  MapPin,
+  Package,
+  Calendar,
+  Users,CheckCircle2
+} from "lucide-react";
+  
+import { Card,CardContent,CardHeader } from "@/features/components/ui/Card";
+import { Button } from "@/features/components/Button";
+import { Badge } from "@/features/components/ui/Badge";
 import type { IBooking } from "@/features/types/IBooking";
 import { getBookingById } from "@/features/services/user/bookingService";
+import travelSuccessImage from "@/assets/travel-success.png";
 
 const BookingSuccessPage = () => {
+     const navigate = useNavigate();
+
   const { id } = useParams();
   const [booking, setBooking] = useState<IBooking | null>(null);
   const [loading, setLoading] = useState(true);
@@ -22,61 +39,90 @@ const BookingSuccessPage = () => {
     if (id) loadBooking();
   }, [id]);
 
-  if (loading) return <div className="text-center py-10 text-gray-500">Loading booking details...</div>;
-  if (!booking) return <div className="text-center py-10 text-red-500">Booking not found.</div>;
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange border-t-transparent mx-auto"></div>
+          <p className="text-muted-foreground font-poppins">Loading your booking details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!booking) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Card className="max-w-md w-full mx-4 shadow-md">
+          <CardContent className="text-center py-8">
+            <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package className="w-8 h-8 text-destructive" />
+            </div>
+            <h2 className="text-xl font-semibold text-foreground mb-2 font-poppins">Booking Not Found</h2>
+            <p className="text-muted-foreground">We couldn't find the booking you're looking for.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg border border-gray-200">
-      <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-green-600">🎉 Booking Confirmed!</h1>
-        <p className="text-gray-500 mt-1">Thank you for your booking. Your details are below:</p>
-      </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4 py-10 text-center">
+      <CheckCircle2 className="text-green-600 w-20 h-20 mb-4" />
+      <h1 className="text-3xl font-semibold text-gray-800 mb-2">Booking Confirmed!</h1>
+      <p className="text-gray-600 mb-6 max-w-md">
+        Thank you for booking <span className="font-medium">{booking.packageId.title}</span>. A confirmation email has been sent. 
+        Below is your booking summary:
+      </p>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 text-sm text-gray-700">
-        <div>
-          <span className="font-medium text-gray-900">Booking ID:</span> <br />
-          <span>{booking._id}</span>
+      <div className="bg-gray-100 w-full max-w-md p-6 rounded-xl shadow-md text-left mb-6">
+        <div className="flex justify-between mb-2">
+          <span className="font-medium text-gray-700">Booking ID:</span>
+          <span className="text-gray-900">{booking.bookingCode}</span>
         </div>
-        <div>
-          <span className="font-medium text-gray-900">Package:</span> <br />
-          <span>{typeof booking.packageId === 'object' ? booking.packageId.title : ''}</span>
-        </div>
-        <div>
-          <span className="font-medium text-gray-900">Travel Date:</span> <br />
-{booking?.travelDate && (
+        <div className="flex justify-between mb-2">
+          <span className="font-medium text-gray-700">Travel Date:</span>
+           {booking?.bookedAt && (
   <span>
-    {new Date(booking.travelDate).toLocaleDateString("en-IN", {
+    {new Date(booking?.bookedAt).toLocaleDateString("en-IN", {
       year: "numeric",
       month: "long",
       day: "numeric",
     })}
   </span>
 )}
+         </div>
+        <div className="flex justify-between mb-2">
+          <span className="font-medium text-gray-700">Travelers:</span>
+          <span className="text-gray-900">{booking.travelers.length}</span>
         </div>
-        <div>
-          <span className="font-medium text-gray-900">Amount Paid:</span> <br />
-          <span>₹{booking.amountPaid}</span>
+        <div className="flex justify-between mb-2">
+          <span className="font-medium text-gray-700">Total Amount:</span>
+          <span className="text-gray-900">₹{booking.totalAmount.toFixed(2)}</span>
+        </div> 
+         <div className="flex justify-between mb-2">
+          <span className="font-medium text-gray-700">Discount:</span>
+          <span className="text-gray-900">₹{booking?.discount!.toFixed(2)}</span>
         </div>
-        <div>
-          <span className="font-medium text-gray-900">Payment Method:</span> <br />
-          <span className="capitalize">{booking.paymentMethod}</span>
+        <div className="flex justify-between mb-2">
+          <span className="font-medium text-gray-700">Amount Paid:</span>
+          <span className="text-green-600 font-semibold">₹{booking.amountPaid.toFixed(2)}</span>
         </div>
-        <div>
-          <span className="font-medium text-gray-900">Booking Status:</span> <br />
-          <span className="capitalize">{booking.bookingStatus}</span>
+        <div className="flex justify-between">
+          <span className="font-medium text-gray-700">Payment Method:</span>
+          <span className="capitalize text-gray-900">{booking.paymentMethod}</span>
         </div>
       </div>
 
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Traveler Details</h3>
-        <ul className="space-y-2 pl-4 list-disc text-sm text-gray-700">
-          {booking.travelers.map((traveler, idx) => (
-            <li key={idx}>
-              {traveler.fullName} ({traveler.gender}, Age: {traveler.age})
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Button
+        className="px-6 py-3 text-base bg"
+        onClick={() => navigate(`/account/my-bookings/${id}`)}
+      >
+        View My Booking
+      </Button>
     </div>
   );
 };

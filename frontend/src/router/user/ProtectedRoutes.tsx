@@ -7,17 +7,19 @@ import EmailOtpPage from "@/features/pages/user/accounts/profile/EmailOtpPage";
 import Wishlist from "@/features/pages/user/accounts/Wishlist";
 import CouponList from "@/features/pages/user/accounts/coupons/CouponList";
 import WalletPage from "@/features/pages/user/accounts/wallet/WalletPage";
-import BookingPage from "@/features/pages/user/booking/BookingPage";
+import CheckoutPage from "@/features/pages/user/booking/CheckoutPage";
 import BookingSuccessPage from "@/features/pages/user/booking/BookingSuccessPage";
 import UserBookingPage from "@/features/pages/user/booking/UserBookingPage";
-import BookingDetailPage from "@/features/pages/user/booking/ViewBookingPage";
+import BookingDetailPage from "@/features/pages/user/booking/BookingDetailPage";
+import PaymentFailed from "@/features/pages/user/booking/PaymentFailed";
 const ProtectedRoutes = (
 
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
-          <Route path="/checkout/:id" element={<BookingPage/>}/>
+          <Route path="/checkout/:id" element={<CheckoutPage/>}/>
           {/* <Route path="/success" element={<BookingSuccessPage/>}/> */}
 <Route path="/booking-success/:id" element={<BookingSuccessPage />} />
+<Route path="/booking-failed/:id" element={<PaymentFailed/>} />
 
        <Route path="/account" element={<AccountLayout/>}>
         <Route path="profile" element={<Profile />} />

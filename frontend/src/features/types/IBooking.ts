@@ -9,6 +9,7 @@ export interface ITraveler {
 
 export interface IBooking {
   _id?: string 
+  bookingCode:string;
  // userId:   string;
   packageId: {
     _id: string;

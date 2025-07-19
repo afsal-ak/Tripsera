@@ -49,6 +49,11 @@ adminApi.interceptors.response.use(
         return adminApi(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem("adminAccessToken");
+         toast.error("Session expired. Please log in again.");
+  setTimeout(() => {
+    window.location.href = "/admin/login";
+  }, 1000);  
+
         return Promise.reject(refreshError);
       }
     }
