@@ -15,7 +15,7 @@ export const upload=multer({
   },
     fileFilter:(_,file,cb)=>{
         const ext=path.extname(file.originalname);
-        if(![".jpg",".jpeg",".png"].includes(ext)){
+        if(![".jpg",".jpeg",".png",".webp"].includes(ext)){
             return cb(new Error('Only .jpg, .jpeg, and .png files are allowed')as any,false)
         }
         cb(null,true)

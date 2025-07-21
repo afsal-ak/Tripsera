@@ -29,6 +29,10 @@ import { BookingUseCases } from "@domain/usecases/admin/bookingUseCases";
 import { MongoBookingRepository } from "@infrastructure/repositories/MongoBookingRepository";
 import { BookingController } from "@presentation/controllers/admin/bookingController";
 
+import { MongoBlogRepository } from "@infrastructure/repositories/MongoBlogRepository";
+import { BlogUseCases } from "@domain/usecases/admin/blogUseCases";
+import { BlogController } from "@presentation/controllers/admin/blogController";
+
 const adminRepository=new MongoUserRepository();
 const otpRepository=new MongoOtpRepository();
 
@@ -59,6 +63,10 @@ const couponController=new CouponController(couponUseCase)
 const bookingRepository=new MongoBookingRepository()
 const bookingUseCase=new BookingUseCases(bookingRepository)
 const bookingController=new BookingController(bookingUseCase)
+
+const blogRepository=new MongoBlogRepository()
+const blogUseCases=new BlogUseCases(blogRepository)
+const blogController=new BlogController(blogUseCases)
 
 
 const router=Router()
@@ -117,6 +125,11 @@ router.get('/booking',adminAuthMiddleware,bookingController.getAllBooking)
 router.get('/booking/:id',adminAuthMiddleware,bookingController.getBookingByIdForAdmin)
 router.patch('/booking/cancel/:id',adminAuthMiddleware,bookingController.cancelBookingByAdmin)
 
+//blog route
+router.get("/blogs", adminAuthMiddleware, blogController.getAllBlogs);
+router.get("/blog/:blogId", adminAuthMiddleware, blogController.getBlogById);
+router.delete("/blog/:blogId", adminAuthMiddleware, blogController.deleteBlog);
+router.patch("/blog/status/:blogId", adminAuthMiddleware, blogController.changeBlogStatus);
 
 
 export default router;

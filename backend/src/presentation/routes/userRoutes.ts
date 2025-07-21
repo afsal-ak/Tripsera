@@ -31,6 +31,11 @@ import { MongoBookingRepository } from "@infrastructure/repositories/MongoBookin
 import { BookingUseCases } from "@domain/usecases/user/bookingUseCases";
 import { BookingController } from "@presentation/controllers/user/bookingController";
 import { RazorpayService } from "@infrastructure/services/razorpay/razorpayService";
+
+import { MongoBlogRepository } from "@infrastructure/repositories/MongoBlogRepository";
+import { BlogUseCases } from "@domain/usecases/user/blogUseCases";
+import { BlogController } from "@presentation/controllers/user/blogControllers";
+
 const walletRepository=new MongoWalletRepository()
 const walletUseCases=new WalletUseCases(walletRepository)
 const walletController=new WalletController(walletUseCases)
@@ -62,6 +67,12 @@ const bookingRepository=new MongoBookingRepository()
 const razorpayService=new RazorpayService()
 const bookingUseCases=new BookingUseCases(bookingRepository,walletRepository,razorpayService)
 const bookingController=new BookingController(bookingUseCases)
+
+const blogRepository=new MongoBlogRepository()
+const blogUseCases=new BlogUseCases(blogRepository)
+const blogController=new BlogController(blogUseCases)
+
+
 const router = Router();
 
 //auth routes
@@ -121,4 +132,22 @@ router.patch("/payment-cancel/:id", userAuthMiddleware, bookingController.cancel
 router.post("/retry-payment/:id", userAuthMiddleware, bookingController.retryBookingPayment);
 
 router.post('/booking/wallet',userAuthMiddleware,bookingController.createBookingWithWalletPayment)
+
+//blog route
+
+
+router.post('/blog/create', userAuthMiddleware, upload.array('images'), blogController.createBlog);
+router.put('/blog/edit/:blogId', userAuthMiddleware, upload.array('images'), blogController.editBlog);
+router.get('/blogs', blogController.getAllPublishedBlogs);
+router.get('/blogs/user',userAuthMiddleware, blogController.getBlogByUser);
+//router.get('/blog/:slug', blogController.getBySlug);
+router.get('/blog/:blogId',userAuthMiddleware, blogController.getBlogById);
+router.delete('/blog/delete/:blogId', userAuthMiddleware, blogController.deleteBlog);
+router.patch('/blog/like/:blogId', userAuthMiddleware, blogController.likeBlog);
+router.patch('/blog/unlike/:blogId', userAuthMiddleware, blogController.unLikeBlog);
+//router.post('/:blogId/comment', userAuthMiddleware, blogController.commentOnBlog);
+//router.delete('/:blogId/comment/:commentId', userAuthMiddleware, blogController.deleteComment);
+//router.post('/:blogId/comment/:commentId/reply', userAuthMiddleware, blogController.replyToComment);
+
+
 export default router;
