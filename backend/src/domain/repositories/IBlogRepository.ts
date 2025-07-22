@@ -1,5 +1,4 @@
 import { IBlog } from "@domain/entities/IBlog";
-import { IComment } from "@domain/entities/IComment";
 export interface IBlogRepository {
     createBlog(userId: string, blogData: IBlog): Promise<IBlog>;
     editBlog(

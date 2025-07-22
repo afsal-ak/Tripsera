@@ -1,6 +1,5 @@
 import { IBlogRepository } from "@domain/repositories/IBlogRepository";
 import { IBlog } from "@domain/entities/IBlog";
-import { IComment } from "@domain/entities/IComment";
 import { deleteImageFromCloudinary } from "@infrastructure/services/cloudinary/cloudinaryService";
 
 export class BlogUseCases {

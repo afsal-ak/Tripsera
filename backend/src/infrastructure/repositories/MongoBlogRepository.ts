@@ -2,7 +2,7 @@ import { IBlog } from "@domain/entities/IBlog";
  
 import { IBlogRepository } from "@domain/repositories/IBlogRepository";
 import { BlogModel } from "@infrastructure/models/Blog";
-import { CommentModel } from "@infrastructure/models/Comment";
+//import { CommentModel } from "@infrastructure/models/Comment";
 import { AppError } from "@shared/utils/AppError";
 import { FilterQuery } from "mongoose";
 
@@ -171,7 +171,7 @@ async blockBlog(blogId: string, block: boolean): Promise<void> {
 }
   async deleteBlog(blogId: string): Promise<void> {
     await BlogModel.findByIdAndDelete(blogId);
-    await CommentModel.deleteMany({ blogId });
+  //  await CommentModel.deleteMany({ blogId });
   }
 
   async changeBlogStatus(blogId: string, isBlocked: boolean): Promise<void> {
