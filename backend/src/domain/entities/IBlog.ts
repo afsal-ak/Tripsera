@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 export interface IBlog {
   _id?: Types.ObjectId | string;
   title: string;
-  //slug?: string;
+  slug?: string;
   content: string;
   coverImage?: {
     url: string;
