@@ -34,7 +34,7 @@ export interface IBlogRepository {
     getBySlug(slug: string): Promise<IBlog | null>;
     deleteBlog(blogId: string): Promise<void>;
     changeBlogStatus(blogId: string, isActive: boolean): Promise<void>;
-    likeBlog(blogId: string, userId: string): Promise<void>;
-    unLikeBlog(blogId: string, userId: string): Promise<void>;
+    likeBlog(blogId: string, userId: string): Promise<IBlog|null>;
+    unLikeBlog(blogId: string, userId: string): Promise<IBlog|null>;
     blockBlog(blogId: string, block: boolean): Promise<void>;
 }

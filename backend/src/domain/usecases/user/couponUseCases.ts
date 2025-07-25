@@ -25,7 +25,8 @@ export class CouponUseCases {
         }
 
         if (coupon.minAmount && totalAmount < coupon.minAmount) {
-            throw new Error(`Minimum amount should be ₹${coupon.minAmount}`);
+            console.log(coupon.minAmount,'min')
+            throw new Error(`Minimum total amount should be ₹${coupon.minAmount}`);
         }
 
         let discount = 0;

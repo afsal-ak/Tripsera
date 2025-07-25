@@ -15,14 +15,18 @@ export class BlogUseCases {
         existingImages: { public_id: string }[],
         newImages: { url: string; public_id: string }[]
     ): Promise<IBlog | null> {
-
-        const oldImages = blogData.images || [];
-        
+const blog = await this.blogRepo.getBlogById(blogId);
+  if (!blog){
+     throw new Error("blog not found");
+  }
+        const oldImages = blog.images || [];
+        console.log(oldImages,'old')
           //  Find which images to delete (not included in existingImages)
           const deletedImages = oldImages.filter(
             oldImg => !existingImages.some(img => img.public_id === oldImg.public_id)
           );
-        
+        console.log(deletedImages,'deleted images')
+     //   console.log(deletedImages?.public_id!,'deleted images')
           //  Delete them from Cloudinary
           for (const img of deletedImages) {
             await deleteImageFromCloudinary(img.public_id);
@@ -38,7 +42,7 @@ export class BlogUseCases {
         return await this.blogRepo.getBlogById(blogId);
     }
     async getBlogByUser(userId: string, page: number, limit: number) {
-        console.log(userId,'userId')
+       // console.log(userId,'userId')
         return await this.blogRepo.getBlogByUser(userId, page, limit);
     }
 
@@ -74,11 +78,11 @@ export class BlogUseCases {
         return await this.blogRepo.getBySlug(slug);
     }
 
-    async likeBlog(blogId: string, userId: string): Promise<void> {
+    async likeBlog(blogId: string, userId: string): Promise<IBlog|null> {
         return await this.blogRepo.likeBlog(blogId, userId);
     }
 
-    async unLikeBlog(blogId: string, userId: string): Promise<void> {
+    async unLikeBlog(blogId: string, userId: string): Promise<IBlog|null> {
         return await this.blogRepo.unLikeBlog(blogId, userId);
     }
 

@@ -140,7 +140,11 @@ router.post('/blog/create', userAuthMiddleware, upload.array('images'), blogCont
 router.put('/blog/edit/:blogId', userAuthMiddleware, upload.array('images'), blogController.editBlog);
 router.get('/blogs', blogController.getAllPublishedBlogs);
 router.get('/blogs/user',userAuthMiddleware, blogController.getBlogByUser);
+<<<<<<< Updated upstream
 //router.get('/blog/:slug', blogController.getBySlug);
+=======
+router.get('/blog/slug/:slug',userAuthMiddleware,blogController.getBySlug);
+>>>>>>> Stashed changes
 router.get('/blog/:blogId',userAuthMiddleware, blogController.getBlogById);
 router.delete('/blog/delete/:blogId', userAuthMiddleware, blogController.deleteBlog);
 router.patch('/blog/like/:blogId', userAuthMiddleware, blogController.likeBlog);
