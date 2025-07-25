@@ -221,7 +221,7 @@ const CheckoutPage = () => {
 
         if (verified) {
           toast.success("Payment successful!");
-          navigate(`/booking-success/${booking.bookingCode}`);
+          navigate(`/booking-success/${booking._id}`);
         } else {
           toast.error("Payment verification failed.");
         }
