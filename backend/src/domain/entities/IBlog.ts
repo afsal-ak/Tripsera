@@ -15,7 +15,7 @@ export interface IBlog {
   //userId: Types.ObjectId | string;
   //isPublished?: boolean;
   likes?: (Types.ObjectId | string)[];
-   status: 'draft' | 'published' | 'archived';
+  status: 'draft' | 'published' | 'archived';
   isBlocked?: boolean;
   createdAt?: Date;
   updatedAt?: Date;

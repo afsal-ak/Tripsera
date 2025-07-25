@@ -1,6 +1,5 @@
 // src/types/express.d.ts
-import { IUser } from "@domain/entities/IUser";
-import { IUserPreview } from "@domain/entities/IUserPreview ";
+import { IUser } from '@domain/entities/IUser';
 declare global {
   namespace Express {
     interface Request {

@@ -1,37 +1,35 @@
-import mongoose,{Schema,Document,model} from "mongoose";
-import { IOTP } from "@domain/entities/IOTP";
+import { Schema, Document, model } from 'mongoose';
+import { IOTP } from '@domain/entities/IOTP';
 
-export interface IOtpDocument extends IOTP,Document{}
+export interface IOtpDocument extends IOTP, Document {}
 
-const OtpSchema=new Schema<IOtpDocument>({
-    email:{
-        type:String,
-        required:true
-    },
-    username: { 
-        type: String,
-         required: false 
-        },
-  password: { 
-    type: String, 
-    required: false 
-},
-    otp:{
-        type:String,
-        required:true
-    },
-    attempts: {
-         type: Number,
-          default: 0
-         },
-    createdAt:{
-        type:Date,
-        default:Date.now
-    },
-     expiresAt: { type: Date, required: true }
-
-})
-
+const OtpSchema = new Schema<IOtpDocument>({
+  email: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: false,
+  },
+  password: {
+    type: String,
+    required: false,
+  },
+  otp: {
+    type: String,
+    required: true,
+  },
+  attempts: {
+    type: Number,
+    default: 0,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  expiresAt: { type: Date, required: true },
+});
 
 // TTL index to auto-delete expired OTPs
 OtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });

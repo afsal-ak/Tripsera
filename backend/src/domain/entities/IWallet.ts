@@ -1,7 +1,7 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface IWalletTransaction {
-  type: "credit" | "debit";
+  type: 'credit' | 'debit';
   amount: number;
   description?: string;
   createdAt: Date;

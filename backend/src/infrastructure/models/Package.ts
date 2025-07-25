@@ -1,13 +1,12 @@
-
-import mongoose, { Schema, Document } from "mongoose";
-import { IPackage } from "@domain/entities/IPackage";
+import mongoose, { Schema, Document } from 'mongoose';
+import { IPackage } from '@domain/entities/IPackage';
 
 // Offer Schema
 const offerSchema = new Schema(
   {
     type: {
       type: String,
-      enum: ["percentage", "flat"],
+      enum: ['percentage', 'flat'],
       required: true,
     },
     value: {
@@ -32,8 +31,8 @@ const locationSchema = new Schema(
     geo: {
       type: {
         type: String,
-        enum: ["Point"],
-        default: "Point",
+        enum: ['Point'],
+        default: 'Point',
         required: true,
       },
       coordinates: {
@@ -73,7 +72,7 @@ const packageSchema = new Schema(
     category: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Category",
+        ref: 'Category',
         required: true,
       },
     ],
@@ -103,9 +102,6 @@ const packageSchema = new Schema(
 );
 
 // Add 2dsphere index for geo queries
-packageSchema.index({ "location.geo": "2dsphere" });
+packageSchema.index({ 'location.geo': '2dsphere' });
 
-export const PackageModel = mongoose.model<IPackage & Document>(
-  "Package",
-  packageSchema
-);
+export const PackageModel = mongoose.model<IPackage & Document>('Package', packageSchema);

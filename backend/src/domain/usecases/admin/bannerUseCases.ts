@@ -1,51 +1,46 @@
-import { IBannerRepository } from "@domain/repositories/IBannerRepository";
-import { IBanner } from "@domain/entities/IBanner";
+import { IBannerRepository } from '@domain/repositories/IBannerRepository';
+import { IBanner } from '@domain/entities/IBanner';
 
+export class BannerMangementUseCases {
+  constructor(private bannerRepository: IBannerRepository) {}
 
-export class BannerMangementUseCases{
-    constructor(
-        private bannerRepository:IBannerRepository
-    ){}
+  async createNewBanner(banner: IBanner): Promise<IBanner> {
+    return await this.bannerRepository.createBanner(banner);
+  }
 
-    // async createNewBanner(title:string,description:string,  image: { url: string; public_id: string }):Promise<IBanner>{
-    //     return await this.bannerRepository.createBanner({title,description,image})
-    // }
-    // usecases/BannerManagementUseCases.ts
-async createNewBanner(banner: IBanner): Promise<IBanner> {
-  return await this.bannerRepository.createBanner(banner);
-}
+  async getBanners(
+    page: number,
+    limit: number
+  ): Promise<{
+    banners: IBanner[];
+    totalBanner: number;
+    totalPages: number;
+  }> {
+    const skip = (page - 1) * limit;
+    const [banners, totalBanner] = await Promise.all([
+      this.bannerRepository.getAllBanners(skip, limit),
+      this.bannerRepository.countDocument(),
+    ]);
 
-    async getBanners(page:number,limit:number):Promise<{
-        banners:IBanner[];
-        totalBanner:number;
-        totalPages:number
-    }>{
-        const skip=(page-1)*limit
-        const[banners,totalBanner]=await Promise.all([
-            this.bannerRepository.getAllBanners(skip,limit),
-            this.bannerRepository.countDocument()
-        ])
+    return {
+      banners,
+      totalBanner,
+      totalPages: Math.ceil(totalBanner / limit),
+    };
+  }
 
-        return {
-            banners,
-            totalBanner,
-            totalPages:Math.ceil(totalBanner/limit)
-        }
-    }
+  async getActiveBanners(): Promise<IBanner[]> {
+    return await this.bannerRepository.getAllActiveBanners();
+  }
 
-    async getActiveBanners():Promise<IBanner[]>{
-        return await this.bannerRepository.getAllActiveBanners()
-    }
+  async blockBanner(bannerId: string): Promise<void> {
+    await this.bannerRepository.blockBanner(bannerId);
+  }
+  async unblockBanner(bannerId: string): Promise<void> {
+    await this.bannerRepository.unblockBanner(bannerId);
+  }
 
-
-     async blockBanner(bannerId:string):Promise<void>{
-        await this.bannerRepository.blockBanner(bannerId)
-    }
-     async unblockBanner(bannerId:string):Promise<void>{
-        await this.bannerRepository.unblockBanner(bannerId)
-    }
-
-    async deleteBanner(bannerId:string):Promise<void>{
-        await this.bannerRepository.deleteBanner(bannerId)
-    }
+  async deleteBanner(bannerId: string): Promise<void> {
+    await this.bannerRepository.deleteBanner(bannerId);
+  }
 }

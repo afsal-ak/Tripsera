@@ -1,86 +1,76 @@
-import { ICouponRepository } from "@domain/repositories/ICouponRepository";
-import { ICoupon } from "@domain/entities/ICoupon";
-import { CouponModel } from "@infrastructure/models/Coupon";
+import { ICouponRepository } from '@domain/repositories/ICouponRepository';
+import { ICoupon } from '@domain/entities/ICoupon';
+import { CouponModel } from '@infrastructure/models/Coupon';
 
 export class MongoCouponRepository implements ICouponRepository {
-
-    async createCoupon(couponData: ICoupon): Promise<ICoupon> {
-        const isCodeExiting = await CouponModel.findOne({ code: new RegExp(`^${couponData.code}$`, 'i') });
-        if (isCodeExiting) {
-            throw new Error("Coupon Code already exists");
-        }
-        const newCoupon = await CouponModel.create(couponData)
-        return newCoupon.toObject();
-
+  async createCoupon(couponData: ICoupon): Promise<ICoupon> {
+    const isCodeExiting = await CouponModel.findOne({
+      code: new RegExp(`^${couponData.code}$`, 'i'),
+    });
+    if (isCodeExiting) {
+      throw new Error('Coupon Code already exists');
     }
+    const newCoupon = await CouponModel.create(couponData);
+    return newCoupon.toObject();
+  }
 
-    async getAllCoupons(page: number, limit: number): Promise<{ coupons: ICoupon[]; total: number; }> {
-        const skip=(page-1)*limit
+  async getAllCoupons(page: number, limit: number): Promise<{ coupons: ICoupon[]; total: number }> {
+    const skip = (page - 1) * limit;
 
-        const [coupons,total]=await Promise.all([
-            CouponModel.find()
-            .skip(skip)
-            .limit(limit)
-            .sort({createdAt:-1})
-            .lean(),
+    const [coupons, total] = await Promise.all([
+      CouponModel.find().skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
 
-            CouponModel.countDocuments()
-        ])
+      CouponModel.countDocuments(),
+    ]);
 
-        return {coupons,total}
+    return { coupons, total };
+  }
 
+  async getActiveCoupons(
+    page: number,
+    limit: number
+  ): Promise<{ coupons: ICoupon[]; total: number }> {
+    const skip = (page - 1) * limit;
+
+    const [coupons, total] = await Promise.all([
+      CouponModel.find({ isActive: true }).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+      CouponModel.countDocuments(),
+    ]);
+
+    return { coupons, total };
+  }
+
+  async getCouponById(id: string): Promise<ICoupon | null> {
+    const coupon = await CouponModel.findById(id);
+    return coupon ? coupon.toObject() : null;
+  }
+
+  async getCouponByCode(code: string): Promise<ICoupon | null> {
+    return await CouponModel.findOne({ code: code });
+  }
+  async editCoupon(id: string, couponData: Partial<ICoupon>): Promise<ICoupon | null> {
+    if (couponData.code) {
+      const isCodeExiting = await CouponModel.findOne({
+        _id: { $ne: id },
+        code: new RegExp(`^${couponData.code}$`, 'i'),
+      });
+      if (isCodeExiting) {
+        throw new Error('Coupon Code already exists');
+      }
     }
+    const updatedCoupon = await CouponModel.findByIdAndUpdate(id, couponData, {
+      new: true,
+      runValidators: true,
+    }).lean();
 
-    async getActiveCoupons(page: number, limit: number): Promise<{ coupons: ICoupon[]; total: number; }> {
-        const skip=(page-1)*limit
+    return updatedCoupon;
+  }
 
-        const [coupons,total]=await Promise.all([
-            CouponModel.find({isActive:true})
-            .skip(skip)
-            .limit(limit)
-            .sort({createdAt:-1})
-            .lean(),
-            CouponModel.countDocuments()
-        ])
+  async updateCouponStatus(id: string, isActive: boolean): Promise<void> {
+    await CouponModel.findByIdAndUpdate(id, { isActive });
+  }
 
-        return {coupons,total}
-    }
-
-    async getCouponById(id: string): Promise<ICoupon | null> {
-        const coupon = await CouponModel.findById(id);
-        return coupon ? coupon.toObject() : null;
-    }
-
-    async getCouponByCode(code: string): Promise<ICoupon | null> {
-        return await CouponModel.findOne({ code: code })
-    }
-    async editCoupon(id: string, couponData: Partial<ICoupon>): Promise<ICoupon | null> {
-        if (couponData.code) {
-            const isCodeExiting = await CouponModel.findOne({
-                _id: { $ne: id },
-                code: new RegExp(`^${couponData.code}$`, 'i')
-
-            })
-            if (isCodeExiting) {
-                throw new Error("Coupon Code already exists");
-            }
-
-        }
-        const updatedCoupon = await CouponModel.findByIdAndUpdate(id, couponData, {
-            new: true,
-            runValidators: true
-        }).lean();
-
-        return updatedCoupon;
-
-    }
-
-    async updateCouponStatus(id: string, isActive: boolean): Promise<void> {
-        await CouponModel.findByIdAndUpdate(id, { isActive });
-    }
-
-    async deleteCoupon(id: string): Promise<void> {
-        await CouponModel.findByIdAndDelete(id);
-    }
-
+  async deleteCoupon(id: string): Promise<void> {
+    await CouponModel.findByIdAndDelete(id);
+  }
 }

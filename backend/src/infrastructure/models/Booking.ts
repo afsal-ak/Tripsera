@@ -1,72 +1,70 @@
-import mongoose, { Schema, model, Document } from "mongoose";
-import { IBooking } from "@domain/entities/IBooking";
- 
-interface IBookingDocument extends   Omit<IBooking, '_id'>, Document {
-      _id: mongoose.Types.ObjectId;
+import mongoose, { Schema, model, Document } from 'mongoose';
+import { IBooking } from '@domain/entities/IBooking';
 
+interface IBookingDocument extends Omit<IBooking, '_id'>, Document {
+  _id: mongoose.Types.ObjectId;
 }
 const TravelerSchema = new Schema(
   {
     fullName: { type: String, required: true },
     age: { type: Number, required: true },
-    gender: { type: String, enum: ["male", "female", "other"], required: true },
-    id: { type: String, required: true }
+    gender: { type: String, enum: ['male', 'female', 'other'], required: true },
+    id: { type: String, required: true },
   },
   { _id: false }
 );
 
-
-const BookingSchema = new Schema<IBookingDocument>({
-  bookingCode:{
-    type:String,
-    required:true,
-    unique:true
-  },
-    userId: { type: Schema.Types.ObjectId, ref: "Users", required: true },
-    packageId: { type: Schema.Types.ObjectId, ref: "Package", required: true },
-       travelers: {
-         type: [TravelerSchema],
-          required: true 
-        },
+const BookingSchema = new Schema<IBookingDocument>(
+  {
+    bookingCode: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    userId: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
+    packageId: { type: Schema.Types.ObjectId, ref: 'Package', required: true },
+    travelers: {
+      type: [TravelerSchema],
+      required: true,
+    },
 
     totalAmount: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     discount: {
-        type: Number,
-        default: 0
+      type: Number,
+      default: 0,
     },
     couponCode: { type: String },
     paymentMethod: {
-        type: String,
-        enum: ["razorpay", "wallet","wallet+razorpay"],
-        required: true
+      type: String,
+      enum: ['razorpay', 'wallet', 'wallet+razorpay'],
+      required: true,
     },
     paymentStatus: {
-        type: String,
-        enum: ["paid", "pending", "failed"],
-        default: "pending"
+      type: String,
+      enum: ['paid', 'pending', 'failed'],
+      default: 'pending',
     },
     bookingStatus: {
-        type: String,
-        enum: ["confirmed","booked", "cancelled","pending"],
-        default: "pending"
+      type: String,
+      enum: ['confirmed', 'booked', 'cancelled', 'pending'],
+      default: 'pending',
     },
     walletUsed: {
-  type: Number,
-  default: 0,
-}, 
-  walletAmountUsed: {
-  type: Number,
-  default: 0,
-},
-amountPaid: {
-  type: Number,
-  required: true,
-},
+      type: Number,
+      default: 0,
+    },
+    walletAmountUsed: {
+      type: Number,
+      default: 0,
+    },
+    amountPaid: {
+      type: Number,
+      required: true,
+    },
 
-    
     cancelReason: { type: String },
     contactDetails: {
       name: { type: String, required: true },
@@ -75,18 +73,20 @@ amountPaid: {
       email: { type: String, required: true },
     },
     razorpay: {
-        orderId: { type: String },
-        paymentId: { type: String },
-        signature: { type: String },
+      orderId: { type: String },
+      paymentId: { type: String },
+      signature: { type: String },
     },
     bookedAt: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now,
     },
     travelDate: {
-        type: Date,
-        required: true
+      type: Date,
+      required: true,
     },
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
-export const BookingModel = model<IBookingDocument>("Booking", BookingSchema);
+export const BookingModel = model<IBookingDocument>('Booking', BookingSchema);

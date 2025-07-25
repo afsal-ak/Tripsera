@@ -1,30 +1,30 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface ITraveler {
   fullName: string;
   age: number;
-  gender: "male" | "female" | "other";
-  id:string
+  gender: 'male' | 'female' | 'other';
+  id: string;
 }
 
 export interface IBooking {
   _id?: string | Types.ObjectId;
-  bookingCode:string;
+  bookingCode: string;
   userId: Types.ObjectId | string;
   packageId: Types.ObjectId | string;
-    travelers: ITraveler[];
+  travelers: ITraveler[];
 
   totalAmount: number;
   discount?: number;
   couponCode?: string;
-  paymentMethod: "razorpay" | "wallet"|"wallet+razorpay";
-  paymentStatus: "paid" | "pending" | "failed";
-  bookingStatus: "confirmed"|"booked" | "cancelled" |"pending";
+  paymentMethod: 'razorpay' | 'wallet' | 'wallet+razorpay';
+  paymentStatus: 'paid' | 'pending' | 'failed';
+  bookingStatus: 'confirmed' | 'booked' | 'cancelled' | 'pending';
   cancelReason?: string;
-  walletUsed?:number;
-    walletAmountUsed?:number;
-amountPaid:number;
- contactDetails: {
+  walletUsed?: number;
+  walletAmountUsed?: number;
+  amountPaid: number;
+  contactDetails: {
     name: string;
     phone: string;
     alternatePhone?: string;
@@ -35,8 +35,8 @@ amountPaid:number;
     paymentId?: string;
     signature?: string;
   };
-  createdAt:Date;
-  updatedAt:Date;
+  createdAt: Date;
+  updatedAt: Date;
   bookedAt?: Date;
   travelDate?: Date;
 }

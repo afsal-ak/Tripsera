@@ -1,9 +1,8 @@
-import { IBlogRepository } from "@domain/repositories/IBlogRepository";
-
+import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 
 export class BlogUseCases {
   constructor(private blogRepository: IBlogRepository) {}
- async getAllBlogs(
+  async getAllBlogs(
     page: number,
     limit: number,
     filters?: {
@@ -26,7 +25,6 @@ export class BlogUseCases {
     await this.blogRepository.changeBlogStatus(blogId, isBlocked);
   }
 
- 
   async getBlogById(blogId: string) {
     return await this.blogRepository.getBlogById(blogId);
   }

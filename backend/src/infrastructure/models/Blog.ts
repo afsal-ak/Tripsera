@@ -6,11 +6,10 @@ interface BlogDocument extends Omit<IBlog, '_id'>, Document {
   _id: mongoose.Types.ObjectId;
 }
 
-
 const BlogSchema = new Schema<BlogDocument>(
   {
     title: { type: String, required: true },
-    slug: { type: String,  unique: true },
+    slug: { type: String, unique: true },
     content: { type: String, required: true },
     coverImage: {
       url: String,
@@ -24,19 +23,17 @@ const BlogSchema = new Schema<BlogDocument>(
     ],
     tags: [{ type: String }],
     author: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
-    //   userId: { type: Schema.Types.ObjectId, ref: "Users", required: true },
-   
-     status: {
+
+    status: {
       type: String,
-      enum: ["draft", "published", "archived"],
-      default: "draft",
+      enum: ['draft', 'published', 'archived'],
+      default: 'draft',
     },
     isBlocked: {
       type: Boolean,
       default: false,
     },
     likes: [{ type: Schema.Types.ObjectId, ref: 'Users' }],
-
   },
   { timestamps: true }
 );

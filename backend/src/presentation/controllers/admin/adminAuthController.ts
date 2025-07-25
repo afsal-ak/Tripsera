@@ -1,6 +1,6 @@
-import { Request,Response } from "express";
-import { AdminAuthUseCases } from "@domain/usecases/admin/adminAuthUseCases";
-import { IUser } from "@domain/entities/IUser";
+import { Request, Response } from 'express';
+import { AdminAuthUseCases } from '@domain/usecases/admin/adminAuthUseCases';
+import { IUser } from '@domain/entities/IUser';
 
 export class AdminAuthController {
   constructor(private adminAuthUseCases: AdminAuthUseCases) {}
@@ -8,27 +8,27 @@ export class AdminAuthController {
   adminLogin = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password } = req.body;
-      const { admin, accessToken, refreshToken } =
-        await this.adminAuthUseCases.adminLogin(email, password);
-//console.log(req.body,'admin')
+      const { admin, accessToken, refreshToken } = await this.adminAuthUseCases.adminLogin(
+        email,
+        password
+      );
       res.cookie('adminRefreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        path:'/',
-
+        path: '/',
       });
 
-  console.log(req.cookies,'k')
-console.log({accessToken,refreshToken})
+      console.log(req.cookies, 'k');
+      console.log({ accessToken, refreshToken });
       res.status(200).json({
         message: 'Login successful',
         admin,
         accessToken,
-       });
+      });
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       res.status(401).json({ message: error.message });
     }
   };
@@ -54,18 +54,17 @@ console.log({accessToken,refreshToken})
     }
   };
 
-  adminLogout=async(req:Request,res:Response):Promise<void>=>{
-  try {
-     res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "none",
-    });
+  adminLogout = async (req: Request, res: Response): Promise<void> => {
+    try {
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'none',
+      });
 
-    res.status(200).json({ message: "Admin logout successful" });
-  } catch (error:any) {
-    res.status(401).json({message:error.message})
-  }
-}
-
+      res.status(200).json({ message: 'Admin logout successful' });
+    } catch (error: any) {
+      res.status(401).json({ message: error.message });
+    }
+  };
 }

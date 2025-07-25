@@ -1,18 +1,18 @@
-import mongoose, { model, Document, Schema } from "mongoose";
-import { IWishlist } from "@domain/entities/IWishlist";
+import mongoose, { model, Document, Schema } from 'mongoose';
+import { IWishlist } from '@domain/entities/IWishlist';
 
- export interface IWishlistDocument extends IWishlist, Document {}
+export interface IWishlistDocument extends IWishlist, Document {}
 
 const wishlistSchema = new Schema<IWishlistDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     packageId: {
       type: Schema.Types.ObjectId,
-      ref: "Package",
+      ref: 'Package',
       required: true,
     },
     addedAt: {
@@ -25,5 +25,4 @@ const wishlistSchema = new Schema<IWishlistDocument>(
   }
 );
 
-  
- export const WishlistModel = model<IWishlistDocument>("Wishlist", wishlistSchema);
+export const WishlistModel = model<IWishlistDocument>('Wishlist', wishlistSchema);

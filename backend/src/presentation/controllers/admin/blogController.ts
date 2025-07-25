@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { BlogUseCases } from "@domain/usecases/admin/blogUseCases";
+import { Request, Response, NextFunction } from 'express';
+import { BlogUseCases } from '@domain/usecases/admin/blogUseCases';
 
 export class BlogController {
   constructor(private blogUseCases: BlogUseCases) {}
@@ -15,11 +15,11 @@ export class BlogController {
         startDate: req.query.startDate as string,
         endDate: req.query.endDate as string,
         authorUsername: req.query.authorUsername as string,
-        tags: req.query.tags ? (req.query.tags as string).split(",") : undefined,
+        tags: req.query.tags ? (req.query.tags as string).split(',') : undefined,
       };
 
       const result = await this.blogUseCases.getAllBlogs(page, limit, filters);
-      res.status(200).json({result,message:'blog fetched successfully'});
+      res.status(200).json({ result, message: 'blog fetched successfully' });
     } catch (error) {
       next(error);
     }
@@ -29,8 +29,8 @@ export class BlogController {
     try {
       const blogId = req.params.blogId;
       const blog = await this.blogUseCases.getBlogById(blogId);
-     
-      res.status(200).json({blog,message:'blog fetched successfully'});
+
+      res.status(200).json({ blog, message: 'blog fetched successfully' });
     } catch (error) {
       next(error);
     }
@@ -40,7 +40,7 @@ export class BlogController {
     try {
       const blogId = req.params.blogId;
       await this.blogUseCases.deleteBlog(blogId);
-      res.status(200).json({ message: "Blog deleted successfully" });
+      res.status(200).json({ message: 'Blog deleted successfully' });
     } catch (error) {
       next(error);
     }
@@ -51,7 +51,7 @@ export class BlogController {
       const blogId = req.params.blogId;
       const { isBlocked } = req.body;
       await this.blogUseCases.changeBlogStatus(blogId, isBlocked);
-      res.status(200).json({ message: "Blog status updated" });
+      res.status(200).json({ message: 'Blog status updated' });
     } catch (error) {
       next(error);
     }

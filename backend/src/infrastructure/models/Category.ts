@@ -1,18 +1,19 @@
-import mongoose, { Schema } from "mongoose";
-import { ICategory } from "@domain/entities/ICategory";
+import mongoose, { Schema } from 'mongoose';
+import { ICategory } from '@domain/entities/ICategory';
 
-const categorySchema=new Schema<ICategory>({
-    name:{
-        type:String,
-        required:true,
-        unique:true
+const categorySchema = new Schema<ICategory>(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    isBlocked:{
-        type:Boolean,
-        default:false
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
-    
-},  { timestamps: true }
-)
+  },
+  { timestamps: true }
+);
 
 export const categoryModel = mongoose.model<ICategory>('Category', categorySchema);

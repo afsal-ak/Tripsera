@@ -1,8 +1,7 @@
-
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface GeoPoint {
-  type: "Point";
+  type: 'Point';
   coordinates: [number, number]; // [lng, lat]
 }
 
@@ -11,7 +10,7 @@ export interface ILocation {
   geo: GeoPoint;
 }
 
-export type OfferType = "percentage" | "flat";
+export type OfferType = 'percentage' | 'flat';
 
 export interface IOffer {
   type: OfferType;

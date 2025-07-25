@@ -1,6 +1,4 @@
-import { IOTP } from "@domain/entities/IOTP";
-
-
+import { IOTP } from '@domain/entities/IOTP';
 
 export interface IOtpRepository {
   saveOtp(data: IOTP): Promise<void>;

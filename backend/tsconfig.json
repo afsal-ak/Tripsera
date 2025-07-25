@@ -10,9 +10,9 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "baseUrl": "./src",
-   // "typeRoots": ["./node_modules/@types", "./src/types"],
+    // "typeRoots": ["./node_modules/@types", "./src/types"],
     //   "typeRoots": ["./node_modules/@types", "./src/types"],
-"typeRoots": ["./src/types", "./node_modules/@types"],
+    "typeRoots": ["./src/types", "./node_modules/@types"],
 
     "paths": {
       "@domain/*": ["domain/*"],

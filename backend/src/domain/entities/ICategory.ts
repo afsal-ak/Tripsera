@@ -1,7 +1,7 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
-export interface ICategory{
-    _id?:  Types.ObjectId|string;
-    name:string;
-     isBlocked:boolean
+export interface ICategory {
+  _id?: Types.ObjectId | string;
+  name: string;
+  isBlocked: boolean;
 }

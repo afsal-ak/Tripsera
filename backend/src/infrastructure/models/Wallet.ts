@@ -1,13 +1,13 @@
-import mongoose, { Schema, model, Document } from "mongoose";
-import { IWallet, IWalletTransaction } from "@domain/entities/IWallet";
+import mongoose, { Schema, model, Document } from 'mongoose';
+import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
 
- export interface IWalletDocument extends IWallet, Document {}
+export interface IWalletDocument extends IWallet, Document {}
 
 const WalletTransactionSchema = new Schema<IWalletTransaction>(
   {
     type: {
       type: String,
-      enum: ["credit", "debit"],
+      enum: ['credit', 'debit'],
       required: true,
     },
     amount: {
@@ -25,31 +25,29 @@ const WalletTransactionSchema = new Schema<IWalletTransaction>(
   { _id: true }
 );
 
- const WalletSchema = new Schema<IWalletDocument>(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-      unique: true,
-    },
-    balance: {
-      type: Number,
-      default: 0,
-    },
-    transactions: {
-      type: [WalletTransactionSchema],
-      default: [],
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
-  }
-);
+const WalletSchema = new Schema<IWalletDocument>({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true,
+  },
+  balance: {
+    type: Number,
+    default: 0,
+  },
+  transactions: {
+    type: [WalletTransactionSchema],
+    default: [],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
- export const WalletModel = model<IWalletDocument>("Wallet", WalletSchema);
+export const WalletModel = model<IWalletDocument>('Wallet', WalletSchema);

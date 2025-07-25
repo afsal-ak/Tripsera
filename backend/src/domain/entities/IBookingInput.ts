@@ -1,28 +1,27 @@
-
 export interface IBookingInput {
-  bookingCode:string;
+  bookingCode: string;
   packageId: string;
   travelDate: Date;
   travelers: {
     fullName: string;
     age: number;
-    gender: "male" | "female" | "other";
+    gender: 'male' | 'female' | 'other';
     id: string;
   }[];
   contactDetails: {
     name: string;
     phone: string;
     alternatePhone?: string;
-     email: string;
+    email: string;
   };
   totalAmount: number;
   discount?: number;
   couponCode?: string;
   walletUsed?: number;
-  walletAmountUsed?:number;
+  walletAmountUsed?: number;
   amountPaid: number;
-  paymentMethod?: "wallet" | "razorpay" | "wallet+razorpay";
-  
+  paymentMethod?: 'wallet' | 'razorpay' | 'wallet+razorpay';
+
   razorpay?: {
     orderId?: string;
     paymentId?: string;

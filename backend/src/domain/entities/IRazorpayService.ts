@@ -1,5 +1,8 @@
 export interface IRazorpayService {
-  createOrder(amount: number, receipt: string): Promise<{
+  createOrder(
+    amount: number,
+    receipt: string
+  ): Promise<{
     id: string;
     amount: number;
     currency: string;
