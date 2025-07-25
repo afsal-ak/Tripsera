@@ -184,10 +184,6 @@ async getAllPublishedBlogs(
   }
 
   const [blogs, totalBlogs] = await Promise.all([
-<<<<<<< Updated upstream
-    BlogModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
-    BlogModel.countDocuments(query),
-=======
 BlogModel.find(query)
     .skip(skip)
     .limit(limit)
@@ -198,7 +194,6 @@ BlogModel.find(query)
     })
     .lean(),
      BlogModel.countDocuments(query),
->>>>>>> Stashed changes
   ]);
 
   return { blogs, totalBlogs };
@@ -206,18 +201,8 @@ BlogModel.find(query)
 
 
   async getBySlug(slug: string): Promise<IBlog | null> {
-<<<<<<< Updated upstream
-    return await BlogModel.findOne({ slug }).lean();
-  }
-
-  async likeBlog(blogId: string, userId: string): Promise<void> {
-    await BlogModel.findByIdAndUpdate(blogId, {
-      $addToSet: { likes: userId },
-    });
-=======
     return await BlogModel.findOne({ slug, status: 'published', isBlocked: false })
     .populate('author', 'username profileImage').lean();
->>>>>>> Stashed changes
   }
   async likeBlog(blogId: string, userId: string): Promise<IBlog | null> {
   const updatedBlog = await BlogModel.findByIdAndUpdate(
