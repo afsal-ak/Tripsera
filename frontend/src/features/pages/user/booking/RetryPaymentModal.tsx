@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { cancelUnpaidBooking, retryBookingPayment } from "@/features/services/user/bookingService";
-import { useRazorpayPayment } from "@/features/hooks/initiateRazorpayPayment";
-import type { IBooking } from "@/features/types/IBooking";
-import { Dialog, DialogContent } from "@/features/components/ui/Dialog";
-import { Button } from "@/features/components/Button";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { cancelUnpaidBooking, retryBookingPayment } from '@/features/services/user/bookingService';
+import { useRazorpayPayment } from '@/features/hooks/initiateRazorpayPayment';
+import type { IBooking } from '@/features/types/IBooking';
+import { Dialog, DialogContent } from '@/features/components/ui/Dialog';
+import { Button } from '@/features/components/Button';
+import { toast } from 'sonner';
 
- interface RetryPaymentModalProps {
+interface RetryPaymentModalProps {
   open: boolean;
   onClose: () => void;
   bookingId: string;
@@ -26,35 +26,34 @@ export const RetryPaymentModal: React.FC<RetryPaymentModalProps> = ({
   onRetrySuccess,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
- const { initiateRazorpayPayment } = useRazorpayPayment();
+  const { initiateRazorpayPayment } = useRazorpayPayment();
 
   const handleRetryPayment = async () => {
     try {
-      const razorpayOrderData:any= await retryBookingPayment(bookingId);
-    //  const razorpayOrder = updatedBooking.razorpay?.orderId;
-       const { booking, razorpayOrder } = razorpayOrderData;
-
+      const razorpayOrderData: any = await retryBookingPayment(bookingId);
+      //  const razorpayOrder = updatedBooking.razorpay?.orderId;
+      const { booking, razorpayOrder } = razorpayOrderData;
 
       // Use prefill from props
       initiateRazorpayPayment(razorpayOrder, booking, prefill);
 
       onRetrySuccess(booking);
     } catch (error: any) {
-      console.error("Retry payment failed", error?.response || error);
-      toast.error("Retry failed. Please try again.");
+      console.error('Retry payment failed', error?.response || error);
+      toast.error('Retry failed. Please try again.');
     }
   };
 
   const handleCancelBooking = async () => {
     setLoading(true);
-    setError("");
+    setError('');
     try {
       await cancelUnpaidBooking(bookingId);
       onClose();
     } catch (err: any) {
-      setError(err.response?.data?.message || "Cancellation failed");
+      setError(err.response?.data?.message || 'Cancellation failed');
     } finally {
       setLoading(false);
     }
@@ -72,7 +71,7 @@ export const RetryPaymentModal: React.FC<RetryPaymentModalProps> = ({
             Cancel Booking
           </Button>
           <Button onClick={handleRetryPayment} disabled={loading}>
-            {loading ? "Processing..." : "Retry Payment"}
+            {loading ? 'Processing...' : 'Retry Payment'}
           </Button>
         </div>
       </DialogContent>

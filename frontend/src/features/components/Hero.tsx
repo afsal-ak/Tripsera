@@ -1,27 +1,27 @@
- import { Button } from "./Button";
-import { ArrowRight, Play, MapPin } from "lucide-react";
-import type { IBanner } from "../types/homeTypes";
-interface Props{
-  banners:IBanner[]
+import { Button } from './Button';
+import { ArrowRight, Play, MapPin } from 'lucide-react';
+import type { IBanner } from '../types/homeTypes';
+interface Props {
+  banners: IBanner[];
 }
 
-const Hero = ({banners}:Props) => {
+const Hero = ({ banners }: Props) => {
   // console.log(banners,'banner')
-console.log("First Banner:", banners[0]); // Safe access
- 
-const bannerImage =
-  banners && banners.length > 0
-    ? banners[0].image.url
-    : 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
+  console.log('First Banner:', banners[0]); // Safe access
+
+  const bannerImage =
+    banners && banners.length > 0
+      ? banners[0].image.url
+      : 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
 
   return (
     <section className="relative h-[600px] bg-gradient-to-r from-orange/10 to-orange/5 flex items-center">
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
         style={{
-       //    backgroundImage: "url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')"
-          backgroundImage:`url('${bannerImage}')`,
-      }}
+          //    backgroundImage: "url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')"
+          backgroundImage: `url('${bannerImage}')`,
+        }}
       />
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-2xl animate-fade-in">
@@ -30,18 +30,23 @@ const bannerImage =
             <span className="text-muted-foreground">Explore the World</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-            Discover Your Next 
+            Discover Your Next
             <span className="text-orange block">Adventure</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Explore breathtaking destinations, create unforgettable memories, and embark on journeys that will change your perspective forever.
+            Explore breathtaking destinations, create unforgettable memories, and embark on journeys
+            that will change your perspective forever.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button size="lg" className="bg-orange hover:bg-orange-dark text-white px-8 py-3">
               Explore Packages
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
-            <Button size="lg" variant="outline" className="border-orange text-orange hover:bg-orange hover:text-white px-8 py-3">
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-orange text-orange hover:bg-orange hover:text-white px-8 py-3"
+            >
               <Play className="w-4 h-4 mr-2" />
               Watch Video
             </Button>

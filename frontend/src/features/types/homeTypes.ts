@@ -7,17 +7,16 @@
 //     public_id: string;
 //   };
 // }
- 
 
-export interface IBanner{
-    _id?:string;
-    title:string;
-    description?:string;
- image: {
+export interface IBanner {
+  _id?: string;
+  title: string;
+  description?: string;
+  image: {
     url: string;
     public_id: string;
   };
-  isBlocked?:boolean    
+  isBlocked?: boolean;
 }
 export interface IPackage {
   _id: string;

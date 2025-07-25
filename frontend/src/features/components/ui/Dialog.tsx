@@ -1,6 +1,6 @@
-import * as React from "react";
-import * as RadixDialog from "@radix-ui/react-dialog";
-import { cn } from "@/lib/utils"; // or replace with your own classNames() helper
+import * as React from 'react';
+import * as RadixDialog from '@radix-ui/react-dialog';
+import { cn } from '@/lib/utils'; // or replace with your own classNames() helper
 
 export const Dialog = RadixDialog.Root;
 
@@ -15,7 +15,7 @@ export const DialogContent = React.forwardRef<
     <RadixDialog.Content
       ref={ref}
       className={cn(
-        "fixed z-50 left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg focus:outline-none",
+        'fixed z-50 left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg focus:outline-none',
         className
       )}
       {...props}
@@ -24,4 +24,4 @@ export const DialogContent = React.forwardRef<
     </RadixDialog.Content>
   </RadixDialog.Portal>
 ));
-DialogContent.displayName = "DialogContent";
+DialogContent.displayName = 'DialogContent';

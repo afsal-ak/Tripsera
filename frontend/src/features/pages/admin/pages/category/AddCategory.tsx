@@ -1,33 +1,33 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardContent, CardTitle } from "@/features/components/ui/Card";
-import { Input } from "@/features/components/ui/Input";
-import { Label } from "@/features/components/ui/Lable";
-import { Button } from "@/features/components/Button";
-import { createCategory } from "@/features/services/admin/categoryService";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardHeader, CardContent, CardTitle } from '@/features/components/ui/Card';
+import { Input } from '@/features/components/ui/Input';
+import { Label } from '@/features/components/ui/Lable';
+import { Button } from '@/features/components/Button';
+import { createCategory } from '@/features/services/admin/categoryService';
+import { toast } from 'sonner';
 
 const AddCategory = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [status, setStatus] = useState("active");
+  const [name, setName] = useState('');
+  const [status, setStatus] = useState('active');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
       name: name.trim().toLowerCase(),
-      isBlocked: status === "blocked",
+      isBlocked: status === 'blocked',
     };
 
-    if (!payload.name) return toast.error("Name is required");
+    if (!payload.name) return toast.error('Name is required');
 
     try {
       await createCategory(payload);
-      toast.success("Category created");
-      navigate("/admin/categories");
-    } catch (error:any) {
-      const message = error?.response?.data?.message || "Failed to create category";
-        toast.error(message);
+      toast.success('Category created');
+      navigate('/admin/categories');
+    } catch (error: any) {
+      const message = error?.response?.data?.message || 'Failed to create category';
+      toast.error(message);
     }
   };
 
@@ -44,13 +44,17 @@ const AddCategory = () => {
           </div>
           <div>
             <Label>Status</Label>
-            <select value={status} onChange={(e) => setStatus(e.target.value)} className="border rounded p-2 w-full">
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="border rounded p-2 w-full"
+            >
               <option value="active">Active</option>
               <option value="blocked">Blocked</option>
             </select>
           </div>
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => navigate("/admin/categories")}>
+            <Button type="button" variant="outline" onClick={() => navigate('/admin/categories')}>
               Cancel
             </Button>
             <Button type="submit">Create</Button>

@@ -1,16 +1,16 @@
-import { Button } from "@/features/components/Button";
-import { cn } from "@/lib/utils";
-import { 
+import { Button } from '@/features/components/Button';
+import { cn } from '@/lib/utils';
+import {
   LayoutDashboard,
-   X, 
-   Table,
-   User,
-   Image ,
-   Briefcase,
-   FolderKanban,
+  X,
+  Table,
+  User,
+  Image,
+  Briefcase,
+  FolderKanban,
   BadgePercent,
- } from "lucide-react";
-import { NavLink } from "react-router-dom";
+} from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -19,43 +19,35 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
   const menuItems = [
-    { path: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { path: "users", label: "Users", icon: User },
-    { path: "categories", label: "Categories", icon: FolderKanban  },
-    { path: "banners", label: "Banners", icon: Image  },
-    { path: "packages", label: "Packages", icon: Briefcase  },
-    { path: "coupons", label: "Coupons", icon: BadgePercent  },
-    { path: "bookings", label: "Bookings", icon: Table  },
-    { path: "blogs", label: "Blogs", icon: Table  },
+    { path: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: 'users', label: 'Users', icon: User },
+    { path: 'categories', label: 'Categories', icon: FolderKanban },
+    { path: 'banners', label: 'Banners', icon: Image },
+    { path: 'packages', label: 'Packages', icon: Briefcase },
+    { path: 'coupons', label: 'Coupons', icon: BadgePercent },
+    { path: 'bookings', label: 'Bookings', icon: Table },
+    { path: 'blogs', label: 'Blogs', icon: Table },
   ];
 
   return (
     <>
       {/* Overlay for mobile */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={onToggle}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={onToggle} />
       )}
 
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out",
-          isOpen ? "translate-x-0" : "-translate-x-full",
-          "lg:translate-x-0"
+          'fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
+          'lg:translate-x-0'
         )}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-bold text-orange">Admin Panel</h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggle}
-            className="lg:hidden"
-          >
+          <Button variant="ghost" size="icon" onClick={onToggle} className="lg:hidden">
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -69,10 +61,8 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                   to={`/admin/${path}`}
                   className={({ isActive }) =>
                     cn(
-                      "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-                      isActive
-                        ? "bg-orange text-white"
-                        : "hover:bg-orange/10 hover:text-orange"
+                      'w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium',
+                      isActive ? 'bg-orange text-white' : 'hover:bg-orange/10 hover:text-orange'
                     )
                   }
                   onClick={() => {

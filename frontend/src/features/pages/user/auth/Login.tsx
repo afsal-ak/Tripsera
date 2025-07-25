@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '@/redux/slices/userAuthSlice';
@@ -10,9 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { loading, error, isAuthenticated } = useSelector(
-    (state: RootState) => state.userAuth
-  );
+  const { loading, error, isAuthenticated } = useSelector((state: RootState) => state.userAuth);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +17,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-       //   console.log(isAuthenticated,'isAuth')
+      //   console.log(isAuthenticated,'isAuth')
 
       navigate('/home');
     }
@@ -35,14 +32,14 @@ const Login = () => {
       return;
     }
 
-    setLocalError(''); 
+    setLocalError('');
 
     try {
       await dispatch(loginUser({ email: trimmedEmail, password: trimmedPassword })).unwrap();
-       toast.success("Login successful"); 
-    } catch (err:any) {
-      console.error("Login error (handled in Redux):", err);
-      toast.error(err)
+      toast.success('Login successful');
+    } catch (err: any) {
+      console.error('Login error (handled in Redux):', err);
+      toast.error(err);
     }
   };
 
@@ -54,7 +51,8 @@ const Login = () => {
           <div className="text-center text-white">
             <h2 className="text-3xl font-bold mb-4">Welcome Back to Picnigo</h2>
             <p className="text-base leading-relaxed">
-              Discover unforgettable journeys, explore breathtaking destinations, and turn your travel dreams into reality. Your next adventure starts here!
+              Discover unforgettable journeys, explore breathtaking destinations, and turn your
+              travel dreams into reality. Your next adventure starts here!
             </p>
           </div>
         </div>
@@ -68,23 +66,17 @@ const Login = () => {
               handleSubmit();
             }}
           >
-            <h2 className="text-2xl font-bold text-orange mb-6 text-center">
-              Login to Picnigo
-            </h2>
+            <h2 className="text-2xl font-bold text-orange mb-6 text-center">Login to Picnigo</h2>
 
             {(localError || error) && (
-              <p className="text-sm text-red-500 mb-4 text-center">
-                {localError || error}
-              </p>
+              <p className="text-sm text-red-500 mb-4 text-center">{localError || error}</p>
             )}
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-foreground mb-1">
-                Email
-              </label>
+              <label className="block text-sm font-medium text-foreground mb-1">Email</label>
               <input
                 type="email"
-                name='email'
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange"
@@ -93,9 +85,7 @@ const Login = () => {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-foreground mb-1">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-foreground mb-1">Password</label>
               <input
                 type="password"
                 value={password}
@@ -103,34 +93,30 @@ const Login = () => {
                 className="w-full border border-border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange"
                 placeholder="Enter your password"
               />
-               <div className="mb-6 text-right">
-  <Link to="/forgot-password" className="text-sm text-orange hover:underline">
-    Forgot your password?
-  </Link>
-</div>
+              <div className="mb-6 text-right">
+                <Link to="/forgot-password" className="text-sm text-orange hover:underline">
+                  Forgot your password?
+                </Link>
+              </div>
             </div>
 
+            <button
+              type="submit"
+              className="w-full bg-orange text-white py-2 rounded hover:bg-orange-dark transition"
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+            <div className="my-4 text-center text-sm text-muted-foreground">or</div>
+            <div className="w-64 mx-auto flex items-center justify-center py-2 rounded  transition">
+              <GoogleLoginButton />
+            </div>
 
-<button
-  type="submit"
-  className="w-full bg-orange text-white py-2 rounded hover:bg-orange-dark transition"
->
-  {loading ? 'Logging in...' : 'Login'}
-</button>
-  <div className="my-4 text-center text-sm text-muted-foreground">
-  or
-</div>
-<div className="w-64 mx-auto flex items-center justify-center py-2 rounded  transition">
-  <GoogleLoginButton />
-</div>
-
-  <p className="mt-4 text-sm text-center text-muted-foreground">
-  Don’t have an account?{' '}
-  <Link to="/signup" className="text-orange hover:underline">
-    Signup
-  </Link>
-</p>
-
+            <p className="mt-4 text-sm text-center text-muted-foreground">
+              Don’t have an account?{' '}
+              <Link to="/signup" className="text-orange hover:underline">
+                Signup
+              </Link>
+            </p>
           </form>
         </div>
       </div>

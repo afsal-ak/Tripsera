@@ -1,32 +1,36 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
-import { Edit } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Edit } from 'lucide-react';
 
-import { Button } from "@/features/components/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/features/components/ui/Card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/features/components/ui/Table";
-import { ConfirmDialog } from "@/features/components/ui/ConfirmDialog";
-import { usePaginationButtons } from "@/features/hooks/usePaginationButtons";
+import { Button } from '@/features/components/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/features/components/ui/Card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/features/components/ui/Table';
+import { usePaginationButtons } from '@/features/hooks/usePaginationButtons';
 
-import { getUserBooking } from "@/features/services/user/bookingService";
+import { getUserBooking } from '@/features/services/user/bookingService';
 
-import type { IBooking } from "@/features/types/IBooking";
+import type { IBooking } from '@/features/types/IBooking';
 const UserBookingPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [bookings, setBookings] = useState<IBooking[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
- 
-     const currentPage = parseInt(searchParams.get("page") || "1", 10);
-   const limit = parseInt(searchParams.get("limit") || "10", 10);
+
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '10', 10);
 
   const handlePageChange = (page: number) => {
     setSearchParams({ page: page.toString(), limit: limit.toString() });
   };
-
-  
 
   const paginationButtons = usePaginationButtons({
     currentPage,
@@ -34,17 +38,16 @@ const UserBookingPage = () => {
     onPageChange: handlePageChange,
   });
 
-
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        const response = await getUserBooking(currentPage, limit); 
-      //  console.log(response,'jj')
-         setBookings(response.bookings);
+        const response = await getUserBooking(currentPage, limit);
+        //  console.log(response,'jj')
+        setBookings(response.bookings);
         setTotalPages(response.totalPages);
       } catch (error) {
-        toast.error("Failed to fetch bookings.");
+        toast.error('Failed to fetch bookings.');
       } finally {
         setLoading(false);
       }
@@ -52,8 +55,8 @@ const UserBookingPage = () => {
 
     fetchBookings();
   }, [currentPage]);
-console.log(bookings,totalPages)
- 
+  console.log(bookings, totalPages);
+
   return (
     <div className="p-4 space-y-6">
       <Card>
@@ -70,7 +73,7 @@ console.log(bookings,totalPages)
                   <TableHead>Amount Paid</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Travel Date</TableHead>
-                 </TableRow>
+                </TableRow>
               </TableHeader>
               <TableBody>
                 {bookings.length === 0 ? (
@@ -82,54 +85,53 @@ console.log(bookings,totalPages)
                 ) : (
                   bookings.map((booking) => (
                     <TableRow key={booking._id}>
-
-                
-                       <TableCell>
-          <div className="flex items-center gap-3">
-            <img
-              src={
-                booking.packageId.imageUrls?.[0]?.url.replace("/upload/", "/upload/f_auto,q_auto/") ||
-                "/placeholder.jpg"
-              }
-              alt={booking.packageId.title}
-              className="h-16 w-24 object-cover rounded"
-            />
-            <div>
-              <div className="font-semibold">{booking.packageId.title}</div>
-              {/* <div className="text-xs text-muted-foreground">
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={
+                              booking.packageId.imageUrls?.[0]?.url.replace(
+                                '/upload/',
+                                '/upload/f_auto,q_auto/'
+                              ) || '/placeholder.jpg'
+                            }
+                            alt={booking.packageId.title}
+                            className="h-16 w-24 object-cover rounded"
+                          />
+                          <div>
+                            <div className="font-semibold">{booking.packageId.title}</div>
+                            {/* <div className="text-xs text-muted-foreground">
                 {new Date(booking.travelDate).toLocaleDateString()}
               </div> */}
-            </div>
-          </div>
-        </TableCell>
+                          </div>
+                        </div>
+                      </TableCell>
 
-                 
-                
-                                    <TableCell>{booking.travelers.length}</TableCell>
+                      <TableCell>{booking.travelers.length}</TableCell>
                       <TableCell>₹{booking.amountPaid}</TableCell>
                       <TableCell>
                         <span
                           className={`font-medium ${
-                            booking.bookingStatus === "confirmed"
-                              ? "text-green-600"
-                              : booking.bookingStatus === "pending"
-                              ? "text-yellow-600"
-                              : "text-red-600"
+                            booking.bookingStatus === 'confirmed'
+                              ? 'text-green-600'
+                              : booking.bookingStatus === 'pending'
+                                ? 'text-yellow-600'
+                                : 'text-red-600'
                           }`}
                         >
                           {booking.bookingStatus}
                         </span>
                       </TableCell>
-                      <TableCell>{booking?.travelDate && (
-  <span>
-    {new Date(booking.travelDate).toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })}
-  </span>
-)}
-</TableCell>
+                      <TableCell>
+                        {booking?.travelDate && (
+                          <span>
+                            {new Date(booking.travelDate).toLocaleDateString('en-IN', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </span>
+                        )}
+                      </TableCell>
                       <TableCell>
                         <Button
                           size="sm"
@@ -146,10 +148,10 @@ console.log(bookings,totalPages)
             </Table>
           </div>
 
- <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
-    {paginationButtons}
-    </div>
-            </CardContent>
+          <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
+            {paginationButtons}
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

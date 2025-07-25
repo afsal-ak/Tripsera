@@ -172,12 +172,12 @@
 // };
 
 // export default ImageCropper;
-import React, { useState, useCallback } from "react";
-import Cropper from "react-easy-crop";
-import type { Area } from "react-easy-crop";
-import { getCroppedImg } from "@/lib/utils/cropUtils";
-import { Button } from "@/features/components/Button";
-import imageCompression from "browser-image-compression";
+import React, { useState, useCallback } from 'react';
+import Cropper from 'react-easy-crop';
+import type { Area } from 'react-easy-crop';
+import { getCroppedImg } from '@/lib/utils/cropUtils';
+import { Button } from '@/features/components/Button';
+import imageCompression from 'browser-image-compression';
 
 interface Props {
   image: string;
@@ -190,12 +190,9 @@ const ImageCropper: React.FC<Props> = ({ image, onCropComplete, onCancel }) => {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
-  const onCropCompleteCallback = useCallback(
-    (_croppedArea: Area, croppedPixels: Area) => {
-      setCroppedAreaPixels(croppedPixels);
-    },
-    []
-  );
+  const onCropCompleteCallback = useCallback((_croppedArea: Area, croppedPixels: Area) => {
+    setCroppedAreaPixels(croppedPixels);
+  }, []);
 
   const handleDone = async () => {
     try {
@@ -209,7 +206,7 @@ const ImageCropper: React.FC<Props> = ({ image, onCropComplete, onCancel }) => {
         useWebWorker: true,
       });
 
-      const compressedFile = new File([compressedBlob], file.name || "cropped.jpg", {
+      const compressedFile = new File([compressedBlob], file.name || 'cropped.jpg', {
         type: compressedBlob.type,
       });
 
@@ -219,7 +216,7 @@ const ImageCropper: React.FC<Props> = ({ image, onCropComplete, onCancel }) => {
 
       onCropComplete(compressedFile, previewUrl);
     } catch (e) {
-      console.error("Crop failed:", e);
+      console.error('Crop failed:', e);
     }
   };
 

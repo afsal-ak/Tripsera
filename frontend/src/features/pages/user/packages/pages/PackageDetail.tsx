@@ -1,107 +1,110 @@
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-import { useParams,Link,useSearchParams, useNavigate } from "react-router-dom";
-import { useState,useEffect } from "react";
+import { Button } from '@/features/components/Button';
+import { Badge } from '@/features/components/ui/Badge';
+import { Star, MapPin, Clock, Calendar, Check, Heart, Share2 } from 'lucide-react';
+import { Card, CardContent } from '@/features/components/ui/Card';
 
-import { Button } from "@/features/components/Button";
-import { Badge } from "@/features/components/ui/Badge"
-import { Star, MapPin, Clock, Users, Calendar, Check, Heart,HeartOff , Share2 } from "lucide-react";
-import { Card,CardContent } from "@/features/components/ui/Card";
-
-import type { IPackage } from "@/features/types/IPackage";
-import { fetchPackgeById } from "@/features/services/user/PackageService"; 
-import { getCategory } from "@/features/services/admin/packageService";
-import { addToWishlist,deleteFromWishlist ,checkPackageInWishlist} from "@/features/services/user/wishlistService";
-import { toast } from "sonner";
- const PackageDetails = () => {
- 
-
+import type { IPackage } from '@/features/types/IPackage';
+import { fetchPackgeById } from '@/features/services/user/PackageService';
+import { getCategory } from '@/features/services/admin/packageService';
+import {
+  addToWishlist,
+  deleteFromWishlist,
+  checkPackageInWishlist,
+} from '@/features/services/user/wishlistService';
+import { toast } from 'sonner';
+const PackageDetails = () => {
   const { id } = useParams();
-const [pkg, setPkg] = useState<IPackage | null>(null);
-const [loading,setLoading]=useState(false)
-const [category,setCategory]=useState([])
-const [isWishlisted,setWishlisted]=useState(false)
-   const [selectedImage, setSelectedImage] = useState(0);
+  const [pkg, setPkg] = useState<IPackage | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [isWishlisted, setWishlisted] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
   const [wishListParams, setWishlistParams] = useSearchParams();
 
-   useEffect(()=>{
-    const loadCat=async()=>{
+  useEffect(() => {
+    const loadCat = async () => {
       try {
-           const cat=await getCategory()
-           setCategory(cat)
+        const cat = await getCategory();
+        setCategory(cat);
       } catch (error) {
         console.log(error);
-        
-      }
-    }
-    loadCat()
-
-   },[])
-
-  useEffect(()=>{
-    const loadPackage=async()=>{
-      if(!id){
-        return
-      }
-      try {
-        const data=await fetchPackgeById(id)
-        const checkWishlist=await checkPackageInWishlist(id)
-     //   console.log(checkWishlist.result,'check')
-        setPkg(data)
-        setWishlisted(checkWishlist.result)
-      } catch (error) {
-        console.error("Failed to fetch package details", error);
-
       }
     };
-    loadPackage()
-   },[id])
+    loadCat();
+  }, []);
 
+  useEffect(() => {
+    const loadPackage = async () => {
+      if (!id) {
+        return;
+      }
+      try {
+        const data = await fetchPackgeById(id);
+        const checkWishlist = await checkPackageInWishlist(id);
+        //   console.log(checkWishlist.result,'check')
+        setPkg(data);
+        setWishlisted(checkWishlist.result);
+      } catch (error) {
+        console.error('Failed to fetch package details', error);
+      }
+    };
+    loadPackage();
+  }, [id]);
 
+  const handleWishlist = async () => {
+    if (!id || loading) return;
+    setLoading(true);
 
-const handleWishlist = async () => {
-  if (!id || loading) return;
-  setLoading(true);
-
-  try {
-    if (isWishlisted) {
-      await deleteFromWishlist(id);
-      toast.success("Removed from wishlist!");
-    } else {
-      await addToWishlist(id);
-      toast.success("Added to wishlist!");
+    try {
+      if (isWishlisted) {
+        await deleteFromWishlist(id);
+        toast.success('Removed from wishlist!');
+      } else {
+        await addToWishlist(id);
+        toast.success('Added to wishlist!');
+      }
+      setWishlisted((prev) => !prev);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
     }
-    setWishlisted((prev) => !prev);
-  } catch (error:any) {
-    toast.error(error?.response?.data?.message||"Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
- const navigate=useNavigate()
- 
-    const handleClick=()=>{
-    navigate(`/checkout/${pkg?._id}`)
+  };
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/checkout/${pkg?._id}`);
+  };
+
+  if (!pkg) {
+    return <div className="h-screen flex items-center justify-center">Loading...</div>;
   }
 
- if (!pkg) {
-  return <div className="h-screen flex items-center justify-center">Loading...</div>;
-}
-
-   const imageObjects = pkg.imageUrls ?? [];
-  const allImages = imageObjects.map((imgObj) => imgObj.url.replace("/upload","/upload/f_auto,q_auto"));
-  const currentImage = allImages[selectedImage] ?? "/fallback.jpg";
-  const locationLabel = pkg.location?.map((l) => l.name).join(", ") ?? "Unknown";
+  const imageObjects = pkg.imageUrls ?? [];
+  const allImages = imageObjects.map((imgObj) =>
+    imgObj.url.replace('/upload', '/upload/f_auto,q_auto')
+  );
+  const currentImage = allImages[selectedImage] ?? '/fallback.jpg';
+  const locationLabel = pkg.location?.map((l) => l.name).join(', ') ?? 'Unknown';
 
   return (
     <div className="min-h-screen bg-background">
-        {/* Hero Section with Image Gallery */}
+      {/* Hero Section with Image Gallery */}
       <div className="bg-white">
         <div className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <div className="text-sm text-muted-foreground mb-6">
-            <span><Link to='/home'>Home</Link>
-            </span> / <span><Link to='/packages'>Packges</Link></span>
-             / <span className="text-foreground">{pkg.title}</span>
+            <span>
+              <Link to="/home">Home</Link>
+            </span>{' '}
+            /{' '}
+            <span>
+              <Link to="/packages">Packges</Link>
+            </span>
+            / <span className="text-foreground">{pkg.title}</span>
           </div>
 
           {/* Title and Actions */}
@@ -122,73 +125,79 @@ const handleWishlist = async () => {
               </div>
             </div>
             <div className="flex items-center gap-3 mt-4 md:mt-0">
-              <Button variant="outline" size="icon" className="border-orange text-orange hover:bg-orange hover:text-white">
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-orange text-orange hover:bg-orange hover:text-white"
+              >
                 <Share2 className="w-4 h-4" />
               </Button>
-              
+
               {/* <Button onClick={handleAddToWishlist}
               variant="outline" size="icon" className="border-orange text-orange hover:bg-orange hover:text-white">
                 <Heart className="w-4 h-4" />
               </Button> */}
-      <Button
-  onClick={handleWishlist}
-  disabled={loading}
-  variant={isWishlisted ? "default" : "outline"}
-  size="icon"
-  className={
-    isWishlisted
-      ? "bg-orange text-white hover:bg-orange/90"
-      : "border-orange text-orange hover:bg-orange hover:text-white"
-  }
->
-  <Heart className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""}`} />
-</Button>
-
+              <Button
+                onClick={handleWishlist}
+                disabled={loading}
+                variant={isWishlisted ? 'default' : 'outline'}
+                size="icon"
+                className={
+                  isWishlisted
+                    ? 'bg-orange text-white hover:bg-orange/90'
+                    : 'border-orange text-orange hover:bg-orange hover:text-white'
+                }
+              >
+                <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
+              </Button>
             </div>
           </div>
-{/* Image Gallery */}
-<div className="w-full  max-w-7xl  mx-auto mb-10">
-  <div className="flex flex-col items-center gap-4">
-       {/*  Image Gallery */}
-          <div className="w-full max-w-7xl mx-auto mb-10">
+          {/* Image Gallery */}
+          <div className="w-full  max-w-7xl  mx-auto mb-10">
             <div className="flex flex-col items-center gap-4">
-              {/* Main Image */}
-              <div className="w-full h-[600px] md:h-[500px] rounded-xl overflow-hidden relative">
-                <img
-                  src={currentImage}
-                  alt={`Image ${selectedImage + 1}`}
-                  className="w-full h-full object-cover transition-all duration-300"
-                />
-                <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 text-sm rounded-lg">
-                  {selectedImage + 1} / {allImages.length}
+              {/*  Image Gallery */}
+              <div className="w-full max-w-7xl mx-auto mb-10">
+                <div className="flex flex-col items-center gap-4">
+                  {/* Main Image */}
+                  <div className="w-full h-[600px] md:h-[500px] rounded-xl overflow-hidden relative">
+                    <img
+                      src={currentImage}
+                      alt={`Image ${selectedImage + 1}`}
+                      className="w-full h-full object-cover transition-all duration-300"
+                    />
+                    <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 text-sm rounded-lg">
+                      {selectedImage + 1} / {allImages.length}
+                    </div>
+                  </div>
+
+                  {/* Thumbnails */}
+                  <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 w-full">
+                    {allImages.map((image, index) => {
+                      const isSelected = selectedImage === index;
+                      return (
+                        <div
+                          key={index}
+                          onClick={() => setSelectedImage(index)}
+                          className={`relative h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${
+                            isSelected ? 'ring-2 ring-orange ring-offset-2' : 'hover:opacity-80'
+                          }`}
+                        >
+                          <img
+                            src={image}
+                            alt={`Thumbnail ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          {isSelected && <div className="absolute inset-0 bg-orange/20" />}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-
-              {/* Thumbnails */}
-              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 w-full">
-                {allImages.map((image, index) => {
-                  const isSelected = selectedImage === index;
-                  return (
-                    <div
-                      key={index}
-                      onClick={() => setSelectedImage(index)}
-                      className={`relative h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${
-                        isSelected ? "ring-2 ring-orange ring-offset-2" : "hover:opacity-80"
-                      }`}
-                    >
-                      <img src={image} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
-                      {isSelected && <div className="absolute inset-0 bg-orange/20" />}
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           </div>
-  </div>
-</div>
-</div>
-</div>
-
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -220,14 +229,19 @@ const handleWishlist = async () => {
               <h2 className="text-2xl font-bold text-foreground mb-6">Day by Day Itinerary</h2>
               <div className="space-y-4">
                 {pkg.itinerary?.map((day, index) => (
-                  <Card key={index} className="border-l-4 border-l-orange hover:shadow-md transition-shadow">
+                  <Card
+                    key={index}
+                    className="border-l-4 border-l-orange hover:shadow-md transition-shadow"
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-start space-x-4">
                         <div className="bg-orange text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
                           {day.day}
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-foreground mb-3">{day.title}</h3>
+                          <h3 className="text-xl font-semibold text-foreground mb-3">
+                            {day.title}
+                          </h3>
                           <ul className="text-muted-foreground space-y-2">
                             {day.activities.map((activity, actIndex) => (
                               <li key={actIndex} className="flex items-center">
@@ -246,7 +260,9 @@ const handleWishlist = async () => {
 
             {/* What's Included */}
             <section className="bg-white rounded-xl p-8 shadow-sm border">
-              <h2 className="text-2xl font-bold text-foreground mb-6">What's Included & Not Included</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-6">
+                What's Included & Not Included
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-green-600 flex items-center">
@@ -299,11 +315,11 @@ const handleWishlist = async () => {
                       <span className="text-sm font-medium">Duration</span>
                     </div>
                     <span className="text-sm font-semibold">{pkg.duration}</span>
-                  {/* </div>
+                    {/* </div>
                   <div className="flex items-center justify-between py-3 border-b">
                     <div className="flex items-center">
                       <Users className="w-4 h-4 text-orange mr-3" /> */}
-                      {/* <span className="text-sm font-medium">Max People</span> */}
+                    {/* <span className="text-sm font-medium">Max People</span> */}
                     {/* </div> */}
                     {/* <span className="text-sm font-semibold">{pkg.maxPeople}</span> */}
                   </div>
@@ -317,10 +333,16 @@ const handleWishlist = async () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Button onClick={handleClick} className="w-full bg-orange hover:bg-orange-dark text-white py-3 text-lg font-semibold">
+                  <Button
+                    onClick={handleClick}
+                    className="w-full bg-orange hover:bg-orange-dark text-white py-3 text-lg font-semibold"
+                  >
                     Book Now
                   </Button>
-                  <Button variant="outline" className="w-full border-orange text-orange hover:bg-orange hover:text-white py-3">
+                  <Button
+                    variant="outline"
+                    className="w-full border-orange text-orange hover:bg-orange hover:text-white py-3"
+                  >
                     Contact Us
                   </Button>
                 </div>
@@ -354,8 +376,7 @@ const handleWishlist = async () => {
           </div>
         </div>
       </div>
-
-     </div>
+    </div>
   );
 };
 

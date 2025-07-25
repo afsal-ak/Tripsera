@@ -1,4 +1,4 @@
-import { Button } from "@/features/components/Button";
+import { Button } from '@/features/components/Button';
 
 interface UsePaginationButtonsProps {
   currentPage: number;
@@ -32,7 +32,7 @@ export const usePaginationButtons = ({
     buttons.push(
       <Button
         key={i}
-        variant={i === currentPage ? "default" : "outline"}
+        variant={i === currentPage ? 'default' : 'outline'}
         onClick={() => onPageChange(i)}
       >
         {i}
@@ -51,7 +51,7 @@ export const usePaginationButtons = ({
     buttons.push(
       <Button
         key={totalPages}
-        variant={currentPage === totalPages ? "default" : "outline"}
+        variant={currentPage === totalPages ? 'default' : 'outline'}
         onClick={() => onPageChange(totalPages)}
       >
         {totalPages}

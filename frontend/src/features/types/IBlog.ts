@@ -1,6 +1,5 @@
- 
 export interface IBlog {
-  _id?:  string;
+  _id?: string;
   title: string;
   slug?: string;
   content: string;
@@ -13,14 +12,14 @@ export interface IBlog {
   //author: string;
   //userId: Types.ObjectId | string;
   //isPublished?: boolean;
-  likes?:  string[];
-   status: 'draft' | 'published' | 'archived';
-    author: {
+  likes?: string[];
+  status: 'draft' | 'published' | 'archived';
+  author: {
     _id: string;
     username: string;
-    profileImage?:{
-        url:string
-    }
+    profileImage?: {
+      url: string;
+    };
   };
   isBlocked?: boolean;
   createdAt?: Date;

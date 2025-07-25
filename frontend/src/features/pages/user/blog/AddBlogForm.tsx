@@ -1,16 +1,16 @@
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { blogSchema, type BlogFormSchema } from "@/features/schemas/BlogSchema";
-import { useEffect, useState } from "react";
-import { Button } from "@/features/components/Button";
-import { Input } from "@/features/components/ui/Input";
-import { Textarea } from "@/features/components/textarea";
-import { Label } from "@/features/components/ui/Lable";
-import { toast } from "sonner";
-import ImageCropper from "@/features/components/ImageCropper";
-import { handleBlogCreation } from "@/features/services/user/blogService";
-import { useNavigate } from "react-router-dom";
-import { useImageUpload } from "@/features/hooks/useImageUpload";
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { blogSchema, type BlogFormSchema } from '@/features/schemas/BlogSchema';
+import { useEffect, useState } from 'react';
+import { Button } from '@/features/components/Button';
+import { Input } from '@/features/components/ui/Input';
+import { Textarea } from '@/features/components/textarea';
+import { Label } from '@/features/components/ui/Lable';
+import { toast } from 'sonner';
+import ImageCropper from '@/features/components/ImageCropper';
+import { handleBlogCreation } from '@/features/services/user/blogService';
+import { useNavigate } from 'react-router-dom';
+import { useImageUpload } from '@/features/hooks/useImageUpload';
 
 const AddBlogForm = () => {
   const navigate = useNavigate();
@@ -37,17 +37,17 @@ const AddBlogForm = () => {
   } = useForm<BlogFormSchema>({
     resolver: zodResolver(blogSchema),
     defaultValues: {
-      title: "",
-      content: "",
+      title: '',
+      content: '',
       tags: [],
       images: [],
-      status: "draft",
+      status: 'draft',
     },
   });
 
   // keep RHF images in sync with hook state
   useEffect(() => {
-    setValue("images", croppedImages, { shouldValidate: true });
+    setValue('images', croppedImages, { shouldValidate: true });
   }, [croppedImages, setValue]);
 
   const onSubmit = async (data: BlogFormSchema) => {
@@ -55,20 +55,20 @@ const AddBlogForm = () => {
       setIsSubmitting(true);
 
       const formData = new FormData();
-      formData.append("title", data.title.trim());
-      formData.append("content", data.content.trim());
-      formData.append("status", data.status!);
-      data.tags!.forEach((tag) => formData.append("tags", tag.trim()));
-      croppedImages.forEach((file) => formData.append("images", file));
+      formData.append('title', data.title.trim());
+      formData.append('content', data.content.trim());
+      formData.append('status', data.status!);
+      data.tags!.forEach((tag) => formData.append('tags', tag.trim()));
+      croppedImages.forEach((file) => formData.append('images', file));
 
       await handleBlogCreation(formData);
-      toast.success("Blog created successfully!");
-      navigate("/account/my-blogs");
+      toast.success('Blog created successfully!');
+      navigate('/account/my-blogs');
       reset();
       setCroppedImages([]); // reset hook state
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || "Something went wrong.");
+      toast.error(err?.response?.data?.message || 'Something went wrong.');
     } finally {
       setIsSubmitting(false);
     }
@@ -93,13 +93,13 @@ const AddBlogForm = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-xl mx-auto">
           <div>
             <Label>Title</Label>
-            <Input {...register("title")} />
+            <Input {...register('title')} />
             {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
           </div>
 
           <div>
-          <Label>Content</Label>
-            <Textarea {...register("content")} rows={5} />
+            <Label>Content</Label>
+            <Textarea {...register('content')} rows={5} />
             {errors.content && <p className="text-red-500 text-sm">{errors.content.message}</p>}
           </div>
 
@@ -111,8 +111,10 @@ const AddBlogForm = () => {
               render={({ field }) => (
                 <Input
                   placeholder="e.g., travel, beach"
-                  onChange={(e) => field.onChange(e.target.value.split(",").map((tag) => tag.trim()))}
-                  value={field.value!.join(", ")}
+                  onChange={(e) =>
+                    field.onChange(e.target.value.split(',').map((tag) => tag.trim()))
+                  }
+                  value={field.value!.join(', ')}
                 />
               )}
             />
@@ -121,7 +123,7 @@ const AddBlogForm = () => {
 
           <div>
             <Label>Status</Label>
-            <select {...register("status")} className="p-2 border rounded w-full">
+            <select {...register('status')} className="p-2 border rounded w-full">
               <option value="draft">Draft</option>
               <option value="published">Published</option>
               <option value="archived">Archived</option>
@@ -166,7 +168,7 @@ const AddBlogForm = () => {
           </div>
 
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Create Blog"}
+            {isSubmitting ? 'Submitting...' : 'Create Blog'}
           </Button>
         </form>
       )}

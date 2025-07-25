@@ -26,106 +26,105 @@ const AddBannerForm = () => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
- const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-  if (!validTypes.includes(file.type)) {
-    toast.error("Only JPG, PNG, or WEBP images are allowed.");
-    return;
-  }
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Only JPG, PNG, or WEBP images are allowed.');
+      return;
+    }
 
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    setImagePreview(reader.result as string);
-    setShowCropper(true);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
   };
-  reader.readAsDataURL(file);
-};
 
-const handleCropConfirm = async () => {
-  if (!imagePreview || !croppedAreaPixels) return;
+  const handleCropConfirm = async () => {
+    if (!imagePreview || !croppedAreaPixels) return;
 
-  const result = await getCroppedImg(imagePreview, croppedAreaPixels);
-  if (result) {
-    const { file, previewUrl } = result;
-    setImageFile(file);
-    // optionally use previewUrl if needed
-    setShowCropper(false);
-  }
-};
+    const result = await getCroppedImg(imagePreview, croppedAreaPixels);
+    if (result) {
+      const { file, previewUrl } = result;
+      setImageFile(file);
+      // optionally use previewUrl if needed
+      setShowCropper(false);
+    }
+  };
 
-// const handleSubmit = async (e: React.FormEvent) => {
-//   e.preventDefault();
-//   if (isSubmitting) return; // prevent double submit
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (isSubmitting) return; // prevent double submit
 
-//   // Trim inputs
-//   const trimmedTitle = title.trim();
-//   const trimmedDescription = description.trim();
+  //   // Trim inputs
+  //   const trimmedTitle = title.trim();
+  //   const trimmedDescription = description.trim();
 
-//   // Basic validation
-//   if (!trimmedTitle || !trimmedDescription || !imageFile) {
-//     toast.error("Please fill all fields and upload an image.");
-//     return;
-//   }
+  //   // Basic validation
+  //   if (!trimmedTitle || !trimmedDescription || !imageFile) {
+  //     toast.error("Please fill all fields and upload an image.");
+  //     return;
+  //   }
 
-//   const formData = new FormData();
-//   formData.append('title', trimmedTitle);
-//   formData.append('description', trimmedDescription);
-//   formData.append('image', imageFile);
+  //   const formData = new FormData();
+  //   formData.append('title', trimmedTitle);
+  //   formData.append('description', trimmedDescription);
+  //   formData.append('image', imageFile);
 
-//   try {
-//     await addBanner(formData);
-//     toast.success("Banner added successfully!");
-//     navigate('/admin/banners');
-//   } catch (error) {
-//     toast.error("Failed to add banner.");
-//     console.error("Banner creation error:", error);
-//   }
-// };
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  //   try {
+  //     await addBanner(formData);
+  //     toast.success("Banner added successfully!");
+  //     navigate('/admin/banners');
+  //   } catch (error) {
+  //     toast.error("Failed to add banner.");
+  //     console.error("Banner creation error:", error);
+  //   }
+  // };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  if (isSubmitting) return; // prevent double submit
+    if (isSubmitting) return; // prevent double submit
 
-  // Trim inputs
-  const trimmedTitle = title.trim();
-  const trimmedDescription = description.trim();
+    // Trim inputs
+    const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim();
 
-  // Basic validation
-  if (!trimmedTitle || !trimmedDescription || !imageFile) {
-    toast.error("Please fill all fields and upload an image.");
-    return;
-  }
+    // Basic validation
+    if (!trimmedTitle || !trimmedDescription || !imageFile) {
+      toast.error('Please fill all fields and upload an image.');
+      return;
+    }
 
-  setIsSubmitting(true); // disable button immediately
+    setIsSubmitting(true); // disable button immediately
 
-  const formData = new FormData();
-  formData.append('title', trimmedTitle);
-  formData.append('description', trimmedDescription);
-  formData.append('image', imageFile);
+    const formData = new FormData();
+    formData.append('title', trimmedTitle);
+    formData.append('description', trimmedDescription);
+    formData.append('image', imageFile);
 
-  try {
-    await addBanner(formData);
-    toast.success("Banner added successfully!");
+    try {
+      await addBanner(formData);
+      toast.success('Banner added successfully!');
 
-    // Clear fields
-    setTitle('');
-    setDescription('');
-    setImageFile(null);
-    setImagePreview('');
-    setIsSubmitting(false); // allow button to work again
+      // Clear fields
+      setTitle('');
+      setDescription('');
+      setImageFile(null);
+      setImagePreview('');
+      setIsSubmitting(false); // allow button to work again
 
-    // Navigate AFTER all is done
-    navigate('/admin/banners');
-  } catch (error) {
-    setIsSubmitting(false); // re-enable button if failed
-    toast.error("Failed to add banner.");
-    console.error("Banner creation error:", error);
-  }
-};
-
+      // Navigate AFTER all is done
+      navigate('/admin/banners');
+    } catch (error) {
+      setIsSubmitting(false); // re-enable button if failed
+      toast.error('Failed to add banner.');
+      console.error('Banner creation error:', error);
+    }
+  };
 
   return (
     <div className="max-w-xl mx-auto mt-8">
@@ -138,14 +137,25 @@ const handleSubmit = async (e: React.FormEvent) => {
 
         <div>
           <Label htmlFor="description">Description</Label>
-          <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
+          <Textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
         </div>
 
         <div>
           <Label htmlFor="image">Banner Image</Label>
-          <Input id="image" type="file" accept="image/*" onChange={(e)=>{handleImageChange(e)
-          
-            }}  required />
+          <Input
+            id="image"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              handleImageChange(e);
+            }}
+            required
+          />
         </div>
 
         {imageFile && (
@@ -157,7 +167,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         )}
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit"}
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </Button>
       </form>
 
@@ -176,7 +186,9 @@ const handleSubmit = async (e: React.FormEvent) => {
             />
           </div>
           <div className="flex justify-end gap-4 mt-4">
-            <Button variant="outline" onClick={() => setShowCropper(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setShowCropper(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleCropConfirm}>Crop</Button>
           </div>
         </Modal>

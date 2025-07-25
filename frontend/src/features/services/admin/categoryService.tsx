@@ -1,4 +1,4 @@
-import adminApi from "@/lib/axios/adminAxios";
+import adminApi from '@/lib/axios/adminAxios';
 //  export const fetchCategoriesData=async()=>{
 //     try {
 //         const response=await adminApi.get('/categories');
@@ -7,7 +7,7 @@ import adminApi from "@/lib/axios/adminAxios";
 //     console.error("Failed to fetch categories", error);
 //     }
 // }
-export const fetchCategoriesData = async (page:number, limit:number) => {
+export const fetchCategoriesData = async (page: number, limit: number) => {
   const response = await adminApi.get(`/categories?page=${page}&limit=${limit}`);
   return response.data;
 };
@@ -18,7 +18,7 @@ export const getCategoryById = async (id: string) => {
 };
 
 export const createCategory = async (data: { name: string; isBlocked: boolean }) => {
-  const response = await adminApi.post("/addCategory", data);
+  const response = await adminApi.post('/addCategory', data);
   return response.data;
 };
 
@@ -27,25 +27,21 @@ export const updateCategory = async (id: string, data: { name: string; isBlocked
   return response.data;
 };
 
-export const blockCategory=async(id:string)=>{
-    try {
-        const response=await adminApi.patch(`/category/${id}/block`)
-        
-        return response.data
+export const blockCategory = async (id: string) => {
+  try {
+    const response = await adminApi.patch(`/category/${id}/block`);
 
-    } catch (error) {
-     console.error("Failed to block category", error);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to block category', error);
+  }
+};
+export const unBlockCategory = async (id: string) => {
+  try {
+    const response = await adminApi.patch(`/category/${id}/unblock`);
 
-    }
-}
-export const unBlockCategory=async(id:string)=>{
-    try {
-        const response=await adminApi.patch(`/category/${id}/unblock`)
-        
-        return response.data
-
-    } catch (error) {
-     console.error("Failed to unblock category", error);
-
-    }
-}
+    return response.data;
+  } catch (error) {
+    console.error('Failed to unblock category', error);
+  }
+};

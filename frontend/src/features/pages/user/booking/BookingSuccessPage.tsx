@@ -1,25 +1,15 @@
-
-import { useParams ,useNavigate} from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 //import { CheckCircle, Calendar, Users, CreditCard, MapPin, Package, Download, Share } from "lucide-react";
-import {
-  CheckCircle,
-  CreditCard,
-  MapPin,
-  Package,
-  Calendar,
-  Users,CheckCircle2
-} from "lucide-react";
-  
-import { Card,CardContent,CardHeader } from "@/features/components/ui/Card";
-import { Button } from "@/features/components/Button";
-import { Badge } from "@/features/components/ui/Badge";
-import type { IBooking } from "@/features/types/IBooking";
-import { getBookingById } from "@/features/services/user/bookingService";
-import travelSuccessImage from "@/assets/travel-success.png";
+import { Package, CheckCircle2 } from 'lucide-react';
+
+import { Card, CardContent } from '@/features/components/ui/Card';
+import { Button } from '@/features/components/Button';
+import type { IBooking } from '@/features/types/IBooking';
+import { getBookingById } from '@/features/services/user/bookingService';
 
 const BookingSuccessPage = () => {
-     const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const [booking, setBooking] = useState<IBooking | null>(null);
@@ -31,15 +21,13 @@ const BookingSuccessPage = () => {
         const res = await getBookingById(id!);
         setBooking(res.booking);
       } catch (err) {
-        console.error("Failed to fetch booking", err);
+        console.error('Failed to fetch booking', err);
       } finally {
         setLoading(false);
       }
     };
     if (id) loadBooking();
   }, [id]);
-
-
 
   if (loading) {
     return (
@@ -60,22 +48,25 @@ const BookingSuccessPage = () => {
             <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Package className="w-8 h-8 text-destructive" />
             </div>
-            <h2 className="text-xl font-semibold text-foreground mb-2 font-poppins">Booking Not Found</h2>
-            <p className="text-muted-foreground">We couldn't find the booking you're looking for.</p>
+            <h2 className="text-xl font-semibold text-foreground mb-2 font-poppins">
+              Booking Not Found
+            </h2>
+            <p className="text-muted-foreground">
+              We couldn't find the booking you're looking for.
+            </p>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4 py-10 text-center">
       <CheckCircle2 className="text-green-600 w-20 h-20 mb-4" />
       <h1 className="text-3xl font-semibold text-gray-800 mb-2">Booking Confirmed!</h1>
       <p className="text-gray-600 mb-6 max-w-md">
-        Thank you for booking <span className="font-medium">{booking.packageId.title}</span>. A confirmation email has been sent. 
-        Below is your booking summary:
+        Thank you for booking <span className="font-medium">{booking.packageId.title}</span>. A
+        confirmation email has been sent. Below is your booking summary:
       </p>
 
       <div className="bg-gray-100 w-full max-w-md p-6 rounded-xl shadow-md text-left mb-6">
@@ -85,16 +76,16 @@ const BookingSuccessPage = () => {
         </div>
         <div className="flex justify-between mb-2">
           <span className="font-medium text-gray-700">Travel Date:</span>
-           {booking?.bookedAt && (
-  <span>
-    {new Date(booking?.bookedAt).toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })}
-  </span>
-)}
-         </div>
+          {booking?.bookedAt && (
+            <span>
+              {new Date(booking?.bookedAt).toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </span>
+          )}
+        </div>
         <div className="flex justify-between mb-2">
           <span className="font-medium text-gray-700">Travelers:</span>
           <span className="text-gray-900">{booking.travelers.length}</span>
@@ -102,8 +93,8 @@ const BookingSuccessPage = () => {
         <div className="flex justify-between mb-2">
           <span className="font-medium text-gray-700">Total Amount:</span>
           <span className="text-gray-900">₹{booking.totalAmount.toFixed(2)}</span>
-        </div> 
-         <div className="flex justify-between mb-2">
+        </div>
+        <div className="flex justify-between mb-2">
           <span className="font-medium text-gray-700">Discount:</span>
           <span className="text-gray-900">₹{booking?.discount!.toFixed(2)}</span>
         </div>

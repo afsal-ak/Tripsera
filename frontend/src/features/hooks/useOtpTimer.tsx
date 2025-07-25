@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const OTP_EXPIRY_MINUTES = 5;
-const OTP_TIMER_KEY = "otp_expiry_timestamp";
+const OTP_TIMER_KEY = 'otp_expiry_timestamp';
 
 export const useOtpTimer = (onExpire?: () => void) => {
   const [timeLeft, setTimeLeft] = useState(0);
@@ -10,9 +10,9 @@ export const useOtpTimer = (onExpire?: () => void) => {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
       .toString()
-      .padStart(2, "0");
+      .padStart(2, '0');
 
-    const secs = (seconds % 60).toString().padStart(2, "0");
+    const secs = (seconds % 60).toString().padStart(2, '0');
     return `${mins}:${secs}`;
   };
 
@@ -25,7 +25,7 @@ export const useOtpTimer = (onExpire?: () => void) => {
 
   // Update the remaining time
   const updateTimeLeft = () => {
-    const expiry = parseInt(localStorage.getItem(OTP_TIMER_KEY) || "0", 10);
+    const expiry = parseInt(localStorage.getItem(OTP_TIMER_KEY) || '0', 10);
     const now = Date.now();
     const diff = Math.floor((expiry - now) / 1000);
 

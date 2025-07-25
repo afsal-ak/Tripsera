@@ -1,25 +1,28 @@
-import { useEffect, useState } from "react";
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, MapPin, Verified } from "lucide-react";
-import { fetchAllPublishedBlog, fetchBlogBySlug, handleLikeBlog, handleUnLikeBlog } from "@/features/services/user/blogService";
-import { useParams } from "react-router-dom";
-import { toast } from "sonner";
-import type { IBlog } from "@/features/types/IBlog";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css"
-import { Navigation, Pagination } from "swiper/modules";
+import { useEffect, useState } from 'react';
+import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Verified } from 'lucide-react';
+import {
+  fetchBlogBySlug,
+  handleLikeBlog,
+  handleUnLikeBlog,
+} from '@/features/services/user/blogService';
+import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import type { IBlog } from '@/features/types/IBlog';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css';
+import { Navigation, Pagination } from 'swiper/modules';
 
 const BlogDetail = () => {
-
-  const { slug } = useParams()
-  console.log(slug, 'from param')
+  const { slug } = useParams();
+  console.log(slug, 'from param');
   const [liked, setLiked] = useState(false);
   // const [savedPosts, setSavedPosts] = useState();
-  const [blogData, setBlogData] = useState<IBlog | null>(null)
-const [likesCount, setLikesCount] = useState(0);
+  const [blogData, setBlogData] = useState<IBlog | null>(null);
+  const [likesCount, setLikesCount] = useState(0);
 
-   useEffect(() => {
+  useEffect(() => {
     const loadBlogDetail = async () => {
       if (!slug) return;
 
@@ -27,52 +30,50 @@ const [likesCount, setLikesCount] = useState(0);
         const response = await fetchBlogBySlug(slug);
         setBlogData(response.blog);
         setLiked(response.blog?.isLiked || false);
-         setLikesCount(response.blog?.likes?.length || 0);
+        setLikesCount(response.blog?.likes?.length || 0);
       } catch (error) {
-        console.error("Failed to fetch blog details", error);
+        console.error('Failed to fetch blog details', error);
       }
     };
 
     loadBlogDetail();
   }, [slug]);
 
-
-const handleLike = async () => {
-    if (!blogData?._id){
-       return;
+  const handleLike = async () => {
+    if (!blogData?._id) {
+      return;
     }
     try {
       await handleLikeBlog(blogData._id);
       setLiked(true);
-          setLikesCount((prev) => prev + 1); 
-
+      setLikesCount((prev) => prev + 1);
     } catch (error: any) {
-      toast.error("Failed to like post");
+      toast.error('Failed to like post');
     }
   };
 
   const handleUnLike = async () => {
-if (!blogData?._id){
-       return;
-    }    try {
+    if (!blogData?._id) {
+      return;
+    }
+    try {
       await handleUnLikeBlog(blogData._id);
-      setLikesCount((prev) => prev - 1); 
+      setLikesCount((prev) => prev - 1);
 
       setLiked(false);
     } catch (error: any) {
-      toast.error("Failed to unlike post");
+      toast.error('Failed to unlike post');
     }
   };
 
- 
-   const formatNumber = (num: number) => {
+  const formatNumber = (num: number) => {
     if (num >= 1000) {
-      return (num / 1000).toFixed(1) + "k";
+      return (num / 1000).toFixed(1) + 'k';
     }
     return num.toString();
   };
- //   const image = blogData?.images?.url!.replace("/upload/", "/upload/f_auto,q_auto/") || "";
- return (
+  //   const image = blogData?.images?.url!.replace("/upload/", "/upload/f_auto,q_auto/") || "";
+  return (
     <div className="min-h-screen bg-bg px-4 py-6">
       {blogData && (
         <article className="bg-white shadow-md rounded-xl overflow-hidden max-w-3xl mx-auto">
@@ -86,7 +87,9 @@ if (!blogData?._id){
               />
               <div>
                 <div className="flex items-center space-x-1">
-                  <span className="text-sm font-semibold text-darkText">{blogData.author?.username}</span>
+                  <span className="text-sm font-semibold text-darkText">
+                    {blogData.author?.username}
+                  </span>
                   <Verified className="w-4 h-4 text-orange" />
                 </div>
                 {/* {blogData.location && (
@@ -101,7 +104,7 @@ if (!blogData?._id){
           </div>
 
           {/* Images */}
-          {blogData.images!?.length > 0 && (
+          {blogData.images?.length > 0 && (
             <Swiper
               spaceBetween={10}
               slidesPerView={1}
@@ -129,7 +132,9 @@ if (!blogData?._id){
                 <button onClick={liked ? handleUnLike : handleLike}>
                   <Heart
                     className={`w-6 h-6 transition-all duration-200 ${
-                      liked ? "fill-red-500 text-red-500" : "text-darkText hover:text-muted-foreground"
+                      liked
+                        ? 'fill-red-500 text-red-500'
+                        : 'text-darkText hover:text-muted-foreground'
                     }`}
                   />
                 </button>
@@ -141,7 +146,7 @@ if (!blogData?._id){
 
             {/* Likes */}
             <div className="text-sm font-semibold text-darkText mb-2">
-       {formatNumber(likesCount)} likes
+              {formatNumber(likesCount)} likes
             </div>
 
             {/* Content */}
@@ -149,7 +154,8 @@ if (!blogData?._id){
               <span className="font-semibold text-sm text-darkText mr-2">
                 {blogData.author?.username}
               </span>
-                <span className="text-lg text-darkText">{blogData.title}</span><br />
+              <span className="text-lg text-darkText">{blogData.title}</span>
+              <br />
 
               <span className="text-sm text-darkText">{blogData.content}</span>
             </div>
@@ -159,7 +165,9 @@ if (!blogData?._id){
               <div className="mb-2">
                 <span className="text-sm text-orange">
                   {blogData.tags!.map((tag, i) => (
-                    <span key={i} className="mr-2">#{tag}</span>
+                    <span key={i} className="mr-2">
+                      #{tag}
+                    </span>
                   ))}
                 </span>
               </div>

@@ -1,8 +1,8 @@
-import { useParams, Link } from "react-router-dom";
-import { AlertTriangle } from "lucide-react";
+import { useParams, Link } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 
 export default function PaymentFailed() {
-  const { id } = useParams(); 
+  const { id } = useParams();
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
@@ -12,10 +12,7 @@ export default function PaymentFailed() {
         <p className="text-gray-700 mb-4">
           Something went wrong with your payment. Your booking ID: <strong>{id}</strong>
         </p>
-        <Link
-          to="/book"
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded"
-        >
+        <Link to="/book" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded">
           Try Again
         </Link>
       </div>

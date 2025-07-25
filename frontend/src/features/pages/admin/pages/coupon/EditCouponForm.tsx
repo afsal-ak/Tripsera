@@ -1,16 +1,15 @@
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+import { useParams, useNavigate } from 'react-router-dom';
 
-import { useForm } from "react-hook-form";
- import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { useParams, useNavigate } from "react-router-dom";
+import { Input } from '@/features/components/ui/Input';
+import { Label } from '@/features/components/ui/Lable';
+import { Button } from '@/features/components/Button';
+import { getCouponById, editCoupon } from '@/features/services/admin/couponService';
+import { useEffect } from 'react';
 
-import { Input } from "@/features/components/ui/Input";
-import { Label } from "@/features/components/ui/Lable";
-import { Button } from "@/features/components/Button";
-import { getCouponById, editCoupon } from "@/features/services/admin/couponService";
-import { useEffect } from "react";
-
-import  { type CouponFormSchema,couponSchema } from "@/features/schemas/CouponFormSchema";
+import { type CouponFormSchema, couponSchema } from '@/features/schemas/CouponFormSchema';
 
 const EditCouponForm = () => {
   const { id } = useParams();
@@ -25,23 +24,22 @@ const EditCouponForm = () => {
     resolver: zodResolver(couponSchema),
   });
 
- 
   useEffect(() => {
     const fetchCoupon = async () => {
       try {
         if (!id) return;
-        const {coupon} = await getCouponById(id);
-        console.log(coupon,'coupon')
+        const { coupon } = await getCouponById(id);
+        console.log(coupon, 'coupon');
         reset({
           code: coupon.code,
           type: coupon.type,
           discountValue: coupon.discountValue,
-          expiryDate: coupon.expiryDate.split("T")[0],  
+          expiryDate: coupon.expiryDate.split('T')[0],
           minAmount: coupon.minAmount,
           maxDiscountAmount: coupon.maxDiscountAmount,
         });
       } catch (error) {
-        toast.error("Failed to fetch coupon data");
+        toast.error('Failed to fetch coupon data');
         console.error(error);
       }
     };
@@ -51,14 +49,14 @@ const EditCouponForm = () => {
 
   const onSubmit = async (data: CouponFormSchema) => {
     try {
-      if (!id){
-         return
-      } 
+      if (!id) {
+        return;
+      }
       await editCoupon(id, data);
-      toast.success("Coupon updated successfully");
-      navigate("/admin/coupons");
-    } catch (error:any) {
-      toast.error(error?.response?.data?.message ||"Failed to update coupon");
+      toast.success('Coupon updated successfully');
+      navigate('/admin/coupons');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to update coupon');
       //console.error(error.message);
     }
   };
@@ -73,14 +71,14 @@ const EditCouponForm = () => {
       {/* Code */}
       <div>
         <Label htmlFor="code">Code</Label>
-        <Input {...register("code")} />
+        <Input {...register('code')} />
         {errors.code && <p className="text-red-500 text-sm">{errors.code.message}</p>}
       </div>
 
       {/* Type */}
       <div>
         <Label htmlFor="type">Type</Label>
-        <select {...register("type")} className="w-full border rounded px-3 py-2">
+        <select {...register('type')} className="w-full border rounded px-3 py-2">
           <option value="percentage">Percentage</option>
           <option value="flat">Flat</option>
         </select>
@@ -89,34 +87,36 @@ const EditCouponForm = () => {
       {/* Discount */}
       <div>
         <Label htmlFor="discountValue">Discount Value</Label>
-        <Input type="number" {...register("discountValue", { valueAsNumber: true })} />
-        {errors.discountValue && <p className="text-red-500 text-sm">{errors.discountValue.message}</p>}
+        <Input type="number" {...register('discountValue', { valueAsNumber: true })} />
+        {errors.discountValue && (
+          <p className="text-red-500 text-sm">{errors.discountValue.message}</p>
+        )}
       </div>
 
       {/* Expiry Date */}
       <div>
         <Label htmlFor="expiryDate">Expiry Date</Label>
-        <Input type="date" {...register("expiryDate")} />
+        <Input type="date" {...register('expiryDate')} />
         {errors.expiryDate && <p className="text-red-500 text-sm">{errors.expiryDate.message}</p>}
       </div>
 
-       <div>
+      <div>
         <Label htmlFor="minAmount">Min Amount </Label>
-        <Input type="number" {...register("minAmount", { valueAsNumber: true })} />
-         {errors.minAmount && <p className="text-red-500 text-sm">{errors.minAmount.message}</p>}
-
+        <Input type="number" {...register('minAmount', { valueAsNumber: true })} />
+        {errors.minAmount && <p className="text-red-500 text-sm">{errors.minAmount.message}</p>}
       </div>
 
-       <div>
+      <div>
         <Label htmlFor="maxDiscountAmount">Max Discount </Label>
-        <Input type="number" {...register("maxDiscountAmount", { valueAsNumber: true })} />
-       {errors.maxDiscountAmount && <p className="text-red-500 text-sm">{errors.maxDiscountAmount.message}</p>}
-
+        <Input type="number" {...register('maxDiscountAmount', { valueAsNumber: true })} />
+        {errors.maxDiscountAmount && (
+          <p className="text-red-500 text-sm">{errors.maxDiscountAmount.message}</p>
+        )}
       </div>
 
-       <div className="flex gap-4">
+      <div className="flex gap-4">
         <Button type="submit">Update</Button>
-        <Button type="button" variant="outline" onClick={() => navigate("/admin/coupons")}>
+        <Button type="button" variant="outline" onClick={() => navigate('/admin/coupons')}>
           Cancel
         </Button>
       </div>

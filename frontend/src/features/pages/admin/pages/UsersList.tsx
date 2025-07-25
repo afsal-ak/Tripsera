@@ -1,15 +1,21 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { Edit } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
-import { Button } from "@/features/components/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/features/components/ui/Card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/features/components/ui/Table";
-import { ConfirmDialog } from "@/features/components/ui/ConfirmDialog";
+import { Button } from '@/features/components/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/features/components/ui/Card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/features/components/ui/Table';
+import { ConfirmDialog } from '@/features/components/ui/ConfirmDialog';
 
-import type { IUser } from "@/features/types/IUser";
-import { fetchUsersData,blockUser,unBlockUser } from "@/features/services/admin/userService";
+import type { IUser } from '@/features/types/IUser';
+import { fetchUsersData, blockUser, unBlockUser } from '@/features/services/admin/userService';
 const UserList = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<IUser[]>([]);
@@ -19,11 +25,11 @@ const UserList = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetchUsersData(currentPage, 5); 
+        const res = await fetchUsersData(currentPage, 5);
         setUsers(res.data);
-        setTotalPages(res.totalPages); 
+        setTotalPages(res.totalPages);
       } catch (error) {
-        console.error("Failed to load user data:", error);
+        console.error('Failed to load user data:', error);
       }
     };
     fetchUsers();
@@ -33,20 +39,18 @@ const UserList = () => {
     try {
       if (shouldBlock) {
         await blockUser(id);
-        toast.success("User blocked successfully");
+        toast.success('User blocked successfully');
       } else {
         await unBlockUser(id);
-        toast.success("User unblocked successfully");
+        toast.success('User unblocked successfully');
       }
 
       setUsers((prev) =>
-        prev.map((user) =>
-          user._id === id ? { ...user, isBlocked: shouldBlock } : user
-        )
+        prev.map((user) => (user._id === id ? { ...user, isBlocked: shouldBlock } : user))
       );
     } catch (error) {
-      toast.error("Failed to update user status");
-      console.error("Block/unblock error:", error);
+      toast.error('Failed to update user status');
+      console.error('Block/unblock error:', error);
     }
   };
 
@@ -67,9 +71,9 @@ const UserList = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user,index) => (
+            {users.map((user, index) => (
               <TableRow key={user._id}>
-      <TableCell>{(currentPage - 1) * 5 + index + 1}</TableCell>
+                <TableCell>{(currentPage - 1) * 5 + index + 1}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
@@ -80,8 +84,6 @@ const UserList = () => {
                   )}
                 </TableCell>
                 <TableCell className="flex gap-2">
-                
-
                   {user.isBlocked ? (
                     <ConfirmDialog
                       title="Unblock this user?"

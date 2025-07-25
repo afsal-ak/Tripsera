@@ -1,42 +1,39 @@
- 
 export interface ITraveler {
   fullName: string;
   age: number;
-  gender: "male" | "female" | "other";
-  id:string
+  gender: 'male' | 'female' | 'other';
+  id: string;
 }
- 
 
 export interface IBooking {
-  _id?: string 
-  bookingCode:string;
- // userId:   string;
+  _id?: string;
+  bookingCode: string;
+  // userId:   string;
   packageId: {
     _id: string;
     title: string;
-    price:string;
+    price: string;
     imageUrls: { url: string }[];
-  //  location: PackageLocation[];
+    //  location: PackageLocation[];
   };
-   userId: {
+  userId: {
     _id: string;
     email: string;
-    username:string;
-   
+    username: string;
   };
 
-      travelers: ITraveler[];
+  travelers: ITraveler[];
 
   totalAmount: number;
   discount?: number;
   couponCode?: string;
-  paymentMethod: "razorpay" | "wallet";
-  paymentStatus: "paid" | "pending" | "failed"|"refunded";
-  bookingStatus: "confirmed"|"booked" | "cancelled" |"pending";
+  paymentMethod: 'razorpay' | 'wallet';
+  paymentStatus: 'paid' | 'pending' | 'failed' | 'refunded';
+  bookingStatus: 'confirmed' | 'booked' | 'cancelled' | 'pending';
   cancelReason?: string;
-  walletUsed?:number;
-amountPaid:number;
- contactDetails: {
+  walletUsed?: number;
+  amountPaid: number;
+  contactDetails: {
     name: string;
     phone: string;
     alternatePhone?: string;
@@ -47,10 +44,10 @@ amountPaid:number;
     paymentId?: string;
     signature?: string;
   };
-  createdAt:Date;
-  updatedAt:Date;
+  createdAt: Date;
+  updatedAt: Date;
   bookedAt?: Date;
   travelDate?: Date;
-  packageTitle?:string,
+  packageTitle?: string;
   packageImage?: { url: string; public_id?: string };
 }

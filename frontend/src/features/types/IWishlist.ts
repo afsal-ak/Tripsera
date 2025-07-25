@@ -11,8 +11,8 @@ export interface WishlistItem {
   packageId: {
     _id: string;
     title: string;
-    price:string;
+    price: string;
     imageUrls: { url: string }[];
     location: PackageLocation[];
-  }
+  };
 }

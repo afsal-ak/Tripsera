@@ -1,15 +1,15 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { usePaginationButtons } from "@/features/hooks/usePaginationButtons";
-import { getAllActiveCoupon } from "@/features/services/user/couponService";
-import type { ICoupon } from "@/features/types/ICoupon";
+import { useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { usePaginationButtons } from '@/features/hooks/usePaginationButtons';
+import { getAllActiveCoupon } from '@/features/services/user/couponService';
+import type { ICoupon } from '@/features/types/ICoupon';
 
 const CouponList = () => {
   const [coupons, setCoupons] = useState<ICoupon[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const limit = 6;
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const CouponList = () => {
         setCoupons(res.coupons);
         setTotalPages(res.totalPages);
       } catch (error) {
-        console.error("Coupon fetch error", error);
+        console.error('Coupon fetch error', error);
       }
     };
     fetch();
@@ -47,7 +47,7 @@ const CouponList = () => {
           >
             {/* Discount Badge */}
             <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs px-3 py-1 rounded-bl-xl font-bold">
-              {coupon.type === "percentage"
+              {coupon.type === 'percentage'
                 ? `${coupon.discountValue}% OFF`
                 : `₹${coupon.discountValue} OFF`}
             </div>
@@ -55,27 +55,20 @@ const CouponList = () => {
             {/* Coupon Code */}
             <div className="mb-4">
               <p className="text-sm text-gray-500">Coupon Code</p>
-              <h3 className="text-xl font-bold text-orange-600 tracking-wider">
-                {coupon.code}
-              </h3>
+              <h3 className="text-xl font-bold text-orange-600 tracking-wider">{coupon.code}</h3>
             </div>
 
             {/* Details */}
             <div className="space-y-1 text-sm text-gray-700">
               <p>
-                Min Purchase:{" "}
-                <span className="font-semibold">
-                  ₹{coupon.minAmount || 0}
-                </span>
+                Min Purchase: <span className="font-semibold">₹{coupon.minAmount || 0}</span>
               </p>
               <p>
-                Max Discount:{" "}
-                <span className="font-semibold">
-                  ₹{coupon.maxDiscountAmount || "-"}
-                </span>
+                Max Discount:{' '}
+                <span className="font-semibold">₹{coupon.maxDiscountAmount || '-'}</span>
               </p>
               <p>
-                Valid Till:{" "}
+                Valid Till:{' '}
                 <span className="font-semibold">
                   {new Date(coupon.expiryDate).toLocaleDateString()}
                 </span>
@@ -90,9 +83,7 @@ const CouponList = () => {
         ))}
       </div>
 
-      <div className="flex justify-center items-center gap-2 mt-8">
-        {paginationButtons}
-      </div>
+      <div className="flex justify-center items-center gap-2 mt-8">{paginationButtons}</div>
     </div>
   );
 };

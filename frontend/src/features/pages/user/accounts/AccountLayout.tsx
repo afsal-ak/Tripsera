@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom";
-import AccountSidebar from "./AccountSidebar";
-import { useState } from "react";
-import { Menu } from "lucide-react";
+import { Outlet } from 'react-router-dom';
+import AccountSidebar from './AccountSidebar';
+import { useState } from 'react';
+import { Menu } from 'lucide-react';
 
 const AccountLayout = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +13,7 @@ const AccountLayout = () => {
       {/* Sidebar */}
       <AccountSidebar isOpen={isOpen} onToggle={toggleSidebar} />
 
-      <div className="flex-1 flex flex-col lg:pl-4"> 
+      <div className="flex-1 flex flex-col lg:pl-4">
         {/* Toggle button for mobile only */}
         <div className="lg:hidden px-4 py-2 border-b bg-white shadow">
           <button

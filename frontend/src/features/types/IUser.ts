@@ -10,7 +10,6 @@
 //     role:"user"|"admin"
 // }
 
- 
 export interface IUser {
   _id?: string;
   username?: string;
@@ -21,18 +20,18 @@ export interface IUser {
   isBlocked?: boolean;
   fullName?: string;
   dob?: Date;
-  gender?: 'male' | 'female' ;
- profileImage?: {
+  gender?: 'male' | 'female';
+  profileImage?: {
     url: string;
     public_id: string;
   };
-    bio?: string;
- links?: {
+  bio?: string;
+  links?: {
     platform: string;
     url: string;
   }[];
   followers?: string[];
-following?: string[];
+  following?: string[];
 
   interests?: string[];
   address?: {
@@ -44,6 +43,5 @@ following?: string[];
   };
   googleId?: string;
   isGoogleUser?: boolean;
-  createdAt?:Date
-
+  createdAt?: Date;
 }

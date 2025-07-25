@@ -1,7 +1,5 @@
-
-
 export interface GeoPoint {
-  type: "Point";
+  type: 'Point';
   coordinates: [number, number]; // [lng, lat]
 }
 
@@ -10,7 +8,7 @@ export interface ILocation {
   geo: GeoPoint;
 }
 
-export type OfferType = "percentage" | "flat";
+export type OfferType = 'percentage' | 'flat';
 
 export interface IOffer {
   type: OfferType;
@@ -31,13 +29,13 @@ export interface ItineraryDay {
 }
 
 export interface IPackage {
-  _id:string;
+  _id: string;
   title: string;
   description?: string;
   price: number;
   duration: string;
-   imageUrls: { url: string }[];
-  category?: { _id: string; name: string }[];  
+  imageUrls: { url: string }[];
+  category?: { _id: string; name: string }[];
   location?: ILocation[];
   offer?: IOffer;
   isBlocked: boolean;

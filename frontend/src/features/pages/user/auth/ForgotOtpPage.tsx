@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleVerifyOtp, handleForgotPassword } from '@/features/services/auth/authService';
@@ -15,18 +14,17 @@ const ForgotOtpPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    
     const storedEmail = localStorage.getItem('forgotEmail');
     const existingExpiry = localStorage.getItem('otp_expiry_timestamp');
 
     if (storedEmail) {
       setEmail(storedEmail);
-      if (!existingExpiry){
-         startTimer();
+      if (!existingExpiry) {
+        startTimer();
       }
     }
   }, []);
- 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -96,7 +94,13 @@ const ForgotOtpPage = () => {
             disabled={loading}
             className="w-full bg-orange text-white font-medium py-2 rounded-md hover:bg-orange-dark transition flex items-center justify-center"
           >
-            {loading ? <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Verifying...</> : 'Verify OTP'}
+            {loading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin mr-2" /> Verifying...
+              </>
+            ) : (
+              'Verify OTP'
+            )}
           </button>
         </form>
 

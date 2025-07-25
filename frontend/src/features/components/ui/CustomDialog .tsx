@@ -1,11 +1,11 @@
- import {type ReactNode, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./Dialog";
-import { Button } from "../Button";
+import { type ReactNode, useState } from 'react';
+import { Dialog, DialogContent, DialogTrigger } from './Dialog';
+import { Button } from '../Button';
 
 interface CustomDialogProps {
   title?: string;
   triggerLabel: string;
-  triggerVariant?: "default" | "destructive" | "outline";
+  triggerVariant?: 'default' | 'destructive' | 'outline';
   children?: ReactNode;
   confirmLabel?: string;
   onConfirm?: () => void;
@@ -15,9 +15,9 @@ interface CustomDialogProps {
 export const CustomDialog = ({
   title,
   triggerLabel,
-  triggerVariant = "default",
+  triggerVariant = 'default',
   children,
-  confirmLabel = "Confirm",
+  confirmLabel = 'Confirm',
   onConfirm,
   disabled = false,
 }: CustomDialogProps) => {

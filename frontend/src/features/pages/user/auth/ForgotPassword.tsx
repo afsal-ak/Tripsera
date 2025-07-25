@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleForgotPassword } from '@/features/services/auth/authService';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react'; 
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -23,9 +21,7 @@ const ForgotPassword = () => {
       navigate('/forgot-password/verfy-otp');
       toast.success('OTP sent to your email');
     } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || error.message || 'Something went wrong'
-      );
+      toast.error(error?.response?.data?.message || error.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -54,21 +50,20 @@ const ForgotPassword = () => {
             />
           </div>
 
-        <button
-  type="submit"
-  disabled={loading}
-  className="w-full bg-orange text-white font-medium py-2 rounded-md hover:bg-orange-dark transition flex items-center justify-center"
->
-  {loading ? (
-<>
-  <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-  <span>Loading...</span>
-</>
-  ) : (
-    'Send Reset OTP'
-  )}
-</button>
-
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-orange text-white font-medium py-2 rounded-md hover:bg-orange-dark transition flex items-center justify-center"
+          >
+            {loading ? (
+              <>
+                <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : (
+              'Send Reset OTP'
+            )}
+          </button>
         </form>
 
         <p className="text-xs text-center text-muted-foreground">

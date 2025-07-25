@@ -1,4 +1,3 @@
-
 // import { useState } from "react";
 // import AdminLayout from "../components/AdminLayout";
 // import CategoryTable from "./Category.tsx/CategoryTable";
@@ -112,18 +111,26 @@
 
 // export default AdminDashboard;
 // src/features/admin/pages/Dashboard.tsx
-import { Card, CardContent, CardHeader, CardTitle } from "@/features/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/features/components/ui/Card';
 
 const AdminDashboard = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <Card>
-        <CardHeader><CardTitle>Total Categories</CardTitle></CardHeader>
-        <CardContent><div className="text-3xl font-bold text-orange">12</div></CardContent>
+        <CardHeader>
+          <CardTitle>Total Categories</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-orange">12</div>
+        </CardContent>
       </Card>
       <Card>
-        <CardHeader><CardTitle>Active</CardTitle></CardHeader>
-        <CardContent><div className="text-3xl font-bold text-green-500">10</div></CardContent>
+        <CardHeader>
+          <CardTitle>Active</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-green-500">10</div>
+        </CardContent>
       </Card>
     </div>
   );

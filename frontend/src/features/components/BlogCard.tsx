@@ -1,12 +1,12 @@
-import type{ IBlog } from "../types/IBlog";
-import { Link } from "react-router-dom";
+import type { IBlog } from '../types/IBlog';
+import { Link } from 'react-router-dom';
 
 type Props = {
   blog: IBlog;
-  linkPrefix?: string; 
+  linkPrefix?: string;
 };
- const BlogCard = ({ blog,linkPrefix }: Props) => {
-   const image = blog.images![0]?.url.replace("/upload/", "/upload/f_auto,q_auto/") || "";
+const BlogCard = ({ blog, linkPrefix }: Props) => {
+  const image = blog.images![0]?.url.replace('/upload/', '/upload/f_auto,q_auto/') || '';
   const blogUrl = `${linkPrefix}/${blog.slug}`;
 
   return (
@@ -19,11 +19,8 @@ type Props = {
         />
         <div className="p-4">
           <div className="flex gap-2 flex-wrap mb-2">
-            {blog.tags?.map(tag => (
-              <span
-                key={tag}
-                className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full"
-              >
+            {blog.tags?.map((tag) => (
+              <span key={tag} className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">
                 #{tag}
               </span>
             ))}
@@ -50,5 +47,4 @@ type Props = {
   );
 };
 
-
-export default BlogCard
+export default BlogCard;

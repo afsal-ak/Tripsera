@@ -1,57 +1,66 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Edit } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Edit } from 'lucide-react';
 
-import { Button } from "@/features/components/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/features/components/ui/Card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/features/components/ui/Table";
-import { ConfirmDialog } from "@/features/components/ui/ConfirmDialog";
+import { Button } from '@/features/components/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/features/components/ui/Card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/features/components/ui/Table';
+import { ConfirmDialog } from '@/features/components/ui/ConfirmDialog';
 
-import type { ICategory } from "@/features/types/ICategory";
-import { fetchCategoriesData, blockCategory, unBlockCategory } from "@/features/services/admin/categoryService";
+import type { ICategory } from '@/features/types/ICategory';
+import {
+  fetchCategoriesData,
+  blockCategory,
+  unBlockCategory,
+} from '@/features/services/admin/categoryService';
 
 const CategoryList = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-useEffect(() => {
-  const fetchCategories = async () => {
-    try {
-      const res = await fetchCategoriesData(currentPage, 3);
-      console.log("Pagination response", res);
-      setCategories(res.data);
-      setTotalPages(res.totalPages); 
-    } catch (error) {
-      console.error("Failed to load category data:", error);
-    }
-  };
-  fetchCategories();
-}, [currentPage]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetchCategoriesData(currentPage, 3);
+        console.log('Pagination response', res);
+        setCategories(res.data);
+        setTotalPages(res.totalPages);
+      } catch (error) {
+        console.error('Failed to load category data:', error);
+      }
+    };
+    fetchCategories();
+  }, [currentPage]);
 
   const handleToggleBlock = async (id: string, shouldBlock: boolean) => {
-    const action = shouldBlock ? "block" : "unblock";
+    const action = shouldBlock ? 'block' : 'unblock';
 
     try {
       if (shouldBlock) {
         await blockCategory(id);
-        toast.success("Category blocked successfully");
+        toast.success('Category blocked successfully');
       } else {
         await unBlockCategory(id);
-        toast.success("Category unblocked successfully");
+        toast.success('Category unblocked successfully');
       }
 
       // Update state after toggle
       setCategories((prev) =>
-        prev.map((cat) =>
-          cat._id === id ? { ...cat, isBlocked: shouldBlock } : cat
-        )
+        prev.map((cat) => (cat._id === id ? { ...cat, isBlocked: shouldBlock } : cat))
       );
     } catch (error) {
       toast.error(`Failed to ${action} category`);
-      console.error("Error toggling block status", error);
+      console.error('Error toggling block status', error);
     }
   };
 
@@ -59,9 +68,7 @@ useEffect(() => {
     <Card>
       <CardHeader>
         <CardTitle>Categories</CardTitle>
-        <Button onClick={() => navigate("/admin/categories/add")}>
-          Add Category
-        </Button>
+        <Button onClick={() => navigate('/admin/categories/add')}>Add Category</Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -74,9 +81,9 @@ useEffect(() => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.map((cat,index) => (
+            {categories.map((cat, index) => (
               <TableRow key={cat._id}>
-      <TableCell>{(currentPage - 1) * totalPages + index + 1}</TableCell>
+                <TableCell>{(currentPage - 1) * totalPages + index + 1}</TableCell>
                 <TableCell>{cat.name}</TableCell>
                 <TableCell>
                   {cat.isBlocked ? (
@@ -126,28 +133,26 @@ useEffect(() => {
           </TableBody>
         </Table>
       </CardContent>
-<div className="flex justify-center items-center gap-4 mt-6">
-  <Button
-    variant="outline"
-    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-    disabled={currentPage === 1}
-  >
-    Previous
-  </Button>
-  <span className="text-sm font-medium">
-    Page {currentPage} of {totalPages}
-  </span>
-  <Button
-    variant="outline"
-    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-    disabled={currentPage === totalPages}
-  >
-    Next
-  </Button>
-</div>
-
+      <div className="flex justify-center items-center gap-4 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span className="text-sm font-medium">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
     </Card>
-    
   );
 };
 

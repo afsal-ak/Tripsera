@@ -1,13 +1,12 @@
- 
 export interface IWalletTransaction {
-  type: "credit" | "debit";
+  type: 'credit' | 'debit';
   amount: number;
   description?: string;
   createdAt: Date;
 }
 
 export interface IWallet {
-   balance: number;
+  balance: number;
   transactions?: IWalletTransaction[];
   createdAt: Date;
- }
+}

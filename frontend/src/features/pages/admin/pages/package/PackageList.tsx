@@ -1,58 +1,66 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Edit } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Edit } from 'lucide-react';
 
-import { Button } from "@/features/components/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/features/components/ui/Card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/features/components/ui/Table";
-import { ConfirmDialog } from "@/features/components/ui/ConfirmDialog";
+import { Button } from '@/features/components/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/features/components/ui/Card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/features/components/ui/Table';
+import { ConfirmDialog } from '@/features/components/ui/ConfirmDialog';
 
-
-import type { IPackage } from "@/features/types/IPackage";
- import { fetchPackagesData,blockPackage,unBlockPackage } from "@/features/services/admin/packageService";
+import type { IPackage } from '@/features/types/IPackage';
+import {
+  fetchPackagesData,
+  blockPackage,
+  unBlockPackage,
+} from '@/features/services/admin/packageService';
 const PackageList = () => {
   const navigate = useNavigate();
   const [packages, setPackages] = useState<IPackage[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-useEffect(() => {
-  const fetchPackages = async () => {
-    try {
-      const res = await fetchPackagesData(currentPage, 3);
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const res = await fetchPackagesData(currentPage, 3);
 
-      console.log("Pagination response", res);
-      setPackages(res.data);
-      setTotalPages(res.totalPages); 
-    } catch (error) {
-      console.error("Failed to load package data:", error);
-    }
-  };
-  fetchPackages();
-}, [currentPage]);
-console.log(packages)
+        console.log('Pagination response', res);
+        setPackages(res.data);
+        setTotalPages(res.totalPages);
+      } catch (error) {
+        console.error('Failed to load package data:', error);
+      }
+    };
+    fetchPackages();
+  }, [currentPage]);
+  console.log(packages);
   const handleToggleBlock = async (id: string, shouldBlock: boolean) => {
-    const action = shouldBlock ? "block" : "unblock";
+    const action = shouldBlock ? 'block' : 'unblock';
 
     try {
       if (shouldBlock) {
         await blockPackage(id);
-        toast.success("Package blocked successfully");
+        toast.success('Package blocked successfully');
       } else {
         await unBlockPackage(id);
-        toast.success("Package unblocked successfully");
+        toast.success('Package unblocked successfully');
       }
 
       // Update state after toggle
       setPackages((prev) =>
-        prev.map((pkg) =>
-          pkg._id === id ? { ...pkg, isBlocked: shouldBlock } : pkg
-        )
+        prev.map((pkg) => (pkg._id === id ? { ...pkg, isBlocked: shouldBlock } : pkg))
       );
     } catch (error) {
       toast.error(`Failed to ${action} package`);
-      console.error("Error toggling block status", error);
+      console.error('Error toggling block status', error);
     }
   };
 
@@ -60,9 +68,7 @@ console.log(packages)
     <Card>
       <CardHeader>
         <CardTitle>Packages</CardTitle>
-        <Button onClick={() => navigate("/admin/packages/add")}>
-          Add Packages
-        </Button>
+        <Button onClick={() => navigate('/admin/packages/add')}>Add Packages</Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -76,18 +82,18 @@ console.log(packages)
             </TableRow>
           </TableHeader>
           <TableBody>
-            {packages.map((pkg,index) => (
+            {packages.map((pkg, index) => (
               <TableRow key={pkg._id}>
-<TableCell>{(currentPage - 1) * 3 + index + 1}</TableCell>
+                <TableCell>{(currentPage - 1) * 3 + index + 1}</TableCell>
                 <TableCell>{pkg.title}</TableCell>
-                  <TableCell>
-                {pkg.category?.map((cat) => (
+                <TableCell>
+                  {pkg.category?.map((cat) => (
                     <div key={cat._id} className="text-sm text-gray-700">
-                    {cat.name}
+                      {cat.name}
                     </div>
-                ))}
+                  ))}
                 </TableCell>
-             <TableCell>
+                <TableCell>
                   {pkg.isBlocked ? (
                     <span className="text-red-500">Blocked</span>
                   ) : (
@@ -135,28 +141,26 @@ console.log(packages)
           </TableBody>
         </Table>
       </CardContent>
-<div className="flex justify-center items-center gap-4 mt-6">
-  <Button
-    variant="outline"
-    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-    disabled={currentPage === 1}
-  >
-    Previous
-  </Button>
-  <span className="text-sm font-medium">
-    Page {currentPage} of {totalPages}
-  </span>
-  <Button
-    variant="outline"
-    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-    disabled={currentPage === totalPages}
-  >
-    Next
-  </Button>
-</div>
-
+      <div className="flex justify-center items-center gap-4 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span className="text-sm font-medium">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
     </Card>
-    
   );
 };
 

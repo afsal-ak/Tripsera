@@ -6,8 +6,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  AlertDialogAction
-} from "@//components/ui/alert-dialog";
+  AlertDialogAction,
+} from '@//components/ui/alert-dialog';
 
 interface ConfirmDialogProps {
   title: string;

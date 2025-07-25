@@ -1,22 +1,20 @@
-import { Routes, Route } from "react-router-dom";
-import PublicRoutes from "./PublicRoutes";
-import CommonRoutes from "./CommonRoutes";
-import ProtectedRoutes from "./ProtectedRoutes";
-import UserLayout from "@/layouts/UserLayout";
-import NotFoundPage from "@/features/components/NotFoundPage";
+import { Routes, Route } from 'react-router-dom';
+import PublicRoutes from './PublicRoutes';
+import CommonRoutes from './CommonRoutes';
+import ProtectedRoutes from './ProtectedRoutes';
+import UserLayout from '@/layouts/UserLayout';
+import NotFoundPage from '@/features/components/NotFoundPage';
 const UserRoutes = () => {
   return (
-    
     <Routes>
+      {PublicRoutes}
 
-       {PublicRoutes}
+      <Route element={<UserLayout />}>
+        {CommonRoutes}
 
-       <Route element={<UserLayout />}>
-         {CommonRoutes }
-
-         {ProtectedRoutes }
+        {ProtectedRoutes}
       </Route>
-     <Route path="*" element={<NotFoundPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

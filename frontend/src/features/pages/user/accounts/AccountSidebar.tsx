@@ -1,7 +1,6 @@
-import { NavLink } from "react-router-dom";
-import { User, Heart, Calendar, Settings, X ,BadgePercent,Wallet,IdCard} from "lucide-react";
-import { cn } from "@/lib/utils";
- 
+import { NavLink } from 'react-router-dom';
+import { User, Heart, Calendar, X, BadgePercent, Wallet, IdCard } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Props {
   isOpen: boolean;
@@ -9,37 +8,33 @@ interface Props {
 }
 
 const menuItems = [
-  { path: "profile", label: "Profile", icon: User },
-  { path: "wishlist", label: "Wishlist", icon: Heart },
-    { path: "coupon", label: "Coupon", icon: BadgePercent },
-    { path: "wallet", label: "Wallet", icon: Wallet },
-  { path: "my-bookings", label: "My Bookings", icon: Calendar },
-  { path: "my-blogs", label: "My Blogs", icon: IdCard },
+  { path: 'profile', label: 'Profile', icon: User },
+  { path: 'wishlist', label: 'Wishlist', icon: Heart },
+  { path: 'coupon', label: 'Coupon', icon: BadgePercent },
+  { path: 'wallet', label: 'Wallet', icon: Wallet },
+  { path: 'my-bookings', label: 'My Bookings', icon: Calendar },
+  { path: 'my-blogs', label: 'My Blogs', icon: IdCard },
 ];
 
 const AccountSidebar = ({ isOpen, onToggle }: Props) => {
-    
   return (
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
-          onClick={onToggle}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden" onClick={onToggle} />
       )}
 
       <aside
-       className={cn(
-    // Mobile: Slide-in fixed
-    "fixed top-0 left-0 z-50 h-full w-64 bg-white border-r transition-transform duration-300",
+        className={cn(
+          // Mobile: Slide-in fixed
+          'fixed top-0 left-0 z-50 h-full w-64 bg-white border-r transition-transform duration-300',
 
-    // Slide toggle on mobile
-    isOpen ? "translate-x-0" : "-translate-x-full",
+          // Slide toggle on mobile
+          isOpen ? 'translate-x-0' : '-translate-x-full',
 
-    // Desktop: Keep it in flow & sticky under navbar (assumes navbar height is 64px)
-    "lg:translate-x-0 lg:sticky lg:top-16 lg:z-10"
-  )}
+          // Desktop: Keep it in flow & sticky under navbar (assumes navbar height is 64px)
+          'lg:translate-x-0 lg:sticky lg:top-16 lg:z-10'
+        )}
       >
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-bold">My Account</h2>
@@ -56,10 +51,8 @@ const AccountSidebar = ({ isOpen, onToggle }: Props) => {
                   to={`/account/${path}`}
                   className={({ isActive }) =>
                     cn(
-                      "flex items-center gap-3 p-2 rounded-md text-sm font-medium",
-                      isActive
-                        ? "bg-orange text-white"
-                        : "hover:bg-orange/10 hover:text-orange"
+                      'flex items-center gap-3 p-2 rounded-md text-sm font-medium',
+                      isActive ? 'bg-orange text-white' : 'hover:bg-orange/10 hover:text-orange'
                     )
                   }
                   onClick={() => {

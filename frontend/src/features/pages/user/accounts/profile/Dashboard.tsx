@@ -1,23 +1,16 @@
-
-import { useEffect, useState } from "react";
-import { getUserProfile } from "@/features/services/user/profileService";
-import { toast } from "sonner";
-import type { IUser } from "@/features/types/IUser";
-import { Mail, MapPin, Calendar, Edit, Share2, MessageCircle } from "lucide-react";
-import { Button } from "@//components/ui/button";
-import { Card,CardContent } from "@/features/components/ui/Card";
-import { Badge } from "@/features/components/ui/Badge";
+import type { IUser } from '@/features/types/IUser';
+import { Mail, MapPin, Calendar, Edit, Share2, MessageCircle } from 'lucide-react';
+import { Button } from '@//components/ui/button';
+import { Card, CardContent } from '@/features/components/ui/Card';
+import { Badge } from '@/features/components/ui/Badge';
 type Props = {
   user?: IUser;
   loading: boolean;
 };
-const Dashboard = ({user,loading}:Props) => {
- 
- 
-
+const Dashboard = ({ user, loading }: Props) => {
   const profilePic = user?.profileImage?.url
-    ? user.profileImage.url.replace("/upload/", "/upload/f_webp,q_auto/")
-    : "/profile-default.jpg";
+    ? user.profileImage.url.replace('/upload/', '/upload/f_webp,q_auto/')
+    : '/profile-default.jpg';
 
   if (loading) {
     return (
@@ -48,7 +41,7 @@ const Dashboard = ({user,loading}:Props) => {
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 opacity-10"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(249,115,22,0.1),transparent_70%)]"></div>
-            
+
             <CardContent className="relative p-8 md:p-12">
               <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
                 {/* Profile Image */}
@@ -66,10 +59,10 @@ const Dashboard = ({user,loading}:Props) => {
                 <div className="flex-1 text-center lg:text-left space-y-4">
                   <div>
                     <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-                      {user?.fullName || "User Name"}
+                      {user?.fullName || 'User Name'}
                     </h1>
                     <p className="text-lg text-orange-600 font-medium mb-1">
-                      @{user?.username || "username"}
+                      @{user?.username || 'username'}
                     </p>
                     {user?.email && (
                       <div className="flex items-center justify-center lg:justify-start gap-2 text-gray-600">
@@ -82,9 +75,7 @@ const Dashboard = ({user,loading}:Props) => {
                   {/* Bio */}
                   {user?.bio && (
                     <div className="max-w-2xl">
-                      <p className="text-gray-700 leading-relaxed text-base">
-                        {user.bio}
-                      </p>
+                      <p className="text-gray-700 leading-relaxed text-base">{user.bio}</p>
                     </div>
                   )}
 
@@ -94,11 +85,17 @@ const Dashboard = ({user,loading}:Props) => {
                       <Edit className="w-4 h-4 mr-2" />
                       Edit Profile
                     </Button>
-                    <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full transition-all duration-300">
+                    <Button
+                      variant="outline"
+                      className="border-orange-200 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full transition-all duration-300"
+                    >
                       <Share2 className="w-4 h-4 mr-2" />
                       Share
                     </Button>
-                    <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full transition-all duration-300">
+                    <Button
+                      variant="outline"
+                      className="border-orange-200 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full transition-all duration-300"
+                    >
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Message
                     </Button>
@@ -126,7 +123,10 @@ const Dashboard = ({user,loading}:Props) => {
                 </div>
               </div>
               <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transform origin-left transition-transform duration-700 hover:scale-x-110" style={{ width: '75%' }}></div>
+                <div
+                  className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transform origin-left transition-transform duration-700 hover:scale-x-110"
+                  style={{ width: '75%' }}
+                ></div>
               </div>
             </CardContent>
           </Card>
@@ -146,7 +146,10 @@ const Dashboard = ({user,loading}:Props) => {
                 </div>
               </div>
               <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transform origin-left transition-transform duration-700 hover:scale-x-110" style={{ width: '60%' }}></div>
+                <div
+                  className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transform origin-left transition-transform duration-700 hover:scale-x-110"
+                  style={{ width: '60%' }}
+                ></div>
               </div>
             </CardContent>
           </Card>
@@ -160,7 +163,9 @@ const Dashboard = ({user,loading}:Props) => {
                 <Calendar className="w-8 h-8 text-green-600" />
               </div>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Member Since</h4>
-              <p className="text-gray-600">{user?.createdAt? new Date(user.createdAt).toISOString().slice(0, 10) : ""}</p>
+              <p className="text-gray-600">
+                {user?.createdAt ? new Date(user.createdAt).toISOString().slice(0, 10) : ''}
+              </p>
             </CardContent>
           </Card>
 

@@ -1,36 +1,33 @@
-import {useEffect, useState} from "react";
-import type { IPackage,IBanner } from "@/features/types/homeTypes";
+import { useEffect, useState } from 'react';
+import type { IPackage, IBanner } from '@/features/types/homeTypes';
 
-import Hero from "../../../components/Hero";
-import { Button } from "../../../components/Button";
-import PackageCard from "../../../components/PackageCard"; 
-import { fetchHomeData } from "@/features/services/user/HomeService";
+import Hero from '../../../components/Hero';
+import { Button } from '../../../components/Button';
+import PackageCard from '../../../components/PackageCard';
+import { fetchHomeData } from '@/features/services/user/HomeService';
 const Home = () => {
   const [packages, setPackages] = useState<IPackage[]>([]);
   const [banners, setBanners] = useState<IBanner[]>([]);
 
-  useEffect(()=>{
-    const loadData=async()=>{
+  useEffect(() => {
+    const loadData = async () => {
       try {
-        const {result}=await fetchHomeData()
-        const {banners,packages}=result
-          console.log("Banners:", banners);
-//         console.log("Packages:", packages); 
-setBanners(banners)
-setPackages(packages)
+        const { result } = await fetchHomeData();
+        const { banners, packages } = result;
+        console.log('Banners:', banners);
+        //         console.log("Packages:", packages);
+        setBanners(banners);
+        setPackages(packages);
       } catch (error) {
-        console.error("Failed to load home data:", error);
-
+        console.error('Failed to load home data:', error);
       }
-    }
-    loadData()
-  },[])
+    };
+    loadData();
+  }, []);
 
-  
-  
   return (
     <>
-       <Hero banners={banners} />
+      <Hero banners={banners} />
 
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
@@ -39,8 +36,8 @@ setPackages(packages)
               Featured <span className="text-orange">Packages</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover our handpicked selection of extraordinary travel
-              experiences designed to create memories that last a lifetime.
+              Discover our handpicked selection of extraordinary travel experiences designed to
+              create memories that last a lifetime.
             </p>
           </div>
 
@@ -48,11 +45,10 @@ setPackages(packages)
             {/* {packages.map((pkg) => (
               <PackageCard key={pkg._id} {...pkg} />
             ))} */}
-            
-            {packages.map((pkg) => (
-  <PackageCard key={pkg._id} pkg={pkg} />
-))}
 
+            {packages.map((pkg) => (
+              <PackageCard key={pkg._id} pkg={pkg} />
+            ))}
           </div>
 
           <div className="text-center mt-12">
@@ -66,8 +62,7 @@ setPackages(packages)
           </div>
         </div>
       </section>
-
-     </>
+    </>
   );
 };
 

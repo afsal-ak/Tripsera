@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice,type PayloadAction } from "@reduxjs/toolkit";
-import { toast } from "sonner";
-import { handleAdminLogin } from "@/features/services/admin/adminService";
-import type { IAdmin } from "@/features/types/IAdmin";
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { toast } from 'sonner';
+import { handleAdminLogin } from '@/features/services/admin/adminService';
+import type { IAdmin } from '@/features/types/IAdmin';
 interface AdminAuthState {
   admin: IAdmin | null;
   accessToken: string | null;
@@ -11,34 +11,29 @@ interface AdminAuthState {
 }
 
 const initialState: AdminAuthState = {
-  admin: JSON.parse(localStorage.getItem("admin") || "null"),
-  accessToken: localStorage.getItem("adminAccessToken"),
-  isAuthenticated: !!localStorage.getItem("adminAccessToken"),
+  admin: JSON.parse(localStorage.getItem('admin') || 'null'),
+  accessToken: localStorage.getItem('adminAccessToken'),
+  isAuthenticated: !!localStorage.getItem('adminAccessToken'),
   loading: false,
   error: null,
 };
 
 export const loginAdmin = createAsyncThunk(
-  "admin/login",
-  async (
-    { email, password }: { email: string; password: string },
-    { rejectWithValue }
-  ) => {
+  'admin/login',
+  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const { admin, accessToken, refreshToken } = await handleAdminLogin(email, password);
 
-      localStorage.setItem("adminAccessToken", accessToken);
+      localStorage.setItem('adminAccessToken', accessToken);
       return { admin, accessToken };
-
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-
 const adminAuthSlice = createSlice({
-  name: "adminAuth",
+  name: 'adminAuth',
   initialState,
   reducers: {
     logoutAdmin(state) {
@@ -47,8 +42,8 @@ const adminAuthSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
-      localStorage.removeItem("adminAccessToken");
-      localStorage.removeItem("admin");
+      localStorage.removeItem('adminAccessToken');
+      localStorage.removeItem('admin');
     },
   },
   extraReducers: (builder) => {
@@ -64,8 +59,8 @@ const adminAuthSlice = createSlice({
           state.admin = action.payload.admin;
           state.accessToken = action.payload.accessToken;
           state.isAuthenticated = true;
-          localStorage.setItem("adminAccessToken", action.payload.accessToken);
-          localStorage.setItem("admin", JSON.stringify(action.payload.admin));
+          localStorage.setItem('adminAccessToken', action.payload.accessToken);
+          localStorage.setItem('admin', JSON.stringify(action.payload.admin));
         }
       )
       .addCase(loginAdmin.rejected, (state, action) => {

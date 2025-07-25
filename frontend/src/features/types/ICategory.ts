@@ -1,5 +1,5 @@
-export interface ICategory{
-    _id:string,
-    name?:string;
-    isBlocked?:boolean
+export interface ICategory {
+  _id: string;
+  name?: string;
+  isBlocked?: boolean;
 }

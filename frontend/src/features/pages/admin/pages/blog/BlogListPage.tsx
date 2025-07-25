@@ -1,14 +1,9 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
-import { Edit } from "lucide-react";
-import { Button } from "@/features/components/Button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/features/components/ui/Card";
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Edit } from 'lucide-react';
+import { Button } from '@/features/components/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/features/components/ui/Card';
 import {
   Table,
   TableBody,
@@ -16,19 +11,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/features/components/ui/Table";
-import { Input } from "@/features/components/ui/Input";
+} from '@/features/components/ui/Table';
 
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@//components/ui/select";
-import { usePaginationButtons } from "@/features/hooks/usePaginationButtons";
-import { getAllBlogs } from "@/features/services/admin/blogService";
-import type { IBlog } from "@/features/types/IBlog";
+import { usePaginationButtons } from '@/features/hooks/usePaginationButtons';
+import { getAllBlogs } from '@/features/services/admin/blogService';
+import type { IBlog } from '@/features/types/IBlog';
 
 const AdminBlogList = () => {
   const navigate = useNavigate();
@@ -38,14 +25,14 @@ const AdminBlogList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
-//   const [titleSearch, setTitleSearch] = useState(searchParams.get("blogSearch") || "");
-//   const [status, setStatus] = useState(searchParams.get("status") || "");
-//   const [authorUsername, setAuthorUsername] = useState(searchParams.get("authorUsername") || "");
-//   const [startDate, setStartDate] = useState(searchParams.get("startDate") || "");
-//   const [endDate, setEndDate] = useState(searchParams.get("endDate") || "");
+  //   const [titleSearch, setTitleSearch] = useState(searchParams.get("blogSearch") || "");
+  //   const [status, setStatus] = useState(searchParams.get("status") || "");
+  //   const [authorUsername, setAuthorUsername] = useState(searchParams.get("authorUsername") || "");
+  //   const [startDate, setStartDate] = useState(searchParams.get("startDate") || "");
+  //   const [endDate, setEndDate] = useState(searchParams.get("endDate") || "");
 
-  const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "5", 10);
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '5', 10);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -55,7 +42,7 @@ const AdminBlogList = () => {
         setBlogs(response.result.blogs);
         setTotalPages(response.result.totalPages);
       } catch (error) {
-        toast.error("Failed to fetch blogs");
+        toast.error('Failed to fetch blogs');
       } finally {
         setLoading(false);
       }
@@ -66,37 +53,37 @@ const AdminBlogList = () => {
   const handlePageChange = (page: number) => {
     setSearchParams({
       page: page.toString(),
-      limit: limit.toString()
+      limit: limit.toString(),
     });
   };
 
-//   const handleFilterChange = () => {
-//     setSearchParams({
-//       page: "1",
-//       limit: limit.toString(),
-//       ...(titleSearch && { blogSearch: titleSearch }),
-//       ...(status && { status }),
-//       ...(startDate && { startDate }),
-//       ...(endDate && { endDate }),
-//       ...(authorUsername && { authorUsername }),
-//     });
-//   };
+  //   const handleFilterChange = () => {
+  //     setSearchParams({
+  //       page: "1",
+  //       limit: limit.toString(),
+  //       ...(titleSearch && { blogSearch: titleSearch }),
+  //       ...(status && { status }),
+  //       ...(startDate && { startDate }),
+  //       ...(endDate && { endDate }),
+  //       ...(authorUsername && { authorUsername }),
+  //     });
+  //   };
 
-//   const handleClearFilters = () => {
-//     setTitleSearch("");
-//     setStatus("");
-//     setAuthorUsername("");
-//     setStartDate("");
-//     setEndDate("");
-//     setSearchParams({ page: "1", limit: limit.toString() });
-//   };
+  //   const handleClearFilters = () => {
+  //     setTitleSearch("");
+  //     setStatus("");
+  //     setAuthorUsername("");
+  //     setStartDate("");
+  //     setEndDate("");
+  //     setSearchParams({ page: "1", limit: limit.toString() });
+  //   };
 
   const paginationButtons = usePaginationButtons({
     currentPage,
     totalPages,
     onPageChange: handlePageChange,
   });
-console.log(blogs,'blog')
+  console.log(blogs, 'blog');
   return (
     <div className="p-4 space-y-6">
       <Card>
@@ -140,17 +127,23 @@ console.log(blogs,'blog')
               <TableBody>
                 {blogs.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">No blogs found.</TableCell>
+                    <TableCell colSpan={5} className="text-center">
+                      No blogs found.
+                    </TableCell>
                   </TableRow>
                 ) : (
                   blogs.map((blog) => (
                     <TableRow key={blog._id}>
                       <TableCell>{blog.title}</TableCell>
-                      <TableCell>{blog.author?.username || "N/A"}</TableCell>
-            <TableCell>{blog.isBlocked ? "Blocked" : "Active"}</TableCell>
+                      <TableCell>{blog.author?.username || 'N/A'}</TableCell>
+                      <TableCell>{blog.isBlocked ? 'Blocked' : 'Active'}</TableCell>
                       <TableCell>{new Date(blog.createdAt!).toLocaleDateString()}</TableCell>
                       <TableCell>
-                        <Button size="sm" variant="outline" onClick={() => navigate(`/admin/blogs/${blog._id}`)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/admin/blogs/${blog._id}`)}
+                        >
                           <Edit className="w-4 h-4 mr-2" /> View
                         </Button>
                       </TableCell>

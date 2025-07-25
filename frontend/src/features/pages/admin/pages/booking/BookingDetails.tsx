@@ -1,15 +1,14 @@
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/features/components/ui/Card";
-import { Separator } from "@/features/components/ui/separator";
-import { Button } from "@/features/components/Button";
-import { Textarea } from "@//components/ui/textarea";
-import { Dialog, DialogTrigger, DialogContent } from "@/features/components/ui/Dialog";
-import { getBookingById, cancelBooking } from "@/features/services/admin/bookingService";
-import type { IBooking } from "@/features/types/IBooking";
+import { Card, CardContent, CardHeader, CardTitle } from '@/features/components/ui/Card';
+import { Separator } from '@/features/components/ui/separator';
+import { Button } from '@/features/components/Button';
+import { Textarea } from '@//components/ui/textarea';
+import { Dialog, DialogTrigger, DialogContent } from '@/features/components/ui/Dialog';
+import { getBookingById, cancelBooking } from '@/features/services/admin/bookingService';
+import type { IBooking } from '@/features/types/IBooking';
 
 const BookingDetail = () => {
   const { id } = useParams();
@@ -17,7 +16,7 @@ const BookingDetail = () => {
   const [booking, setBooking] = useState<IBooking | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [cancelReason, setCancelReason] = useState("");
+  const [cancelReason, setCancelReason] = useState('');
 
   useEffect(() => {
     const loadBooking = async () => {
@@ -25,8 +24,8 @@ const BookingDetail = () => {
         const data = await getBookingById(id!);
         setBooking(data.booking);
       } catch {
-        toast.error("Failed to load booking.");
-        navigate("/admin/bookings");
+        toast.error('Failed to load booking.');
+        navigate('/admin/bookings');
       } finally {
         setLoading(false);
       }
@@ -36,28 +35,28 @@ const BookingDetail = () => {
 
   const handleCancel = async () => {
     if (!cancelReason.trim()) {
-      toast.error("Please provide a cancellation reason.");
+      toast.error('Please provide a cancellation reason.');
       return;
     }
 
     try {
       await cancelBooking(id!, cancelReason);
-      console.log(cancelReason,'reason')
-      toast.success("Booking cancelled.");
+      console.log(cancelReason, 'reason');
+      toast.success('Booking cancelled.');
 
       setBooking((prev) =>
         prev
           ? {
               ...prev,
-              bookingStatus: "cancelled",
-              paymentStatus: "failed",
-              updatedAt: new Date() 
+              bookingStatus: 'cancelled',
+              paymentStatus: 'failed',
+              updatedAt: new Date(),
             }
           : prev
       );
       setOpen(false);
     } catch {
-      toast.error("Cancellation failed.");
+      toast.error('Cancellation failed.');
     }
   };
 
@@ -74,36 +73,51 @@ const BookingDetail = () => {
           {/* Image */}
           {booking.packageId?.imageUrls?.[0]?.url && (
             <img
-              src={booking.packageId.imageUrls[0].url.replace("/upload/", "/upload/f_auto,q_auto/")}
+              src={booking.packageId.imageUrls[0].url.replace('/upload/', '/upload/f_auto,q_auto/')}
               alt={booking.packageId.title}
               className="w-full h-56 object-cover rounded-md"
             />
           )}
 
-         <p><strong>email:</strong> {booking.userId?.email}</p>
-         <p><strong>username:</strong> {booking.userId?.username}</p>
-
+          <p>
+            <strong>email:</strong> {booking.userId?.email}
+          </p>
+          <p>
+            <strong>username:</strong> {booking.userId?.username}
+          </p>
 
           {/* Booking Summary */}
           <div className="grid grid-cols-2 gap-4">
-              <p><strong>Package:</strong> {booking.bookingCode}</p>
+            <p>
+              <strong>Package:</strong> {booking.bookingCode}
+            </p>
 
-            <p><strong>Package:</strong> {booking.packageId?.title}</p>
+            <p>
+              <strong>Package:</strong> {booking.packageId?.title}
+            </p>
             {/* <p><strong>Travel Date:</strong> {new Date(booking.travelDate).toLocaleDateString()}</p> */}
             <p>
-              <strong>Status:</strong>{" "}
+              <strong>Status:</strong>{' '}
               <span
                 className={`font-medium ${
-                  booking.bookingStatus === "cancelled" ? "text-red-500" : "text-green-600"
+                  booking.bookingStatus === 'cancelled' ? 'text-red-500' : 'text-green-600'
                 }`}
               >
                 {booking.bookingStatus}
               </span>
             </p>
-            <p><strong>Payment:</strong> ₹{booking.amountPaid} ({booking.paymentStatus})</p>
-            <p><strong>Payment Method:</strong> {booking.paymentMethod}</p>
-            <p><strong>Coupon code:</strong> {booking.couponCode || "None"}</p>
-            <p><strong>Wallet Used:</strong> ₹{booking.walletUsed || 0}</p>
+            <p>
+              <strong>Payment:</strong> ₹{booking.amountPaid} ({booking.paymentStatus})
+            </p>
+            <p>
+              <strong>Payment Method:</strong> {booking.paymentMethod}
+            </p>
+            <p>
+              <strong>Coupon code:</strong> {booking.couponCode || 'None'}
+            </p>
+            <p>
+              <strong>Wallet Used:</strong> ₹{booking.walletUsed || 0}
+            </p>
           </div>
 
           <Separator />
@@ -113,7 +127,9 @@ const BookingDetail = () => {
             <h4 className="font-semibold mb-2">Traveler Info</h4>
             <ul className="space-y-1">
               {booking.travelers?.map((t, idx) => (
-                <li key={idx}>• {t?.fullName}, Age {t?.age}, {t?.gender}</li>
+                <li key={idx}>
+                  • {t?.fullName}, Age {t?.age}, {t?.gender}
+                </li>
               ))}
             </ul>
           </div>
@@ -121,17 +137,21 @@ const BookingDetail = () => {
           {/* Contact */}
           <div>
             <h4 className="font-semibold mt-4 mb-1">Contact Info</h4>
-            <p>{booking.contactDetails?.name}, {booking.contactDetails?.phone}</p>
+            <p>
+              {booking.contactDetails?.name}, {booking.contactDetails?.phone}
+            </p>
             <p>{booking.contactDetails?.email}</p>
           </div>
 
           {/* Cancel Button */}
-          {booking.bookingStatus !== "cancelled" && (
+          {booking.bookingStatus !== 'cancelled' && (
             <>
               <Separator className="my-4" />
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="destructive" className="w-full">Cancel Booking</Button>
+                  <Button variant="destructive" className="w-full">
+                    Cancel Booking
+                  </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <h3 className="font-semibold text-lg mb-2">Reason for Cancellation</h3>
@@ -141,7 +161,9 @@ const BookingDetail = () => {
                     onChange={(e) => setCancelReason(e.target.value)}
                     placeholder="Write your reason here..."
                   />
-                  <Button onClick={handleCancel} className="mt-4 w-full">Submit Cancellation</Button>
+                  <Button onClick={handleCancel} className="mt-4 w-full">
+                    Submit Cancellation
+                  </Button>
                 </DialogContent>
               </Dialog>
             </>
@@ -249,7 +271,7 @@ export default BookingDetail;
 //               ...prev,
 //               bookingStatus: "cancelled",
 //               paymentStatus: "failed",
-//               updatedAt: new Date() 
+//               updatedAt: new Date()
 //             }
 //           : prev
 //       );
@@ -320,9 +342,9 @@ export default BookingDetail;
 //         {/* Header */}
 //         <div className="flex items-center justify-between mb-8">
 //           <div className="flex items-center space-x-4">
-//             <Button 
-//               onClick={() => navigate("/admin/bookings")} 
-//               variant="outline" 
+//             <Button
+//               onClick={() => navigate("/admin/bookings")}
+//               variant="outline"
 //               size="sm"
 //               className="hover:bg-white hover:shadow-md transition-all duration-200"
 //             >
@@ -526,7 +548,7 @@ export default BookingDetail;
 //                       <p className="text-3xl font-bold text-green-700">₹{booking.amountPaid.toLocaleString()}</p>
 //                     </div>
 //                   </div>
-                  
+
 //                   <div className="space-y-3">
 //                     <div className="flex justify-between items-center">
 //                       <span className="text-gray-600 flex items-center">
@@ -535,7 +557,7 @@ export default BookingDetail;
 //                       </span>
 //                       <span className="font-medium">{booking.paymentMethod}</span>
 //                     </div>
-                    
+
 //                     {booking.couponCode && (
 //                       <div className="flex justify-between items-center">
 //                         <span className="text-gray-600 flex items-center">
@@ -545,7 +567,7 @@ export default BookingDetail;
 //                         <Badge variant="secondary">{booking.couponCode}</Badge>
 //                       </div>
 //                     )}
-                    
+
 //                     {booking.walletUsed && booking.walletUsed > 0 && (
 //                       <div className="flex justify-between items-center">
 //                         <span className="text-gray-600 flex items-center">

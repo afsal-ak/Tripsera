@@ -1,6 +1,6 @@
-import { useState, useCallback, useRef } from "react";
-import { toast } from "sonner";
-import imageCompression from "browser-image-compression";
+import { useState, useCallback, useRef } from 'react';
+import { toast } from 'sonner';
+import imageCompression from 'browser-image-compression';
 
 interface UseImageUploadProps {
   maxImages?: number;
@@ -18,7 +18,7 @@ export const useImageUpload = ({ maxImages = 4, maxSizeMB = 2 }: UseImageUploadP
       const files = e.target.files;
       if (!files) return;
 
-      const acceptedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+      const acceptedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
       const maxSize = maxSizeMB * 1024 * 1024;
 
       const validFiles = Array.from(files).filter((file) => {
@@ -35,7 +35,7 @@ export const useImageUpload = ({ maxImages = 4, maxSizeMB = 2 }: UseImageUploadP
       });
 
       if (validFiles.length === 0) {
-        toast.error("Please select at least 1 valid image.");
+        toast.error('Please select at least 1 valid image.');
         return;
       }
 

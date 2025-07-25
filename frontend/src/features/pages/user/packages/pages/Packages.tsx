@@ -1,12 +1,11 @@
+import { useState, useEffect } from 'react';
 
-import  { useState, useEffect } from "react";
-
-import PackageFilterSidebar from "@/features/components/PackageFilterSidebar";
-import PackageCard from "@/features/components/PackageCard";
-import type { IPackage } from "@/features/types/homeTypes";
-import { fetchActivePackages } from "@/features/services/user/PackageService";
-import { useSearchParams } from "react-router-dom";
-import { Search } from "lucide-react";
+import PackageFilterSidebar from '@/features/components/PackageFilterSidebar';
+import PackageCard from '@/features/components/PackageCard';
+import type { IPackage } from '@/features/types/homeTypes';
+import { fetchActivePackages } from '@/features/services/user/PackageService';
+import { useSearchParams } from 'react-router-dom';
+import { Search } from 'lucide-react';
 
 const Packages = () => {
   const [packages, setPackages] = useState<IPackage[]>([]);
@@ -17,20 +16,20 @@ const Packages = () => {
 
   const filters = {
     // location: searchParams.get("location") || "",
-    category: searchParams.get("category") || "",
-    duration: searchParams.get("duration") || "",
-    sort: (searchParams.get("sort") || "newest") as
-      | "newest"
-      | "oldest"
-      | "price_asc"
-      | "price_desc",
-    search: searchParams.get("search") || "",
-    startDate: searchParams.get("startDate") || "",
-    endDate: searchParams.get("endDate") || "",
+    category: searchParams.get('category') || '',
+    duration: searchParams.get('duration') || '',
+    sort: (searchParams.get('sort') || 'newest') as
+      | 'newest'
+      | 'oldest'
+      | 'price_asc'
+      | 'price_desc',
+    search: searchParams.get('search') || '',
+    startDate: searchParams.get('startDate') || '',
+    endDate: searchParams.get('endDate') || '',
   };
-  const [searchQuery, setSearchQuery] = useState(filters.search || "");
+  const [searchQuery, setSearchQuery] = useState(filters.search || '');
 
-  const currentPage = parseInt(searchParams.get("page") || "1");
+  const currentPage = parseInt(searchParams.get('page') || '1');
 
   const loadPackages = async () => {
     try {
@@ -50,7 +49,7 @@ const Packages = () => {
       setTotalPages(res.totalPages);
       setPage(currentPage);
     } catch (error) {
-      console.error("Failed to load packages", error);
+      console.error('Failed to load packages', error);
     }
   };
 
@@ -61,43 +60,38 @@ const Packages = () => {
   const handleFilterChange = (newFilters: any) => {
     setSearchParams({
       ...newFilters,
-      page: "1",
+      page: '1',
     });
   };
 
   const handleClear = () => {
-    setSearchParams({ page: "1" })
+    setSearchParams({ page: '1' });
   };
 
- 
- 
   const handlePageChange = (newPage: number) => {
     setSearchParams({
       ...filters,
       page: String(newPage),
     });
   };
-  
- const handleSearch=()=>{
 
-  setSearchParams({
-  ...filters,
-  search:searchQuery,
-  page:"1"
- 
- })
- }
- const handleSearchClear = () => {
-    setSearchQuery("");
+  const handleSearch = () => {
     setSearchParams({
       ...filters,
-      search: "",
-      page: "1",
+      search: searchQuery,
+      page: '1',
     });
-  }
+  };
+  const handleSearchClear = () => {
+    setSearchQuery('');
+    setSearchParams({
+      ...filters,
+      search: '',
+      page: '1',
+    });
+  };
   return (
     <>
-       
       <div className="bg-background min-h-screen py-8">
         <div className="container mx-auto px-4 flex flex-col md:flex-row gap-6">
           <PackageFilterSidebar
@@ -106,57 +100,46 @@ const Packages = () => {
             onClear={handleClear}
           />
           <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-6 text-foreground">
-              Available Packages
-            </h2>
-
+            <h2 className="text-2xl font-bold mb-6 text-foreground">Available Packages</h2>
 
             <div className="flex flex-col sm:flex-row items-center justify-end mb-6 gap-2">
-            
-  <input
-  
-    type="text"
-    placeholder="Search packages... "
-    value={searchQuery || ""}
-    onChange={(e) =>
-      setSearchQuery(() => ( e.target.value ))
-    }
-    onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      setSearchParams({
-        ...filters,
-        search: searchQuery,
-        page: "1",
-      });
-    }
-  }}
-    className="w-full sm:w-64 border border-border px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange text-sm"
-  />
+              <input
+                type="text"
+                placeholder="Search packages... "
+                value={searchQuery || ''}
+                onChange={(e) => setSearchQuery(() => e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setSearchParams({
+                      ...filters,
+                      search: searchQuery,
+                      page: '1',
+                    });
+                  }
+                }}
+                className="w-full sm:w-64 border border-border px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange text-sm"
+              />
 
- {searchQuery&& (
-  <button onClick={handleSearchClear}
-  
-        className="text-sm text-gray-500 hover:text-red-500 transition"
->
-     ✖
-  </button>
- )}
+              {searchQuery && (
+                <button
+                  onClick={handleSearchClear}
+                  className="text-sm text-gray-500 hover:text-red-500 transition"
+                >
+                  ✖
+                </button>
+              )}
 
-  <button
-  onClick={handleSearch}
-    className="bg-orange hover:bg-orange-dark text-white text-sm px-4 py-2 rounded-md transition"
-  >
-    
-     <Search size={18} />
-
-  </button>
-</div>
+              <button
+                onClick={handleSearch}
+                className="bg-orange hover:bg-orange-dark text-white text-sm px-4 py-2 rounded-md transition"
+              >
+                <Search size={18} />
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {packages.length > 0 ? (
-                packages.map((pkg) => (
-                  <PackageCard key={pkg._id} pkg={pkg} />
-                ))
+                packages.map((pkg) => <PackageCard key={pkg._id} pkg={pkg} />)
               ) : (
                 <p className="text-muted-foreground">No packages found.</p>
               )}
@@ -185,10 +168,11 @@ const Packages = () => {
               <button
                 onClick={() => handlePageChange(page - 1)}
                 disabled={page === 1}
-                className={`px-3 py-1.5 text-sm rounded border ${page === 1
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-border"
-                    : "bg-orange text-white hover:bg-orange/90"
-                  }`}
+                className={`px-3 py-1.5 text-sm rounded border ${
+                  page === 1
+                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-border'
+                    : 'bg-orange text-white hover:bg-orange/90'
+                }`}
               >
                 Prev
               </button>
@@ -200,20 +184,19 @@ const Packages = () => {
               <button
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page === totalPages}
-                className={`px-3 py-1.5 text-sm rounded border ${page === totalPages
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-border"
-                    : "bg-orange text-white hover:bg-orange/90"
-                  }`}
+                className={`px-3 py-1.5 text-sm rounded border ${
+                  page === totalPages
+                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-border'
+                    : 'bg-orange text-white hover:bg-orange/90'
+                }`}
               >
                 Next
               </button>
             </div>
-
-
           </div>
         </div>
       </div>
-     </>
+    </>
   );
 };
 

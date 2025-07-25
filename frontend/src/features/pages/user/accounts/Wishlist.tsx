@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 
-import { getAllWishlist, deleteFromWishlist } from "@/features/services/user/wishlistService";
-import { Trash2,MapPin } from "lucide-react";
-import { toast } from "sonner";
-import type { WishlistItem } from "@/features/types/IWishlist";
-import { ConfirmDialog } from "@/features/components/ui/ConfirmDialog";
-import { usePaginationButtons } from "@/features/hooks/usePaginationButtons";
+import { getAllWishlist, deleteFromWishlist } from '@/features/services/user/wishlistService';
+import { Trash2, MapPin } from 'lucide-react';
+import { toast } from 'sonner';
+import type { WishlistItem } from '@/features/types/IWishlist';
+import { ConfirmDialog } from '@/features/components/ui/ConfirmDialog';
+import { usePaginationButtons } from '@/features/hooks/usePaginationButtons';
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
@@ -14,21 +14,18 @@ const Wishlist = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "6", 10);
-
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '6', 10);
 
   useEffect(() => {
-
     const fetchWishlist = async () => {
       try {
         const data = await getAllWishlist(currentPage, limit);
-        console.log(data, 'wifhlist')
+        console.log(data, 'wifhlist');
         setWishlist(data.data || []);
         setTotalPages(data.totalPage);
-
       } catch (err) {
-        toast.error("Failed to load wishlist");
+        toast.error('Failed to load wishlist');
       } finally {
         setLoading(false);
       }
@@ -41,29 +38,22 @@ const Wishlist = () => {
   const handleDelete = async (packageId: string) => {
     try {
       await deleteFromWishlist(packageId);
-      toast.success("Removed from wishlist");
-      setWishlist((prev) =>
-        prev.filter((item) => item.packageId._id !== packageId)
-      );
+      toast.success('Removed from wishlist');
+      setWishlist((prev) => prev.filter((item) => item.packageId._id !== packageId));
     } catch (err) {
-      toast.error("Failed to remove item");
+      toast.error('Failed to remove item');
     }
   };
-
-
 
   const handlePageChange = (page: number) => {
     setSearchParams({ page: page.toString(), limit: limit.toString() });
   };
-
-
 
   const paginationButtons = usePaginationButtons({
     currentPage,
     totalPages,
     onPageChange: handlePageChange,
   });
-
 
   if (loading) {
     return <p className="p-4 text-center">Loading wishlist...</p>;
@@ -83,29 +73,22 @@ const Wishlist = () => {
         {wishlist.map((item) => {
           const pkg = item.packageId;
           return (
-            <div
-              key={pkg._id}
-              className="bg-white rounded-lg shadow p-4 relative"
-            >
+            <div key={pkg._id} className="bg-white rounded-lg shadow p-4 relative">
               <Link to={`/packages/${pkg._id}`} className="block hover:opacity-90 transition">
-
                 <img
-                  src={pkg.imageUrls[0]?.url.replace("/upload/", "/upload/f_auto,q_auto/") || ""}
+                  src={pkg.imageUrls[0]?.url.replace('/upload/', '/upload/f_auto,q_auto/') || ''}
                   alt={pkg.title}
                   className="h-40 w-full object-cover rounded-md mb-3"
                 />
                 <h3 className="text-lg font-semibold">{pkg.title}</h3>
-                
-                <p className="text-sm text-gray-600 ">
-                    
 
-                 <MapPin className="w-3 h-3 mr-3" />
-                  {pkg.location.map((loc) => loc.name).join(", ")}
+                <p className="text-sm text-gray-600 ">
+                  <MapPin className="w-3 h-3 mr-3" />
+                  {pkg.location.map((loc) => loc.name).join(', ')}
                 </p>
                 <p className="text-sm text-gray-800 font-medium mt-1">
                   ₹ {pkg.price.toLocaleString()}
                 </p>
-
               </Link>
               <ConfirmDialog
                 title="Delete this wishlist?"
@@ -119,7 +102,6 @@ const Wishlist = () => {
                   <Trash2 className="w-4 h-4" />
                 </button>
               </ConfirmDialog>
-
             </div>
           );
         })}
