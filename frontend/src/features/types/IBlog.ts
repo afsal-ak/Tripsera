@@ -1,21 +1,27 @@
-import { Types } from 'mongoose';
-
+ 
 export interface IBlog {
-  _id?: Types.ObjectId | string;
+  _id?:  string;
   title: string;
   slug?: string;
   content: string;
-  coverImage?: {
-    url: string;
-    public_id: string;
-  };
+  // coverImage?: {
+  //   url: string;
+  //   public_id: string;
+  // };
   images?: { url: string; public_id: string }[];
   tags?: string[];
-  author: Types.ObjectId | string;
+  //author: string;
   //userId: Types.ObjectId | string;
   //isPublished?: boolean;
-  likes?: (Types.ObjectId | string)[];
+  likes?:  string[];
    status: 'draft' | 'published' | 'archived';
+    author: {
+    _id: string;
+    username: string;
+    profileImage?:{
+        url:string
+    }
+  };
   isBlocked?: boolean;
   createdAt?: Date;
   updatedAt?: Date;

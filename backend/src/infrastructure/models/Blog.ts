@@ -1,5 +1,6 @@
 import mongoose, { Schema, model, Document } from 'mongoose';
 import { IBlog } from '@domain/entities/IBlog';
+import slugify from 'slugify';
 
 interface BlogDocument extends Omit<IBlog, '_id'>, Document {
   _id: mongoose.Types.ObjectId;
@@ -9,7 +10,7 @@ interface BlogDocument extends Omit<IBlog, '_id'>, Document {
 const BlogSchema = new Schema<BlogDocument>(
   {
     title: { type: String, required: true },
-   // slug: { type: String, required: false, unique: true },
+    slug: { type: String,  unique: true },
     content: { type: String, required: true },
     coverImage: {
       url: String,
@@ -39,5 +40,22 @@ const BlogSchema = new Schema<BlogDocument>(
   },
   { timestamps: true }
 );
+
+BlogSchema.pre('save', async function (next) {
+  // Only regenerate slug if title is new or changed
+  if (!this.isModified('title')) return next();
+
+  const baseSlug = slugify(this.title, { lower: true, strict: true });
+  let slug = baseSlug;
+  let count = 1;
+
+  // Check if slug already exists
+  while (await BlogModel.exists({ slug })) {
+    slug = `${baseSlug}-${count++}`;
+  }
+
+  this.slug = slug;
+  next();
+});
 
 export const BlogModel = model<BlogDocument>('Blog', BlogSchema);

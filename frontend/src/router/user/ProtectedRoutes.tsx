@@ -12,25 +12,36 @@ import BookingSuccessPage from "@/features/pages/user/booking/BookingSuccessPage
 import UserBookingPage from "@/features/pages/user/booking/UserBookingPage";
 import BookingDetailPage from "@/features/pages/user/booking/BookingDetailPage";
 import PaymentFailed from "@/features/pages/user/booking/PaymentFailed";
+import AddBlogForm from "@/features/pages/user/blog/AddBlogForm";
+import EditBlogForm from "@/features/pages/user/blog/EditBlogForm";
+import BlogDetail from "@/features/pages/user/blog/BlogDetails";
+import UserBlogsPage from "@/features/pages/user/blog/UserBlogsPage";
+import UserBlogDetails from "@/features/pages/user/blog/UserBlogDetail";
 const ProtectedRoutes = (
 
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
-          <Route path="/checkout/:id" element={<CheckoutPage/>}/>
-          {/* <Route path="/success" element={<BookingSuccessPage/>}/> */}
-<Route path="/booking-success/:id" element={<BookingSuccessPage />} />
-<Route path="/booking-failed/:id" element={<PaymentFailed/>} />
+    <Route path="/checkout/:id" element={<CheckoutPage />} />
+    {/* <Route path="/success" element={<BookingSuccessPage/>}/> */}
+    <Route path="/booking-success/:id" element={<BookingSuccessPage />} />
+    <Route path="/booking-failed/:id" element={<PaymentFailed />} />
 
-       <Route path="/account" element={<AccountLayout/>}>
-        <Route path="profile" element={<Profile />} />
-        <Route path='verify-otp' element={<EmailOtpPage/>}/>
+    <Route path="/account" element={<AccountLayout />}>
+      <Route path="profile" element={<Profile />} />
+      <Route path='verify-otp' element={<EmailOtpPage />} />
 
-      <Route path="wishlist" element={<Wishlist/>}/>
-      <Route path="coupon" element={<CouponList/>}/>
-      <Route path="wallet" element={<WalletPage/>}/>
-      <Route path='my-bookings' element={<UserBookingPage/>}/>
-      <Route path='my-bookings/:id' element={<BookingDetailPage/>}/>
-      </Route>
+      <Route path="wishlist" element={<Wishlist />} />
+      <Route path="coupon" element={<CouponList />} />
+      <Route path="wallet" element={<WalletPage />} />
+      <Route path='my-bookings' element={<UserBookingPage />} />
+      <Route path='my-bookings/:id' element={<BookingDetailPage />} />
+      <Route path='my-blogs' element={<UserBlogsPage />} />
+       <Route path="my-blogs/add" element={<AddBlogForm />} />
+      <Route path="my-blogs/:slug" element={<UserBlogDetails />} />
+     <Route path="my-blogs/edit/:blogId" element={<EditBlogForm />} />
+
+
+    </Route>
   </Route>
 );
 

@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { User, Heart, Calendar, Settings, X ,BadgePercent,Wallet} from "lucide-react";
+import { User, Heart, Calendar, Settings, X ,BadgePercent,Wallet,IdCard} from "lucide-react";
 import { cn } from "@/lib/utils";
  
 
@@ -14,6 +14,7 @@ const menuItems = [
     { path: "coupon", label: "Coupon", icon: BadgePercent },
     { path: "wallet", label: "Wallet", icon: Wallet },
   { path: "my-bookings", label: "My Bookings", icon: Calendar },
+  { path: "my-blogs", label: "My Blogs", icon: IdCard },
 ];
 
 const AccountSidebar = ({ isOpen, onToggle }: Props) => {
