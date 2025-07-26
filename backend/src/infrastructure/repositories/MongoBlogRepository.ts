@@ -164,7 +164,10 @@ export class MongoBlogRepository implements IBlogRepository {
   }
 
   async getBySlug(slug: string): Promise<IBlog | null> {
-    return await BlogModel.findOne({ slug }).lean();
+    return await BlogModel.findOne({ slug }).populate({
+          path: 'author',
+          select: 'username email profileImage.url',
+        }).lean();
   }
 
   async likeBlog(blogId: string, userId: string): Promise<IBlog | null> {

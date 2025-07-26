@@ -131,25 +131,53 @@ export class BlogController {
     }
   };
 
-  getBySlug = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { slug } = req.params;
-      const userId = getUserIdFromRequest(req);
-      const blog = await this.blogUseCases.getBySlug(slug);
+  // getBySlug = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  //   try {
+  //     const { slug } = req.params;
+  //     const userId = getUserIdFromRequest(req);
+  //     const blog = await this.blogUseCases.getBySlug(slug);
 
-      if (!blog) {
-        res.status(404).json({ message: 'Blog not found' });
-        return;
-      }
-      // console.log(userId, 'id')
-      // console.log(blog, 'blog')
-      const isLiked = blog.likes?.some((id) => id.toString() === userId);
-      console.log(isLiked, 'isliked');
-      res.status(200).json({ blog: { ...blog, isLiked } });
+  //     if (!blog) {
+  //       res.status(404).json({ message: 'Blog not found' });
+  //       return;
+  //     }
+  //     // console.log(userId, 'id')
+  //     // console.log(blog, 'blog')
+  //     const isLiked = blog.likes?.some((id) => id.toString() === userId);
+  //     console.log(isLiked, 'isliked');
+  //     res.status(200).json({ blog: { ...blog, isLiked } });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
+getBySlug = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { slug } = req.params;
+
+    // Try to extract userId if user is logged in, otherwise undefined
+    let userId: string | undefined;
+    try {
+      userId = getUserIdFromRequest(req);
     } catch (err) {
-      next(err);
+      userId = undefined; // No token or invalid token
     }
-  };
+console.log(userId,'userid from slug')
+    const blog = await this.blogUseCases.getBySlug(slug);
+
+    if (!blog) {
+      res.status(404).json({ message: 'Blog not found' });
+      return;
+    }
+  //     const isLiked = blog.likes?.some((id) => id.toString() === userId);
+
+    // Check if the user has liked the blog (only if user is logged in)
+    const isLiked = userId ? blog.likes?.some((id) => id.toString() === userId) : false;
+console.log(blog,'blog',{isLiked})
+    res.status(200).json({ blog: { ...blog ?? blog, isLiked } });
+  } catch (err) {
+    next(err);
+  }
+};
 
   likeBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,12 +1,22 @@
 import { Router } from 'express';
 import { upload } from '@presentation/middlewares/upload';
-
+import {
+  AUTH_ROUTES,
+  HOME_ROUTES,
+  PROFILE_ROUTES,
+  WISHLIST_ROUTES,
+  COUPON_ROUTES,
+  WALLET_ROUTES,
+  BOOKING_ROUTES,
+  BLOG_ROUTES,
+} from 'constants/route-constants/userRoutes';
 import { UserAuthUsecases } from '@domain/usecases/user/userAuthUseCases';
 import { MongoUserRepository } from '@infrastructure/repositories/MongoUserRepository';
 import { MongoOtpRepository } from '@infrastructure/repositories/MongoOtpRepository';
 import { userRefreshToken } from '@presentation/controllers/token/userRefreshToken';
 import { UserAuthController } from '@presentation/controllers/user/UserAuthController';
 import { userAuthMiddleware } from '@presentation/middlewares/userAuthMiddleware';
+import { optionalAuthMiddleware } from '@presentation/middlewares/optionalAuthMiddleware ';
 import { HomeUseCases } from '@domain/usecases/user/homeUseCases';
 import { HomeController } from '@presentation/controllers/user/homeController';
 import { MongoBannerRepository } from '@infrastructure/repositories/MongoBannerRepository';
@@ -72,97 +82,67 @@ const blogController = new BlogController(blogUseCases);
 
 const router = Router();
 
-//auth routes
-router.post('/refresh-token', userRefreshToken);
-router.post('/pre-register', userAuthController.preRegister);
-router.post('/register', userAuthController.register);
-router.post('/resend-otp', userAuthController.resendOtp);
-router.post('/login', userAuthController.login);
-router.post('/google-login', userAuthController.googleLogin);
-router.post('/forgotPassword', userAuthController.forgotPassword);
-router.post('/verify-otp', userAuthController.verifyOtpForForgotPassword);
-router.post('/forgotPasswordChange', userAuthController.forgotPasswordChange);
-router.post('/logout', userAuthController.userLogout);
-router.post('/email/request-change', userAuthMiddleware, userAuthController.requestEmailChange);
-router.post('/email/verify-change', userAuthMiddleware, userAuthController.verifyAndUpdateEmail);
-router.post('/password/change', userAuthMiddleware, userAuthController.changePassword);
+// AUTH ROUTES
+router.post(AUTH_ROUTES.REFRESH_TOKEN, userRefreshToken);
+router.post(AUTH_ROUTES.PRE_REGISTER, userAuthController.preRegister);
+router.post(AUTH_ROUTES.REGISTER, userAuthController.register);
+router.post(AUTH_ROUTES.RESEND_OTP, userAuthController.resendOtp);
+router.post(AUTH_ROUTES.LOGIN, userAuthController.login);
+router.post(AUTH_ROUTES.GOOGLE_LOGIN, userAuthController.googleLogin);
+router.post(AUTH_ROUTES.FORGOT_PASSWORD, userAuthController.forgotPassword);
+router.post(AUTH_ROUTES.VERIFY_OTP, userAuthController.verifyOtpForForgotPassword);
+router.post(AUTH_ROUTES.FORGOT_PASSWORD_CHANGE, userAuthController.forgotPasswordChange);
+router.post(AUTH_ROUTES.LOGOUT, userAuthController.userLogout);
+router.post(AUTH_ROUTES.EMAIL_REQUEST_CHANGE, userAuthMiddleware, userAuthController.requestEmailChange);
+router.post(AUTH_ROUTES.EMAIL_VERIFY_CHANGE, userAuthMiddleware, userAuthController.verifyAndUpdateEmail);
+router.post(AUTH_ROUTES.PASSWORD_CHANGE, userAuthMiddleware, userAuthController.changePassword);
 
-//
-router.get('/home', homeController.getHome);
-router.get('/packages', homeController.getActivePackage);
-router.get('/packages/:id', homeController.getPackagesById);
+// HOME ROUTES
+router.get(HOME_ROUTES.HOME, homeController.getHome);
+router.get(HOME_ROUTES.PACKAGES, homeController.getActivePackage);
+router.get(HOME_ROUTES.PACKAGE_BY_ID, homeController.getPackagesById);
 
-//profileRoutes
-router.get('/profile', userAuthMiddleware, profileController.getUserProfile);
-router.put('/profile/update', userAuthMiddleware, profileController.updateUserProfile);
-router.put(
-  '/profile/uploadProfileImage',
-  userAuthMiddleware,
-  upload.single('image'),
-  profileController.updateProfileImage
-);
-router.put('/profile/updateAddress', userAuthMiddleware, profileController.updateUserAddress);
+// PROFILE ROUTES
+router.get(PROFILE_ROUTES.GET_PROFILE, userAuthMiddleware, profileController.getUserProfile);
+router.put(PROFILE_ROUTES.UPDATE_PROFILE, userAuthMiddleware, profileController.updateUserProfile);
+router.put(PROFILE_ROUTES.UPLOAD_PROFILE_IMAGE, userAuthMiddleware, upload.single('image'), profileController.updateProfileImage);
+router.put(PROFILE_ROUTES.UPDATE_ADDRESS, userAuthMiddleware, profileController.updateUserAddress);
 
-//wishlist routes
-router.get('/wishlist', userAuthMiddleware, wishlistController.getAllWishlist);
-router.get('/wishlist/check', userAuthMiddleware, wishlistController.checkPackageInWishlist);
-router.post('/wishlist/add', userAuthMiddleware, wishlistController.addToWishlist);
-router.delete('/wishlist/delete', userAuthMiddleware, wishlistController.removeFromWishlist);
+// WISHLIST ROUTES
+router.get(WISHLIST_ROUTES.GET_ALL, userAuthMiddleware, wishlistController.getAllWishlist);
+router.get(WISHLIST_ROUTES.CHECK, userAuthMiddleware, wishlistController.checkPackageInWishlist);
+router.post(WISHLIST_ROUTES.ADD, userAuthMiddleware, wishlistController.addToWishlist);
+router.delete(WISHLIST_ROUTES.DELETE, userAuthMiddleware, wishlistController.removeFromWishlist);
 
-//coupon routes
-router.get('/coupons', userAuthMiddleware, couponController.getActiveCoupons);
-router.post('/coupon/apply', userAuthMiddleware, couponController.applyCoupon);
+// COUPON ROUTES
+router.get(COUPON_ROUTES.GET_COUPONS, userAuthMiddleware, couponController.getActiveCoupons);
+router.post(COUPON_ROUTES.APPLY, userAuthMiddleware, couponController.applyCoupon);
 
-//wallet routes
-router.get('/wallet', userAuthMiddleware, walletController.getUserWallet);
-router.get('/wallet-balance', userAuthMiddleware, walletController.walletBalance);
-router.post('/wallet/credit', userAuthMiddleware, walletController.creditWallet);
-router.post('/wallet/debit', userAuthMiddleware, walletController.debitWallet);
+// WALLET ROUTES
+router.get(WALLET_ROUTES.GET_WALLET, userAuthMiddleware, walletController.getUserWallet);
+router.get(WALLET_ROUTES.BALANCE, userAuthMiddleware, walletController.walletBalance);
+router.post(WALLET_ROUTES.CREDIT, userAuthMiddleware, walletController.creditWallet);
+router.post(WALLET_ROUTES.DEBIT, userAuthMiddleware, walletController.debitWallet);
 
-// booking routes
-router.get('/booking', userAuthMiddleware, bookingController.getUserBookings);
-router.get('/booking/:id', userAuthMiddleware, bookingController.getBookingById);
-router.patch('/booking/cancel/:id', userAuthMiddleware, bookingController.cancelBooking);
+// BOOKING ROUTES
+router.get(BOOKING_ROUTES.GET_BOOKINGS, userAuthMiddleware, bookingController.getUserBookings);
+router.get(BOOKING_ROUTES.GET_BY_ID, userAuthMiddleware, bookingController.getBookingById);
+router.patch(BOOKING_ROUTES.CANCEL, userAuthMiddleware, bookingController.cancelBooking);
+router.post(BOOKING_ROUTES.ONLINE_BOOKING, userAuthMiddleware, bookingController.createBookingWithOnlinePayment);
+router.post(BOOKING_ROUTES.VERIFY_PAYMENT, userAuthMiddleware, bookingController.verifyRazorpayPayment);
+router.patch(BOOKING_ROUTES.CANCEL_UNPAID, userAuthMiddleware, bookingController.cancelUnpaidBooking);
+router.post(BOOKING_ROUTES.RETRY_PAYMENT, userAuthMiddleware, bookingController.retryBookingPayment);
+router.post(BOOKING_ROUTES.WALLET_BOOKING, userAuthMiddleware, bookingController.createBookingWithWalletPayment);
 
-router.post(
-  '/booking/online',
-  userAuthMiddleware,
-  bookingController.createBookingWithOnlinePayment
-);
-router.post('/booking/verify', userAuthMiddleware, bookingController.verifyRazorpayPayment);
-
-router.patch('/payment-cancel/:id', userAuthMiddleware, bookingController.cancelUnpaidBooking);
-router.post('/retry-payment/:id', userAuthMiddleware, bookingController.retryBookingPayment);
-
-router.post(
-  '/booking/wallet',
-  userAuthMiddleware,
-  bookingController.createBookingWithWalletPayment
-);
-
-//blog route
-
-router.post('/blog/create', userAuthMiddleware, upload.array('images'), blogController.createBlog);
-router.put(
-  '/blog/edit/:blogId',
-  userAuthMiddleware,
-  upload.array('images'),
-  blogController.editBlog
-);
-router.get('/blogs', blogController.getAllPublishedBlogs);
-router.get('/blogs/user', userAuthMiddleware, blogController.getBlogByUser);
-
-//router.get('/blog/:slug', blogController.getBySlug);
-
-router.get('/blog/slug/:slug', userAuthMiddleware, blogController.getBySlug);
-router.get('/blog/:blogId', userAuthMiddleware, blogController.getBlogById);
-router.get('/blog/:slug', blogController.getBySlug);
-router.get('/blog/slug/:slug', blogController.getBySlug);
-router.delete('/blog/delete/:blogId', userAuthMiddleware, blogController.deleteBlog);
-router.patch('/blog/like/:blogId', userAuthMiddleware, blogController.likeBlog);
-router.patch('/blog/unlike/:blogId', userAuthMiddleware, blogController.unLikeBlog);
-//router.post('/:blogId/comment', userAuthMiddleware, blogController.commentOnBlog);
-//router.delete('/:blogId/comment/:commentId', userAuthMiddleware, blogController.deleteComment);
-//router.post('/:blogId/comment/:commentId/reply', userAuthMiddleware, blogController.replyToComment);
+// BLOG ROUTES
+router.post(BLOG_ROUTES.CREATE, userAuthMiddleware, upload.array('images'), blogController.createBlog);
+router.put(BLOG_ROUTES.EDIT, userAuthMiddleware, upload.array('images'), blogController.editBlog);
+router.get(BLOG_ROUTES.GET_ALL, blogController.getAllPublishedBlogs);
+router.get(BLOG_ROUTES.GET_USER_BLOGS, userAuthMiddleware, blogController.getBlogByUser);
+router.get(BLOG_ROUTES.GET_BY_ID, userAuthMiddleware, blogController.getBlogById);
+ router.get(BLOG_ROUTES.GET_BY_SLUG,optionalAuthMiddleware, blogController.getBySlug);
+router.delete(BLOG_ROUTES.DELETE, userAuthMiddleware, blogController.deleteBlog);
+router.patch(BLOG_ROUTES.LIKE, userAuthMiddleware, blogController.likeBlog);
+router.patch(BLOG_ROUTES.UNLIKE, userAuthMiddleware, blogController.unLikeBlog);
 
 export default router;

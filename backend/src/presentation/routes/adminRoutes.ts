@@ -1,4 +1,15 @@
 import { Router } from 'express';
+import {
+  AUTH_ROUTES,
+  USER_MANAGEMENT_ROUTES,
+  BANNER_ROUTES,
+  CATEGORY_ROUTES,
+  PACKAGE_ROUTES,
+  COUPON_ROUTES,
+  BOOKING_ROUTES,
+  BLOG_ROUTES,
+} from 'constants/route-constants/adminRoutes';
+
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
 import { AdminAuthUseCases } from '@domain/usecases/admin/adminAuthUseCases';
 import { AdminAuthController } from '@presentation/controllers/admin/adminAuthController';
@@ -68,90 +79,60 @@ const blogController = new BlogController(blogUseCases);
 
 const router = Router();
 
-//admin router
-router.post('/refresh-token', adminRefreshToken);
-router.post('/admin-login', adminAuthController.adminLogin);
-router.post('/forgotPassword', adminAuthController.forgotPassword);
-router.post('/forgotPasswordChange', adminAuthController.forgotPasswordChange);
-router.post('/logout', adminAuthController.adminLogout);
+// AUTH ROUTES 
+router.post(AUTH_ROUTES.REFRESH_TOKEN, adminRefreshToken);
+router.post(AUTH_ROUTES.LOGIN, adminAuthController.adminLogin);
+router.post(AUTH_ROUTES.FORGOT_PASSWORD, adminAuthController.forgotPassword);
+router.post(AUTH_ROUTES.FORGOT_PASSWORD_CHANGE, adminAuthController.forgotPasswordChange);
+router.post(AUTH_ROUTES.LOGOUT, adminAuthController.adminLogout);
 
-//user router
-router.get('/users', adminAuthMiddleware, userManagementController.getAllUser);
-router.get('/users/:userId', adminAuthMiddleware, userManagementController.getSingleUser);
-router.patch('/users/:userId/block', adminAuthMiddleware, userManagementController.blockUser);
-router.patch('/users/:userId/unblock', adminAuthMiddleware, userManagementController.unblockUser);
+// USER MANAGEMENT 
+router.get(USER_MANAGEMENT_ROUTES.GET_ALL_USERS, adminAuthMiddleware, userManagementController.getAllUser);
+router.get(USER_MANAGEMENT_ROUTES.GET_SINGLE_USER, adminAuthMiddleware, userManagementController.getSingleUser);
+router.patch(USER_MANAGEMENT_ROUTES.BLOCK_USER, adminAuthMiddleware, userManagementController.blockUser);
+router.patch(USER_MANAGEMENT_ROUTES.UNBLOCK_USER, adminAuthMiddleware, userManagementController.unblockUser);
 
-//banner router
+//  BANNER ROUTES
+router.post(BANNER_ROUTES.ADD, adminAuthMiddleware, upload.single('image'), bannerMangementController.createBanner);
+router.get(BANNER_ROUTES.GET_ALL, adminAuthMiddleware, bannerMangementController.getBanner);
+router.patch(BANNER_ROUTES.BLOCK, adminAuthMiddleware, bannerMangementController.blockBanner);
+router.patch(BANNER_ROUTES.UNBLOCK, adminAuthMiddleware, bannerMangementController.unblockBanner);
+router.delete(BANNER_ROUTES.DELETE, adminAuthMiddleware, bannerMangementController.deleteBanner);
 
-router.post(
-  '/addBanner',
-  adminAuthMiddleware,
-  upload.single('image'),
-  bannerMangementController.createBanner
-);
-router.get('/banners', adminAuthMiddleware, bannerMangementController.getBanner);
-router.patch(
-  '/banners/:bannerId/unblock',
-  adminAuthMiddleware,
-  bannerMangementController.unblockBanner
-);
-router.patch(
-  '/banners/:bannerId/block',
-  adminAuthMiddleware,
-  bannerMangementController.blockBanner
-);
-router.delete(
-  '/banners/:bannerId/delete',
-  adminAuthMiddleware,
-  bannerMangementController.deleteBanner
-);
+// CATEGORY ROUTES
+router.get(CATEGORY_ROUTES.GET_ALL, adminAuthMiddleware, categoryController.getAllCategories);
+router.get(CATEGORY_ROUTES.GET_ACTIVE, categoryController.getActiveCategory);
+router.get(CATEGORY_ROUTES.GET_BY_ID, adminAuthMiddleware, categoryController.getCategoryById);
+router.post(CATEGORY_ROUTES.ADD, adminAuthMiddleware, categoryController.createCategory);
+router.put(CATEGORY_ROUTES.EDIT, adminAuthMiddleware, categoryController.editCategory);
+router.patch(CATEGORY_ROUTES.BLOCK, adminAuthMiddleware, categoryController.blockCategory);
+router.patch(CATEGORY_ROUTES.UNBLOCK, adminAuthMiddleware, categoryController.unblockCategory);
 
-//category router
+// PACKAGE ROUTES
+router.get(PACKAGE_ROUTES.GET_ALL, adminAuthMiddleware, packageController.getFullPackage);
+router.get(PACKAGE_ROUTES.GET_BY_ID, adminAuthMiddleware, packageController.getPackagesById);
+router.post(PACKAGE_ROUTES.ADD, adminAuthMiddleware, upload.array('images', 4), packageController.createPackage);
+router.put(PACKAGE_ROUTES.EDIT, adminAuthMiddleware, upload.array('images', 4), packageController.editPackage);
+router.patch(PACKAGE_ROUTES.BLOCK, adminAuthMiddleware, packageController.blockPackage);
+router.patch(PACKAGE_ROUTES.UNBLOCK, adminAuthMiddleware, packageController.unblockPackage);
 
-router.get('/categories', adminAuthMiddleware, categoryController.getAllCategories);
-router.get('/category/active', categoryController.getActiveCategory);
-router.get('/category/:id', adminAuthMiddleware, categoryController.getCategoryById);
-router.post('/addCategory', adminAuthMiddleware, categoryController.createCategory);
-router.put('/category/:id', adminAuthMiddleware, categoryController.editCategory);
-router.patch('/category/:id/block', adminAuthMiddleware, categoryController.blockCategory);
-router.patch('/category/:id/unblock', adminAuthMiddleware, categoryController.unblockCategory);
+// COUPON ROUTES
+router.get(COUPON_ROUTES.GET_ALL, adminAuthMiddleware, couponController.getAllCoupon);
+router.post(COUPON_ROUTES.ADD, adminAuthMiddleware, couponController.createCoupon);
+router.get(COUPON_ROUTES.GET_BY_ID, adminAuthMiddleware, couponController.getCouponById);
+router.put(COUPON_ROUTES.EDIT, adminAuthMiddleware, couponController.editCoupon);
+router.patch(COUPON_ROUTES.STATUS, adminAuthMiddleware, couponController.updateCouponStatus);
+router.delete(COUPON_ROUTES.DELETE, adminAuthMiddleware, couponController.deleteCoupon);
 
-//package router
-router.get('/packages', adminAuthMiddleware, packageController.getFullPackage);
-router.get('/packages/:id', adminAuthMiddleware, packageController.getPackagesById);
-router.post(
-  '/addPackage',
-  adminAuthMiddleware,
-  upload.array('images', 4),
-  packageController.createPackage
-);
-router.put(
-  '/packages/:id/edit',
-  adminAuthMiddleware,
-  upload.array('images', 4),
-  packageController.editPackage
-);
-router.patch('/packages/:id/block', adminAuthMiddleware, packageController.blockPackage);
-router.patch('/packages/:id/unblock', adminAuthMiddleware, packageController.unblockPackage);
+// BOOKING ROUTES
+router.get(BOOKING_ROUTES.GET_ALL, adminAuthMiddleware, bookingController.getAllBooking);
+router.get(BOOKING_ROUTES.GET_BY_ID, adminAuthMiddleware, bookingController.getBookingByIdForAdmin);
+router.patch(BOOKING_ROUTES.CANCEL, adminAuthMiddleware, bookingController.cancelBookingByAdmin);
 
-//coupon router
-
-router.get('/coupons', adminAuthMiddleware, couponController.getAllCoupon);
-router.post('/coupon/add', adminAuthMiddleware, couponController.createCoupon);
-router.get('/coupon/:id', adminAuthMiddleware, couponController.getCouponById);
-router.put('/coupon/edit/:id', adminAuthMiddleware, couponController.editCoupon);
-router.patch('/coupon/status/:id', adminAuthMiddleware, couponController.updateCouponStatus);
-router.delete('/coupon/delete/:id', adminAuthMiddleware, couponController.deleteCoupon);
-
-//booking route
-router.get('/booking', adminAuthMiddleware, bookingController.getAllBooking);
-router.get('/booking/:id', adminAuthMiddleware, bookingController.getBookingByIdForAdmin);
-router.patch('/booking/cancel/:id', adminAuthMiddleware, bookingController.cancelBookingByAdmin);
-
-//blog route
-router.get('/blogs', adminAuthMiddleware, blogController.getAllBlogs);
-router.get('/blog/:blogId', adminAuthMiddleware, blogController.getBlogById);
-router.delete('/blog/:blogId', adminAuthMiddleware, blogController.deleteBlog);
-router.patch('/blog/status/:blogId', adminAuthMiddleware, blogController.changeBlogStatus);
+// BLOG ROUTES
+router.get(BLOG_ROUTES.GET_ALL, adminAuthMiddleware, blogController.getAllBlogs);
+router.get(BLOG_ROUTES.GET_BY_ID, adminAuthMiddleware, blogController.getBlogById);
+router.delete(BLOG_ROUTES.DELETE, adminAuthMiddleware, blogController.deleteBlog);
+router.patch(BLOG_ROUTES.STATUS, adminAuthMiddleware, blogController.changeBlogStatus);
 
 export default router;
