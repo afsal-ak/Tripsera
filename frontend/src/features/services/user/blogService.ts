@@ -11,6 +11,7 @@ export const fetchBlogBySlug = async (slug: string) => {
   console.log(response, 'from servoce');
   return response.data;
 };
+
 export const fetchBlogById = async (blogId: string) => {
   const response = await userApi.get(`/blog/${blogId}`);
   console.log(response, 'from servoce');
@@ -35,8 +36,7 @@ export const handleBlogEdit = async (blogId: string, formData: FormData) => {
   console.log(response, 'from servoce');
   return response.data;
 };
-// router.get('/blog/slug/:slug',blogController.getBySlug);
-
+ 
 export const handleDeleteBlog = async (blogId: string): Promise<IBlog> => {
   const response = await userApi.delete(`/blog/delete/${blogId}`);
   return response.data;

@@ -19,21 +19,23 @@ const PackageDetails = () => {
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
   const [loading, setLoading] = useState(false);
-  const [category, setCategory] = useState([]);
-  const [isWishlisted, setWishlisted] = useState(false);
+   const [isWishlisted, setWishlisted] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [wishListParams, setWishlistParams] = useSearchParams();
-
+ 
   useEffect(() => {
-    const loadCat = async () => {
+       if (!id) {
+        return;
+      }
+    const loadWishListCheck = async () => {
       try {
-        const cat = await getCategory();
-        setCategory(cat);
-      } catch (error) {
+        const checkWishlist = await checkPackageInWishlist(id);
+       console.log(checkWishlist.result,'check')
+        setWishlisted(checkWishlist.result);
+       } catch (error) {
         console.log(error);
       }
     };
-    loadCat();
+    loadWishListCheck();
   }, []);
 
   useEffect(() => {
@@ -43,11 +45,8 @@ const PackageDetails = () => {
       }
       try {
         const data = await fetchPackgeById(id);
-        const checkWishlist = await checkPackageInWishlist(id);
-        //   console.log(checkWishlist.result,'check')
-        setPkg(data);
-        setWishlisted(checkWishlist.result);
-      } catch (error) {
+         setPkg(data);
+       } catch (error) {
         console.error('Failed to fetch package details', error);
       }
     };
@@ -68,7 +67,7 @@ const PackageDetails = () => {
       }
       setWishlisted((prev) => !prev);
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Something went wrong');
+      toast.error('Please log in');
     } finally {
       setLoading(false);
     }

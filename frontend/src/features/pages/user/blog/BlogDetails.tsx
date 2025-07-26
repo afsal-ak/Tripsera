@@ -28,10 +28,11 @@ const BlogDetail = () => {
 
       try {
         const response = await fetchBlogBySlug(slug);
+        console.log(response, 'response fr')
         setBlogData(response.blog);
         setLiked(response.blog?.isLiked || false);
         setLikesCount(response.blog?.likes?.length || 0);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to fetch blog details', error);
       }
     };
@@ -39,30 +40,23 @@ const BlogDetail = () => {
     loadBlogDetail();
   }, [slug]);
 
-  const handleLike = async () => {
-    if (!blogData?._id) {
-      return;
-    }
-    try {
-      await handleLikeBlog(blogData._id);
-      setLiked(true);
-      setLikesCount((prev) => prev + 1);
-    } catch (error: any) {
-      toast.error('Failed to like post');
-    }
-  };
+ 
+  const toggleLike = async () => {
+    if (!blogData?._id) return;
 
-  const handleUnLike = async () => {
-    if (!blogData?._id) {
-      return;
-    }
     try {
-      await handleUnLikeBlog(blogData._id);
-      setLikesCount((prev) => prev - 1);
-
-      setLiked(false);
-    } catch (error: any) {
-      toast.error('Failed to unlike post');
+      if (liked) {
+        await handleUnLikeBlog(blogData._id);
+        setLiked(false);
+        setLikesCount((prev) => prev - 1);
+      } else {
+        await handleLikeBlog(blogData._id);
+        setLiked(true);
+        setLikesCount((prev) => prev + 1);
+      }
+    } catch (error: unknown) {
+      console.error('Like/Unlike failed', error);
+      toast.error('Please log in');
     }
   };
 
@@ -104,7 +98,7 @@ const BlogDetail = () => {
           </div>
 
           {/* Images */}
-          {blogData.images?.length > 0 && (
+          {blogData.images?.length! > 0 && (
             <Swiper
               spaceBetween={10}
               slidesPerView={1}
@@ -129,15 +123,15 @@ const BlogDetail = () => {
           <div className="p-4">
             <div className="flex justify-between mb-2">
               <div className="flex items-center space-x-4">
-                <button onClick={liked ? handleUnLike : handleLike}>
+                <button onClick={toggleLike}>
                   <Heart
-                    className={`w-6 h-6 transition-all duration-200 ${
-                      liked
+                    className={`w-6 h-6 transition-all duration-200 ${liked
                         ? 'fill-red-500 text-red-500'
                         : 'text-darkText hover:text-muted-foreground'
-                    }`}
+                      }`}
                   />
                 </button>
+
                 <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" />
                 <Send className="w-6 h-6 text-darkText hover:text-muted-foreground" />
               </div>
