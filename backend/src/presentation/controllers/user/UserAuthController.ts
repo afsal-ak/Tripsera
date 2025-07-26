@@ -9,7 +9,6 @@ export class UserAuthController {
     try {
       const { email, username, password } = req.body;
 
-      console.log(req.body, 'body');
       await this.userAuthUseCases.preRegistration({
         email,
         username,
@@ -25,7 +24,6 @@ export class UserAuthController {
   register = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, otp } = req.body;
-      console.log(req.body, 'register');
       await this.userAuthUseCases.verifyOtpAndRegister(email, otp);
       res.status(200).json({ message: 'User registered successfully' });
     } catch (error: any) {
@@ -67,7 +65,6 @@ export class UserAuthController {
         refreshToken,
       });
     } catch (error: any) {
-      console.log(error.message, 'login');
       res.status(401).json({ message: error.message });
     }
   };
@@ -75,7 +72,6 @@ export class UserAuthController {
   forgotPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email } = req.body;
-      console.log({ email });
       await this.userAuthUseCases.forgotPasswordOtp(email);
       res.status(200).json({ message: 'OTP send to your email' });
     } catch (error: any) {
@@ -86,7 +82,6 @@ export class UserAuthController {
   verifyOtpForForgotPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, otp } = req.body;
-      console.log(req.body, 'otp');
       const { token } = await this.userAuthUseCases.verifyOtpForForgotPassword(email, otp);
       console.log(token, 'contr');
       res.status(200).json({ message: 'OTP Verfied Successfully', token });
@@ -98,7 +93,6 @@ export class UserAuthController {
   forgotPasswordChange = async (req: Request, res: Response): Promise<void> => {
     try {
       const { token, password } = req.body;
-      console.log(req.body);
       await this.userAuthUseCases.forgotPasswordChange(token, password);
       res.status(200).json({ message: 'Password changed successfully' });
     } catch (error: any) {

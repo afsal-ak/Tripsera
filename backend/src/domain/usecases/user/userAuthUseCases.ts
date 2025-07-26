@@ -96,10 +96,7 @@ export class UserAuthUsecases {
     password: string
   ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> {
     const user = await this.userRepository.findByEmail(email);
-    console.log(email, password, 'em');
     if (!user) {
-      console.log(email, password, 'em');
-
       throw new Error('Incorrect email or password');
     }
     if (user.isBlocked == true) {

@@ -7,7 +7,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-
+import morganLogger from '@presentation/middlewares/logger';
 dotenv.config();
 
 const app = express();
@@ -29,11 +29,14 @@ app.use(
     credentials: true,
   })
 );
+app.use(morganLogger);
+
 app.use(bodyParser.json());
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.use(errorHandler);
+
 connectMongoDB().then(() => {
   app.listen(PORT, () => {
     console.log(` Server running on port ${PORT}`);

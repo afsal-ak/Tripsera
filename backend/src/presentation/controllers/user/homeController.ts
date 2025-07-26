@@ -34,9 +34,9 @@ export class HomeController {
         }
       }
 
-      console.log('Query received:', req.query);
-      console.log('Final cleaned filters:', filters);
-      console.log('Search query:', searchQuery);
+      // console.log('Query received:', req.query);
+      // console.log('Final cleaned filters:', filters);
+      // console.log('Search query:', searchQuery);
 
       const result = await this.homeUseCases.getActivePackage({
         filters,
@@ -45,7 +45,7 @@ export class HomeController {
         sort: sortBy,
         search: searchQuery,
       });
-      console.log(search, 'search');
+      // console.log(search, 'search');
       res.status(200).json({
         message: 'Active packages fetched successfully',
         ...result,
