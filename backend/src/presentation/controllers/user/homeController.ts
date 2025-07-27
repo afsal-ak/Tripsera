@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { HomeUseCases } from '@domain/usecases/user/homeUseCases';
+import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 
 export class HomeController {
   constructor(private homeUseCases: HomeUseCases) {}
@@ -8,10 +9,9 @@ export class HomeController {
     try {
       const result = await this.homeUseCases.getHome();
 
-      res.status(200).json({ result });
+      res.status(HttpStatus.OK).json({ result });
 
-      // res.status(200).json({ result:'hello'});
-    } catch (error: any) {
+     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
   };
@@ -34,10 +34,7 @@ export class HomeController {
         }
       }
 
-      // console.log('Query received:', req.query);
-      // console.log('Final cleaned filters:', filters);
-      // console.log('Search query:', searchQuery);
-
+    
       const result = await this.homeUseCases.getActivePackage({
         filters,
         page: pageNum,
@@ -46,7 +43,7 @@ export class HomeController {
         search: searchQuery,
       });
       // console.log(search, 'search');
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         message: 'Active packages fetched successfully',
         ...result,
       });
@@ -61,7 +58,7 @@ export class HomeController {
       const packages = await this.homeUseCases.getPackageById(id);
       // console.log(packages,'pkg')
 
-      res.status(200).json({ message: 'Package fetched successfully', packages });
+      res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });
     }

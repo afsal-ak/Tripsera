@@ -1,54 +1,54 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserAuthUsecases } from '@domain/usecases/user/userAuthUseCases';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
-
+import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 export class UserAuthController {
-  constructor(private userAuthUseCases: UserAuthUsecases) {}
+  constructor(private userAuthUseCases: UserAuthUsecases) { }
 
-  preRegister = async (req: Request, res: Response): Promise<void> => {
+
+  preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, username, password } = req.body;
+      await this.userAuthUseCases.preRegistration({ email, username, password });
 
-      await this.userAuthUseCases.preRegistration({
-        email,
-        username,
-        password,
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'OTP sent to your email',
       });
-      res.status(200).json({ message: 'OTP send to your email' });
     } catch (error: any) {
-      console.log(error.message);
-      res.status(400).json({ message: error.message });
+      next(error);
     }
   };
 
-  register = async (req: Request, res: Response): Promise<void> => {
+
+  register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, otp } = req.body;
       await this.userAuthUseCases.verifyOtpAndRegister(email, otp);
-      res.status(200).json({ message: 'User registered successfully' });
+
+      res.status(HttpStatus.CREATED).json({
+        success: true,
+        message: 'User registered successfully',
+      });
     } catch (error: any) {
-      console.log(error.message);
-      res.status(400).json({ message: error.message });
+      next(error);
     }
   };
 
-  resendOtp = async (req: Request, res: Response): Promise<void> => {
+  resendOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email } = req.body;
       await this.userAuthUseCases.resendOtp(email);
-      res.status(200).json({ message: 'OTP resent to your email' });
+      res.status(HttpStatus.OK).json({ message: 'OTP resent to your email' });
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      next(error);
     }
   };
 
-  login = async (req: Request, res: Response): Promise<void> => {
+  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, password } = req.body;
-      const { user, accessToken, refreshToken } = await this.userAuthUseCases.login(
-        email,
-        password
-      );
+      const { user, accessToken, refreshToken } = await this.userAuthUseCases.login(email, password);
 
       res.cookie('userRefreshToken', refreshToken, {
         httpOnly: true,
@@ -58,73 +58,72 @@ export class UserAuthController {
         path: '/',
       });
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
+        success: true,
         message: 'Login successful',
-        user,
-        accessToken,
-        refreshToken,
+        data: { user, accessToken },
       });
     } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      next(error);
     }
   };
 
-  forgotPassword = async (req: Request, res: Response): Promise<void> => {
+
+  forgotPassword = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
     try {
       const { email } = req.body;
       await this.userAuthUseCases.forgotPasswordOtp(email);
-      res.status(200).json({ message: 'OTP send to your email' });
+      res.status(HttpStatus.OK).json({ message: 'OTP send to your email' });
     } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      next(error);
     }
   };
 
-  verifyOtpForForgotPassword = async (req: Request, res: Response): Promise<void> => {
+  verifyOtpForForgotPassword = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
     try {
       const { email, otp } = req.body;
       const { token } = await this.userAuthUseCases.verifyOtpForForgotPassword(email, otp);
-      console.log(token, 'contr');
-      res.status(200).json({ message: 'OTP Verfied Successfully', token });
+       res.status(HttpStatus.OK).json({ message: 'OTP Verfied Successfully', token });
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      next(error);
     }
   };
 
-  forgotPasswordChange = async (req: Request, res: Response): Promise<void> => {
+  forgotPasswordChange = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
     try {
       const { token, password } = req.body;
       await this.userAuthUseCases.forgotPasswordChange(token, password);
-      res.status(200).json({ message: 'Password changed successfully' });
+      res.status(HttpStatus.OK).json({ message: 'Password changed successfully' });
     } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      next(error);
     }
   };
 
-  googleLogin = async (req: Request, res: Response): Promise<void> => {
+  googleLogin = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
     const { token } = req.body;
     if (!token) {
-      res.status(400).json({ message: 'Missing Google token' });
+      res.status(HttpStatus.BAD_REQUEST).json({ message: 'Missing Google token' });
     }
     try {
       const data = await this.userAuthUseCases.loginWithGoole(token);
-      res.status(200).json(data);
+      res.status(HttpStatus.OK).json(data);
     } catch (error: any) {
       console.log(error);
-      res.status(500).json({ message: error.message || 'Google login failed' });
+      next(error);
     }
   };
 
-  userLogout = async (req: Request, res: Response): Promise<void> => {
+  userLogout = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
     try {
-      res.clearCookie('refreshToken', {
+      res.clearCookie('userRefreshToken', {
         httpOnly: true,
         secure: false,
         sameSite: 'none',
       });
 
-      res.status(200).json({ message: 'Admin logout successful' });
+      res.status(HttpStatus.OK).json({ message: 'Admin logout successful' });
     } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      next(error);
     }
   };
 
@@ -135,7 +134,7 @@ export class UserAuthController {
       const { newEmail } = req.body;
 
       await this.userAuthUseCases.requestEmailChange(userId, newEmail);
-      res.status(200).json({ message: 'OTP sent to new email' });
+      res.status(HttpStatus.OK).json({ message: 'OTP sent to new email' });
     } catch (error) {
       next(error);
     }
@@ -146,9 +145,8 @@ export class UserAuthController {
       const userId = getUserIdFromRequest(req);
 
       const { newEmail, otp } = req.body;
-      console.log(newEmail, otp, 'email change');
       const user = await this.userAuthUseCases.verifyAndUpdateEmail(userId, newEmail, otp);
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         message: 'Email updated successfully',
         email: user?.email,
       });
@@ -163,7 +161,7 @@ export class UserAuthController {
       const userId = getUserIdFromRequest(req);
 
       await this.userAuthUseCases.changePassword(userId, currentPassword, newPassword);
-      res.status(200).json({ message: 'Password updated successfully' });
+      res.status(HttpStatus.OK).json({ message: 'Password updated successfully' });
     } catch (error) {
       next(error);
     }

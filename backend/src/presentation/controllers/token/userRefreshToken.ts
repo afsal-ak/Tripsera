@@ -20,7 +20,6 @@ export const userRefreshToken = async (req: Request, res: Response): Promise<voi
       res.status(403).json({ message: 'Invalid refresh token' });
       return;
     }
-    console.log({ payload });
 
     // Create new tokens
     const newAccessToken = generateAccessToken({

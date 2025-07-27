@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { BookingUseCases } from '@domain/usecases/user/bookingUseCases';
 import { AppError } from '@shared/utils/AppError';
+import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 
 export class BookingController {
   constructor(private bookingUseCases: BookingUseCases) {}
@@ -16,7 +17,7 @@ export class BookingController {
       const data = req.body;
 
       const result = await this.bookingUseCases.createBookingWithOnlinePayment(userId, data);
-      res.status(201).json({
+      res.status(HttpStatus.CREATED).json({
         message: 'Booking created successfully',
         booking: result.booking,
         razorpayOrder: result.razorpayOrder || null,
@@ -41,7 +42,7 @@ export class BookingController {
       );
 
       if (!isValid) {
-        res.status(400).json({ success: false, message: 'Invalid Razorpay signature' });
+        res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: 'Invalid Razorpay signature' });
         return;
       }
 
@@ -51,7 +52,7 @@ export class BookingController {
         razorpay_signature
       );
 
-      res.status(200).json({ success: true });
+      res.status(HttpStatus.OK).json({ success: true });
     } catch (error) {
       next(error);
     }
@@ -65,7 +66,7 @@ export class BookingController {
 
       await this.bookingUseCases.cancelUnpaidBooking(userId, bookingId);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         message: 'Booking cancelled successfully',
       });
     } catch (error) {
@@ -82,7 +83,7 @@ export class BookingController {
 
       const result = await this.bookingUseCases.retryBookingPayment(userId, bookingId);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         message: 'New Razorpay order created',
         booking: result.booking,
         razorpayOrder: result.razorpayOrder || null,
@@ -105,9 +106,9 @@ export class BookingController {
       const { booking } = await this.bookingUseCases.createBookingWithWalletPayment(userId, data);
 
       if (!booking) {
-        throw new AppError(500, 'Booking creation failed');
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
       }
-      res.status(201).json({
+      res.status(HttpStatus.CREATED).json({
         message: 'Booking created successfully using wallet',
         booking,
       });
@@ -125,7 +126,7 @@ export class BookingController {
 
       const { bookings, total } = await this.bookingUseCases.getAllUserBooking(userId, page, limit);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         bookings: bookings,
         total: total,
         currentPage: page,
@@ -145,7 +146,7 @@ export class BookingController {
 
       const booking = await this.bookingUseCases.getBookingById(userId, bookingId);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         booking,
         message: 'Booking details retrieved',
       });
@@ -164,7 +165,7 @@ export class BookingController {
 
       const booking = await this.bookingUseCases.cancelBooking(userId, bookingId, reason);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         booking,
         message: 'Booking cancelled successfully',
       });

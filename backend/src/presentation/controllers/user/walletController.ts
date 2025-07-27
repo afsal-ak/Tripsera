@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { WalletUseCases } from '@domain/usecases/user/walletUseCases';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
+import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 
 export class WalletController {
   constructor(private walletUseCases: WalletUseCases) {}
@@ -11,7 +12,7 @@ export class WalletController {
 
       const { balance } = await this.walletUseCases.getUserWallet(userId);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         balance,
         message: 'Wallet balance fetched successfully',
       });
@@ -35,7 +36,7 @@ export class WalletController {
         sort,
       });
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         balance,
         transactions,
         total,
@@ -57,7 +58,7 @@ export class WalletController {
       }
 
       const wallet = await this.walletUseCases.creditWallet(userId, amount, description);
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         wallet,
         message: 'Wallet credited successfully',
       });
@@ -77,7 +78,7 @@ export class WalletController {
       }
 
       const wallet = await this.walletUseCases.debitWallet(userId, amount, description);
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         wallet,
         message: 'Wallet debited successfully',
       });

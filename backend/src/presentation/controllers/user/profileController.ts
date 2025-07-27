@@ -3,16 +3,17 @@ import { ProfileUseCases } from '@domain/usecases/user/profileUseCases';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { IUser } from '@domain/entities/IUser';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 
 export class ProfileController {
-  constructor(private profileUseCases: ProfileUseCases) {}
+  constructor(private profileUseCases: ProfileUseCases) { }
 
   getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
       const userProfile = await this.profileUseCases.getUserProfile(userId);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         userProfile,
         message: 'user profile fetched successfully',
       });
@@ -27,8 +28,7 @@ export class ProfileController {
       const { profileData }: { profileData: Partial<IUser> } = req.body;
       console.log(profileData, 'profile data');
       const updatedProfile = await this.profileUseCases.updateUserProfile(userId, profileData);
-      console.log(updatedProfile, 'upadted profile');
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         success: true,
         message: 'User profile updated successfully',
         userProfile: updatedProfile,
@@ -45,9 +45,9 @@ export class ProfileController {
       // console.log(address, 'adress data')
       const updatedAddress = await this.profileUseCases.updateUserAddress(userId, address);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         success: true,
-        message: 'User profile updated successfully',
+        message: 'User address updated successfully',
         userProfile: updatedAddress,
       });
     } catch (error) {
@@ -60,7 +60,9 @@ export class ProfileController {
       const userId = getUserIdFromRequest(req);
       const imagePath = req.file?.path;
       if (!imagePath) {
-        res.status(400).json({ success: false, message: 'No file uploaded' });
+        res.status(HttpStatus.BAD_REQUEST).json({
+          success: false, message: 'No file uploaded'
+        });
         return;
       }
 
@@ -70,7 +72,7 @@ export class ProfileController {
 
       const updatedUser = await this.profileUseCases.updateProfileImage(userId, profileImage);
 
-      res.status(200).json({
+      res.status(HttpStatus.CREATED).json({
         success: true,
         profileImage: updatedUser?.profileImage,
         message: 'Profile image uploaded successfully',
