@@ -11,37 +11,37 @@ import {
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
-import { AdminAuthUseCases } from '@domain/usecases/admin/adminAuthUseCases';
+import { AdminAuthUseCases } from '@application/usecases/admin/adminAuthUseCases';
 import { AdminAuthController } from '@presentation/controllers/admin/adminAuthController';
 import { MongoUserRepository } from '@infrastructure/repositories/MongoUserRepository';
 import { MongoOtpRepository } from '@infrastructure/repositories/MongoOtpRepository';
 import { adminRefreshToken } from '@presentation/controllers/token/adminRefreshToken';
-import { UserManagementUseCases } from '@domain/usecases/admin/userManagementUseCases';
+import { UserManagementUseCases } from '@application/usecases/admin/userManagementUseCases';
 import { UserManagementController } from '@presentation/controllers/admin/userMangementController';
 
 import { upload } from '@presentation/middlewares/upload';
 import { BannerMangementController } from '@presentation/controllers/admin/bannerController';
-import { BannerMangementUseCases } from '@domain/usecases/admin/bannerUseCases';
+import { BannerMangementUseCases } from '@application/usecases/admin/bannerUseCases';
 import { MongoBannerRepository } from '@infrastructure/repositories/MongoBannerRepository';
 
-import { CategoryUseCases } from '@domain/usecases/admin/categoryUseCases';
+import { CategoryUseCases } from '@application/usecases/admin/categoryUseCases';
 import { CategoryController } from '@presentation/controllers/admin/categoryController';
 import { MongoCategoryRepository } from '@infrastructure/repositories/MongoCategoryRepository';
 
-import { PackageUseCases } from '@domain/usecases/admin/packageUseCases';
+import { PackageUseCases } from '@application/usecases/admin/packageUseCases';
 import { PackageController } from '@presentation/controllers/admin/packageController';
 import { MongoPackageRepository } from '@infrastructure/repositories/MongoPackageRepository';
 
-import { CouponUseCases } from '@domain/usecases/admin/couponUseCases';
+import { CouponUseCases } from '@application/usecases/admin/couponUseCases';
 import { MongoCouponRepository } from '@infrastructure/repositories/MongoCouponRepository';
 import { CouponController } from '@presentation/controllers/admin/couponController';
 
-import { BookingUseCases } from '@domain/usecases/admin/bookingUseCases';
+import { BookingUseCases } from '@application/usecases/admin/bookingUseCases';
 import { MongoBookingRepository } from '@infrastructure/repositories/MongoBookingRepository';
 import { BookingController } from '@presentation/controllers/admin/bookingController';
 
 import { MongoBlogRepository } from '@infrastructure/repositories/MongoBlogRepository';
-import { BlogUseCases } from '@domain/usecases/admin/blogUseCases';
+import { BlogUseCases } from '@application/usecases/admin/blogUseCases';
 import { BlogController } from '@presentation/controllers/admin/blogController';
 
 const adminRepository = new MongoUserRepository();

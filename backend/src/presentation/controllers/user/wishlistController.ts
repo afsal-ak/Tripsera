@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { WishlistUseCases } from '@domain/usecases/user/wishlistUseCases';
+import { WishlistUseCases } from '@application/usecases/user/wishlistUseCases';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 

@@ -1,4 +1,4 @@
-import { BlogUseCases } from '@domain/usecases/user/blogUseCases';
+import { BlogUseCases } from '@application/usecases/user/blogUseCases';
 import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';

@@ -1,6 +1,6 @@
 // src/presentation/controllers/CategoryController.ts
 import { Request, Response } from 'express';
-import { CategoryUseCases } from '@domain/usecases/admin/categoryUseCases';
+import { CategoryUseCases } from '@application/usecases/admin/categoryUseCases';
 
 export class CategoryController {
   constructor(private categoryUseCase: CategoryUseCases) {}

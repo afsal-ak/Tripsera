@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PackageUseCases } from '@domain/usecases/admin/packageUseCases';
+import { PackageUseCases } from '@application/usecases/admin/packageUseCases';
 import { IPackage } from '@domain/entities/IPackage';
 import cloudinary from '@infrastructure/services/cloudinary/cloudinary';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';

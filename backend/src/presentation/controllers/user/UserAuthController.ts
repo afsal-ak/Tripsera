@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserAuthUsecases } from '@domain/usecases/user/userAuthUseCases';
+import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 export class UserAuthController {

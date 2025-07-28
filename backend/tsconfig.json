@@ -19,9 +19,11 @@
       "@usecases/*": ["usecases/*"],
       "@infrastructure/*": ["infrastructure/*"],
       "@presentation/*": ["presentation/*"],
+      "@application/*": ["application/*"],
       "@config/*": ["config/*"],
       "@shared/*": ["shared/*"],
-      "@types/*": ["types/*"]
+      "@types/*": ["types/*"],
+      "@constants/*": ["constants/*"]
     }
   },
   "include": ["src/**/*"],

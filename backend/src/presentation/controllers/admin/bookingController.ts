@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { BookingUseCases } from '@domain/usecases/admin/bookingUseCases';
+import { BookingUseCases } from '@application/usecases/admin/bookingUseCases';
 
 export class BookingController {
   constructor(private bookingUseCases: BookingUseCases) {}

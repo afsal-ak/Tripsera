@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AdminAuthUseCases } from '@domain/usecases/admin/adminAuthUseCases';
+import { AdminAuthUseCases } from '@application/usecases/admin/adminAuthUseCases';
 import { IUser } from '@domain/entities/IUser';
 
 export class AdminAuthController {

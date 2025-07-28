@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { CouponUseCases } from '@domain/usecases/user/couponUseCases';
+import { CouponUseCases } from '@application/usecases/user/couponUseCases';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 export class CouponController {
   constructor(private couponUseCase: CouponUseCases) {}

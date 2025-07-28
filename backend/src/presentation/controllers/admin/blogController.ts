@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { BlogUseCases } from '@domain/usecases/admin/blogUseCases';
+import { BlogUseCases } from '@application/usecases/admin/blogUseCases';
 
 export class BlogController {
   constructor(private blogUseCases: BlogUseCases) {}

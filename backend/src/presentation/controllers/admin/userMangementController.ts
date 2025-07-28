@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UserManagementUseCases } from '@domain/usecases/admin/userManagementUseCases';
+import { UserManagementUseCases } from '@application/usecases/admin/userManagementUseCases';
 
 export class UserManagementController {
   constructor(private userManagementUseCases: UserManagementUseCases) {}

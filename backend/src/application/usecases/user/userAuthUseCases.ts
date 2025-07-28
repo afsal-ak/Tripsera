@@ -1,9 +1,9 @@
-import { IUserRepository } from '../../repositories/IUserRepository';
-import { IOtpRepository } from '../../repositories/IOtpRepository';
+import { IUserRepository } from '../../../domain/repositories/IUserRepository';
+import { IOtpRepository } from '../../../domain/repositories/IOtpRepository';
 import { sendOtpMail } from '@infrastructure/services/mail/mailer';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { hashPassword, comparePassword } from '@shared/utils/hash';
-import { IUser } from '../../entities/IUser';
+import { IUser } from '../../../domain/entities/IUser';
 import { IOTP } from '@domain/entities/IOTP';
 import { generateOtp } from '@shared/utils/generateOtp';
 import { verifyGoogleToken } from '@infrastructure/services/googleAuth/googleAuthService';

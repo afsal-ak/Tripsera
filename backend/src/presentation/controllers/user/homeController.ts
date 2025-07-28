@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { HomeUseCases } from '@domain/usecases/user/homeUseCases';
+import { HomeUseCases } from '@application/usecases/user/homeUseCases';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 
 export class HomeController {

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
-import { BookingUseCases } from '@domain/usecases/user/bookingUseCases';
+import { BookingUseCases } from '@application/usecases/user/bookingUseCases';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 

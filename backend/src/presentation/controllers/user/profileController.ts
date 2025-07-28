@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ProfileUseCases } from '@domain/usecases/user/profileUseCases';
+import { ProfileUseCases } from '@application/usecases/user/profileUseCases';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { IUser } from '@domain/entities/IUser';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
