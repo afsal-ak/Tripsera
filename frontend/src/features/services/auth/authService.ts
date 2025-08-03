@@ -20,6 +20,7 @@ export const handleResendOtp = async (email: string) => {
 
 export const handleLogin = async (email: string, password: string) => {
   const response = await userApi.post('/login', { email, password });
+  console.log(response,'from service')
   return response.data;
 };
 

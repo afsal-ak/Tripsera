@@ -88,7 +88,7 @@ const UserList = () => {
                     <ConfirmDialog
                       title="Unblock this user?"
                       actionLabel="Unblock"
-                      onConfirm={() => handleToggleBlock(user._id, false)}
+                      onConfirm={() => handleToggleBlock(user._id!, false)}
                     >
                       <Button
                         size="sm"
@@ -102,7 +102,7 @@ const UserList = () => {
                     <ConfirmDialog
                       title="Block this user?"
                       actionLabel="Block"
-                      onConfirm={() => handleToggleBlock(user._id, true)}
+                      onConfirm={() => handleToggleBlock(user._id!, true)}
                     >
                       <Button size="sm" variant="destructive">
                         Block

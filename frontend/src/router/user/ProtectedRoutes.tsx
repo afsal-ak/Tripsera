@@ -16,6 +16,10 @@ import AddBlogForm from '@/features/pages/user/blog/AddBlogForm';
 import EditBlogForm from '@/features/pages/user/blog/EditBlogForm';
 import UserBlogsPage from '@/features/pages/user/blog/UserBlogsPage';
 import UserBlogDetails from '@/features/pages/user/blog/UserBlogDetail';
+import ReviewPage from '@/features/pages/user/reviews/ReviewPage';
+import ReviewForm from '@/features/pages/user/reviews/ReviewForm';
+import UserReviewPage from '@/features/pages/user/reviews/UserReview';
+import ReviewDetail from '@/features/pages/user/reviews/ReviewDetail';
 const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
@@ -23,6 +27,8 @@ const ProtectedRoutes = (
     {/* <Route path="/success" element={<BookingSuccessPage/>}/> */}
     <Route path="/booking-success/:id" element={<BookingSuccessPage />} />
     <Route path="/booking-failed/:id" element={<PaymentFailed />} />
+    <Route path="/packages/:packageId/review" element={<ReviewPage />} />
+    <Route path="/packages/:packageId/review/add" element={<ReviewForm />} />
 
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />
@@ -37,6 +43,8 @@ const ProtectedRoutes = (
       <Route path="my-blogs/add" element={<AddBlogForm />} />
       <Route path="my-blogs/:slug" element={<UserBlogDetails />} />
       <Route path="my-blogs/edit/:blogId" element={<EditBlogForm />} />
+      <Route path="my-reviews" element={<UserReviewPage />} />
+      <Route path="my-reviews/:reviewId" element={<ReviewDetail />} />
     </Route>
   </Route>
 );

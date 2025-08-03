@@ -111,7 +111,7 @@ const BlogDetail = () => {
           </div>
 
           {/* Images */}
-          {blogData.images?.length > 0 && (
+          {blogData.images?.length! > 0 && (
             <Swiper
               spaceBetween={10}
               slidesPerView={1}

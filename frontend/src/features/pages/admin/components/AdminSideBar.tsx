@@ -27,6 +27,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
     { path: 'coupons', label: 'Coupons', icon: BadgePercent },
     { path: 'bookings', label: 'Bookings', icon: Table },
     { path: 'blogs', label: 'Blogs', icon: Table },
+    { path: 'reviews', label: 'Reviews', icon: Table },
   ];
 
   return (

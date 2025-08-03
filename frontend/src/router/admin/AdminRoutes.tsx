@@ -22,6 +22,8 @@ import BookingList from '@/features/pages/admin/pages/booking/BookingsList';
 import BookingDetail from '@/features/pages/admin/pages/booking/BookingDetails';
 import AdminBlogList from '@/features/pages/admin/pages/blog/BlogListPage';
 import BlogDetail from '@/features/pages/admin/pages/blog/BlogDetail';
+import ReviewList from '@/features/pages/admin/pages/review/ReviewList';
+import ReviewDetail from '@/features/pages/admin/pages/review/ReviewDetail';
 const AdminRoutes = () => {
   return (
     <Routes>
@@ -54,6 +56,8 @@ const AdminRoutes = () => {
           <Route path="bookings/:id" element={<BookingDetail />} />
           <Route path="blogs" element={<AdminBlogList />} />
           <Route path="blogs/:blogId" element={<BlogDetail />} />
+          <Route path="reviews" element={<ReviewList />} />
+          <Route path="reviews/:reviewId" element={<ReviewDetail />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
