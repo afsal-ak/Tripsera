@@ -9,6 +9,7 @@ import {
   WALLET_ROUTES,
   BOOKING_ROUTES,
   BLOG_ROUTES,
+  REVIEW_ROUTE
 } from 'constants/route-constants/userRoutes';
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
 import { MongoUserRepository } from '@infrastructure/repositories/MongoUserRepository';
@@ -45,6 +46,10 @@ import { MongoBlogRepository } from '@infrastructure/repositories/MongoBlogRepos
 import { BlogUseCases } from '@application/usecases/user/blogUseCases';
 import { BlogController } from '@presentation/controllers/user/blogControllers';
 
+import { ReviewRepository } from '@infrastructure/repositories/ReviewRepository';
+import { ReviewUseCases } from '@application/usecases/user/reviewUseCase';
+import { ReviewController } from '@presentation/controllers/user/reviewController';
+
 const walletRepository = new MongoWalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
 const walletController = new WalletController(walletUseCases);
@@ -79,6 +84,11 @@ const bookingController = new BookingController(bookingUseCases);
 const blogRepository = new MongoBlogRepository();
 const blogUseCases = new BlogUseCases(blogRepository);
 const blogController = new BlogController(blogUseCases);
+
+const reviewRepository = new ReviewRepository();
+const reviewUseCases = new ReviewUseCases(reviewRepository,bookingRepository);
+const reviewController = new ReviewController(reviewUseCases);
+
 
 const router = Router();
 
@@ -144,5 +154,14 @@ router.get(BLOG_ROUTES.GET_BY_ID, userAuthMiddleware, blogController.getBlogById
 router.delete(BLOG_ROUTES.DELETE, userAuthMiddleware, blogController.deleteBlog);
 router.patch(BLOG_ROUTES.LIKE, userAuthMiddleware, blogController.likeBlog);
 router.patch(BLOG_ROUTES.UNLIKE, userAuthMiddleware, blogController.unLikeBlog);
+
+//REVIEW ROUTES
+
+router.post(REVIEW_ROUTE.CREATE,userAuthMiddleware,reviewController.createReview)
+router.get(REVIEW_ROUTE.GET_USER_REVIEWS,userAuthMiddleware,reviewController.getUserReview)
+router.get(REVIEW_ROUTE.GET_BY_ID,userAuthMiddleware,reviewController.getReviewById)
+router.get(REVIEW_ROUTE.GET_BY_PACKAGE,reviewController.getPackageReviews)
+router.delete(REVIEW_ROUTE.DELETE,userAuthMiddleware,reviewController.deleteReview)
+router.get(REVIEW_ROUTE.GET_REVIEW_RATING, reviewController.getRatingSummary);
 
 export default router;

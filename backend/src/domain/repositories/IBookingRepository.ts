@@ -15,6 +15,8 @@ export interface IBookingRepository {
     limit: number
   ): Promise<{ bookings: IBooking[]; total: number }>;
   getBookingById(userId: string, bookingId: string): Promise<IBooking | null>;
+  findOneByUserAndPackage(userId: string, packageId: string): Promise<IBooking | null>;
+
   getBookingByIdForAdmin(bookingId: string): Promise<IBooking | null>;
 
   cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null>;

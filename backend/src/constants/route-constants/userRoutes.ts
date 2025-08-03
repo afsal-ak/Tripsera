@@ -69,3 +69,13 @@ export const BLOG_ROUTES = {
   LIKE: '/blog/like/:blogId',
   UNLIKE: '/blog/unlike/:blogId',
 };
+
+export const REVIEW_ROUTE = {
+  GET_USER_REVIEWS: '/users/me/reviews',                 
+  GET_BY_PACKAGE: '/packages/:packageId/reviews',         
+  GET_BY_ID: '/reviews/:reviewId',         
+  GET_REVIEW_RATING:'/reviews/summary/:packageId',
+  CREATE: '/packages/:packageId/reviews',                 
+  EDIT: '/packages/:packageId/reviews/:reviewId',         
+  DELETE: '/reviews/:reviewId/delete',      
+};

@@ -1,3 +1,4 @@
+
 import { IReview } from "@domain/entities/IReview";  
  export interface CreateReviewDTO {
   userId: string;
@@ -16,18 +17,19 @@ import { IReview } from "@domain/entities/IReview";
   _id: string;
   userId: string;
   packageId: string;
-  rating: number;
+   rating: number;
   comment: string;
   isBlocked: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
+
 export const toReviewResponseDTO = (review: IReview): ReviewResponseDTO => {
   return {
     _id: review._id!.toString(),
-    userId: review.userId.toString(),
-    packageId: review.packageId.toString(),
+    userId: review.userId as string,
+    packageId: review.packageId as string,
     rating: review.rating,
     comment: review.comment,
     isBlocked: review.isBlocked ?? false,
@@ -35,3 +37,5 @@ export const toReviewResponseDTO = (review: IReview): ReviewResponseDTO => {
     updatedAt: review.updatedAt!,
   };
 };
+
+ 

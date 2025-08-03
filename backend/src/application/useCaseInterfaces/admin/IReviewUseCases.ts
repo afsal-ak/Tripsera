@@ -1,13 +1,13 @@
 import { IReview } from "@domain/entities/IReview";
+import { PaginationInfo } from "@application/dtos/PaginationDto";
 
 export interface IAdminReviewUseCases {
-  blockReview(reviewId: string): Promise<IReview | null>;
-  unblockReview(reviewId: string): Promise<IReview | null>;
-  deleteReview(reviewId: string): Promise<boolean>;
   getAllReviews(page: number, limit: number): Promise<{
-    data: IReview[];
-    total: number;
-    page: number;
-    totalPages: number;
+    review: IReview[];
+   pagination:PaginationInfo
   }>;
+   changeReviewStatus(reviewId: string, isBlocked: boolean): Promise<IReview | null>;
+  deleteReview(reviewId: string): Promise<boolean>;
+    getReviewById(reviewId: string): Promise<IReview | null>;
+
 }

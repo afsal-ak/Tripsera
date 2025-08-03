@@ -49,7 +49,7 @@ export class UserAuthController {
     try {
       const { email, password } = req.body;
       const { user, accessToken, refreshToken } = await this.userAuthUseCases.login(email, password);
-
+console.log(accessToken,'toekn from user login')
       res.cookie('userRefreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
@@ -61,7 +61,8 @@ export class UserAuthController {
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'Login successful',
-        data: { user, accessToken },
+        accessToken,
+        user,
       });
     } catch (error: any) {
       next(error);
@@ -119,9 +120,10 @@ export class UserAuthController {
         httpOnly: true,
         secure: false,
         sameSite: 'none',
+        
       });
 
-      res.status(HttpStatus.OK).json({ message: 'Admin logout successful' });
+      res.status(HttpStatus.OK).json({ message: 'user logout successful' });
     } catch (error: any) {
       next(error);
     }

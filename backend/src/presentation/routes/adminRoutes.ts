@@ -8,6 +8,7 @@ import {
   COUPON_ROUTES,
   BOOKING_ROUTES,
   BLOG_ROUTES,
+  REVIEW_ROUTE
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -44,6 +45,10 @@ import { MongoBlogRepository } from '@infrastructure/repositories/MongoBlogRepos
 import { BlogUseCases } from '@application/usecases/admin/blogUseCases';
 import { BlogController } from '@presentation/controllers/admin/blogController';
 
+import { ReviewRepository } from '@infrastructure/repositories/ReviewRepository';
+import { ReviewUseCases } from '@application/usecases/admin/reviewUseCase';
+import { ReviewController } from '@presentation/controllers/admin/reviewController';
+
 const adminRepository = new MongoUserRepository();
 const otpRepository = new MongoOtpRepository();
 
@@ -76,6 +81,11 @@ const bookingController = new BookingController(bookingUseCase);
 const blogRepository = new MongoBlogRepository();
 const blogUseCases = new BlogUseCases(blogRepository);
 const blogController = new BlogController(blogUseCases);
+
+const reviewRepository = new ReviewRepository();
+const reviewUseCases = new ReviewUseCases(reviewRepository);
+const reviewController = new ReviewController(reviewUseCases);
+
 
 const router = Router();
 
@@ -134,5 +144,14 @@ router.get(BLOG_ROUTES.GET_ALL, adminAuthMiddleware, blogController.getAllBlogs)
 router.get(BLOG_ROUTES.GET_BY_ID, adminAuthMiddleware, blogController.getBlogById);
 router.delete(BLOG_ROUTES.DELETE, adminAuthMiddleware, blogController.deleteBlog);
 router.patch(BLOG_ROUTES.STATUS, adminAuthMiddleware, blogController.changeBlogStatus);
+
+
+//REVIEW ROUTES
+
+ router.get(REVIEW_ROUTE.GET_REVIEWS,adminAuthMiddleware,reviewController.getAllReview)
+ router.get(REVIEW_ROUTE.GET_BY_ID,adminAuthMiddleware,reviewController.getReviewById)
+router.patch(REVIEW_ROUTE.CHANGE_STATUS,adminAuthMiddleware,reviewController.changeReviewStatus)
+router.delete(REVIEW_ROUTE.DELETE,adminAuthMiddleware,reviewController.deleteReview)
+
 
 export default router;

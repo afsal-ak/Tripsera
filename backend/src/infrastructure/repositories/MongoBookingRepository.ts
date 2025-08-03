@@ -124,6 +124,9 @@ export class MongoBookingRepository implements IBookingRepository {
 
     return booking ? booking : null;
   }
+  async findOneByUserAndPackage(userId: string, packageId: string): Promise<IBooking | null> {
+    return await BookingModel.findOne({ userId: userId, packageId: packageId, paymentStatus: 'paid' });
+  }
 
   async getBookingByIdForAdmin(bookingId: string): Promise<IBooking | null> {
     const booking = await BookingModel.findOne({ _id: bookingId })

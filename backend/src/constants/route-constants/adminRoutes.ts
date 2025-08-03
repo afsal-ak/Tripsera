@@ -69,3 +69,12 @@ export const BLOG_ROUTES = {
   DELETE: '/blog/:blogId',
   STATUS: '/blog/status/:blogId',
 };
+
+
+
+export const REVIEW_ROUTE = {
+  GET_REVIEWS: '/reviews',
+  GET_BY_ID: '/reviews/:reviewId',
+  CHANGE_STATUS: '/reviews/:reviewId/status',
+  DELETE: '/reviews/:reviewId/delete',
+};

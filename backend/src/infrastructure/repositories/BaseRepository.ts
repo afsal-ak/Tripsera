@@ -1,4 +1,5 @@
 import { Model, UpdateQuery, Document, SortOrder } from "mongoose";
+import { PaginationInfo, createPaginationDTO } from "@application/dtos/PaginationDto";
 
 export abstract class BaseRepository<T> {
     protected model: Model<T & Document>;
@@ -21,7 +22,7 @@ export abstract class BaseRepository<T> {
         limit = 10,
         filter: Record<string, any> = {},
         sort: 'newest' | 'oldest' = 'newest'
-    ): Promise<{ data: T[]; total: number; page: number; totalPages: number }> {
+    ): Promise<{ data: T[]; pagination: PaginationInfo }> {
         const skip = (page - 1) * limit;
 
         const sortOption: Record<string, SortOrder> =
@@ -32,13 +33,16 @@ export abstract class BaseRepository<T> {
             this.model.countDocuments(filter),
         ]);
 
-        return {
-            data: data as T[],
-            total,
-            page,
+        const pagination: PaginationInfo = {
+            totalItems: total,
+            currentPage: page,
+            pageSize: limit,
             totalPages: Math.ceil(total / limit),
         };
+
+        return { data: data as T[], pagination };
     }
+
 
     async update(id: string, data: Partial<T>): Promise<T | null> {
         const result = await this.model.findByIdAndUpdate(
@@ -48,8 +52,10 @@ export abstract class BaseRepository<T> {
         ).lean();
         return result as T | null;
     }
-    
-    async delete(id: string): Promise<void> {
-        await this.model.findByIdAndDelete(id);
+
+    async delete(id: string): Promise<boolean> {
+        const result = await this.model.findByIdAndDelete(id);
+        return !!result;
     }
 }
+
