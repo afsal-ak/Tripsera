@@ -17,6 +17,7 @@ const Profile = () => {
       try {
         setLoading(true);
         const response = await getUserProfile();
+        console.log(response,'response from profile')
         setUser(response.userProfile);
       } catch (error: any) {
         toast.error(error?.response?.data?.message || 'Failed to fetch user data');

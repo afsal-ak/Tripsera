@@ -25,6 +25,10 @@ export interface IUser {
     url: string;
     public_id: string;
   };
+    coverImage?: {
+    url: string;
+    public_id: string;
+  };
   bio?: string;
   links?: {
     platform: string;

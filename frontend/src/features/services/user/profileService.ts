@@ -10,6 +10,15 @@ export const updateProfilepic = async (formData: FormData) => {
   });
   return response.data;
 };
+
+export const uploadCoverpic = async (formData: FormData) => {
+  const response = await userApi.put('/profile/uploadCoverImage', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
 export const updateUserProfile = async (profileData: ProfileFormSchema) => {
   const response = await userApi.put('/profile/update', { profileData });
   return response.data;
@@ -40,11 +49,3 @@ export const passwordChange = async (currentPassword: string, newPassword: strin
   return response.data;
 };
 
-// router.post("/email/request-change", userAuthMiddleware, userAuthController.requestEmailChange);
-// router.post("/email/verify-change", userAuthMiddleware, userAuthController.verifyAndUpdateEmail);
-// router.post("/password/change", userAuthMiddleware, userAuthController.changePassword);
-
-// router.get('/profile',userAuthMiddleware,profileController.getUserProfile)
-// router.put('/profile/update',userAuthMiddleware,profileController.updateUserProfile)
-// router.put('/profile/uploadProfileImage',userAuthMiddleware,upload.single('image'),profileController.updateProfileImage)
-// router.put('/profile/updateAddress',userAuthMiddleware,profileController.updateUserAddress)
