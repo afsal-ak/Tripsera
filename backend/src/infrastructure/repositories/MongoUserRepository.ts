@@ -80,6 +80,16 @@ export class MongoUserRepository implements IUserRepository {
     return user;
   }
 
+  async createCoverImage(id: string, coverImage : { url: string; public_id: string; }): Promise<IUser | null> {
+     const user = await UserModel.findByIdAndUpdate(id, { coverImage }).lean();
+
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+
+    return user;
+  }
+
   async updateUserProfile(id: string, profileData: Partial<IUser>): Promise<IUser | null> {
     const checkUsername = await UserModel.findOne({
       _id: { $ne: id },

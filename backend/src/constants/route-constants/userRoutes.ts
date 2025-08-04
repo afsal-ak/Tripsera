@@ -25,6 +25,7 @@ export const PROFILE_ROUTES = {
   GET_PROFILE: '/profile',
   UPDATE_PROFILE: '/profile/update',
   UPLOAD_PROFILE_IMAGE: '/profile/uploadProfileImage',
+  CREATE_COVER_IMAGE: '/profile/uploadCoverImage',
   UPDATE_ADDRESS: '/profile/updateAddress',
 };
 

@@ -14,6 +14,12 @@ export class ProfileUseCases {
   ): Promise<IUser | null> {
     return await this.userRepo.updateProfileImage(userId, profileImage);
   }
+ async createCoverImage(
+    userId: string,
+    coverImage: { url: string; public_id: string }
+  ): Promise<IUser | null> {
+    return await this.userRepo.createCoverImage(userId, coverImage);
+  }
 
   async updateUserProfile(userId: string, profileData: Partial<IUser>): Promise<IUser | null> {
     return await this.userRepo.updateUserProfile(userId, profileData);

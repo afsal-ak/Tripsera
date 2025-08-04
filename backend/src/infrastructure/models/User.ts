@@ -41,6 +41,10 @@ const UserSchema = new Schema<IUserDocument>(
       url: { type: String, required: false },
       public_id: { type: String, required: false },
     },
+     coverImage: {
+      url: { type: String, required: false },
+      public_id: { type: String, required: false },
+    },
     bio: { type: String },
     links: [
       {

@@ -18,5 +18,9 @@ export interface IUserRepository {
     id: string,
     profileImage: { url: string; public_id: string }
   ): Promise<IUser | null>;
+   createCoverImage(
+    id: string,
+    coverImageImage: { url: string; public_id: string }
+  ): Promise<IUser | null>;
   getUserProfile(id: string): Promise<IUser | null>;
 }

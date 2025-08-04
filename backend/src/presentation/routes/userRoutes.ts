@@ -116,6 +116,7 @@ router.get(HOME_ROUTES.PACKAGE_BY_ID, homeController.getPackagesById);
 router.get(PROFILE_ROUTES.GET_PROFILE, userAuthMiddleware, profileController.getUserProfile);
 router.put(PROFILE_ROUTES.UPDATE_PROFILE, userAuthMiddleware, profileController.updateUserProfile);
 router.put(PROFILE_ROUTES.UPLOAD_PROFILE_IMAGE, userAuthMiddleware, upload.single('image'), profileController.updateProfileImage);
+router.put(PROFILE_ROUTES.CREATE_COVER_IMAGE, userAuthMiddleware, upload.single('image'), profileController.createCoverImage);
 router.put(PROFILE_ROUTES.UPDATE_ADDRESS, userAuthMiddleware, profileController.updateUserAddress);
 
 // WISHLIST ROUTES

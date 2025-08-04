@@ -81,4 +81,32 @@ export class ProfileController {
       next(error);
     }
   };
+
+
+    createCoverImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
+      const imagePath = req.file?.path;
+      if (!imagePath) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+          success: false, message: 'No file uploaded'
+        });
+        return;
+      }
+
+      const { url, public_id } = await uploadCloudinary(imagePath, 'coverImage');
+
+      const coverImage = { url, public_id };
+
+      const updatedUser = await this.profileUseCases.createCoverImage(userId, coverImage);
+
+      res.status(HttpStatus.CREATED).json({
+        success: true,
+        profileImage: updatedUser?.coverImage,
+        message: 'Cover image uploaded successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
