@@ -8,7 +8,8 @@ import {
   COUPON_ROUTES,
   BOOKING_ROUTES,
   BLOG_ROUTES,
-  REVIEW_ROUTE
+  REVIEW_ROUTE,
+  REFERRAL_ROUTE
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -49,6 +50,10 @@ import { ReviewRepository } from '@infrastructure/repositories/ReviewRepository'
 import { ReviewUseCases } from '@application/usecases/admin/reviewUseCase';
 import { ReviewController } from '@presentation/controllers/admin/reviewController';
 
+import { ReferralRepository } from '@infrastructure/repositories/ReferralRepository';
+import { ReferralUseCase } from '@application/usecases/admin/referralUseCases.ts';
+import { ReferralController } from '@presentation/controllers/admin/referralController';
+
 const adminRepository = new MongoUserRepository();
 const otpRepository = new MongoOtpRepository();
 
@@ -85,6 +90,11 @@ const blogController = new BlogController(blogUseCases);
 const reviewRepository = new ReviewRepository();
 const reviewUseCases = new ReviewUseCases(reviewRepository);
 const reviewController = new ReviewController(reviewUseCases);
+
+const referralRepository = new ReferralRepository();
+const referralUseCases = new ReferralUseCase(referralRepository);
+const referralController = new ReferralController(referralUseCases);
+
 
 
 const router = Router();
@@ -152,6 +162,15 @@ router.patch(BLOG_ROUTES.STATUS, adminAuthMiddleware, blogController.changeBlogS
  router.get(REVIEW_ROUTE.GET_BY_ID,adminAuthMiddleware,reviewController.getReviewById)
 router.patch(REVIEW_ROUTE.CHANGE_STATUS,adminAuthMiddleware,reviewController.changeReviewStatus)
 router.delete(REVIEW_ROUTE.DELETE,adminAuthMiddleware,reviewController.deleteReview)
+
+
+//REFERRAl ROUTES
+
+ router.get(REFERRAL_ROUTE.GET_REFERRAL,adminAuthMiddleware,referralController.getReferral)
+ router.post(REFERRAL_ROUTE.ADD_REFERRAL,adminAuthMiddleware,referralController.saveReferralSettings)
+  router.get(REFERRAL_ROUTE.GET_BY_ID,adminAuthMiddleware,referralController.getReferralById)
+router.patch(REFERRAL_ROUTE.CHANGE_STATUS,adminAuthMiddleware,referralController.changeReferralStatus)
+router.delete(REFERRAL_ROUTE.DELETE,adminAuthMiddleware,referralController.deleteReferral)
 
 
 export default router;

@@ -79,7 +79,15 @@ const UserSchema = new Schema<IUserDocument>(
         required: false,
       },
     },
-
+    referralCode:{
+      type:String,
+      required:true,
+      unique:true
+    },
+   referredBy: {
+    type: Schema.Types.ObjectId,
+     ref: 'Users'
+   },
     googleId: String,
     isGoogleUser: {
       type: Boolean,

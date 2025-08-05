@@ -35,6 +35,8 @@ export interface IUser {
     zip?: string;
     country?: string;
   };
+  referralCode?:string;
+  referredBy ?:Types.ObjectId | string;
   googleId?: string;
   isGoogleUser?: boolean;
 }

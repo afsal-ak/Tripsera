@@ -9,15 +9,18 @@ import { generateOtp } from '@shared/utils/generateOtp';
 import { verifyGoogleToken } from '@infrastructure/services/googleAuth/googleAuthService';
 import { generateAccessToken, generateRefreshToken, verifyAccessToken } from '@shared/utils/jwt';
 import { AppError } from '@shared/utils/AppError';
+import { generateUniqueReferralCode } from '@shared/utils/generateRefferalCode';
+import { IReferralRepository } from '@domain/repositories/IReferralRepository';
 export class UserAuthUsecases {
   constructor(
     private userRepository: IUserRepository,
     private otpRepository: IOtpRepository,
-    private walletRepository: IWalletRepository
-  ) {}
+    private walletRepository: IWalletRepository,
+    private referraRepository: IReferralRepository
+  ) { }
 
   async preRegistration(userData: IOTP): Promise<void> {
-    const { email, username, password } = userData;
+    const { email, username, password, referredReferralCode } = userData;
 
     const existingEmail = await this.userRepository.findByEmail(email);
     if (existingEmail) {
@@ -37,10 +40,11 @@ export class UserAuthUsecases {
     if (!email || !username || !password) {
       throw new Error('Missing required fields');
     }
-
+    console.log(referredReferralCode, 'referal code in usecase')
     await this.otpRepository.saveOtp({
       email,
       username,
+      referredReferralCode: referredReferralCode || '',
       password: hashedPassword,
       otp,
       expiresAt,
@@ -56,6 +60,7 @@ export class UserAuthUsecases {
       throw new Error('Invalid OTP');
     }
     const otpDoc = await this.otpRepository.getOtpByEmail(email);
+    console.log(otpDoc, 'otp doc')
     if (!otpDoc || !otpDoc.username || !otpDoc.password) {
       throw new Error('Incomplete registration data');
     }
@@ -64,11 +69,21 @@ export class UserAuthUsecases {
     if (existing) {
       throw new Error('User already registered');
     }
+
+    const referredReferralCode = otpDoc?.referredReferralCode
+    console.log(referredReferralCode, 'from otp')
+    const referredBy = await this.userRepository.findUserByReferralCode(referredReferralCode!)
+    console.log(referredBy, 'check reffered by')
+    const referralCode = await generateUniqueReferralCode()
     const newUser: IUser = {
       email,
       username: otpDoc.username,
       password: otpDoc.password,
+      referralCode: referralCode,
+      referredBy: referredBy?._id
     };
+
+
 
     const user = await this.userRepository.createUser(newUser);
     if (!user || !user._id) {
@@ -76,6 +91,20 @@ export class UserAuthUsecases {
     }
     await this.otpRepository.deleteOtp(email);
     await this.walletRepository.createWallet(user._id.toString());
+
+    const referralStatus = await this.referraRepository.getReferral()
+
+if (referredBy && referralStatus && !referralStatus.isBlocked && referralStatus.amount) {
+  const amount = referralStatus.amount;
+
+  await this.walletRepository.creditWallet(user._id.toString(), amount, 'Referral Reward');
+  await this.walletRepository.creditWallet(user?.referredBy!.toString(), amount, 'Referral Reward');
+}
+
+    // if (referredBy) {
+    //   this.walletRepository.creditWallet(user._id.toString(), 100, 'Refferal Reward')
+    //   this.walletRepository.creditWallet(user?.referredBy!.toString(), 100, 'Refferal  Reward')
+    // }
   }
 
   async resendOtp(email: string): Promise<void> {
@@ -173,14 +202,14 @@ export class UserAuthUsecases {
     console.log(email, 'google');
     console.log(token, 'google token');
     let user = await this.userRepository.findByEmail(email);
+    const referralCode = await generateUniqueReferralCode()
 
     if (!user) {
       user = await this.userRepository.createUser({
         email,
         username: name,
-        // profileImage: picture,
+        referralCode: referralCode,
         profileImage: picture ? { url: picture, public_id: 'google-oauth' } : undefined,
-
         googleId: googleId,
         isGoogleUser: true,
       });

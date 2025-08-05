@@ -78,3 +78,13 @@ export const REVIEW_ROUTE = {
   CHANGE_STATUS: '/reviews/:reviewId/status',
   DELETE: '/reviews/:reviewId/delete',
 };
+
+
+export const REFERRAL_ROUTE = {
+  GET_REFERRAL: '/referral',
+  ADD_REFERRAL: '/referral/add',
+  EDIT_REFERRAL: '/referral/:referralId/edit',
+  GET_BY_ID: '/referral/:referralId',
+  CHANGE_STATUS: '/referral/:referralId/status',
+  DELETE: '/referral/:referralId/delete',
+};

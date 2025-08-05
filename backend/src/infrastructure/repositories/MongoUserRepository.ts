@@ -4,6 +4,7 @@ import { UserModel } from '@infrastructure/models/User';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { IUserPreview } from '@domain/entities/IUserPreview ';
 import { AppError } from '@shared/utils/AppError';
+
 export class MongoUserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<IUser | null> {
     const user = await UserModel.findOne({ email: email });
@@ -34,6 +35,11 @@ export class MongoUserRepository implements IUserRepository {
   async findById(id: string): Promise<IUser | null> {
     const user = await UserModel.findById(id);
     return user ? user.toObject() : null;
+  }
+
+  async findUserByReferralCode( referredReferralCode: string): Promise<IUser|null> {
+    const referredBy=await UserModel.findOne({referralCode:referredReferralCode})
+    return referredBy
   }
 
   async findAll(skip: number, limit: number): Promise<IUser[]> {

@@ -9,7 +9,9 @@ export class UserAuthController {
   preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, username, password } = req.body;
-      await this.userAuthUseCases.preRegistration({ email, username, password });
+      const referredReferralCode=req.query.referralCode as string
+      console.log(referredReferralCode,'referralcode')
+      await this.userAuthUseCases.preRegistration({ email, username, password,referredReferralCode });
 
       res.status(HttpStatus.OK).json({
         success: true,

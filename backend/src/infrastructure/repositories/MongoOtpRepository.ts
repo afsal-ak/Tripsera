@@ -10,6 +10,7 @@ export class MongoOtpRepository implements IOtpRepository {
       username: data.username,
       password: data.password,
       otp: data.otp,
+      referredReferralCode:data.referredReferralCode??null,
       expiresAt: data.expiresAt,
       attempts: data.attempts ?? 0,
     });

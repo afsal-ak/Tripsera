@@ -50,13 +50,18 @@ import { ReviewRepository } from '@infrastructure/repositories/ReviewRepository'
 import { ReviewUseCases } from '@application/usecases/user/reviewUseCase';
 import { ReviewController } from '@presentation/controllers/user/reviewController';
 
+import { ReferralRepository } from '@infrastructure/repositories/ReferralRepository';
+  
 const walletRepository = new MongoWalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
 const walletController = new WalletController(walletUseCases);
 
+const referralRepository = new ReferralRepository();
+
+
 const userRepository = new MongoUserRepository();
 const otpRepository = new MongoOtpRepository();
-const userAuthUseCases = new UserAuthUsecases(userRepository, otpRepository, walletRepository);
+const userAuthUseCases = new UserAuthUsecases(userRepository, otpRepository, walletRepository,referralRepository);
 const userAuthController = new UserAuthController(userAuthUseCases);
 
 const bannerRepository = new MongoBannerRepository();
