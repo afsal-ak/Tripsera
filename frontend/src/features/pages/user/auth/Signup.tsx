@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { handlePreRegister } from '@/features/services/auth/authService';
 import GoogleLoginButton from '@/features/components/GoogleLoginButton';
 import { toast } from 'sonner';
@@ -11,6 +11,7 @@ const Signup = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [searchParams,setSearchParams]=useSearchParams()
   const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({
@@ -60,6 +61,8 @@ const Signup = () => {
     return Object.values(newErrors).every((e) => e === '');
   };
 
+  const refferalCode=searchParams.get('referralCode')||''
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
@@ -67,7 +70,7 @@ const Signup = () => {
     }
     setLoading(true);
     try {
-      const result = await handlePreRegister(email, username, password);
+      const result = await handlePreRegister(email, username, password,refferalCode);
       localStorage.setItem('signupEmail', email);
       toast.success('OTP sent to your email');
       console.log(email, 'preregistration');

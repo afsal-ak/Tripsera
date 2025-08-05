@@ -25,7 +25,7 @@ export interface IUser {
     url: string;
     public_id: string;
   };
-    coverImage?: {
+  coverImage?: {
     url: string;
     public_id: string;
   };
@@ -36,7 +36,7 @@ export interface IUser {
   }[];
   followers?: string[];
   following?: string[];
-
+  referralCode?: string;
   interests?: string[];
   address?: {
     street?: string;

@@ -3,9 +3,10 @@ import userApi from '@/lib/axios/userAxios';
 export const handlePreRegister = async (
   email: string,
   username: string,
-  password: string
+  password: string,
+  referralCode?:string
 ): Promise<string> => {
-  const response = await userApi.post('/pre-register', { email, username, password });
+  const response = await userApi.post(`/pre-register?referralCode=${referralCode}`, { email, username, password });
   return response.data;
 };
 
