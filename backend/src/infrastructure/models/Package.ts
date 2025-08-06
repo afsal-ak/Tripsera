@@ -58,6 +58,11 @@ const itinerarySchema = new Schema(
 const packageSchema = new Schema(
   {
     title: { type: String, required: true },
+     packageCode: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     description: { type: String },
     price: { type: Number, required: true },
     duration: { type: String, required: true },

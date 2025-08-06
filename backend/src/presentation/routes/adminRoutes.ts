@@ -9,7 +9,8 @@ import {
   BOOKING_ROUTES,
   BLOG_ROUTES,
   REVIEW_ROUTE,
-  REFERRAL_ROUTE
+  REFERRAL_ROUTE,
+  SALES_REPORT_ROUTE
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -54,6 +55,10 @@ import { ReferralRepository } from '@infrastructure/repositories/ReferralReposit
 import { ReferralUseCase } from '@application/usecases/admin/referralUseCases.ts';
 import { ReferralController } from '@presentation/controllers/admin/referralController';
 
+import { SalesReportRepository } from '@infrastructure/repositories/salesReportRepository';
+import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
+import { SalesReportController } from '@presentation/controllers/admin/salesReportController';
+
 const adminRepository = new MongoUserRepository();
 const otpRepository = new MongoOtpRepository();
 
@@ -95,6 +100,9 @@ const referralRepository = new ReferralRepository();
 const referralUseCases = new ReferralUseCase(referralRepository);
 const referralController = new ReferralController(referralUseCases);
 
+const salesRepository= new SalesReportRepository();
+const salesuseCases = new SalesReportUseCase(salesRepository);
+const salesController = new SalesReportController(salesuseCases);
 
 
 const router = Router();
@@ -169,8 +177,10 @@ router.delete(REVIEW_ROUTE.DELETE,adminAuthMiddleware,reviewController.deleteRev
  router.get(REFERRAL_ROUTE.GET_REFERRAL,adminAuthMiddleware,referralController.getReferral)
  router.post(REFERRAL_ROUTE.ADD_REFERRAL,adminAuthMiddleware,referralController.saveReferralSettings)
   router.get(REFERRAL_ROUTE.GET_BY_ID,adminAuthMiddleware,referralController.getReferralById)
-router.patch(REFERRAL_ROUTE.CHANGE_STATUS,adminAuthMiddleware,referralController.changeReferralStatus)
-router.delete(REFERRAL_ROUTE.DELETE,adminAuthMiddleware,referralController.deleteReferral)
+  
+//SALES ROUTES
 
+router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT, salesController.getReportList);
+router.get(SALES_REPORT_ROUTE.SALES_REPORT_DOWNLOAD, salesController.downloadExcel);
 
 export default router;

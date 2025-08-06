@@ -32,6 +32,7 @@ export interface ItineraryDay {
 
 export interface IPackage {
   title: string;
+  packageCode:string;
   description?: string;
   price: number;
   duration: string;

@@ -1,9 +1,9 @@
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IPackage } from '@domain/entities/IPackage';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
-
+import { generatePackageCode } from '@shared/utils/generatePackageCode';
 export class PackageUseCases {
-  constructor(private packageRepo: IPackageRepository) {}
+  constructor(private packageRepo: IPackageRepository) { }
 
   async getAllPackages(
     page: number,
@@ -33,9 +33,15 @@ export class PackageUseCases {
 
   async createPackage(pkg: IPackage): Promise<IPackage> {
     try {
-      console.log(' Calling repository with pkg:', pkg);
-      const result = await this.packageRepo.create(pkg);
-      console.log(' Created package:', result);
+      // const result = await this.packageRepo.create(pkg);
+      // return result;
+      const packageCode = await generatePackageCode();
+      const packageData = {
+        ...pkg,
+        packageCode,
+      };
+
+      const result = await this.packageRepo.create(packageData);
       return result;
     } catch (error) {
       console.error(' UseCase Error:', error);
