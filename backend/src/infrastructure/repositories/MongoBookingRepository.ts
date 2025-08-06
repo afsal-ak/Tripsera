@@ -119,7 +119,7 @@ export class MongoBookingRepository implements IBookingRepository {
       _id: bookingId,
       userId: userId,
     })
-      .populate('packageId', 'title imageUrls price travelDate ')
+      .populate('packageId', 'title imageUrls price travelDate packageCode')
       .lean();
 
     return booking ? booking : null;
@@ -130,7 +130,7 @@ export class MongoBookingRepository implements IBookingRepository {
 
   async getBookingByIdForAdmin(bookingId: string): Promise<IBooking | null> {
     const booking = await BookingModel.findOne({ _id: bookingId })
-      .populate('packageId', 'title imageUrls price travelDate ')
+      .populate('packageId', 'title imageUrls price travelDate packageCode ')
       .populate('userId', 'email username')
       .lean();
 
