@@ -56,3 +56,9 @@ export const handleAllUserBlogs = async (page: number, limit: number) => {
   const response = await userApi.get(`/blogs/user?page=${page}&limit=${limit}`);
   return response.data;
 };
+
+
+export const handlePublicUserBlogs = async (userId:string,page: number, limit: number) => {
+  const response = await userApi.get(`/blogs/public/${userId}?page=${page}&limit=${limit}`);
+  return response.data;
+};

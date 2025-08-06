@@ -49,3 +49,19 @@ export const passwordChange = async (currentPassword: string, newPassword: strin
   return response.data;
 };
 
+//public profile
+
+export const fetchPublicProfile = async (username:string) => {
+  const response = await userApi.get(`/profile/${username}`);
+  return response.data;
+};
+
+export const handleFollow = async (userId:string) => {
+  const response = await userApi.post(`/follow/${userId}`);
+  return response.data;
+};
+
+export const handleUnFollow = async (userId:string) => {
+  const response = await userApi.post(`/unfollow/${userId}`);
+  return response.data;
+};

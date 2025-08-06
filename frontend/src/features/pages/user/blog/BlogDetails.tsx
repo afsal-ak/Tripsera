@@ -5,7 +5,7 @@ import {
   handleLikeBlog,
   handleUnLikeBlog,
 } from '@/features/services/user/blogService';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import type { IBlog } from '@/features/types/IBlog';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -16,6 +16,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 
 const BlogDetail = () => {
   const { slug } = useParams();
+  const navigate=useNavigate()
   console.log(slug, 'from param');
   const [liked, setLiked] = useState(false);
   // const [savedPosts, setSavedPosts] = useState();
@@ -66,16 +67,20 @@ const BlogDetail = () => {
     }
     return num.toString();
   };
-  //   const image = blogData?.images?.url!.replace("/upload/", "/upload/f_auto,q_auto/") || "";
+
+  const handleNavigateUseProfile=(username:string)=>{
+    navigate(`/profile/${username}`)
+  }
+
   return (
     <div className="min-h-screen bg-bg px-4 py-6">
       {blogData && (
         <article className="bg-white shadow-md rounded-xl overflow-hidden max-w-3xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center space-x-3">
+            <div onClick={()=>handleNavigateUseProfile(blogData.author.username)} className="flex items-center space-x-3">
               <img
-                src={blogData.author?.profileImage?.url}
+                src={blogData.author?.profileImage?.url|| '/profile-default.jpg'}
                 alt={blogData.author?.username}
                 className="w-10 h-10 rounded-full object-cover ring-2 ring-orange/30"
               />

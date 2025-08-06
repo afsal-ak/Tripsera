@@ -20,6 +20,7 @@ import ReviewPage from '@/features/pages/user/reviews/ReviewPage';
 import ReviewForm from '@/features/pages/user/reviews/ReviewForm';
 import UserReviewPage from '@/features/pages/user/reviews/UserReview';
 import ReviewDetail from '@/features/pages/user/reviews/ReviewDetail';
+import PublicProfile from '@/features/pages/user/accounts/profile/PublicProfile';
 const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
@@ -29,6 +30,7 @@ const ProtectedRoutes = (
     <Route path="/booking-failed/:id" element={<PaymentFailed />} />
     <Route path="/packages/:packageId/review" element={<ReviewPage />} />
     <Route path="/packages/:packageId/review/add" element={<ReviewForm />} />
+    <Route path="/profile/:username" element={<PublicProfile />} />
 
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />

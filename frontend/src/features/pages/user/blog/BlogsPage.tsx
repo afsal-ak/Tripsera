@@ -11,7 +11,7 @@ const BlogsPage = () => {
   const [searchBlog, setSearchBlog] = useState('');
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const limit = 4;
+  const limit = 6;
 
   const search = searchParams.get('search') || '';
   const handleSearch = () => {
@@ -46,7 +46,7 @@ const BlogsPage = () => {
       setBlogs(response.blogs);
       console.log(response);
 
-      setTotalPages(response.totalBlogs);
+      setTotalPages(Math.ceil(response.totalBlogs / limit));
     };
     fetchBlogs();
   }, [searchParams]);
@@ -81,7 +81,7 @@ const BlogsPage = () => {
       </div>
 
       {/* Blog Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {blogs.map((blog) => (
           <BlogCard key={blog._id} blog={blog} linkPrefix="/blog" />
         ))}
