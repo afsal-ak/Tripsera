@@ -49,11 +49,11 @@ const BookingDetailPage = () => {
       setBooking((prev) =>
         prev
           ? {
-              ...prev,
-              bookingStatus: 'cancelled',
-              paymentStatus: 'failed',
-              updatedAt: new Date(),
-            }
+            ...prev,
+            bookingStatus: 'cancelled',
+            paymentStatus: 'failed',
+            updatedAt: new Date(),
+          }
           : prev
       );
       setOpen(false);
@@ -84,7 +84,10 @@ const BookingDetailPage = () => {
           {/* Booking Summary */}
           <div className="grid grid-cols-2 gap-4">
             <p>
-              <strong>Package:</strong> {booking.bookingCode}
+              <strong>Booking Code:</strong> {booking.bookingCode}
+            </p>
+            <p>
+              <strong>Package Code:</strong> {booking.packageId.packageCode}
             </p>
             <p>
               <strong>Package:</strong> {booking.packageId?.title}
@@ -106,9 +109,8 @@ const BookingDetailPage = () => {
             <p>
               <strong>Status:</strong>{' '}
               <span
-                className={`font-medium ${
-                  booking.bookingStatus === 'cancelled' ? 'text-red-500' : 'text-green-600'
-                }`}
+                className={`font-medium ${booking.bookingStatus === 'cancelled' ? 'text-red-500' : 'text-green-600'
+                  }`}
               >
                 {booking.bookingStatus}
               </span>

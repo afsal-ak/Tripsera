@@ -50,5 +50,6 @@ export interface IBooking {
   bookedAt?: string;
   travelDate?: string;
   packageTitle?: string;
+  packageCode?: string;
   packageImage?: { url: string; public_id?: string };
 }
