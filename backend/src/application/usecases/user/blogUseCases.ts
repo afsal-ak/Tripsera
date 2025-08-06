@@ -93,4 +93,9 @@ export class BlogUseCases {
   async changeBlogStatus(blogId: string, isActive: boolean): Promise<void> {
     return await this.blogRepo.changeBlogStatus(blogId, isActive);
   }
+
+  async getPublicBlogsByUser(userId: string, page: number, limit: number) {
+  return await this.blogRepo.getPublicBlogsByUser(userId, page, limit);
+}
+
 }

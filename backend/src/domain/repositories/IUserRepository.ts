@@ -3,7 +3,7 @@ import { IUser } from '../entities/IUser';
 export interface IUserRepository {
   findByEmail(email: string): Promise<IUser | null>;
   findByUsername(username: string): Promise<IUser | null>;
-  createUser(user: IUser): Promise<IUser>;
+  createUser(user: Partial<IUser>): Promise<IUser>;
   updateUserPassword(email: string, password: string): Promise<IUser | null>;
   findById(id: string): Promise<IUser | null>;
   findAll(skip: number, limit: number): Promise<IUser[]>;
@@ -24,4 +24,5 @@ export interface IUserRepository {
     coverImageImage: { url: string; public_id: string }
   ): Promise<IUser | null>;
   getUserProfile(id: string): Promise<IUser | null>;
+ 
 }

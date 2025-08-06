@@ -222,4 +222,19 @@ export class BlogController {
       next(err);
     }
   };
+
+  getPublicBlogsByUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.userId;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const blogs = await this.blogUseCases.getPublicBlogsByUser(userId, page, limit);
+
+    res.status(HttpStatus.OK).json(blogs);
+  } catch (error) {
+    next(error);
+  }
+}
+
 }

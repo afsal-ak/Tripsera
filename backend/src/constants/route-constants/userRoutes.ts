@@ -27,6 +27,10 @@ export const PROFILE_ROUTES = {
   UPLOAD_PROFILE_IMAGE: '/profile/uploadProfileImage',
   CREATE_COVER_IMAGE: '/profile/uploadCoverImage',
   UPDATE_ADDRESS: '/profile/updateAddress',
+  GET_PUBLIC_PROFILE:'/profile/:username',
+  FOLLOW:'/follow/:userId',
+   UNFOLLOW:'/unfollow/:userId'
+
 };
 
 export const WISHLIST_ROUTES = {
@@ -64,6 +68,7 @@ export const BLOG_ROUTES = {
   EDIT: '/blog/edit/:blogId',
   GET_ALL: '/blogs',
   GET_USER_BLOGS: '/blogs/user',
+   GET_PUBLIC_USER_BLOGS: '/blogs/public/:userId',
   GET_BY_ID: '/blog/:blogId',
    GET_BY_SLUG: '/blog/slug/:slug',
   DELETE: '/blog/delete/:blogId',

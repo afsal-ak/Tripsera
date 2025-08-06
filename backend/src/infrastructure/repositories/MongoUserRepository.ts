@@ -1,8 +1,6 @@
-import { Model } from 'mongoose';
 import { IUser } from '@domain/entities/IUser';
 import { UserModel } from '@infrastructure/models/User';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
-import { IUserPreview } from '@domain/entities/IUserPreview ';
 import { AppError } from '@shared/utils/AppError';
 
 export class MongoUserRepository implements IUserRepository {
@@ -37,8 +35,53 @@ export class MongoUserRepository implements IUserRepository {
     return user ? user.toObject() : null;
   }
 
-  async findUserByReferralCode( referredReferralCode: string): Promise<IUser|null> {
-    const referredBy=await UserModel.findOne({referralCode:referredReferralCode})
+  async addFollowerAndFollowing(followerId: string, followingId: string): Promise<void> {
+    const follower = await UserModel.findById(followerId);
+    const following = await UserModel.findById(followingId);
+
+    if (!follower || !following) {
+      throw new AppError(404, "User not found");
+    }
+
+    const alreadyFollowing = following?.followers!
+      .some(id => id.toString() === follower._id.toString());
+
+    if (alreadyFollowing) return;
+
+    following.followers!.push(follower._id.toString());
+    follower.following!.push(following._id.toString());
+
+    await Promise.all([follower.save(), following.save()]);
+  }
+
+
+  async unFollowAndFollowing(followerId: string, followingId: string): Promise<void> {
+    const follower = await UserModel.findById(followerId);
+    const following = await UserModel.findById(followingId);
+
+    if (!follower || !following) {
+      throw new AppError(404, "User not found");
+    }
+
+    const isFollowing = following.followers!.some(
+      id => id.toString() === follower._id.toString()
+    );
+
+    if (!isFollowing) return;
+    following.followers = following.followers!.filter(
+      id => id.toString() !== follower._id.toString()
+    );
+
+    follower.following = follower.following!.filter(
+      id => id.toString() !== following._id.toString()
+    );
+
+
+    await Promise.all([follower.save(), following.save()]);
+  }
+
+  async findUserByReferralCode(referredReferralCode: string): Promise<IUser | null> {
+    const referredBy = await UserModel.findOne({ referralCode: referredReferralCode })
     return referredBy
   }
 
@@ -86,8 +129,8 @@ export class MongoUserRepository implements IUserRepository {
     return user;
   }
 
-  async createCoverImage(id: string, coverImage : { url: string; public_id: string; }): Promise<IUser | null> {
-     const user = await UserModel.findByIdAndUpdate(id, { coverImage }).lean();
+  async createCoverImage(id: string, coverImage: { url: string; public_id: string; }): Promise<IUser | null> {
+    const user = await UserModel.findByIdAndUpdate(id, { coverImage }).lean();
 
     if (!user) {
       throw new AppError(404, 'User not found');
@@ -131,4 +174,6 @@ export class MongoUserRepository implements IUserRepository {
     }
     return updated;
   }
+
+
 }

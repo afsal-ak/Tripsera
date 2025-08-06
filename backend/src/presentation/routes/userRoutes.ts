@@ -122,7 +122,12 @@ router.get(PROFILE_ROUTES.GET_PROFILE, userAuthMiddleware, profileController.get
 router.put(PROFILE_ROUTES.UPDATE_PROFILE, userAuthMiddleware, profileController.updateUserProfile);
 router.put(PROFILE_ROUTES.UPLOAD_PROFILE_IMAGE, userAuthMiddleware, upload.single('image'), profileController.updateProfileImage);
 router.put(PROFILE_ROUTES.CREATE_COVER_IMAGE, userAuthMiddleware, upload.single('image'), profileController.createCoverImage);
-router.put(PROFILE_ROUTES.UPDATE_ADDRESS, userAuthMiddleware, profileController.updateUserAddress);
+router.get(PROFILE_ROUTES.UPDATE_ADDRESS, userAuthMiddleware, profileController.updateUserAddress);
+
+//for public
+router.get(PROFILE_ROUTES.GET_PUBLIC_PROFILE, userAuthMiddleware, profileController.getPublicProfile);
+router.post(PROFILE_ROUTES.FOLLOW, userAuthMiddleware, profileController.followUser);
+router.post(PROFILE_ROUTES.UNFOLLOW, userAuthMiddleware, profileController.unfollowUser);
 
 // WISHLIST ROUTES
 router.get(WISHLIST_ROUTES.GET_ALL, userAuthMiddleware, wishlistController.getAllWishlist);
@@ -155,6 +160,7 @@ router.post(BLOG_ROUTES.CREATE, userAuthMiddleware, upload.array('images'), blog
 router.put(BLOG_ROUTES.EDIT, userAuthMiddleware, upload.array('images'), blogController.editBlog);
 router.get(BLOG_ROUTES.GET_ALL, blogController.getAllPublishedBlogs);
 router.get(BLOG_ROUTES.GET_USER_BLOGS, userAuthMiddleware, blogController.getBlogByUser);
+router.get(BLOG_ROUTES.GET_PUBLIC_USER_BLOGS, userAuthMiddleware, blogController.getPublicBlogsByUser);
 router.get(BLOG_ROUTES.GET_BY_ID, userAuthMiddleware, blogController.getBlogById);
  router.get(BLOG_ROUTES.GET_BY_SLUG,optionalAuthMiddleware, blogController.getBySlug);
 router.delete(BLOG_ROUTES.DELETE, userAuthMiddleware, blogController.deleteBlog);

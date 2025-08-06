@@ -1,8 +1,10 @@
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IUser } from '@domain/entities/IUser';
 import { MongoUserRepository } from '@infrastructure/repositories/MongoUserRepository';
+import { AppError } from '@shared/utils/AppError';
 
 export class ProfileUseCases {
-  constructor(private userRepo: MongoUserRepository) {}
+  constructor(private userRepo: MongoUserRepository) { }
 
   async getUserProfile(userId: string): Promise<IUser | null> {
     return await this.userRepo.getUserProfile(userId);
@@ -14,7 +16,7 @@ export class ProfileUseCases {
   ): Promise<IUser | null> {
     return await this.userRepo.updateProfileImage(userId, profileImage);
   }
- async createCoverImage(
+  async createCoverImage(
     userId: string,
     coverImage: { url: string; public_id: string }
   ): Promise<IUser | null> {
@@ -28,4 +30,33 @@ export class ProfileUseCases {
   async updateUserAddress(userId: string, addressData: Partial<IUser>): Promise<IUser | null> {
     return await this.userRepo.updateUserAddress(userId, addressData);
   }
+
+
+  async getPublicProfile(username: string): Promise<IUser | null> {
+    const user = await this.userRepo.findByUsername(username);
+
+    if (!user) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
+    }
+ 
+    return user;
+  }
+
+async followUser(followerId: string, followingId: string): Promise<void> {
+  if (followerId === followingId) {
+    throw new AppError(400, "Cannot follow yourself");
+  }
+
+  await this.userRepo.addFollowerAndFollowing(followerId, followingId);
+}
+
+async unfollowUser(followerId: string, followingId: string): Promise<void> {
+  if (followerId === followingId) {
+    throw new AppError(400, "Cannot follow yourself");
+  }
+
+  await this.userRepo.unFollowAndFollowing(followerId, followingId);
+}
+
+
 }

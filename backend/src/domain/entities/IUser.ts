@@ -26,6 +26,8 @@ export interface IUser {
   }[];
   followers?: string[];
   following?: string[];
+  isPrivate?: boolean
+
 
   interests?: string[];
   address?: {

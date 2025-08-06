@@ -2,6 +2,7 @@ import { IBlog } from '@domain/entities/IBlog';
 
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { BlogModel } from '@infrastructure/models/Blog';
+import { UserModel } from '@infrastructure/models/User';
 //import { CommentModel } from "@infrastructure/models/Comment";
 import { AppError } from '@shared/utils/AppError';
 import { FilterQuery } from 'mongoose';
@@ -159,7 +160,6 @@ export class MongoBlogRepository implements IBlogRepository {
       BlogModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
       BlogModel.countDocuments(query),
     ]);
-
     return { blogs, totalBlogs };
   }
 
@@ -200,4 +200,26 @@ export class MongoBlogRepository implements IBlogRepository {
   async changeBlogStatus(blogId: string, isBlocked: boolean): Promise<void> {
     await BlogModel.findByIdAndUpdate(blogId, { isBlocked });
   }
+
+  async getPublicBlogsByUser(
+  author: string,
+  page: number,
+  limit: number
+): Promise<{ blogs: IBlog[]; totalBlogs: number }> {
+  const skip = (page - 1) * limit;
+
+  const query = {
+    author,
+    status: 'published',
+    isBlocked: false,
+  };
+
+  const [blogs, totalBlogs] = await Promise.all([
+    BlogModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+    BlogModel.countDocuments(query),
+  ]);
+
+  return { blogs, totalBlogs };
+}
+
 }

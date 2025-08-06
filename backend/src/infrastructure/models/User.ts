@@ -27,8 +27,10 @@ const UserSchema = new Schema<IUserDocument>(
       enum: ['user', 'admin'],
       default: 'user',
     },
-    followers: [{ type: Schema.Types.ObjectId, ref: 'Users' }],
-    following: [{ type: Schema.Types.ObjectId, ref: 'Users' }],
+    followers: [{ type: Schema.Types.ObjectId, ref: 'Users',default: [] }],
+    following: [{ type: Schema.Types.ObjectId, ref: 'Users',default: [] }],
+    isPrivate: { type: Boolean, default: false },
+ 
     isBlocked: {
       type: Boolean,
       default: false,
@@ -81,8 +83,7 @@ const UserSchema = new Schema<IUserDocument>(
     },
     referralCode:{
       type:String,
-      required:true,
-      unique:true
+       unique:true
     },
    referredBy: {
     type: Schema.Types.ObjectId,

@@ -44,4 +44,10 @@ export interface IBlogRepository {
   likeBlog(blogId: string, userId: string): Promise<IBlog | null>;
   unLikeBlog(blogId: string, userId: string): Promise<IBlog | null>;
   blockBlog(blogId: string, block: boolean): Promise<void>;
+
+  getPublicBlogsByUser(
+  author: string,
+  page: number,
+  limit: number
+): Promise<{ blogs: IBlog[]; totalBlogs: number }>  
 }
