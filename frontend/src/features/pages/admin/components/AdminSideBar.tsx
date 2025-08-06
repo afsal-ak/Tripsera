@@ -29,6 +29,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
     { path: 'blogs', label: 'Blogs', icon: Table },
     { path: 'reviews', label: 'Reviews', icon: Table },
     { path: 'referral', label: 'Referral', icon: Table },
+    { path: 'sales-report', label: 'Sales Report', icon: Table },
   ];
    return (
     <>

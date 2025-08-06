@@ -13,6 +13,7 @@ export interface IBooking {
     _id: string;
     title: string;
     price: string;
+    packageCode:string;
     imageUrls: { url: string }[];
     //  location: PackageLocation[];
   };
@@ -46,8 +47,8 @@ export interface IBooking {
   };
   createdAt: Date;
   updatedAt: Date;
-  bookedAt?: Date;
-  travelDate?: Date;
+  bookedAt?: string;
+  travelDate?: string;
   packageTitle?: string;
   packageImage?: { url: string; public_id?: string };
 }
