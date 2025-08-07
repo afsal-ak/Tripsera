@@ -1,7 +1,7 @@
 import { IBannerRepository } from '@domain/repositories/IBannerRepository';
 import { IBanner } from '@domain/entities/IBanner';
-
-export class BannerMangementUseCases {
+import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/IBannerManagementUseCases';
+export class BannerMangementUseCases implements IBannerManagementUseCases {
   constructor(private bannerRepository: IBannerRepository) {}
 
   async createNewBanner(banner: IBanner): Promise<IBanner> {

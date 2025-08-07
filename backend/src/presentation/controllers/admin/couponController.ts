@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { CouponUseCases } from '@application/usecases/admin/couponUseCases';
-import { ICoupon } from '@domain/entities/ICoupon';
-
+ import { ICoupon } from '@domain/entities/ICoupon';
+import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
 export class CouponController {
-  constructor(private couponUseCase: CouponUseCases) {}
+  constructor(private couponUseCase: ICouponUseCases) {}
 
   createCoupon = async (req: Request, res: Response): Promise<void> => {
     try {

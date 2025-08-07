@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { BookingUseCases } from '@application/usecases/admin/bookingUseCases';
-
+ import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingUseCases';
 export class BookingController {
-  constructor(private bookingUseCases: BookingUseCases) {}
+  constructor(private bookingUseCases: IBookingUseCases) {}
   getAllBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const page = parseInt(req.query.page as string) || 1;

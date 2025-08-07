@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { UserManagementUseCases } from '@application/usecases/admin/userManagementUseCases';
-
+ import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
+ 
 export class UserManagementController {
-  constructor(private userManagementUseCases: UserManagementUseCases) {}
+  constructor(private userManagementUseCases: IUserManagementUseCases) {}
 
   getAllUser = async (req: Request, res: Response): Promise<void> => {
     try {

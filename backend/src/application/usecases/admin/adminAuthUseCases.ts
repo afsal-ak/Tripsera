@@ -5,8 +5,9 @@ import { generateOtp } from '@shared/utils/generateOtp';
 import { hashPassword, comparePassword } from '@shared/utils/hash';
 import { sendOtpMail } from '@infrastructure/services/mail/mailer';
 import { generateAccessToken, generateRefreshToken } from '@shared/utils/jwt';
+import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
 
-export class AdminAuthUseCases {
+export class AdminAuthUseCases implements IAdminAuthUseCases {
   constructor(
     private adminRepository: IUserRepository,
     private otpRepository: IOtpRepository

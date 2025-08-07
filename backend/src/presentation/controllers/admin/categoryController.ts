@@ -1,9 +1,7 @@
-// src/presentation/controllers/CategoryController.ts
-import { Request, Response } from 'express';
-import { CategoryUseCases } from '@application/usecases/admin/categoryUseCases';
-
+ import { Request, Response } from 'express';
+ import { ICategoryUseCases } from '@application/useCaseInterfaces/admin/ICategoryUseCases';
 export class CategoryController {
-  constructor(private categoryUseCase: CategoryUseCases) {}
+  constructor(private categoryUseCase: ICategoryUseCases) {}
 
   createCategory = async (req: Request, res: Response): Promise<void> => {
     try {

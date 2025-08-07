@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { HomeUseCases } from '@application/usecases/user/homeUseCases';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
+import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
 
 export class HomeController {
-  constructor(private homeUseCases: HomeUseCases) {}
+  constructor(private homeUseCases: IHomeUseCases) {}
 
   getHome = async (req: Request, res: Response): Promise<void> => {
     try {

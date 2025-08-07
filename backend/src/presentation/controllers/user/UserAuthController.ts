@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
-import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
+ import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
+import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
+
 export class UserAuthController {
-  constructor(private userAuthUseCases: UserAuthUsecases) { }
+  constructor(private userAuthUseCases: IUserAuthUseCases) { }
 
 
   preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

@@ -1,7 +1,7 @@
 import { ICategory } from '@domain/entities/ICategory';
 import { ICategoryRepository } from '@domain/repositories/ICategoryRepository';
-
-export class CategoryUseCases {
+import { ICategoryUseCases } from '@application/useCaseInterfaces/admin/ICategoryUseCases';
+export class CategoryUseCases implements ICategoryUseCases{
   constructor(private categoryRepo: ICategoryRepository) {}
 
   async getAllCategory({ page, limit }: { page: number; limit: number }) {

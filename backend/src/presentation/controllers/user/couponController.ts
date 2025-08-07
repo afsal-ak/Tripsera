@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
-import { CouponUseCases } from '@application/usecases/user/couponUseCases';
-import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
+ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
+import { ICouponUseCases } from '@application/useCaseInterfaces/user/ICouponUseCases';
+
+
 export class CouponController {
-  constructor(private couponUseCase: CouponUseCases) {}
+  constructor(private couponUseCase: ICouponUseCases) {}
 
   getActiveCoupons = async (req: Request, res: Response): Promise<void> => {
     try {

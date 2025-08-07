@@ -5,9 +5,10 @@ import { IUser } from '@domain/entities/IUser';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { mapToPublicProfileDTO } from '@application/dtos/PublicProfileDTO ';
+import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
 
 export class ProfileController {
-  constructor(private profileUseCases: ProfileUseCases) { }
+  constructor(private profileUseCases: IProfileUseCases) { }
 
   getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

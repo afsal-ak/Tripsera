@@ -2,12 +2,11 @@ import { IBooking } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
-import { ICouponRepository } from '@domain/repositories/ICouponRepository';
-
+import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUseCases ';
 import { RazorpayService } from '@infrastructure/services/razorpay/razorpayService';
 import { AppError } from '@shared/utils/AppError';
 import { generateBookingCode } from '@shared/utils/generateBookingCode';
-export class BookingUseCases {
+export class BookingUseCases implements IBookingUseCases {
   constructor(
     private bookingRepo: IBookingRepository,
     private walletRepo: IWalletRepository,

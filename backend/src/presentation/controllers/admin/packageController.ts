@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
-import { PackageUseCases } from '@application/usecases/admin/packageUseCases';
-import { IPackage } from '@domain/entities/IPackage';
-import cloudinary from '@infrastructure/services/cloudinary/cloudinary';
-import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
-
+ import { IPackage } from '@domain/entities/IPackage';
+ import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';
 export class PackageController {
-  constructor(private packageUseCase: PackageUseCases) {}
+  constructor(private packageUseCase: IPackageUseCases) {}
 
   getFullPackage = async (req: Request, res: Response): Promise<void> => {
     try {

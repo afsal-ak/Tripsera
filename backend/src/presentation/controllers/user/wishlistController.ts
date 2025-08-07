@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { WishlistUseCases } from '@application/usecases/user/wishlistUseCases';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
+import { IWishlistUseCases } from '@application/useCaseInterfaces/user/IWishlistUseCases';
 
 export class WishlistController {
-  constructor(private wishlistUseCases: WishlistUseCases) {}
+  constructor(private wishlistUseCases: IWishlistUseCases) {}
 
   addToWishlist = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
     try {

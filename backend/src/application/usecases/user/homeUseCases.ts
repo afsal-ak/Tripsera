@@ -3,7 +3,8 @@ import { IBanner } from '@domain/entities/IBanner';
 import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IPackage } from '@domain/entities/IPackage';
-export class HomeUseCases {
+import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
+export class HomeUseCases implements IHomeUseCases{
   constructor(
     private packageRepo: IPackageRepository,
     private bannerRepo: IBannerRepository

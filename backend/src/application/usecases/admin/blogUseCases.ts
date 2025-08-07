@@ -1,6 +1,6 @@
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
-
-export class BlogUseCases {
+import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
+export class BlogUseCases implements IBlogUseCases {
   constructor(private blogRepository: IBlogRepository) {}
   async getAllBlogs(
     page: number,

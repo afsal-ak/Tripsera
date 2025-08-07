@@ -2,7 +2,8 @@ import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IPackage } from '@domain/entities/IPackage';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { generatePackageCode } from '@shared/utils/generatePackageCode';
-export class PackageUseCases {
+import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';
+export class PackageUseCases implements IPackageUseCases{
   constructor(private packageRepo: IPackageRepository) { }
 
   async getAllPackages(

@@ -1,7 +1,7 @@
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { IBooking } from '@domain/entities/IBooking';
-
-export class BookingUseCases {
+import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingUseCases';
+export class BookingUseCases implements IBookingUseCases {
   constructor(private bookingRepo: IBookingRepository) {}
   async getAllBookings(filters: {
     page: number;

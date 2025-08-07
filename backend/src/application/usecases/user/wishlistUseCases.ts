@@ -1,7 +1,8 @@
 import { IWishlist } from '@domain/entities/IWishlist';
-import { WishlistRepository } from '@infrastructure/repositories/WishlistRepository';
-import { IWishlistRepository } from '@domain/repositories/IWishlistRepository';
-export class WishlistUseCases {
+ import { IWishlistRepository } from '@domain/repositories/IWishlistRepository';
+import { IWishlistUseCases } from '@application/useCaseInterfaces/user/IWishlistUseCases';
+
+export class WishlistUseCases implements IWishlistUseCases {
   constructor(private wishlistRepo: IWishlistRepository) {}
 
   async addToWishlist(userId: string, packageId: string): Promise<void> {

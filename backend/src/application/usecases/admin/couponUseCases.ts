@@ -1,6 +1,8 @@
 import { ICoupon } from '@domain/entities/ICoupon';
  import { ICouponRepository } from '@domain/repositories/ICouponRepository';
-export class CouponUseCases {
+import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
+
+export class CouponUseCases implements ICouponUseCases {
   constructor(private couponRepo: ICouponRepository) {}
 
   async createCoupon(coupon: ICoupon): Promise<ICoupon> {

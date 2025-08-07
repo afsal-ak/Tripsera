@@ -3,7 +3,8 @@ import { IUser } from '@domain/entities/IUser';
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
 import { AppError } from '@shared/utils/AppError';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
-export class ProfileUseCases {
+import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
+export class ProfileUseCases implements IProfileUseCases{
   constructor(private userRepo: UserRepository) { }
 
   async getUserProfile(userId: string): Promise<IUser | null> {

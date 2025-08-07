@@ -11,7 +11,8 @@ import { generateAccessToken, generateRefreshToken, verifyAccessToken } from '@s
 import { AppError } from '@shared/utils/AppError';
 import { generateUniqueReferralCode } from '@shared/utils/generateRefferalCode';
 import { IReferralRepository } from '@domain/repositories/IReferralRepository';
-export class UserAuthUsecases {
+import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
+export class UserAuthUsecases implements IUserAuthUseCases {
   constructor(
     private userRepository: IUserRepository,
     private otpRepository: IOtpRepository,

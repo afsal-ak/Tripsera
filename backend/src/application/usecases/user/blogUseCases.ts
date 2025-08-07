@@ -1,8 +1,8 @@
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { IBlog } from '@domain/entities/IBlog';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
-
-export class BlogUseCases {
+import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
+export class BlogUseCases implements IBlogUseCases{
   constructor(private blogRepo: IBlogRepository) {}
 
   async createBlog(userId: string, blogData: IBlog): Promise<IBlog> {

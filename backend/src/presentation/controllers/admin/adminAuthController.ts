@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { AdminAuthUseCases } from '@application/usecases/admin/adminAuthUseCases';
-import { IUser } from '@domain/entities/IUser';
-
+ import { IUser } from '@domain/entities/IUser';
+import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
 export class AdminAuthController {
-  constructor(private adminAuthUseCases: AdminAuthUseCases) {}
+  constructor(private adminAuthUseCases: IAdminAuthUseCases) {}
 
   adminLogin = async (req: Request, res: Response): Promise<void> => {
     try {

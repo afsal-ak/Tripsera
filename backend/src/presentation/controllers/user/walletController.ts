@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { WalletUseCases } from '@application/usecases/user/walletUseCases';
-import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
+ import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
+import { IWalletUseCases } from '@application/useCaseInterfaces/user/IWalletUseCases';
 
 export class WalletController {
-  constructor(private walletUseCases: WalletUseCases) {}
+  constructor(private walletUseCases: IWalletUseCases) {}
 
   walletBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

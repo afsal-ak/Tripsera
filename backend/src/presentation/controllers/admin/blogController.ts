@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { BlogUseCases } from '@application/usecases/admin/blogUseCases';
-
+import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
 export class BlogController {
-  constructor(private blogUseCases: BlogUseCases) {}
+  constructor(private blogUseCases: IBlogUseCases) {}
 
   getAllBlogs = async (req: Request, res: Response, next: NextFunction) => {
     try {

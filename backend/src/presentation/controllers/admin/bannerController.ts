@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import { BannerMangementUseCases } from '@application/usecases/admin/bannerUseCases';
-import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+ import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IBanner } from '@domain/entities/IBanner';
-
+import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/IBannerManagementUseCases';
 export class BannerMangementController {
-  constructor(private bannerMangementUseCases: BannerMangementUseCases) {}
+  constructor(private bannerMangementUseCases: IBannerManagementUseCases) {}
 
   createBanner = async (req: Request, res: Response) => {
     try {

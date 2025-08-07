@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
-import { BookingUseCases } from '@application/usecases/user/bookingUseCases';
-import { AppError } from '@shared/utils/AppError';
+ import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
-
+import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUseCases ';
 export class BookingController {
-  constructor(private bookingUseCases: BookingUseCases) {}
+  constructor(private bookingUseCases: IBookingUseCases) {}
 
   createBookingWithOnlinePayment = async (
     req: Request,
