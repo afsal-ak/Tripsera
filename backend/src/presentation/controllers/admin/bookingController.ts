@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
- import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingUseCases';
+import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingUseCases';
 export class BookingController {
   constructor(private bookingUseCases: IBookingUseCases) {}
   getAllBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

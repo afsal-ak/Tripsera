@@ -1,5 +1,5 @@
- import { Request, Response } from 'express';
- import { ICategoryUseCases } from '@application/useCaseInterfaces/admin/ICategoryUseCases';
+import { Request, Response } from 'express';
+import { ICategoryUseCases } from '@application/useCaseInterfaces/admin/ICategoryUseCases';
 export class CategoryController {
   constructor(private categoryUseCase: ICategoryUseCases) {}
 

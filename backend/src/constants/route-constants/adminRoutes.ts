@@ -70,8 +70,6 @@ export const BLOG_ROUTES = {
   STATUS: '/blog/status/:blogId',
 };
 
-
-
 export const REVIEW_ROUTE = {
   GET_REVIEWS: '/reviews',
   GET_BY_ID: '/reviews/:reviewId',
@@ -79,16 +77,12 @@ export const REVIEW_ROUTE = {
   DELETE: '/reviews/:reviewId/delete',
 };
 
-
 export const REFERRAL_ROUTE = {
   GET_REFERRAL: '/referral',
   ADD_REFERRAL: '/referral/add',
   GET_BY_ID: '/referral/:referralId',
   CHANGE_STATUS: '/referral/:referralId/status',
 };
-
-
-
 
 export const SALES_REPORT_ROUTE = {
   GET_SALES_REPORT: '/salesReport',

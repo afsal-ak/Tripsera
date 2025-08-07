@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
- import { ICoupon } from '@domain/entities/ICoupon';
+import { ICoupon } from '@domain/entities/ICoupon';
 import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
 export class CouponController {
   constructor(private couponUseCase: ICouponUseCases) {}

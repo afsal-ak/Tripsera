@@ -1,4 +1,4 @@
-import { ObjectId, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface IUser {
   _id?: Types.ObjectId | string;
@@ -15,7 +15,7 @@ export interface IUser {
     url: string;
     public_id: string;
   };
-   coverImage?: {
+  coverImage?: {
     url: string;
     public_id: string;
   };
@@ -26,8 +26,7 @@ export interface IUser {
   }[];
   followers?: string[];
   following?: string[];
-  isPrivate?: boolean
-
+  isPrivate?: boolean;
 
   interests?: string[];
   address?: {
@@ -37,8 +36,8 @@ export interface IUser {
     zip?: string;
     country?: string;
   };
-  referralCode?:string;
-  referredBy ?:Types.ObjectId | string;
+  referralCode?: string;
+  referredBy?: Types.ObjectId | string;
   googleId?: string;
   isGoogleUser?: boolean;
 }

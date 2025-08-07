@@ -8,16 +8,9 @@ export interface IBookingUseCases {
     limit: number
   ): Promise<{ bookings: IBooking[]; total: number }>;
 
-  getBookingById(
-    userId: string,
-    bookingId: string
-  ): Promise<IBooking | null>;
+  getBookingById(userId: string, bookingId: string): Promise<IBooking | null>;
 
-  cancelBooking(
-    userId: string,
-    bookingId: string,
-    reason: string
-  ): Promise<IBooking | null>;
+  cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null>;
 
   createBookingWithOnlinePayment(
     userId: string,
@@ -38,16 +31,9 @@ export interface IBookingUseCases {
     razorpaySignature: string
   ): Promise<boolean>;
 
-  confirmBookingAfterPayment(
-    orderId: string,
-    paymentId: string,
-    signature: string
-  ): Promise<void>;
+  confirmBookingAfterPayment(orderId: string, paymentId: string, signature: string): Promise<void>;
 
-  cancelUnpaidBooking(
-    userId: string,
-    bookingId: string
-  ): Promise<void>;
+  cancelUnpaidBooking(userId: string, bookingId: string): Promise<void>;
 
   retryBookingPayment(
     userId: string,

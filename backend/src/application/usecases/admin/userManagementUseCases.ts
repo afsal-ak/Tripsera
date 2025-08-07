@@ -1,6 +1,5 @@
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { IUser } from '@domain/entities/IUser';
-import { IUserPreview } from '@domain/entities/IUserPreview ';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
 export class UserManagementUseCases implements IUserManagementUseCases {
   constructor(private userRepository: IUserRepository) {}

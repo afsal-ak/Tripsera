@@ -1,7 +1,5 @@
-import { IReferral } from "@domain/entities/IReferral";
- 
+import { IReferral } from '@domain/entities/IReferral';
 
 export interface IReferralUseCases {
-   getReferral():Promise<IReferral|null>
-
+  getReferral(): Promise<IReferral | null>;
 }

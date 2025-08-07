@@ -1,4 +1,4 @@
-import { PackageModel } from "@infrastructure/models/Package";
+import { PackageModel } from '@infrastructure/models/Package';
 export async function generatePackageCode(): Promise<string> {
   const prefix = 'PKG';
   const year = new Date().getFullYear();

@@ -46,8 +46,8 @@ export interface IBlogRepository {
   blockBlog(blogId: string, block: boolean): Promise<void>;
 
   getPublicBlogsByUser(
-  author: string,
-  page: number,
-  limit: number
-): Promise<{ blogs: IBlog[]; totalBlogs: number }>  
+    author: string,
+    page: number,
+    limit: number
+  ): Promise<{ blogs: IBlog[]; totalBlogs: number }>;
 }

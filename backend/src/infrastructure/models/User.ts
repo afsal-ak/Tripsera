@@ -27,10 +27,10 @@ const UserSchema = new Schema<IUserDocument>(
       enum: ['user', 'admin'],
       default: 'user',
     },
-    followers: [{ type: Schema.Types.ObjectId, ref: 'Users',default: [] }],
-    following: [{ type: Schema.Types.ObjectId, ref: 'Users',default: [] }],
+    followers: [{ type: Schema.Types.ObjectId, ref: 'Users', default: [] }],
+    following: [{ type: Schema.Types.ObjectId, ref: 'Users', default: [] }],
     isPrivate: { type: Boolean, default: false },
- 
+
     isBlocked: {
       type: Boolean,
       default: false,
@@ -43,7 +43,7 @@ const UserSchema = new Schema<IUserDocument>(
       url: { type: String, required: false },
       public_id: { type: String, required: false },
     },
-     coverImage: {
+    coverImage: {
       url: { type: String, required: false },
       public_id: { type: String, required: false },
     },
@@ -81,14 +81,14 @@ const UserSchema = new Schema<IUserDocument>(
         required: false,
       },
     },
-    referralCode:{
-      type:String,
-       unique:true
+    referralCode: {
+      type: String,
+      unique: true,
     },
-   referredBy: {
-    type: Schema.Types.ObjectId,
-     ref: 'Users'
-   },
+    referredBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'Users',
+    },
     googleId: String,
     isGoogleUser: {
       type: Boolean,

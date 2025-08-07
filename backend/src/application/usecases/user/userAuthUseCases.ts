@@ -12,13 +12,14 @@ import { AppError } from '@shared/utils/AppError';
 import { generateUniqueReferralCode } from '@shared/utils/generateRefferalCode';
 import { IReferralRepository } from '@domain/repositories/IReferralRepository';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
+
 export class UserAuthUsecases implements IUserAuthUseCases {
   constructor(
     private userRepository: IUserRepository,
     private otpRepository: IOtpRepository,
     private walletRepository: IWalletRepository,
     private referraRepository: IReferralRepository
-  ) { }
+  ) {}
 
   async preRegistration(userData: IOTP): Promise<void> {
     const { email, username, password, referredReferralCode } = userData;
@@ -41,7 +42,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     if (!email || !username || !password) {
       throw new Error('Missing required fields');
     }
-    console.log(referredReferralCode, 'referal code in usecase')
+    console.log(referredReferralCode, 'referal code in usecase');
     await this.otpRepository.saveOtp({
       email,
       username,
@@ -61,7 +62,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
       throw new Error('Invalid OTP');
     }
     const otpDoc = await this.otpRepository.getOtpByEmail(email);
-    console.log(otpDoc, 'otp doc')
+    console.log(otpDoc, 'otp doc');
     if (!otpDoc || !otpDoc.username || !otpDoc.password) {
       throw new Error('Incomplete registration data');
     }
@@ -71,20 +72,18 @@ export class UserAuthUsecases implements IUserAuthUseCases {
       throw new Error('User already registered');
     }
 
-    const referredReferralCode = otpDoc?.referredReferralCode
-    console.log(referredReferralCode, 'from otp')
-    const referredBy = await this.userRepository.findUserByReferralCode(referredReferralCode!)
-    console.log(referredBy, 'check reffered by')
-    const referralCode = await generateUniqueReferralCode()
+    const referredReferralCode = otpDoc?.referredReferralCode;
+    console.log(referredReferralCode, 'from otp');
+    const referredBy = await this.userRepository.findUserByReferralCode(referredReferralCode!);
+    console.log(referredBy, 'check reffered by');
+    const referralCode = await generateUniqueReferralCode();
     const newUser: IUser = {
       email,
       username: otpDoc.username,
       password: otpDoc.password,
       referralCode: referralCode,
-      referredBy: referredBy?._id
+      referredBy: referredBy?._id,
     };
-
-
 
     const user = await this.userRepository.createUser(newUser);
     if (!user || !user._id) {
@@ -93,14 +92,18 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     await this.otpRepository.deleteOtp(email);
     await this.walletRepository.createWallet(user._id.toString());
 
-    const referralStatus = await this.referraRepository.getReferral()
+    const referralStatus = await this.referraRepository.getReferral();
 
-if (referredBy && referralStatus && !referralStatus.isBlocked && referralStatus.amount) {
-  const amount = referralStatus.amount;
+    if (referredBy && referralStatus && !referralStatus.isBlocked && referralStatus.amount) {
+      const amount = referralStatus.amount;
 
-  await this.walletRepository.creditWallet(user._id.toString(), amount, 'Referral Reward');
-  await this.walletRepository.creditWallet(user?.referredBy!.toString(), amount, 'Referral Reward');
-}
+      await this.walletRepository.creditWallet(user._id.toString(), amount, 'Referral Reward');
+      await this.walletRepository.creditWallet(
+        user?.referredBy!.toString(),
+        amount,
+        'Referral Reward'
+      );
+    }
 
     // if (referredBy) {
     //   this.walletRepository.creditWallet(user._id.toString(), 100, 'Refferal Reward')
@@ -203,7 +206,7 @@ if (referredBy && referralStatus && !referralStatus.isBlocked && referralStatus.
     console.log(email, 'google');
     console.log(token, 'google token');
     let user = await this.userRepository.findByEmail(email);
-    const referralCode = await generateUniqueReferralCode()
+    const referralCode = await generateUniqueReferralCode();
 
     if (!user) {
       user = await this.userRepository.createUser({

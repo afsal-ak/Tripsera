@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
- import { IPackage } from '@domain/entities/IPackage';
- import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+import { IPackage } from '@domain/entities/IPackage';
+import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';
 export class PackageController {
   constructor(private packageUseCase: IPackageUseCases) {}
@@ -58,8 +58,8 @@ export class PackageController {
         endDate: req.body.endDate ? new Date(req.body.endDate) : undefined,
         isBlocked: false,
       };
-      console.log(req.body,'packge body')
-      console.log(pkg,'packge updated body')
+      console.log(req.body, 'packge body');
+      console.log(pkg, 'packge updated body');
 
       const imageUrls = await Promise.all(
         files.map((file) => uploadCloudinary(file.path, 'packages'))
@@ -67,7 +67,7 @@ export class PackageController {
       pkg.imageUrls = imageUrls;
 
       const createdPkg = await this.packageUseCase.createPackage(pkg);
-      console.log({createdPkg},'creted pkd')
+      console.log({ createdPkg }, 'creted pkd');
       res.status(200).json({ message: 'Package created successfully', createdPkg });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });
@@ -92,8 +92,8 @@ export class PackageController {
         title: body.title,
         description: body.description,
         duration: body.duration,
-        durationDays:body.durationDays,
-        durationNights:body.durationNights,
+        durationDays: body.durationDays,
+        durationNights: body.durationNights,
         price: body.price ? Number(body.price) : undefined,
         location: body.location ? JSON.parse(body.location) : undefined,
         category: body.category ? JSON.parse(body.category) : undefined,
@@ -118,8 +118,6 @@ export class PackageController {
       res.status(500).json({ message: error.message || 'Something went wrong' });
     }
   };
-
-  
 
   blockPackage = async (req: Request, res: Response): Promise<void> => {
     try {

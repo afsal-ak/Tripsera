@@ -1,10 +1,6 @@
-
-
-import { IBooking } from "@domain/entities/IBooking";
-import { BookingModel } from "@infrastructure/models/Booking";
-import { SalesReportFilterDTO } from "@application/dtos/salesReportDTO";
+import { IBooking } from '@domain/entities/IBooking';
+import { BookingModel } from '@infrastructure/models/Booking';
 import { FilterQuery } from 'mongoose';
-import { FilterQueryOptions } from "@application/usecases/helpers/getSalesReportFilter";
 
 interface FindOptions {
   skip?: number;
@@ -24,13 +20,13 @@ export class SalesReportRepository {
       .sort(options.sort || {})
       .populate({
         path: 'userId',
-        select: 'username'
+        select: 'username',
       })
-       .populate({
+      .populate({
         path: 'packageId',
-        select: 'packageCode'
+        select: 'packageCode',
       })
-      
+
       .lean();
   }
 
@@ -40,20 +36,21 @@ export class SalesReportRepository {
       {
         $group: {
           _id: null,
-          totalPaid: { $sum: "$amountPaid" },
-          totalDiscount: { $sum: "$discount" },
-          totalWalletUsed: { $sum: "$walletUsed" },
-          totalAmount: { $sum: "$totalAmount" },
-        }
-      }
+          totalPaid: { $sum: '$amountPaid' },
+          totalDiscount: { $sum: '$discount' },
+          totalWalletUsed: { $sum: '$walletUsed' },
+          totalAmount: { $sum: '$totalAmount' },
+        },
+      },
     ]);
 
-    return result[0] || {
-      totalPaid: 0,
-      totalDiscount: 0,
-      totalWalletUsed: 0,
-      totalCouponUsed: 0
-    };
+    return (
+      result[0] || {
+        totalPaid: 0,
+        totalDiscount: 0,
+        totalWalletUsed: 0,
+        totalCouponUsed: 0,
+      }
+    );
   }
-
 }

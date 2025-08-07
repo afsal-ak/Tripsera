@@ -1,12 +1,12 @@
 import { ISalesReportRepository } from '@domain/repositories/ISalesReportRepository';
 import { getSalesReportFilter, FilterQueryOptions } from '../helpers/getSalesReportFilter';
-import { exportSalesReportExcel } from '@shared/utils/excelUtils'; 
+import { exportSalesReportExcel } from '@shared/utils/excelUtils';
 import { IBooking } from '@domain/entities/IBooking';
 
 export class SalesReportUseCase {
   constructor(private salesRepo: ISalesReportRepository) {}
 
-   async getReportList(query: FilterQueryOptions, page: number, limit: number) {
+  async getReportList(query: FilterQueryOptions, page: number, limit: number) {
     const filter = getSalesReportFilter(query);
     const skip = (page - 1) * limit;
 
@@ -14,28 +14,28 @@ export class SalesReportUseCase {
     const data = await this.salesRepo.find(filter, {
       skip,
       limit,
-      sort: { createdAt: -1 }
+      sort: { createdAt: -1 },
     });
-  const summary = await this.salesRepo.calculateSummary(filter);
+    const summary = await this.salesRepo.calculateSummary(filter);
 
     return {
       data,
       total,
       summary,
       page,
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / limit),
     };
   }
 
-   // Download report as Excel 
+  // Download report as Excel
   async downloadExcel(query: FilterQueryOptions): Promise<Buffer> {
     const filter = getSalesReportFilter(query);
     const bookings: IBooking[] = await this.salesRepo.find(filter, {
-      sort: { createdAt: -1 }
+      sort: { createdAt: -1 },
     });
 
-  const summary = await this.salesRepo.calculateSummary(filter);
-    const buffer = await exportSalesReportExcel(bookings,summary);
+    const summary = await this.salesRepo.calculateSummary(filter);
+    const buffer = await exportSalesReportExcel(bookings, summary);
     return buffer;
   }
 }

@@ -10,7 +10,7 @@ import {
   BLOG_ROUTES,
   REVIEW_ROUTE,
   REFERRAL_ROUTE,
-  SALES_REPORT_ROUTE
+  SALES_REPORT_ROUTE,
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -55,7 +55,7 @@ import { ReferralRepository } from '@infrastructure/repositories/ReferralReposit
 import { ReferralUseCase } from '@application/usecases/admin/referralUseCases.ts';
 import { ReferralController } from '@presentation/controllers/admin/referralController';
 
-import { SalesReportRepository } from '@infrastructure/repositories/salesReportRepository';
+import { SalesReportRepository } from '@infrastructure/repositories/SalesReportRepository';
 import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
 import { SalesReportController } from '@presentation/controllers/admin/salesReportController';
 
@@ -100,28 +100,48 @@ const referralRepository = new ReferralRepository();
 const referralUseCases = new ReferralUseCase(referralRepository);
 const referralController = new ReferralController(referralUseCases);
 
-const salesRepository= new SalesReportRepository();
+const salesRepository = new SalesReportRepository();
 const salesuseCases = new SalesReportUseCase(salesRepository);
 const salesController = new SalesReportController(salesuseCases);
 
-
 const router = Router();
 
-// AUTH ROUTES 
+// AUTH ROUTES
 router.post(AUTH_ROUTES.REFRESH_TOKEN, adminRefreshToken);
 router.post(AUTH_ROUTES.LOGIN, adminAuthController.adminLogin);
 router.post(AUTH_ROUTES.FORGOT_PASSWORD, adminAuthController.forgotPassword);
 router.post(AUTH_ROUTES.FORGOT_PASSWORD_CHANGE, adminAuthController.forgotPasswordChange);
 router.post(AUTH_ROUTES.LOGOUT, adminAuthController.adminLogout);
 
-// USER MANAGEMENT 
-router.get(USER_MANAGEMENT_ROUTES.GET_ALL_USERS, adminAuthMiddleware, userManagementController.getAllUser);
-router.get(USER_MANAGEMENT_ROUTES.GET_SINGLE_USER, adminAuthMiddleware, userManagementController.getSingleUser);
-router.patch(USER_MANAGEMENT_ROUTES.BLOCK_USER, adminAuthMiddleware, userManagementController.blockUser);
-router.patch(USER_MANAGEMENT_ROUTES.UNBLOCK_USER, adminAuthMiddleware, userManagementController.unblockUser);
+// USER MANAGEMENT
+router.get(
+  USER_MANAGEMENT_ROUTES.GET_ALL_USERS,
+  adminAuthMiddleware,
+  userManagementController.getAllUser
+);
+router.get(
+  USER_MANAGEMENT_ROUTES.GET_SINGLE_USER,
+  adminAuthMiddleware,
+  userManagementController.getSingleUser
+);
+router.patch(
+  USER_MANAGEMENT_ROUTES.BLOCK_USER,
+  adminAuthMiddleware,
+  userManagementController.blockUser
+);
+router.patch(
+  USER_MANAGEMENT_ROUTES.UNBLOCK_USER,
+  adminAuthMiddleware,
+  userManagementController.unblockUser
+);
 
 //  BANNER ROUTES
-router.post(BANNER_ROUTES.ADD, adminAuthMiddleware, upload.single('image'), bannerMangementController.createBanner);
+router.post(
+  BANNER_ROUTES.ADD,
+  adminAuthMiddleware,
+  upload.single('image'),
+  bannerMangementController.createBanner
+);
 router.get(BANNER_ROUTES.GET_ALL, adminAuthMiddleware, bannerMangementController.getBanner);
 router.patch(BANNER_ROUTES.BLOCK, adminAuthMiddleware, bannerMangementController.blockBanner);
 router.patch(BANNER_ROUTES.UNBLOCK, adminAuthMiddleware, bannerMangementController.unblockBanner);
@@ -139,8 +159,18 @@ router.patch(CATEGORY_ROUTES.UNBLOCK, adminAuthMiddleware, categoryController.un
 // PACKAGE ROUTES
 router.get(PACKAGE_ROUTES.GET_ALL, adminAuthMiddleware, packageController.getFullPackage);
 router.get(PACKAGE_ROUTES.GET_BY_ID, adminAuthMiddleware, packageController.getPackagesById);
-router.post(PACKAGE_ROUTES.ADD, adminAuthMiddleware, upload.array('images', 4), packageController.createPackage);
-router.put(PACKAGE_ROUTES.EDIT, adminAuthMiddleware, upload.array('images', 4), packageController.editPackage);
+router.post(
+  PACKAGE_ROUTES.ADD,
+  adminAuthMiddleware,
+  upload.array('images', 4),
+  packageController.createPackage
+);
+router.put(
+  PACKAGE_ROUTES.EDIT,
+  adminAuthMiddleware,
+  upload.array('images', 4),
+  packageController.editPackage
+);
 router.patch(PACKAGE_ROUTES.BLOCK, adminAuthMiddleware, packageController.blockPackage);
 router.patch(PACKAGE_ROUTES.UNBLOCK, adminAuthMiddleware, packageController.unblockPackage);
 
@@ -163,21 +193,23 @@ router.get(BLOG_ROUTES.GET_BY_ID, adminAuthMiddleware, blogController.getBlogByI
 router.delete(BLOG_ROUTES.DELETE, adminAuthMiddleware, blogController.deleteBlog);
 router.patch(BLOG_ROUTES.STATUS, adminAuthMiddleware, blogController.changeBlogStatus);
 
-
 //REVIEW ROUTES
 
- router.get(REVIEW_ROUTE.GET_REVIEWS,adminAuthMiddleware,reviewController.getAllReview)
- router.get(REVIEW_ROUTE.GET_BY_ID,adminAuthMiddleware,reviewController.getReviewById)
-router.patch(REVIEW_ROUTE.CHANGE_STATUS,adminAuthMiddleware,reviewController.changeReviewStatus)
-router.delete(REVIEW_ROUTE.DELETE,adminAuthMiddleware,reviewController.deleteReview)
-
+router.get(REVIEW_ROUTE.GET_REVIEWS, adminAuthMiddleware, reviewController.getAllReview);
+router.get(REVIEW_ROUTE.GET_BY_ID, adminAuthMiddleware, reviewController.getReviewById);
+router.patch(REVIEW_ROUTE.CHANGE_STATUS, adminAuthMiddleware, reviewController.changeReviewStatus);
+router.delete(REVIEW_ROUTE.DELETE, adminAuthMiddleware, reviewController.deleteReview);
 
 //REFERRAl ROUTES
 
- router.get(REFERRAL_ROUTE.GET_REFERRAL,adminAuthMiddleware,referralController.getReferral)
- router.post(REFERRAL_ROUTE.ADD_REFERRAL,adminAuthMiddleware,referralController.saveReferralSettings)
-  router.get(REFERRAL_ROUTE.GET_BY_ID,adminAuthMiddleware,referralController.getReferralById)
-  
+router.get(REFERRAL_ROUTE.GET_REFERRAL, adminAuthMiddleware, referralController.getReferral);
+router.post(
+  REFERRAL_ROUTE.ADD_REFERRAL,
+  adminAuthMiddleware,
+  referralController.saveReferralSettings
+);
+router.get(REFERRAL_ROUTE.GET_BY_ID, adminAuthMiddleware, referralController.getReferralById);
+
 //SALES ROUTES
 
 router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT, salesController.getReportList);

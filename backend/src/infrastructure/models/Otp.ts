@@ -24,10 +24,10 @@ const OtpSchema = new Schema<IOtpDocument>({
     type: Number,
     default: 0,
   },
-   referredReferralCode:{
-    type:String,
-    default:null
-   },
+  referredReferralCode: {
+    type: String,
+    default: null,
+  },
 
   createdAt: {
     type: Date,

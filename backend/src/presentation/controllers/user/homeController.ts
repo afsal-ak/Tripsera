@@ -10,8 +10,7 @@ export class HomeController {
       const result = await this.homeUseCases.getHome();
 
       res.status(HttpStatus.OK).json({ result });
-
-     } catch (error: any) {
+    } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
   };
@@ -34,7 +33,6 @@ export class HomeController {
         }
       }
 
-    
       const result = await this.homeUseCases.getActivePackage({
         filters,
         page: pageNum,

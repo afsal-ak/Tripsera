@@ -4,12 +4,12 @@ import { IBooking } from '@domain/entities/IBooking';
 export interface FilterQueryOptions {
   from?: string;
   to?: string;
-  day?: string;       
-  week?: string;      
-  month?: string;    
-  year?: string;     
+  day?: string;
+  week?: string;
+  month?: string;
+  year?: string;
   status?: string;
-  paymentMethod?:string
+  paymentMethod?: string;
 }
 
 export const getSalesReportFilter = (query: FilterQueryOptions): FilterQuery<IBooking> => {
@@ -19,10 +19,9 @@ export const getSalesReportFilter = (query: FilterQueryOptions): FilterQuery<IBo
   if (query.status) {
     filter.bookingStatus = query.status;
   }
-   if (query.paymentMethod) {
+  if (query.paymentMethod) {
     filter.paymentMethod = query.paymentMethod;
   }
-
 
   // Custom date range
   if (query.from || query.to) {

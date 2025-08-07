@@ -1,5 +1,5 @@
 import { ICoupon } from '@domain/entities/ICoupon';
- import { ICouponRepository } from '@domain/repositories/ICouponRepository';
+import { ICouponRepository } from '@domain/repositories/ICouponRepository';
 import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
 
 export class CouponUseCases implements ICouponUseCases {

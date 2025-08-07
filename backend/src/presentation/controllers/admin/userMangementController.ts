@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
- import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
- 
+import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
+
 export class UserManagementController {
   constructor(private userManagementUseCases: IUserManagementUseCases) {}
 

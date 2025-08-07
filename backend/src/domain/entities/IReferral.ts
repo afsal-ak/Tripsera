@@ -1,9 +1,9 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
-export interface IReferral{
+export interface IReferral {
   _id?: Types.ObjectId | string;
-  amount:number;
-  isBlocked:boolean;
+  amount: number;
+  isBlocked: boolean;
   expiresAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;

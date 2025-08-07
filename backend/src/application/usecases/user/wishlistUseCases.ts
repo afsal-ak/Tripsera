@@ -1,5 +1,5 @@
 import { IWishlist } from '@domain/entities/IWishlist';
- import { IWishlistRepository } from '@domain/repositories/IWishlistRepository';
+import { IWishlistRepository } from '@domain/repositories/IWishlistRepository';
 import { IWishlistUseCases } from '@application/useCaseInterfaces/user/IWishlistUseCases';
 
 export class WishlistUseCases implements IWishlistUseCases {

@@ -1,4 +1,4 @@
-import { IUser } from "@domain/entities/IUser";
+import { IUser } from '@domain/entities/IUser';
 
 export interface PublicProfileDTO {
   _id: string;
@@ -13,12 +13,10 @@ export interface PublicProfileDTO {
     url: string;
     public_id: string;
   };
-  followers:string[]
+  followers: string[];
   followersCount: number;
   followingCount: number;
 }
-
-
 
 export const mapToPublicProfileDTO = (user: IUser): PublicProfileDTO => ({
   _id: user._id!.toString(),
@@ -27,7 +25,7 @@ export const mapToPublicProfileDTO = (user: IUser): PublicProfileDTO => ({
   bio: user.bio,
   profileImage: user.profileImage,
   coverImage: user.coverImage,
-  followers:user.followers as string[],
+  followers: user.followers as string[],
   followersCount: user.followers?.length || 0,
   followingCount: user.following?.length || 0,
 });

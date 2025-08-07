@@ -2,7 +2,7 @@ import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { IBlog } from '@domain/entities/IBlog';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
-export class BlogUseCases implements IBlogUseCases{
+export class BlogUseCases implements IBlogUseCases {
   constructor(private blogRepo: IBlogRepository) {}
 
   async createBlog(userId: string, blogData: IBlog): Promise<IBlog> {
@@ -95,7 +95,6 @@ export class BlogUseCases implements IBlogUseCases{
   }
 
   async getPublicBlogsByUser(userId: string, page: number, limit: number) {
-  return await this.blogRepo.getPublicBlogsByUser(userId, page, limit);
-}
-
+    return await this.blogRepo.getPublicBlogsByUser(userId, page, limit);
+  }
 }

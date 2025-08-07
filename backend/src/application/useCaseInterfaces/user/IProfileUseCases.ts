@@ -13,15 +13,9 @@ export interface IProfileUseCases {
     coverImage: { url: string; public_id: string }
   ): Promise<IUser | null>;
 
-  updateUserProfile(
-    userId: string,
-    profileData: Partial<IUser>
-  ): Promise<IUser | null>;
+  updateUserProfile(userId: string, profileData: Partial<IUser>): Promise<IUser | null>;
 
-  updateUserAddress(
-    userId: string,
-    addressData: Partial<IUser>
-  ): Promise<IUser | null>;
+  updateUserAddress(userId: string, addressData: Partial<IUser>): Promise<IUser | null>;
 
   getPublicProfile(username: string): Promise<IUser | null>;
 

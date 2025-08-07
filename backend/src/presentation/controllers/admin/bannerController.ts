@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
- import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IBanner } from '@domain/entities/IBanner';
 import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/IBannerManagementUseCases';
 export class BannerMangementController {

@@ -1,13 +1,13 @@
-import { IReview } from "@domain/entities/IReview";
-import { IBaseRepository } from "./IBaseRepository";
-import { PaginationInfo } from "@application/dtos/PaginationDto";
+import { IReview } from '@domain/entities/IReview';
+import { IBaseRepository } from './IBaseRepository';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 
 export interface IReviewRepository extends IBaseRepository<IReview> {
   findAllReviews(
     page: number,
-    limit: number,
+    limit: number
     //sort: 'newest' | 'oldest'
-  ): Promise<{ review: IReview[]; pagination: PaginationInfo }>
+  ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
   findPackageReviews(
     packageId: string,
     page?: number,
@@ -21,8 +21,9 @@ export interface IReviewRepository extends IBaseRepository<IReview> {
     page?: number,
     limit?: number
   ): Promise<{ data: IReview[]; pagination: PaginationInfo }>;
-   findReviewById(reviewId: string): Promise<IReview | null> 
+  findReviewById(reviewId: string): Promise<IReview | null>;
 
-  getPackageRatingSummary(packageId: string): Promise<{ averageRating: number; totalReviews: number }>;
-
+  getPackageRatingSummary(
+    packageId: string
+  ): Promise<{ averageRating: number; totalReviews: number }>;
 }

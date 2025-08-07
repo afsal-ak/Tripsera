@@ -1,9 +1,6 @@
-import { WalletRepository } from '@infrastructure/repositories/WalletRepository ';
 import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
-import { IWishlist } from '@domain/entities/IWishlist';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { IWalletUseCases } from '@application/useCaseInterfaces/user/IWalletUseCases';
-
 
 export class WalletUseCases implements IWalletUseCases {
   constructor(private walletRepo: IWalletRepository) {}

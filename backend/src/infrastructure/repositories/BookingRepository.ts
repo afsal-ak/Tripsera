@@ -125,7 +125,11 @@ export class BookingRepository implements IBookingRepository {
     return booking ? booking : null;
   }
   async findOneByUserAndPackage(userId: string, packageId: string): Promise<IBooking | null> {
-    return await BookingModel.findOne({ userId: userId, packageId: packageId, paymentStatus: 'paid' });
+    return await BookingModel.findOne({
+      userId: userId,
+      packageId: packageId,
+      paymentStatus: 'paid',
+    });
   }
 
   async getBookingByIdForAdmin(bookingId: string): Promise<IBooking | null> {
@@ -166,6 +170,10 @@ export class BookingRepository implements IBookingRepository {
   }
 
   async createBooking(userId: string, data: IBookingInput): Promise<IBooking> {
+    const isUserBooked = await BookingModel.find({ userId });
+    if (isUserBooked) {
+      throw new Error('user alredy booked');
+    }
     const newBooking = await BookingModel.create({ userId, ...data });
     return newBooking.toObject();
   }

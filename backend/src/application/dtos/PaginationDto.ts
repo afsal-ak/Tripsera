@@ -1,5 +1,4 @@
- 
-export interface PaginationInfo  {
+export interface PaginationInfo {
   currentPage: number;
   totalPages: number;
   pageSize: number;
@@ -10,7 +9,7 @@ export function createPaginationDTO(
   totalItems: number,
   currentPage: number,
   pageSize: number
-): PaginationInfo  {
+): PaginationInfo {
   return {
     currentPage,
     totalPages: Math.ceil(totalItems / pageSize),

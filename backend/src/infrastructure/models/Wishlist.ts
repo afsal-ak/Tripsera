@@ -1,4 +1,4 @@
-import mongoose, { model, Document, Schema } from 'mongoose';
+import { model, Document, Schema } from 'mongoose';
 import { IWishlist } from '@domain/entities/IWishlist';
 
 export interface IWishlistDocument extends IWishlist, Document {}

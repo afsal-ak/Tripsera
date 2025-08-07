@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
 
 export interface IWalletDocument extends IWallet, Document {}

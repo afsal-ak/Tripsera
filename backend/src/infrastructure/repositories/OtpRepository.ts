@@ -10,7 +10,7 @@ export class OtpRepository implements IOtpRepository {
       username: data.username,
       password: data.password,
       otp: data.otp,
-      referredReferralCode:data.referredReferralCode??null,
+      referredReferralCode: data.referredReferralCode ?? null,
       expiresAt: data.expiresAt,
       attempts: data.attempts ?? 0,
     });

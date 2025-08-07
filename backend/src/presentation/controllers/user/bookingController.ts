@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
- import { AppError } from '@shared/utils/AppError';
+import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUseCases ';
 export class BookingController {
@@ -41,7 +41,9 @@ export class BookingController {
       );
 
       if (!isValid) {
-        res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: 'Invalid Razorpay signature' });
+        res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ success: false, message: 'Invalid Razorpay signature' });
         return;
       }
 

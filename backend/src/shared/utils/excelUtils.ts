@@ -1,15 +1,17 @@
 import ExcelJS from 'exceljs';
 import { IBooking } from '@domain/entities/IBooking';
 
-export const exportSalesReportExcel = async (bookings: IBooking[],  summary: {
-  totalAmount:number
-    totalPaid: number,
-    totalDiscount: number,
-    totalWalletUsed: number
-  }): Promise<Buffer> => {
+export const exportSalesReportExcel = async (
+  bookings: IBooking[],
+  summary: {
+    totalAmount: number;
+    totalPaid: number;
+    totalDiscount: number;
+    totalWalletUsed: number;
+  }
+): Promise<Buffer> => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Sales Report');
-  
 
   // Define column headers
   worksheet.columns = [
@@ -29,29 +31,27 @@ export const exportSalesReportExcel = async (bookings: IBooking[],  summary: {
   bookings.forEach((booking) => {
     worksheet.addRow({
       bookingCode: booking.bookingCode,
-        packageCode: (booking.packageId as any)?.packageCode || '', 
+      packageCode: (booking.packageId as any)?.packageCode || '',
       username: (booking.userId as any)?.username || '',
-      travelers: booking.travelers?.map(t => `${t.fullName} (${t.age})`).join(', ') || '',
+      travelers: booking.travelers?.map((t) => `${t.fullName} (${t.age})`).join(', ') || '',
       amountPaid: booking.amountPaid,
       paymentMethod: booking.paymentMethod,
       paymentStatus: booking.paymentStatus,
       bookingStatus: booking.bookingStatus,
       bookedAt: booking.bookedAt ? formatDate(booking.bookedAt) : '',
       travelDate: booking.travelDate ? formatDate(booking.travelDate) : '',
-
-      
     });
   });
-   worksheet.addRow([]);
+  worksheet.addRow([]);
   worksheet.addRow(['Summary']);
-   worksheet.addRow(['Total Amount ', summary.totalAmount]);
+  worksheet.addRow(['Total Amount ', summary.totalAmount]);
   worksheet.addRow(['Total Discount', summary.totalDiscount]);
   worksheet.addRow(['Total Wallet Used', summary.totalWalletUsed]);
   worksheet.addRow(['Total Amount Paid', summary.totalPaid]);
 
   // Create buffer
   const buffer = await workbook.xlsx.writeBuffer();
-return Buffer.from(buffer);
+  return Buffer.from(buffer);
 };
 
 // Utility to format date

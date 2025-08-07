@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
- import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
+import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IWalletUseCases } from '@application/useCaseInterfaces/user/IWalletUseCases';
 

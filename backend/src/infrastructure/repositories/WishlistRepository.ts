@@ -1,7 +1,6 @@
 import { WishlistModel } from '@infrastructure/models/Wishlist';
 import { IWishlist } from '@domain/entities/IWishlist';
 import { IWishlistRepository } from '@domain/repositories/IWishlistRepository';
-import { UserModel } from '@infrastructure/models/User';
 
 export class WishlistRepository implements IWishlistRepository {
   async addToWishlist(userId: string, packageId: string): Promise<void> {

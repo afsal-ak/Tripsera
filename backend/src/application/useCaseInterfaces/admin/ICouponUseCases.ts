@@ -5,7 +5,10 @@ export interface ICouponUseCases {
 
   editCoupon(id: string, couponData: Partial<ICoupon>): Promise<ICoupon | null>;
 
-  getAllCoupon(page: number, limit: number): Promise<{
+  getAllCoupon(
+    page: number,
+    limit: number
+  ): Promise<{
     coupons: ICoupon[];
     total: number;
   }>;

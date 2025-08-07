@@ -4,7 +4,10 @@ export interface IUserAuthUseCases {
   preRegistration(userData: any): Promise<void>;
   verifyOtpAndRegister(email: string, otp: string): Promise<void>;
   resendOtp(email: string): Promise<void>;
-  login(email: string, password: string): Promise<{
+  login(
+    email: string,
+    password: string
+  ): Promise<{
     user: IUser;
     accessToken: string;
     refreshToken: string;

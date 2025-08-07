@@ -1,13 +1,12 @@
- import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IBlog } from '@domain/entities/IBlog';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
 
-
 export class BlogController {
-  constructor(private readonly blogUseCases: IBlogUseCases) { }
+  constructor(private readonly blogUseCases: IBlogUseCases) {}
 
   createBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -145,7 +144,7 @@ export class BlogController {
       } catch (err) {
         userId = undefined; // No token or invalid token
       }
-      console.log(userId, 'userid from slug')
+      console.log(userId, 'userid from slug');
       const blog = await this.blogUseCases.getBySlug(slug);
 
       if (!blog) {
@@ -155,7 +154,7 @@ export class BlogController {
 
       // Check if the user has liked the blog (only if user is logged in)
       const isLiked = userId ? blog.likes?.some((id) => id.toString() === userId) : false;
-      res.status(HttpStatus.OK).json({ blog: { ...blog ?? blog, isLiked } });
+      res.status(HttpStatus.OK).json({ blog: { ...(blog ?? blog), isLiked } });
     } catch (err) {
       next(err);
     }
@@ -226,17 +225,16 @@ export class BlogController {
   };
 
   getPublicBlogsByUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    try {
+      const userId = req.params.userId;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
 
-    const blogs = await this.blogUseCases.getPublicBlogsByUser(userId, page, limit);
+      const blogs = await this.blogUseCases.getPublicBlogsByUser(userId, page, limit);
 
-    res.status(HttpStatus.OK).json(blogs);
-  } catch (error) {
-    next(error);
-  }
-}
-
+      res.status(HttpStatus.OK).json(blogs);
+    } catch (error) {
+      next(error);
+    }
+  };
 }

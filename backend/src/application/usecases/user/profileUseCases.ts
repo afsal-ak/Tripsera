@@ -2,10 +2,9 @@ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IUser } from '@domain/entities/IUser';
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
 import { AppError } from '@shared/utils/AppError';
-import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
-export class ProfileUseCases implements IProfileUseCases{
-  constructor(private userRepo: UserRepository) { }
+export class ProfileUseCases implements IProfileUseCases {
+  constructor(private userRepo: UserRepository) {}
 
   async getUserProfile(userId: string): Promise<IUser | null> {
     return await this.userRepo.getUserProfile(userId);
@@ -32,32 +31,29 @@ export class ProfileUseCases implements IProfileUseCases{
     return await this.userRepo.updateUserAddress(userId, addressData);
   }
 
-
   async getPublicProfile(username: string): Promise<IUser | null> {
     const user = await this.userRepo.findByUsername(username);
 
     if (!user) {
       throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
- 
+
     return user;
   }
 
-async followUser(followerId: string, followingId: string): Promise<void> {
-  if (followerId === followingId) {
-    throw new AppError(400, "Cannot follow yourself");
+  async followUser(followerId: string, followingId: string): Promise<void> {
+    if (followerId === followingId) {
+      throw new AppError(400, 'Cannot follow yourself');
+    }
+
+    await this.userRepo.addFollowerAndFollowing(followerId, followingId);
   }
 
-  await this.userRepo.addFollowerAndFollowing(followerId, followingId);
-}
+  async unfollowUser(followerId: string, followingId: string): Promise<void> {
+    if (followerId === followingId) {
+      throw new AppError(400, 'Cannot follow yourself');
+    }
 
-async unfollowUser(followerId: string, followingId: string): Promise<void> {
-  if (followerId === followingId) {
-    throw new AppError(400, "Cannot follow yourself");
+    await this.userRepo.unFollowAndFollowing(followerId, followingId);
   }
-
-  await this.userRepo.unFollowAndFollowing(followerId, followingId);
-}
-
-
 }

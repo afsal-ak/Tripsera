@@ -40,11 +40,12 @@ export class UserRepository implements IUserRepository {
     const following = await UserModel.findById(followingId);
 
     if (!follower || !following) {
-      throw new AppError(404, "User not found");
+      throw new AppError(404, 'User not found');
     }
 
-    const alreadyFollowing = following?.followers!
-      .some(id => id.toString() === follower._id.toString());
+    const alreadyFollowing = following?.followers!.some(
+      (id) => id.toString() === follower._id.toString()
+    );
 
     if (alreadyFollowing) return;
 
@@ -54,35 +55,33 @@ export class UserRepository implements IUserRepository {
     await Promise.all([follower.save(), following.save()]);
   }
 
-
   async unFollowAndFollowing(followerId: string, followingId: string): Promise<void> {
     const follower = await UserModel.findById(followerId);
     const following = await UserModel.findById(followingId);
 
     if (!follower || !following) {
-      throw new AppError(404, "User not found");
+      throw new AppError(404, 'User not found');
     }
 
     const isFollowing = following.followers!.some(
-      id => id.toString() === follower._id.toString()
+      (id) => id.toString() === follower._id.toString()
     );
 
     if (!isFollowing) return;
     following.followers = following.followers!.filter(
-      id => id.toString() !== follower._id.toString()
+      (id) => id.toString() !== follower._id.toString()
     );
 
     follower.following = follower.following!.filter(
-      id => id.toString() !== following._id.toString()
+      (id) => id.toString() !== following._id.toString()
     );
-
 
     await Promise.all([follower.save(), following.save()]);
   }
 
   async findUserByReferralCode(referredReferralCode: string): Promise<IUser | null> {
-    const referredBy = await UserModel.findOne({ referralCode: referredReferralCode })
-    return referredBy
+    const referredBy = await UserModel.findOne({ referralCode: referredReferralCode });
+    return referredBy;
   }
 
   async findAll(skip: number, limit: number): Promise<IUser[]> {
@@ -129,7 +128,10 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  async createCoverImage(id: string, coverImage: { url: string; public_id: string; }): Promise<IUser | null> {
+  async createCoverImage(
+    id: string,
+    coverImage: { url: string; public_id: string }
+  ): Promise<IUser | null> {
     const user = await UserModel.findByIdAndUpdate(id, { coverImage }).lean();
 
     if (!user) {
@@ -174,6 +176,4 @@ export class UserRepository implements IUserRepository {
     }
     return updated;
   }
-
-
 }

@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { ProfileUseCases } from '@application/usecases/user/profileUseCases';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { IUser } from '@domain/entities/IUser';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
@@ -8,7 +7,7 @@ import { mapToPublicProfileDTO } from '@application/dtos/PublicProfileDTO ';
 import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
 
 export class ProfileController {
-  constructor(private profileUseCases: IProfileUseCases) { }
+  constructor(private profileUseCases: IProfileUseCases) {}
 
   getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -63,7 +62,8 @@ export class ProfileController {
       const imagePath = req.file?.path;
       if (!imagePath) {
         res.status(HttpStatus.BAD_REQUEST).json({
-          success: false, message: 'No file uploaded'
+          success: false,
+          message: 'No file uploaded',
         });
         return;
       }
@@ -84,14 +84,14 @@ export class ProfileController {
     }
   };
 
-
   createCoverImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
       const imagePath = req.file?.path;
       if (!imagePath) {
         res.status(HttpStatus.BAD_REQUEST).json({
-          success: false, message: 'No file uploaded'
+          success: false,
+          message: 'No file uploaded',
         });
         return;
       }
@@ -112,33 +112,32 @@ export class ProfileController {
     }
   };
 
-
   getPublicProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const viewerId = getUserIdFromRequest(req);
-      console.log(viewerId, 'user name in public')
+      console.log(viewerId, 'user name in public');
 
-      const { username } = req.params
-      console.log(username, 'user name in public')
+      const { username } = req.params;
+      console.log(username, 'user name in public');
       const user = await this.profileUseCases.getPublicProfile(username);
       const profile = mapToPublicProfileDTO(user!);
       const isFollowing = profile.followers.toString()?.includes(viewerId) ?? false;
-// console.log(isFollowing,'foollwoing')
-// console.log(profile.followers.toString(),'follwers')
+      // console.log(isFollowing,'foollwoing')
+      // console.log(profile.followers.toString(),'follwers')
       res.status(HttpStatus.OK).json({
         profile,
         isFollowing,
-        message: "Profile fetched successfully"
+        message: 'Profile fetched successfully',
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
   followUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const followingId = req.params.userId;
-      console.log(followingId, 'following id')
-      const followerId = getUserIdFromRequest(req)
+      console.log(followingId, 'following id');
+      const followerId = getUserIdFromRequest(req);
       // const followingId = req.params.userId;
       // console.log(followingId,'following id')
 
@@ -148,14 +147,13 @@ export class ProfileController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   unfollowUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-
-      const followerId = getUserIdFromRequest(req)
+      const followerId = getUserIdFromRequest(req);
       const followingId = req.params.userId;
-      console.log(followingId, 'following id')
+      console.log(followingId, 'following id');
 
       const result = await this.profileUseCases.unfollowUser(followerId, followingId);
 
@@ -163,6 +161,5 @@ export class ProfileController {
     } catch (error) {
       next(error);
     }
-  }
-
+  };
 }

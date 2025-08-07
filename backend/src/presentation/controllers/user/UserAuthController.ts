@@ -1,18 +1,22 @@
 import { NextFunction, Request, Response } from 'express';
- import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
+import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
 
 export class UserAuthController {
-  constructor(private userAuthUseCases: IUserAuthUseCases) { }
-
+  constructor(private userAuthUseCases: IUserAuthUseCases) {}
 
   preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, username, password } = req.body;
-      const referredReferralCode=req.query.referralCode as string
-      console.log(referredReferralCode,'referralcode')
-      await this.userAuthUseCases.preRegistration({ email, username, password,referredReferralCode });
+      const referredReferralCode = req.query.referralCode as string;
+      console.log(referredReferralCode, 'referralcode');
+      await this.userAuthUseCases.preRegistration({
+        email,
+        username,
+        password,
+        referredReferralCode,
+      });
 
       res.status(HttpStatus.OK).json({
         success: true,
@@ -22,7 +26,6 @@ export class UserAuthController {
       next(error);
     }
   };
-
 
   register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -51,8 +54,11 @@ export class UserAuthController {
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, password } = req.body;
-      const { user, accessToken, refreshToken } = await this.userAuthUseCases.login(email, password);
-console.log(accessToken,'toekn from user login')
+      const { user, accessToken, refreshToken } = await this.userAuthUseCases.login(
+        email,
+        password
+      );
+      console.log(accessToken, 'toekn from user login');
       res.cookie('userRefreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
@@ -72,8 +78,7 @@ console.log(accessToken,'toekn from user login')
     }
   };
 
-
-  forgotPassword = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+  forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email } = req.body;
       await this.userAuthUseCases.forgotPasswordOtp(email);
@@ -83,17 +88,21 @@ console.log(accessToken,'toekn from user login')
     }
   };
 
-  verifyOtpForForgotPassword = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+  verifyOtpForForgotPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { email, otp } = req.body;
       const { token } = await this.userAuthUseCases.verifyOtpForForgotPassword(email, otp);
-       res.status(HttpStatus.OK).json({ message: 'OTP Verfied Successfully', token });
+      res.status(HttpStatus.OK).json({ message: 'OTP Verfied Successfully', token });
     } catch (error: any) {
       next(error);
     }
   };
 
-  forgotPasswordChange = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+  forgotPasswordChange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { token, password } = req.body;
       await this.userAuthUseCases.forgotPasswordChange(token, password);
@@ -103,7 +112,7 @@ console.log(accessToken,'toekn from user login')
     }
   };
 
-  googleLogin = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+  googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { token } = req.body;
     if (!token) {
       res.status(HttpStatus.BAD_REQUEST).json({ message: 'Missing Google token' });
@@ -117,13 +126,12 @@ console.log(accessToken,'toekn from user login')
     }
   };
 
-  userLogout = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+  userLogout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       res.clearCookie('userRefreshToken', {
         httpOnly: true,
         secure: false,
         sameSite: 'none',
-        
       });
 
       res.status(HttpStatus.OK).json({ message: 'user logout successful' });

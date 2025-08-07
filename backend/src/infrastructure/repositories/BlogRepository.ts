@@ -2,9 +2,7 @@ import { IBlog } from '@domain/entities/IBlog';
 
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { BlogModel } from '@infrastructure/models/Blog';
-import { UserModel } from '@infrastructure/models/User';
 //import { CommentModel } from "@infrastructure/models/Comment";
-import { AppError } from '@shared/utils/AppError';
 import { FilterQuery } from 'mongoose';
 
 export class BlogRepository implements IBlogRepository {
@@ -164,10 +162,12 @@ export class BlogRepository implements IBlogRepository {
   }
 
   async getBySlug(slug: string): Promise<IBlog | null> {
-    return await BlogModel.findOne({ slug }).populate({
-          path: 'author',
-          select: 'username email profileImage.url',
-        }).lean();
+    return await BlogModel.findOne({ slug })
+      .populate({
+        path: 'author',
+        select: 'username email profileImage.url',
+      })
+      .lean();
   }
 
   async likeBlog(blogId: string, userId: string): Promise<IBlog | null> {
@@ -202,24 +202,23 @@ export class BlogRepository implements IBlogRepository {
   }
 
   async getPublicBlogsByUser(
-  author: string,
-  page: number,
-  limit: number
-): Promise<{ blogs: IBlog[]; totalBlogs: number }> {
-  const skip = (page - 1) * limit;
+    author: string,
+    page: number,
+    limit: number
+  ): Promise<{ blogs: IBlog[]; totalBlogs: number }> {
+    const skip = (page - 1) * limit;
 
-  const query = {
-    author,
-    status: 'published',
-    isBlocked: false,
-  };
+    const query = {
+      author,
+      status: 'published',
+      isBlocked: false,
+    };
 
-  const [blogs, totalBlogs] = await Promise.all([
-    BlogModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
-    BlogModel.countDocuments(query),
-  ]);
+    const [blogs, totalBlogs] = await Promise.all([
+      BlogModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+      BlogModel.countDocuments(query),
+    ]);
 
-  return { blogs, totalBlogs };
-}
-
+    return { blogs, totalBlogs };
+  }
 }

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
- import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
+import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { ICouponUseCases } from '@application/useCaseInterfaces/user/ICouponUseCases';
-
 
 export class CouponController {
   constructor(private couponUseCase: ICouponUseCases) {}
