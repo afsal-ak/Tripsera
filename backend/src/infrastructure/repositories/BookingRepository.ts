@@ -2,7 +2,7 @@ import { IBooking } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { BookingModel } from '@infrastructure/models/Booking';
-export class MongoBookingRepository implements IBookingRepository {
+export class BookingRepository implements IBookingRepository {
   async getAllBooking({
     page,
     limit,

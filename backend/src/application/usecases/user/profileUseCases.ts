@@ -1,10 +1,10 @@
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IUser } from '@domain/entities/IUser';
-import { MongoUserRepository } from '@infrastructure/repositories/MongoUserRepository';
+import { UserRepository } from '@infrastructure/repositories/UserRepository';
 import { AppError } from '@shared/utils/AppError';
 
 export class ProfileUseCases {
-  constructor(private userRepo: MongoUserRepository) { }
+  constructor(private userRepo: UserRepository) { }
 
   async getUserProfile(userId: string): Promise<IUser | null> {
     return await this.userRepo.getUserProfile(userId);

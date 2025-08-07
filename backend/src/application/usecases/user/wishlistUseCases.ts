@@ -1,8 +1,8 @@
 import { IWishlist } from '@domain/entities/IWishlist';
-import { MongoWishlistRepository } from '@infrastructure/repositories/MongoWishlistRepository';
+import { WishlistRepository } from '@infrastructure/repositories/WishlistRepository';
 
 export class WishlistUseCases {
-  constructor(private wishlistRepo: MongoWishlistRepository) {}
+  constructor(private wishlistRepo: WishlistRepository) {}
 
   async addToWishlist(userId: string, packageId: string): Promise<void> {
     return await this.wishlistRepo.addToWishlist(userId, packageId);

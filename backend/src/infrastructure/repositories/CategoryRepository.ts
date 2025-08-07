@@ -4,7 +4,7 @@ import { IPaginatedResult } from '@domain/entities/IPagination';
 import { categoryModel } from '@infrastructure/models/Category';
 import mongoose from 'mongoose';
 
-export class MongoCategoryRepository implements ICategoryRepository {
+export class CategoryRepository implements ICategoryRepository {
   async createCategory(category: ICategory): Promise<ICategory> {
     const existing = await categoryModel.findOne({
       name: new RegExp(`^${category.name}$`, 'i'),

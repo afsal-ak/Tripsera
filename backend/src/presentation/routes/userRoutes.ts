@@ -12,37 +12,37 @@ import {
   REVIEW_ROUTE
 } from 'constants/route-constants/userRoutes';
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
-import { MongoUserRepository } from '@infrastructure/repositories/MongoUserRepository';
-import { MongoOtpRepository } from '@infrastructure/repositories/MongoOtpRepository';
+import { UserRepository } from '@infrastructure/repositories/UserRepository';
+import { OtpRepository } from '@infrastructure/repositories/OtpRepository';
 import { userRefreshToken } from '@presentation/controllers/token/userRefreshToken';
 import { UserAuthController } from '@presentation/controllers/user/UserAuthController';
 import { userAuthMiddleware } from '@presentation/middlewares/userAuthMiddleware';
 import { optionalAuthMiddleware } from '@presentation/middlewares/optionalAuthMiddleware ';
 import { HomeUseCases } from '@application/usecases/user/homeUseCases';
 import { HomeController } from '@presentation/controllers/user/homeController';
-import { MongoBannerRepository } from '@infrastructure/repositories/MongoBannerRepository';
-import { MongoPackageRepository } from '@infrastructure/repositories/MongoPackageRepository';
+import { BannerRepository } from '@infrastructure/repositories/BannerRepository';
+import { PackageRepository } from '@infrastructure/repositories/PackageRepository';
 
 import { WishlistController } from '@presentation/controllers/user/wishlistController';
 import { WishlistUseCases } from '@application/usecases/user/wishlistUseCases';
-import { MongoWishlistRepository } from '@infrastructure/repositories/MongoWishlistRepository';
+import { WishlistRepository } from '@infrastructure/repositories/WishlistRepository';
 
 import { CouponController } from '@presentation/controllers/user/couponController';
 import { CouponUseCases } from '@application/usecases/user/couponUseCases';
-import { MongoCouponRepository } from '@infrastructure/repositories/MongoCouponRepository';
+import { CouponRepository } from '@infrastructure/repositories/CouponRepository';
 import { ProfileUseCases } from '@application/usecases/user/profileUseCases';
 import { ProfileController } from '@presentation/controllers/user/profileController';
 
 import { WalletController } from '@presentation/controllers/user/walletController';
 import { WalletUseCases } from '@application/usecases/user/walletUseCases';
-import { MongoWalletRepository } from '@infrastructure/repositories/MongoWalletRepository ';
+import { WalletRepository } from '@infrastructure/repositories/WalletRepository ';
 
-import { MongoBookingRepository } from '@infrastructure/repositories/MongoBookingRepository';
+import { BookingRepository } from '@infrastructure/repositories/BookingRepository';
 import { BookingUseCases } from '@application/usecases/user/bookingUseCases';
 import { BookingController } from '@presentation/controllers/user/bookingController';
 import { RazorpayService } from '@infrastructure/services/razorpay/razorpayService';
 
-import { MongoBlogRepository } from '@infrastructure/repositories/MongoBlogRepository';
+import { BlogRepository } from '@infrastructure/repositories/BlogRepository';
 import { BlogUseCases } from '@application/usecases/user/blogUseCases';
 import { BlogController } from '@presentation/controllers/user/blogControllers';
 
@@ -52,41 +52,41 @@ import { ReviewController } from '@presentation/controllers/user/reviewControlle
 
 import { ReferralRepository } from '@infrastructure/repositories/ReferralRepository';
   
-const walletRepository = new MongoWalletRepository();
+const walletRepository = new WalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
 const walletController = new WalletController(walletUseCases);
 
 const referralRepository = new ReferralRepository();
 
 
-const userRepository = new MongoUserRepository();
-const otpRepository = new MongoOtpRepository();
+const userRepository = new UserRepository();
+const otpRepository = new OtpRepository();
 const userAuthUseCases = new UserAuthUsecases(userRepository, otpRepository, walletRepository,referralRepository);
 const userAuthController = new UserAuthController(userAuthUseCases);
 
-const bannerRepository = new MongoBannerRepository();
-const packageRepository = new MongoPackageRepository();
+const bannerRepository = new BannerRepository();
+const packageRepository = new PackageRepository();
 const homeUseCases = new HomeUseCases(packageRepository, bannerRepository);
 const homeController = new HomeController(homeUseCases);
 
-const wishlistRepository = new MongoWishlistRepository();
+const wishlistRepository = new WishlistRepository();
 const wishlistUseCases = new WishlistUseCases(wishlistRepository);
 const wishlistController = new WishlistController(wishlistUseCases);
 
-const couponRepository = new MongoCouponRepository();
+const couponRepository = new CouponRepository();
 const couponUseCases = new CouponUseCases(couponRepository);
 const couponController = new CouponController(couponUseCases);
 
-const profileRepository = new MongoUserRepository();
+const profileRepository = new UserRepository();
 const profileUseCases = new ProfileUseCases(profileRepository);
 const profileController = new ProfileController(profileUseCases);
 
-const bookingRepository = new MongoBookingRepository();
+const bookingRepository = new BookingRepository();
 const razorpayService = new RazorpayService();
 const bookingUseCases = new BookingUseCases(bookingRepository, walletRepository, razorpayService);
 const bookingController = new BookingController(bookingUseCases);
 
-const blogRepository = new MongoBlogRepository();
+const blogRepository = new BlogRepository();
 const blogUseCases = new BlogUseCases(blogRepository);
 const blogController = new BlogController(blogUseCases);
 

@@ -1,9 +1,9 @@
-import { MongoWalletRepository } from '@infrastructure/repositories/MongoWalletRepository ';
+import { WalletRepository } from '@infrastructure/repositories/WalletRepository ';
 import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
 import { IWishlist } from '@domain/entities/IWishlist';
 
 export class WalletUseCases {
-  constructor(private walletRepo: MongoWalletRepository) {}
+  constructor(private walletRepo: WalletRepository) {}
 
   async createWallet(userId: string): Promise<IWallet> {
     return await this.walletRepo.createWallet(userId);

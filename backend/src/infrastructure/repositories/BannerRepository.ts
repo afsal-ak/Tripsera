@@ -4,7 +4,7 @@ import { BannerModel } from '@infrastructure/models/Banner';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import mongoose from 'mongoose';
 
-export class MongoBannerRepository implements IBannerRepository {
+export class BannerRepository implements IBannerRepository {
   async createBanner(banner: IBanner): Promise<IBanner> {
     const newBanner = await BannerModel.create(banner);
     return newBanner.toObject();

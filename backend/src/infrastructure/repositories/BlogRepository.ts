@@ -7,7 +7,7 @@ import { UserModel } from '@infrastructure/models/User';
 import { AppError } from '@shared/utils/AppError';
 import { FilterQuery } from 'mongoose';
 
-export class MongoBlogRepository implements IBlogRepository {
+export class BlogRepository implements IBlogRepository {
   async createBlog(userId: string, blogData: IBlog): Promise<IBlog> {
     const { author, ...restData } = blogData;
 

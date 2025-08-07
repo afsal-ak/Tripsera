@@ -2,7 +2,7 @@ import { ICouponRepository } from '@domain/repositories/ICouponRepository';
 import { ICoupon } from '@domain/entities/ICoupon';
 import { CouponModel } from '@infrastructure/models/Coupon';
 
-export class MongoCouponRepository implements ICouponRepository {
+export class CouponRepository implements ICouponRepository {
   async createCoupon(couponData: ICoupon): Promise<ICoupon> {
     const isCodeExiting = await CouponModel.findOne({
       code: new RegExp(`^${couponData.code}$`, 'i'),

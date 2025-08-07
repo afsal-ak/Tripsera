@@ -1,8 +1,8 @@
 import { ICoupon } from '@domain/entities/ICoupon';
-import { MongoCouponRepository } from '@infrastructure/repositories/MongoCouponRepository';
+import { CouponRepository } from '@infrastructure/repositories/CouponRepository';
 
 export class CouponUseCases {
-  constructor(private couponRepo: MongoCouponRepository) {}
+  constructor(private couponRepo: CouponRepository) {}
 
   async getActiveCoupons(
     page: number,

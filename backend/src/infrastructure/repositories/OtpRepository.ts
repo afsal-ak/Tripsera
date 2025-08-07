@@ -2,7 +2,7 @@ import { IOTP } from '@domain/entities/IOTP';
 import { IOtpRepository } from '@domain/repositories/IOtpRepository';
 import { OtpModel } from '@infrastructure/models/Otp';
 
-export class MongoOtpRepository implements IOtpRepository {
+export class OtpRepository implements IOtpRepository {
   async saveOtp(data: IOTP): Promise<void> {
     await OtpModel.deleteOne({ email: data.email });
     await OtpModel.create({

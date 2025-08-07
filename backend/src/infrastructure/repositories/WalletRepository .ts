@@ -3,7 +3,7 @@ import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { WalletModel } from '@infrastructure/models/Wallet';
 import { AppError } from '@shared/utils/AppError';
 
-export class MongoWalletRepository implements IWalletRepository {
+export class WalletRepository implements IWalletRepository {
   async walletBalance(userId: string): Promise<{ balance: number }> {
     const wallet = await WalletModel.findOne({ userId }).lean();
     return { balance: wallet?.balance || 0 };

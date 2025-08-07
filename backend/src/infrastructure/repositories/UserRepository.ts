@@ -3,7 +3,7 @@ import { UserModel } from '@infrastructure/models/User';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { AppError } from '@shared/utils/AppError';
 
-export class MongoUserRepository implements IUserRepository {
+export class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<IUser | null> {
     const user = await UserModel.findOne({ email: email });
     return user ? user.toObject() : null;
