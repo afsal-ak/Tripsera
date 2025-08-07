@@ -1,9 +1,9 @@
 import { WalletRepository } from '@infrastructure/repositories/WalletRepository ';
 import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
 import { IWishlist } from '@domain/entities/IWishlist';
-
+import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 export class WalletUseCases {
-  constructor(private walletRepo: WalletRepository) {}
+  constructor(private walletRepo: IWalletRepository) {}
 
   async createWallet(userId: string): Promise<IWallet> {
     return await this.walletRepo.createWallet(userId);
