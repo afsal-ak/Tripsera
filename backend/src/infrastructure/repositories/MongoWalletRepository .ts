@@ -22,8 +22,12 @@ export class MongoWalletRepository implements IWalletRepository {
     const skip = (page - 1) * limit;
     const sortOrder = options?.sort || 'newest';
 
-    const wallet = await WalletModel.findOne({ userId }).lean();
+    let wallet = await WalletModel.findOne({ userId }) 
     if (!wallet) {
+      wallet = await WalletModel.create({
+      userId: userId,
+      balance: 0,
+    });
       throw new AppError(400, 'wallet not found');
     }
 
