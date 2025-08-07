@@ -4,22 +4,25 @@ import { IReferralRepository } from '@domain/repositories/IReferralRepository';
 import { UpdateReferralDTO } from '@application/dtos/ReferralDto';
 
 export class ReferralUseCase implements IReferralUseCases {
-  constructor(private referralRepo: IReferralRepository) {}
+
+  constructor(private _referralRepo: IReferralRepository) {}
+
+
   async upsertReferral(data: UpdateReferralDTO): Promise<IReferral> {
-    return await this.referralRepo.upsertReferral(data);
+    return await this._referralRepo.upsertReferral(data);
   }
 
   async getReferral(): Promise<IReferral | null> {
-    return await this.referralRepo.getReferral();
+    return await this._referralRepo.getReferral();
   }
   async getReferralById(referralId: string): Promise<IReferral | null> {
-    return await this.referralRepo.findById(referralId);
+    return await this._referralRepo.findById(referralId);
   }
   async changeReferralStatus(referralId: string, isBlocked: boolean): Promise<IReferral | null> {
-    return await this.referralRepo.update(referralId, { isBlocked });
+    return await this._referralRepo.update(referralId, { isBlocked });
   }
 
   async deleteReferral(referralId: string): Promise<boolean> {
-    return await this.referralRepo.delete(referralId);
+    return await this._referralRepo.delete(referralId);
   }
 }

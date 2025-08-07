@@ -4,14 +4,14 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
 
 export class UserAuthController {
-  constructor(private userAuthUseCases: IUserAuthUseCases) {}
+  constructor(private _userAuthUseCases: IUserAuthUseCases) {}
 
   preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, username, password } = req.body;
       const referredReferralCode = req.query.referralCode as string;
       console.log(referredReferralCode, 'referralcode');
-      await this.userAuthUseCases.preRegistration({
+      await this._userAuthUseCases.preRegistration({
         email,
         username,
         password,
@@ -30,7 +30,7 @@ export class UserAuthController {
   register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, otp } = req.body;
-      await this.userAuthUseCases.verifyOtpAndRegister(email, otp);
+      await this._userAuthUseCases.verifyOtpAndRegister(email, otp);
 
       res.status(HttpStatus.CREATED).json({
         success: true,
@@ -44,7 +44,7 @@ export class UserAuthController {
   resendOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email } = req.body;
-      await this.userAuthUseCases.resendOtp(email);
+      await this._userAuthUseCases.resendOtp(email);
       res.status(HttpStatus.OK).json({ message: 'OTP resent to your email' });
     } catch (error: any) {
       next(error);
@@ -54,7 +54,7 @@ export class UserAuthController {
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, password } = req.body;
-      const { user, accessToken, refreshToken } = await this.userAuthUseCases.login(
+      const { user, accessToken, refreshToken } = await this._userAuthUseCases.login(
         email,
         password
       );
@@ -81,7 +81,7 @@ export class UserAuthController {
   forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email } = req.body;
-      await this.userAuthUseCases.forgotPasswordOtp(email);
+      await this._userAuthUseCases.forgotPasswordOtp(email);
       res.status(HttpStatus.OK).json({ message: 'OTP send to your email' });
     } catch (error: any) {
       next(error);
@@ -95,7 +95,7 @@ export class UserAuthController {
   ): Promise<void> => {
     try {
       const { email, otp } = req.body;
-      const { token } = await this.userAuthUseCases.verifyOtpForForgotPassword(email, otp);
+      const { token } = await this._userAuthUseCases.verifyOtpForForgotPassword(email, otp);
       res.status(HttpStatus.OK).json({ message: 'OTP Verfied Successfully', token });
     } catch (error: any) {
       next(error);
@@ -105,7 +105,7 @@ export class UserAuthController {
   forgotPasswordChange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { token, password } = req.body;
-      await this.userAuthUseCases.forgotPasswordChange(token, password);
+      await this._userAuthUseCases.forgotPasswordChange(token, password);
       res.status(HttpStatus.OK).json({ message: 'Password changed successfully' });
     } catch (error: any) {
       next(error);
@@ -118,7 +118,7 @@ export class UserAuthController {
       res.status(HttpStatus.BAD_REQUEST).json({ message: 'Missing Google token' });
     }
     try {
-      const data = await this.userAuthUseCases.loginWithGoole(token);
+      const data = await this._userAuthUseCases.loginWithGoole(token);
       res.status(HttpStatus.OK).json(data);
     } catch (error: any) {
       console.log(error);
@@ -146,7 +146,7 @@ export class UserAuthController {
 
       const { newEmail } = req.body;
 
-      await this.userAuthUseCases.requestEmailChange(userId, newEmail);
+      await this._userAuthUseCases.requestEmailChange(userId, newEmail);
       res.status(HttpStatus.OK).json({ message: 'OTP sent to new email' });
     } catch (error) {
       next(error);
@@ -158,7 +158,7 @@ export class UserAuthController {
       const userId = getUserIdFromRequest(req);
 
       const { newEmail, otp } = req.body;
-      const user = await this.userAuthUseCases.verifyAndUpdateEmail(userId, newEmail, otp);
+      const user = await this._userAuthUseCases.verifyAndUpdateEmail(userId, newEmail, otp);
       res.status(HttpStatus.OK).json({
         message: 'Email updated successfully',
         email: user?.email,
@@ -173,7 +173,7 @@ export class UserAuthController {
       const { currentPassword, newPassword } = req.body;
       const userId = getUserIdFromRequest(req);
 
-      await this.userAuthUseCases.changePassword(userId, currentPassword, newPassword);
+      await this._userAuthUseCases.changePassword(userId, currentPassword, newPassword);
       res.status(HttpStatus.OK).json({ message: 'Password updated successfully' });
     } catch (error) {
       next(error);

@@ -3,7 +3,7 @@ import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinary
 import { IBanner } from '@domain/entities/IBanner';
 import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/IBannerManagementUseCases';
 export class BannerMangementController {
-  constructor(private bannerMangementUseCases: IBannerManagementUseCases) {}
+  constructor(private _bannerMangementUseCases: IBannerManagementUseCases) {}
 
   createBanner = async (req: Request, res: Response) => {
     try {
@@ -22,7 +22,7 @@ export class BannerMangementController {
         image: { url, public_id },
       };
       console.log(req.body, 'nbanner');
-      const createdBanner = await this.bannerMangementUseCases.createNewBanner(banner);
+      const createdBanner = await this._bannerMangementUseCases.createNewBanner(banner);
       res.status(201).json({ message: 'Banner Created Successfully', banner });
     } catch (error: any) {
       console.error(error);
@@ -35,7 +35,7 @@ export class BannerMangementController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 8;
 
-      const { banners, totalBanner, totalPages } = await this.bannerMangementUseCases.getBanners(
+      const { banners, totalBanner, totalPages } = await this._bannerMangementUseCases.getBanners(
         page,
         limit
       );
@@ -55,7 +55,7 @@ export class BannerMangementController {
   blockBanner = async (req: Request, res: Response): Promise<void> => {
     try {
       const { bannerId } = req.params;
-      await this.bannerMangementUseCases.blockBanner(bannerId);
+      await this._bannerMangementUseCases.blockBanner(bannerId);
       console.log({ bannerId });
       res.status(200).json({ message: 'Banner blocked successfully' });
     } catch (error: any) {
@@ -65,7 +65,7 @@ export class BannerMangementController {
   unblockBanner = async (req: Request, res: Response): Promise<void> => {
     try {
       const { bannerId } = req.params;
-      await this.bannerMangementUseCases.unblockBanner(bannerId);
+      await this._bannerMangementUseCases.unblockBanner(bannerId);
       res.status(200).json({ message: 'Banner unblocked successfully' });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });
@@ -76,7 +76,7 @@ export class BannerMangementController {
     try {
       const { bannerId } = req.params;
       console.log({ bannerId }, 'deleet');
-      await this.bannerMangementUseCases.deleteBanner(bannerId);
+      await this._bannerMangementUseCases.deleteBanner(bannerId);
       res.status(200).json({ message: 'Banner deleted successfully' });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });

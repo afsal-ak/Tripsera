@@ -1,8 +1,10 @@
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { IUser } from '@domain/entities/IUser';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
+
 export class UserManagementUseCases implements IUserManagementUseCases {
-  constructor(private userRepository: IUserRepository) {}
+
+  constructor(private _userRepository: IUserRepository) {}
 
   async getUsers(
     page: number,
@@ -15,8 +17,8 @@ export class UserManagementUseCases implements IUserManagementUseCases {
     const skip = (page - 1) * limit;
 
     const [users, totalUsers] = await Promise.all([
-      this.userRepository.findAll(skip, limit),
-      this.userRepository.countAll(),
+      this._userRepository.findAll(skip, limit),
+      this._userRepository.countAll(),
     ]);
 
     if (!users || users.length === 0) {
@@ -30,7 +32,7 @@ export class UserManagementUseCases implements IUserManagementUseCases {
     };
   }
   async getSingleUser(userId: string): Promise<IUser> {
-    const user = await this.userRepository.findById(userId);
+    const user = await this._userRepository.findById(userId);
     if (!user) {
       throw new Error('User not found');
     }
@@ -38,18 +40,18 @@ export class UserManagementUseCases implements IUserManagementUseCases {
   }
 
   async blockUser(userId: string): Promise<void> {
-    const user = await this.userRepository.findById(userId);
+    const user = await this._userRepository.findById(userId);
     if (!user) {
       throw new Error('User not found');
     }
-    await this.userRepository.updateUserStatus(userId, true);
+    await this._userRepository.updateUserStatus(userId, true);
   }
 
   async unblockUser(userId: string): Promise<void> {
-    const user = await this.userRepository.findById(userId);
+    const user = await this._userRepository.findById(userId);
     if (!user) {
       throw new Error('User not found');
     }
-    await this.userRepository.updateUserStatus(userId, false);
+    await this._userRepository.updateUserStatus(userId, false);
   }
 }

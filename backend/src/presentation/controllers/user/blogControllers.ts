@@ -6,7 +6,7 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
 
 export class BlogController {
-  constructor(private readonly blogUseCases: IBlogUseCases) {}
+  constructor(private readonly _blogUseCases: IBlogUseCases) {}
 
   createBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -29,7 +29,7 @@ export class BlogController {
         files.map((file) => uploadCloudinary(file.path, 'blogs'))
       );
       blogData.images = imageUrls;
-      const blog = await this.blogUseCases.createBlog(userId, blogData);
+      const blog = await this._blogUseCases.createBlog(userId, blogData);
       res.status(HttpStatus.CREATED).json({ message: 'Blog created successfully', blog });
     } catch (err) {
       next(err);
@@ -56,7 +56,7 @@ export class BlogController {
       //  Pass correct data to use case
       //    await this.blogUseCases.editBlog(id, pkgData, existingImageUrls, newImages);
 
-      const blog = await this.blogUseCases.editBlog(blogId, blogData, existingImageUrls, newImages);
+      const blog = await this._blogUseCases.editBlog(blogId, blogData, existingImageUrls, newImages);
       res.status(HttpStatus.OK).json({ message: 'Blog updated successfully', blog });
     } catch (err) {
       next(err);
@@ -71,7 +71,7 @@ export class BlogController {
       // console.log(blogId, 'id')
       // console.log('id')
 
-      const blog = await this.blogUseCases.getBlogById(blogId);
+      const blog = await this._blogUseCases.getBlogById(blogId);
       res.status(HttpStatus.OK).json(blog);
     } catch (err) {
       next(err);
@@ -84,7 +84,7 @@ export class BlogController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       //console.log(page,limit,'from blog  user')
-      const blogs = await this.blogUseCases.getBlogByUser(userId, page, limit);
+      const blogs = await this._blogUseCases.getBlogByUser(userId, page, limit);
       res.status(HttpStatus.OK).json(blogs);
     } catch (err) {
       next(err);
@@ -98,7 +98,7 @@ export class BlogController {
 
       const { blogSearch, status, startDate, endDate, authorUsername, tags } = req.query;
 
-      const blogs = await this.blogUseCases.getAllBlog(page, limit, {
+      const blogs = await this._blogUseCases.getAllBlog(page, limit, {
         blogSearch: blogSearch?.toString(),
         status: status?.toString(),
         startDate: startDate?.toString(),
@@ -120,7 +120,7 @@ export class BlogController {
 
       const { search, tags, startDate, endDate } = req.query;
       //   console.log(req.query, 'search')
-      const blogs = await this.blogUseCases.getAllPublishedBlogs(page, limit, {
+      const blogs = await this._blogUseCases.getAllPublishedBlogs(page, limit, {
         search: search?.toString(),
         tags: tags ? tags.toString().split(',') : undefined,
         startDate: startDate?.toString(),
@@ -145,7 +145,7 @@ export class BlogController {
         userId = undefined; // No token or invalid token
       }
       console.log(userId, 'userid from slug');
-      const blog = await this.blogUseCases.getBySlug(slug);
+      const blog = await this._blogUseCases.getBySlug(slug);
 
       if (!blog) {
         res.status(HttpStatus.NOT_FOUND).json({ message: 'Blog not found' });
@@ -164,7 +164,7 @@ export class BlogController {
     try {
       const { blogId } = req.params;
       const userId = getUserIdFromRequest(req);
-      const updatedBlog = await this.blogUseCases.likeBlog(blogId, userId);
+      const updatedBlog = await this._blogUseCases.likeBlog(blogId, userId);
 
       const isLiked = updatedBlog?.likes?.includes(userId);
       res.status(HttpStatus.OK).json({
@@ -180,7 +180,7 @@ export class BlogController {
     try {
       const { blogId } = req.params;
       const userId = getUserIdFromRequest(req);
-      const updatedBlog = await this.blogUseCases.unLikeBlog(blogId, userId);
+      const updatedBlog = await this._blogUseCases.unLikeBlog(blogId, userId);
 
       const isLiked = updatedBlog?.likes?.includes(userId);
       res.status(HttpStatus.OK).json({
@@ -196,7 +196,7 @@ export class BlogController {
     try {
       const { blogId } = req.params;
       const { block } = req.body;
-      const updatedBlog = await this.blogUseCases.blockBlog(blogId, block);
+      const updatedBlog = await this._blogUseCases.blockBlog(blogId, block);
       res.status(HttpStatus.OK).json(updatedBlog);
     } catch (err) {
       next(err);
@@ -206,7 +206,7 @@ export class BlogController {
   deleteBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { blogId } = req.params;
-      await this.blogUseCases.deleteBlog(blogId);
+      await this._blogUseCases.deleteBlog(blogId);
       res.status(HttpStatus.OK).json({ message: 'Blog deleted successfully' });
     } catch (err) {
       next(err);
@@ -217,7 +217,7 @@ export class BlogController {
     try {
       const { blogId } = req.params;
       const { isActive } = req.body;
-      const updatedBlog = await this.blogUseCases.changeBlogStatus(blogId, isActive);
+      const updatedBlog = await this._blogUseCases.changeBlogStatus(blogId, isActive);
       res.status(HttpStatus.OK).json(updatedBlog);
     } catch (err) {
       next(err);
@@ -230,7 +230,7 @@ export class BlogController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const blogs = await this.blogUseCases.getPublicBlogsByUser(userId, page, limit);
+      const blogs = await this._blogUseCases.getPublicBlogsByUser(userId, page, limit);
 
       res.status(HttpStatus.OK).json(blogs);
     } catch (error) {

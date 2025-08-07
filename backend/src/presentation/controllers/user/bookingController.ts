@@ -4,7 +4,7 @@ import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUseCases ';
 export class BookingController {
-  constructor(private bookingUseCases: IBookingUseCases) {}
+  constructor(private _bookingUseCases: IBookingUseCases) {}
 
   createBookingWithOnlinePayment = async (
     req: Request,
@@ -15,7 +15,7 @@ export class BookingController {
       const userId = getUserIdFromRequest(req);
       const data = req.body;
 
-      const result = await this.bookingUseCases.createBookingWithOnlinePayment(userId, data);
+      const result = await this._bookingUseCases.createBookingWithOnlinePayment(userId, data);
       res.status(HttpStatus.CREATED).json({
         message: 'Booking created successfully',
         booking: result.booking,
@@ -34,7 +34,7 @@ export class BookingController {
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
       console.log(req.body, 'verify raxorpay');
-      const isValid = await this.bookingUseCases.verifyRazorpaySignature(
+      const isValid = await this._bookingUseCases.verifyRazorpaySignature(
         razorpay_order_id,
         razorpay_payment_id,
         razorpay_signature
@@ -47,7 +47,7 @@ export class BookingController {
         return;
       }
 
-      await this.bookingUseCases.confirmBookingAfterPayment(
+      await this._bookingUseCases.confirmBookingAfterPayment(
         razorpay_order_id,
         razorpay_payment_id,
         razorpay_signature
@@ -65,7 +65,7 @@ export class BookingController {
       const userId = getUserIdFromRequest(req);
       const bookingId = req.params.id;
 
-      await this.bookingUseCases.cancelUnpaidBooking(userId, bookingId);
+      await this._bookingUseCases.cancelUnpaidBooking(userId, bookingId);
 
       res.status(HttpStatus.OK).json({
         message: 'Booking cancelled successfully',
@@ -82,7 +82,7 @@ export class BookingController {
       const bookingId = req.params.id;
       console.log(bookingId, 'retyr payment');
 
-      const result = await this.bookingUseCases.retryBookingPayment(userId, bookingId);
+      const result = await this._bookingUseCases.retryBookingPayment(userId, bookingId);
 
       res.status(HttpStatus.OK).json({
         message: 'New Razorpay order created',
@@ -104,7 +104,7 @@ export class BookingController {
       const data = req.body;
       console.log(data, 'wallet payment');
 
-      const { booking } = await this.bookingUseCases.createBookingWithWalletPayment(userId, data);
+      const { booking } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
 
       if (!booking) {
         throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
@@ -125,7 +125,7 @@ export class BookingController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const { bookings, total } = await this.bookingUseCases.getAllUserBooking(userId, page, limit);
+      const { bookings, total } = await this._bookingUseCases.getAllUserBooking(userId, page, limit);
 
       res.status(HttpStatus.OK).json({
         bookings: bookings,
@@ -145,7 +145,7 @@ export class BookingController {
       const userId = getUserIdFromRequest(req);
       const bookingId = req.params.id;
 
-      const booking = await this.bookingUseCases.getBookingById(userId, bookingId);
+      const booking = await this._bookingUseCases.getBookingById(userId, bookingId);
 
       res.status(HttpStatus.OK).json({
         booking,
@@ -164,7 +164,7 @@ export class BookingController {
       console.log(req.body, 'cancel reason');
       const { reason } = req.body;
 
-      const booking = await this.bookingUseCases.cancelBooking(userId, bookingId, reason);
+      const booking = await this._bookingUseCases.cancelBooking(userId, bookingId, reason);
 
       res.status(HttpStatus.OK).json({
         booking,

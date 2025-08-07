@@ -4,7 +4,8 @@ import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { IAdminReviewUseCases } from '@application/useCaseInterfaces/admin/IReviewUseCases';
 
 export class ReviewUseCases implements IAdminReviewUseCases {
-  constructor(private reviewRepo: IReviewRepository) {}
+
+  constructor(private _reviewRepo: IReviewRepository) {}
 
   async getAllReviews(
     page: number,
@@ -14,17 +15,17 @@ export class ReviewUseCases implements IAdminReviewUseCases {
     review: IReview[];
     pagination: PaginationInfo;
   }> {
-    return await this.reviewRepo.findAllReviews(page, limit);
+    return await this._reviewRepo.findAllReviews(page, limit);
   }
 
   async getReviewById(reviewId: string): Promise<IReview | null> {
-    return await this.reviewRepo.findReviewById(reviewId);
+    return await this._reviewRepo.findReviewById(reviewId);
   }
   async changeReviewStatus(reviewId: string, isBlocked: boolean): Promise<IReview | null> {
-    return await this.reviewRepo.update(reviewId, { isBlocked });
+    return await this._reviewRepo.update(reviewId, { isBlocked });
   }
 
   async deleteReview(reviewId: string): Promise<boolean> {
-    return await this.reviewRepo.delete(reviewId);
+    return await this._reviewRepo.delete(reviewId);
   }
 }

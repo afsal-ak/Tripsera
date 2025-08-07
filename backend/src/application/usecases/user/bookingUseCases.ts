@@ -6,11 +6,12 @@ import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUs
 import { RazorpayService } from '@infrastructure/services/razorpay/razorpayService';
 import { AppError } from '@shared/utils/AppError';
 import { generateBookingCode } from '@shared/utils/generateBookingCode';
+
 export class BookingUseCases implements IBookingUseCases {
   constructor(
-    private bookingRepo: IBookingRepository,
-    private walletRepo: IWalletRepository,
-    private razorpayService: RazorpayService
+    private _bookingRepo: IBookingRepository,
+    private _walletRepo: IWalletRepository,
+    private _razorpayService: RazorpayService
   ) {}
 
   async getAllUserBooking(
@@ -18,15 +19,15 @@ export class BookingUseCases implements IBookingUseCases {
     page: number,
     limit: number
   ): Promise<{ bookings: IBooking[]; total: number }> {
-    return await this.bookingRepo.getAllBookingOfUser(userId, page, limit);
+    return await this._bookingRepo.getAllBookingOfUser(userId, page, limit);
   }
 
   async getBookingById(userId: string, bookingId: string): Promise<IBooking | null> {
-    return await this.bookingRepo.getBookingById(userId, bookingId);
+    return await this._bookingRepo.getBookingById(userId, bookingId);
   }
 
   async cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null> {
-    const booking = await this.bookingRepo.getBookingById(userId, bookingId);
+    const booking = await this._bookingRepo.getBookingById(userId, bookingId);
     if (!booking) {
       throw new AppError(404, 'Booking not found');
     }
@@ -36,14 +37,14 @@ export class BookingUseCases implements IBookingUseCases {
     }
 
     if (booking.paymentStatus === 'paid' && booking.amountPaid > 0) {
-      await this.walletRepo.creditWallet(
+      await this._walletRepo.creditWallet(
         userId,
         booking.amountPaid,
         `Refund for cancelled booking`
       );
     }
 
-    return await this.bookingRepo.cancelBooking(userId, bookingId, reason);
+    return await this._bookingRepo.cancelBooking(userId, bookingId, reason);
   }
 
   async createBookingWithOnlinePayment(
@@ -91,17 +92,17 @@ export class BookingUseCases implements IBookingUseCases {
       updatedAt: new Date(),
     };
 
-    const booking = await this.bookingRepo.createBooking(userId, bookingData);
+    const booking = await this._bookingRepo.createBooking(userId, bookingData);
 
     if (!booking || !booking._id) {
       throw new Error('Booking failed');
     }
-    const razorpayOrder = await this.razorpayService.createOrder(
+    const razorpayOrder = await this._razorpayService.createOrder(
       finalAmount,
       booking._id.toString()
     );
 
-    await this.bookingRepo.updateBooking(booking._id.toString(), {
+    await this._bookingRepo.updateBooking(booking._id.toString(), {
       razorpay: {
         orderId: razorpayOrder.id,
       },
@@ -117,7 +118,7 @@ export class BookingUseCases implements IBookingUseCases {
     razorpayPaymentId: string,
     razorpaySignature: string
   ): Promise<boolean> {
-    return await this.razorpayService.verifySignature(
+    return await this._razorpayService.verifySignature(
       razorpayOrderId,
       razorpayPaymentId,
       razorpaySignature
@@ -129,12 +130,12 @@ export class BookingUseCases implements IBookingUseCases {
     paymentId: string,
     signature: string
   ): Promise<void> {
-    const booking = await this.bookingRepo.findByRazorpayOrderId(orderId);
+    const booking = await this._bookingRepo.findByRazorpayOrderId(orderId);
     if (!booking) {
       throw new AppError(404, 'Booking not found');
     }
     if (booking.walletAmountUsed && booking.walletAmountUsed > 0) {
-      await this.walletRepo.debitWallet(booking.userId.toString(), booking.walletAmountUsed);
+      await this._walletRepo.debitWallet(booking.userId.toString(), booking.walletAmountUsed);
       console.log('wallet debited from user');
     }
     booking.paymentStatus = 'paid';
@@ -146,11 +147,11 @@ export class BookingUseCases implements IBookingUseCases {
       signature,
     };
 
-    await this.bookingRepo.updateBooking(booking._id!.toString(), booking);
+    await this._bookingRepo.updateBooking(booking._id!.toString(), booking);
   }
 
   async cancelUnpaidBooking(userId: string, bookingId: string): Promise<void> {
-    const booking = await this.bookingRepo.getBookingById(userId, bookingId);
+    const booking = await this._bookingRepo.getBookingById(userId, bookingId);
     if (!booking) {
       throw new AppError(404, 'Booking not found');
     }
@@ -162,7 +163,7 @@ export class BookingUseCases implements IBookingUseCases {
     booking.paymentStatus = 'failed';
     booking.updatedAt = new Date();
 
-    await this.bookingRepo.updateBooking(bookingId, booking);
+    await this._bookingRepo.updateBooking(bookingId, booking);
   }
 
   async retryBookingPayment(
@@ -177,7 +178,7 @@ export class BookingUseCases implements IBookingUseCases {
       receipt: string;
     };
   }> {
-    const booking = await this.bookingRepo.getBookingById(userId, bookingId);
+    const booking = await this._bookingRepo.getBookingById(userId, bookingId);
 
     if (!booking) {
       throw new AppError(404, 'Booking not found');
@@ -193,9 +194,9 @@ export class BookingUseCases implements IBookingUseCases {
     const finalAmount = booking.amountPaid;
     const receipt = `retry-${booking._id.toString().slice(0, 30)}`;
 
-    const razorpayOrder = await this.razorpayService.createOrder(finalAmount, receipt);
+    const razorpayOrder = await this._razorpayService.createOrder(finalAmount, receipt);
 
-    await this.bookingRepo.updateBooking(booking._id.toString(), {
+    await this._bookingRepo.updateBooking(booking._id.toString(), {
       razorpay: {
         orderId: razorpayOrder.id,
       },
@@ -229,7 +230,7 @@ export class BookingUseCases implements IBookingUseCases {
       throw new AppError(400, 'Wallet usage not requested');
     }
 
-    const wallet = await this.walletRepo.getUserWallet(userId);
+    const wallet = await this._walletRepo.getUserWallet(userId);
     if (!wallet) {
       throw new AppError(404, 'Wallet not found');
     }
@@ -241,7 +242,7 @@ export class BookingUseCases implements IBookingUseCases {
     }
 
     // Wallet fully covers booking
-    await this.walletRepo.debitWallet(userId, totalAmount, 'Used for booking');
+    await this._walletRepo.debitWallet(userId, totalAmount, 'Used for booking');
 
     const bookingCode = await generateBookingCode();
 
@@ -263,7 +264,7 @@ export class BookingUseCases implements IBookingUseCases {
       updatedAt: new Date(),
     };
 
-    const booking = await this.bookingRepo.createBooking(userId, bookingData);
+    const booking = await this._bookingRepo.createBooking(userId, bookingData);
     return { booking };
   }
 }

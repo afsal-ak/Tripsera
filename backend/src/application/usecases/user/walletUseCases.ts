@@ -3,14 +3,14 @@ import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { IWalletUseCases } from '@application/useCaseInterfaces/user/IWalletUseCases';
 
 export class WalletUseCases implements IWalletUseCases {
-  constructor(private walletRepo: IWalletRepository) {}
+  constructor(private _walletRepo: IWalletRepository) {}
 
   async createWallet(userId: string): Promise<IWallet> {
-    return await this.walletRepo.createWallet(userId);
+    return await this._walletRepo.createWallet(userId);
   }
 
   async walletBalance(userId: string): Promise<{ balance: number }> {
-    return await this.walletRepo.walletBalance(userId);
+    return await this._walletRepo.walletBalance(userId);
   }
 
   async getUserWallet(
@@ -21,13 +21,13 @@ export class WalletUseCases implements IWalletUseCases {
     transactions: IWalletTransaction[];
     total: number;
   }> {
-    return await this.walletRepo.getUserWallet(userId, options);
+    return await this._walletRepo.getUserWallet(userId, options);
   }
 
   async creditWallet(userId: string, amount: number, description: string): Promise<IWallet> {
-    return await this.walletRepo.creditWallet(userId, amount, description);
+    return await this._walletRepo.creditWallet(userId, amount, description);
   }
   async debitWallet(userId: string, amount: number, description: string): Promise<IWallet> {
-    return await this.walletRepo.debitWallet(userId, amount, description);
+    return await this._walletRepo.debitWallet(userId, amount, description);
   }
 }

@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import { IUser } from '@domain/entities/IUser';
 import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
 export class AdminAuthController {
-  constructor(private adminAuthUseCases: IAdminAuthUseCases) {}
+  constructor(private _adminAuthUseCases: IAdminAuthUseCases) {}
 
   adminLogin = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password } = req.body;
-      const { admin, accessToken, refreshToken } = await this.adminAuthUseCases.adminLogin(
+      const { admin, accessToken, refreshToken } = await this._adminAuthUseCases.adminLogin(
         email,
         password
       );
@@ -35,7 +35,7 @@ export class AdminAuthController {
   forgotPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email } = req.body;
-      await this.adminAuthUseCases.forgotPasswordOtp(email);
+      await this._adminAuthUseCases.forgotPasswordOtp(email);
       res.status(200).json({ message: 'OTP sent to your email' });
     } catch (error: any) {
       res.status(401).json({ message: error.message });
@@ -46,7 +46,7 @@ export class AdminAuthController {
     try {
       const { email, password, otp } = req.body;
       const adminData: IUser = { email, password };
-      await this.adminAuthUseCases.forgotPasswordChange(adminData, otp);
+      await this._adminAuthUseCases.forgotPasswordChange(adminData, otp);
       res.status(200).json({ message: 'Password changed successfully' });
     } catch (error: any) {
       res.status(401).json({ message: error.message });

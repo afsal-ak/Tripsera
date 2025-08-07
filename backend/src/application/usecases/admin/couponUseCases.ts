@@ -3,32 +3,33 @@ import { ICouponRepository } from '@domain/repositories/ICouponRepository';
 import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
 
 export class CouponUseCases implements ICouponUseCases {
-  constructor(private couponRepo: ICouponRepository) {}
+
+  constructor(private _couponRepo: ICouponRepository) {}
 
   async createCoupon(coupon: ICoupon): Promise<ICoupon> {
-    return this.couponRepo.createCoupon(coupon);
+    return this._couponRepo.createCoupon(coupon);
   }
 
   async editCoupon(id: string, couponData: Partial<ICoupon>): Promise<ICoupon | null> {
-    return this.couponRepo.editCoupon(id, couponData);
+    return this._couponRepo.editCoupon(id, couponData);
   }
 
   async getAllCoupon(page: number, limit: number): Promise<{ coupons: ICoupon[]; total: number }> {
-    return this.couponRepo.getAllCoupons(page, limit);
+    return this._couponRepo.getAllCoupons(page, limit);
   }
 
   async getCouponById(id: string): Promise<ICoupon | null> {
-    return this.couponRepo.getCouponById(id);
+    return this._couponRepo.getCouponById(id);
   }
   async getCouponByCode(code: string): Promise<ICoupon | null> {
-    return this.couponRepo.getCouponByCode(code);
+    return this._couponRepo.getCouponByCode(code);
   }
 
   async updateCouponStatus(id: string, isActive: boolean): Promise<void> {
-    return this.couponRepo.updateCouponStatus(id, isActive);
+    return this._couponRepo.updateCouponStatus(id, isActive);
   }
 
   async deleteCoupon(id: string): Promise<void> {
-    return this.couponRepo.deleteCoupon(id);
+    return this._couponRepo.deleteCoupon(id);
   }
 }

@@ -9,22 +9,22 @@ import { PaginationInfo } from '@application/dtos/PaginationDto';
 
 export class ReviewUseCases implements IReviewUseCases {
   constructor(
-    private reviewRepo: IReviewRepository,
-    private bookingRepo: IBookingRepository
+    private _reviewRepo: IReviewRepository,
+    private _bookingRepo: IBookingRepository
   ) {}
 
   async createReview(data: CreateReviewDTO): Promise<IReview> {
     const { userId, packageId } = data;
 
-    const userBooking = await this.bookingRepo.findOneByUserAndPackage(userId, packageId);
+    const userBooking = await this._bookingRepo.findOneByUserAndPackage(userId, packageId);
     if (!userBooking || userBooking.paymentStatus !== 'paid') {
       throw new AppError(HttpStatus.FORBIDDEN, 'You can only review packages you have booked.');
     }
-    const existingReview = await this.reviewRepo.findUserReviewedAlready(userId, packageId);
+    const existingReview = await this._reviewRepo.findUserReviewedAlready(userId, packageId);
     if (existingReview) {
       throw new AppError(HttpStatus.CONFLICT, 'You have already reviewed this package.');
     }
-    return await this.reviewRepo.create(data);
+    return await this._reviewRepo.create(data);
   }
 
   async getUserReview(
@@ -35,7 +35,7 @@ export class ReviewUseCases implements IReviewUseCases {
     data: IReview[];
     pagination: PaginationInfo;
   }> {
-    return await this.reviewRepo.findUserReviews(userId, page, limit);
+    return await this._reviewRepo.findUserReviews(userId, page, limit);
   }
 
   async getPackageReviews(
@@ -43,17 +43,17 @@ export class ReviewUseCases implements IReviewUseCases {
     page: number,
     limit: number
   ): Promise<{ review: IReview[]; pagination: PaginationInfo }> {
-    return await this.reviewRepo.findPackageReviews(packageId, page, limit);
+    return await this._reviewRepo.findPackageReviews(packageId, page, limit);
   }
 
   async getReviewById(reviewId: string): Promise<IReview | null> {
-    return await this.reviewRepo.findById(reviewId);
+    return await this._reviewRepo.findById(reviewId);
   }
   getRatingSummary(packageId: string) {
-    return this.reviewRepo.getPackageRatingSummary(packageId);
+    return this._reviewRepo.getPackageRatingSummary(packageId);
   }
   async deleteReview(reviewId: string, userId: string): Promise<boolean> {
-    const review = await this.reviewRepo.findById(reviewId);
+    const review = await this._reviewRepo.findById(reviewId);
     if (!review) {
       throw new AppError(HttpStatus.NOT_FOUND, 'Review not found');
     }
@@ -64,6 +64,6 @@ export class ReviewUseCases implements IReviewUseCases {
       throw new AppError(HttpStatus.UNAUTHORIZED, 'Unauthorized');
     }
 
-    return await this.reviewRepo.delete(reviewId);
+    return await this._reviewRepo.delete(reviewId);
   }
 }

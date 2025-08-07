@@ -7,12 +7,12 @@ import { mapToPublicProfileDTO } from '@application/dtos/PublicProfileDTO ';
 import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
 
 export class ProfileController {
-  constructor(private profileUseCases: IProfileUseCases) {}
+  constructor(private _profileUseCases: IProfileUseCases) {}
 
   getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-      const userProfile = await this.profileUseCases.getUserProfile(userId);
+      const userProfile = await this._profileUseCases.getUserProfile(userId);
 
       res.status(HttpStatus.OK).json({
         userProfile,
@@ -28,7 +28,7 @@ export class ProfileController {
       const userId = getUserIdFromRequest(req);
       const { profileData }: { profileData: Partial<IUser> } = req.body;
       console.log(profileData, 'profile data');
-      const updatedProfile = await this.profileUseCases.updateUserProfile(userId, profileData);
+      const updatedProfile = await this._profileUseCases.updateUserProfile(userId, profileData);
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'User profile updated successfully',
@@ -44,7 +44,7 @@ export class ProfileController {
       const userId = getUserIdFromRequest(req);
       const { address } = req.body;
       // console.log(address, 'adress data')
-      const updatedAddress = await this.profileUseCases.updateUserAddress(userId, address);
+      const updatedAddress = await this._profileUseCases.updateUserAddress(userId, address);
 
       res.status(HttpStatus.OK).json({
         success: true,
@@ -72,7 +72,7 @@ export class ProfileController {
 
       const profileImage = { url, public_id };
 
-      const updatedUser = await this.profileUseCases.updateProfileImage(userId, profileImage);
+      const updatedUser = await this._profileUseCases.updateProfileImage(userId, profileImage);
 
       res.status(HttpStatus.CREATED).json({
         success: true,
@@ -100,7 +100,7 @@ export class ProfileController {
 
       const coverImage = { url, public_id };
 
-      const updatedUser = await this.profileUseCases.createCoverImage(userId, coverImage);
+      const updatedUser = await this._profileUseCases.createCoverImage(userId, coverImage);
 
       res.status(HttpStatus.CREATED).json({
         success: true,
@@ -119,7 +119,7 @@ export class ProfileController {
 
       const { username } = req.params;
       console.log(username, 'user name in public');
-      const user = await this.profileUseCases.getPublicProfile(username);
+      const user = await this._profileUseCases.getPublicProfile(username);
       const profile = mapToPublicProfileDTO(user!);
       const isFollowing = profile.followers.toString()?.includes(viewerId) ?? false;
       // console.log(isFollowing,'foollwoing')
@@ -141,7 +141,7 @@ export class ProfileController {
       // const followingId = req.params.userId;
       // console.log(followingId,'following id')
 
-      const result = await this.profileUseCases.followUser(followerId, followingId);
+      const result = await this._profileUseCases.followUser(followerId, followingId);
 
       res.status(200).json({ result, message: 'Followed successfully' });
     } catch (error) {
@@ -155,7 +155,7 @@ export class ProfileController {
       const followingId = req.params.userId;
       console.log(followingId, 'following id');
 
-      const result = await this.profileUseCases.unfollowUser(followerId, followingId);
+      const result = await this._profileUseCases.unfollowUser(followerId, followingId);
 
       res.status(200).json({ result, message: 'Unfollowed successfully' });
     } catch (error) {

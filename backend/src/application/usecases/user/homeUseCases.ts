@@ -7,13 +7,13 @@ import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases
 
 export class HomeUseCases implements IHomeUseCases {
   constructor(
-    private packageRepo: IPackageRepository,
-    private bannerRepo: IBannerRepository
+    private _packageRepo: IPackageRepository,
+    private _bannerRepo: IBannerRepository
   ) {}
 
   async getHome(): Promise<{ banners: IBanner[]; packages: IPackage[] }> {
-    const banners = await this.bannerRepo.getAllActiveBanners();
-    const packages = await this.packageRepo.getHomeData();
+    const banners = await this._bannerRepo.getAllActiveBanners();
+    const packages = await this._packageRepo.getHomeData();
     return { banners, packages };
   }
 
@@ -76,8 +76,8 @@ export class HomeUseCases implements IHomeUseCases {
     const sortBy = sortOptions[sort] || sortOptions['newest'];
 
     const [packages, total] = await Promise.all([
-      this.packageRepo.getActivePackages(mongoFilter, skip, limit, sortBy),
-      this.packageRepo.countActivePackages(mongoFilter),
+      this._packageRepo.getActivePackages(mongoFilter, skip, limit, sortBy),
+      this._packageRepo.countActivePackages(mongoFilter),
     ]);
 
     return {
@@ -89,7 +89,7 @@ export class HomeUseCases implements IHomeUseCases {
   }
 
   async getPackageById(id: string): Promise<IPackage | null> {
-    const pkg = await this.packageRepo.findById(id);
+    const pkg = await this._packageRepo.findById(id);
     return pkg;
   }
 }

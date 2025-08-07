@@ -2,15 +2,17 @@ import { Request, Response } from 'express';
 import { IPackage } from '@domain/entities/IPackage';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';
+
 export class PackageController {
-  constructor(private packageUseCase: IPackageUseCases) {}
+  
+  constructor(private _packageUseCase: IPackageUseCases) {}
 
   getFullPackage = async (req: Request, res: Response): Promise<void> => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const { packages, totalPackages, totalPages } = await this.packageUseCase.getAllPackages(
+      const { packages, totalPackages, totalPages } = await this._packageUseCase.getAllPackages(
         page,
         limit
       );
@@ -30,7 +32,7 @@ export class PackageController {
   getPackagesById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const packages = await this.packageUseCase.getSinglePackage(id);
+      const packages = await this._packageUseCase.getSinglePackage(id);
       res.status(200).json({ message: 'Package fetched successfully', packages });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });
@@ -66,7 +68,7 @@ export class PackageController {
       );
       pkg.imageUrls = imageUrls;
 
-      const createdPkg = await this.packageUseCase.createPackage(pkg);
+      const createdPkg = await this._packageUseCase.createPackage(pkg);
       console.log({ createdPkg }, 'creted pkd');
       res.status(200).json({ message: 'Package created successfully', createdPkg });
     } catch (error: any) {
@@ -110,7 +112,7 @@ export class PackageController {
         : [];
 
       //  Pass correct data to use case
-      await this.packageUseCase.editPackageData(id, pkgData, existingImageUrls, newImages);
+      await this._packageUseCase.editPackageData(id, pkgData, existingImageUrls, newImages);
 
       res.status(200).json({ message: 'Package updated successfully' });
     } catch (error: any) {
@@ -123,7 +125,7 @@ export class PackageController {
     try {
       const { id } = req.params;
       console.log(id, 'pid');
-      await this.packageUseCase.block(id);
+      await this._packageUseCase.block(id);
       res.status(200).json({ message: 'Package blocked successfully' });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });
@@ -133,7 +135,7 @@ export class PackageController {
   unblockPackage = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      await this.packageUseCase.unblock(id);
+      await this._packageUseCase.unblock(id);
       res.status(200).json({ message: 'Package unblocked successfully' });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });
@@ -143,7 +145,7 @@ export class PackageController {
   deletePackage = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      await this.packageUseCase.delete(id);
+      await this._packageUseCase.delete(id);
       res.status(200).json({ message: 'Package deleted successfully' });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });

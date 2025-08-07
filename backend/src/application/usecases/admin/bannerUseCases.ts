@@ -1,11 +1,13 @@
 import { IBannerRepository } from '@domain/repositories/IBannerRepository';
 import { IBanner } from '@domain/entities/IBanner';
 import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/IBannerManagementUseCases';
+
 export class BannerMangementUseCases implements IBannerManagementUseCases {
-  constructor(private bannerRepository: IBannerRepository) {}
+  
+  constructor(private _bannerRepository: IBannerRepository) {}
 
   async createNewBanner(banner: IBanner): Promise<IBanner> {
-    return await this.bannerRepository.createBanner(banner);
+    return await this._bannerRepository.createBanner(banner);
   }
 
   async getBanners(
@@ -18,8 +20,8 @@ export class BannerMangementUseCases implements IBannerManagementUseCases {
   }> {
     const skip = (page - 1) * limit;
     const [banners, totalBanner] = await Promise.all([
-      this.bannerRepository.getAllBanners(skip, limit),
-      this.bannerRepository.countDocument(),
+      this._bannerRepository.getAllBanners(skip, limit),
+      this._bannerRepository.countDocument(),
     ]);
 
     return {
@@ -30,17 +32,17 @@ export class BannerMangementUseCases implements IBannerManagementUseCases {
   }
 
   async getActiveBanners(): Promise<IBanner[]> {
-    return await this.bannerRepository.getAllActiveBanners();
+    return await this._bannerRepository.getAllActiveBanners();
   }
 
   async blockBanner(bannerId: string): Promise<void> {
-    await this.bannerRepository.blockBanner(bannerId);
+    await this._bannerRepository.blockBanner(bannerId);
   }
   async unblockBanner(bannerId: string): Promise<void> {
-    await this.bannerRepository.unblockBanner(bannerId);
+    await this._bannerRepository.unblockBanner(bannerId);
   }
 
   async deleteBanner(bannerId: string): Promise<void> {
-    await this.bannerRepository.deleteBanner(bannerId);
+    await this._bannerRepository.deleteBanner(bannerId);
   }
 }

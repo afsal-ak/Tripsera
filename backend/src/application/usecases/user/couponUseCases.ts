@@ -3,17 +3,17 @@ import { ICouponUseCases } from '@application/useCaseInterfaces/user/ICouponUseC
 import { ICouponRepository } from '@domain/repositories/ICouponRepository';
 
 export class CouponUseCases implements ICouponUseCases {
-  constructor(private couponRepo: ICouponRepository) {}
+  constructor(private _couponRepo: ICouponRepository) {}
 
   async getActiveCoupons(
     page: number,
     limit: number
   ): Promise<{ coupons: ICoupon[]; total: number }> {
-    return this.couponRepo.getActiveCoupons(page, limit);
+    return this._couponRepo.getActiveCoupons(page, limit);
   }
 
   async applyCoupon(code: string, totalAmount: number): Promise<number> {
-    const coupon = await this.couponRepo.getCouponByCode(code);
+    const coupon = await this._couponRepo.getCouponByCode(code);
 
     if (!coupon) {
       throw new Error('Coupon does not exist');

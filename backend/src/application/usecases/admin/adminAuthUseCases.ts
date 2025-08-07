@@ -9,8 +9,8 @@ import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminA
 
 export class AdminAuthUseCases implements IAdminAuthUseCases {
   constructor(
-    private adminRepository: IUserRepository,
-    private otpRepository: IOtpRepository
+    private _adminRepository: IUserRepository,
+    private _otpRepository: IOtpRepository
   ) {}
 
   async adminLogin(
@@ -21,7 +21,7 @@ export class AdminAuthUseCases implements IAdminAuthUseCases {
     accessToken: string;
     refreshToken: string;
   }> {
-    const admin = await this.adminRepository.findByEmail(email);
+    const admin = await this._adminRepository.findByEmail(email);
     if (!admin || admin.role !== 'admin') {
       throw new Error('Incorrect email or password');
     }
@@ -52,27 +52,27 @@ export class AdminAuthUseCases implements IAdminAuthUseCases {
   }
 
   async forgotPasswordOtp(email: string): Promise<void> {
-    const existingEmail = await this.adminRepository.findByEmail(email);
+    const existingEmail = await this._adminRepository.findByEmail(email);
     if (!existingEmail || existingEmail.role !== 'admin') {
       throw new Error('Invalid Email');
     }
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    await this.otpRepository.saveOtp({ email, otp, expiresAt });
+    await this._otpRepository.saveOtp({ email, otp, expiresAt });
     await sendOtpMail(email, otp);
   }
 
   async forgotPasswordChange(userData: IUser, otp: string): Promise<void> {
     const { email, password } = userData;
 
-    const isValidOtp = await this.otpRepository.verifyOtp(email, otp);
+    const isValidOtp = await this._otpRepository.verifyOtp(email, otp);
     if (!isValidOtp) {
       throw new Error('Invalid or Expired OTP');
     }
     const hashedPassword = await hashPassword(password!);
 
-    await this.adminRepository.updateUserPassword(email, hashedPassword);
-    await this.otpRepository.deleteOtp(email);
+    await this._adminRepository.updateUserPassword(email, hashedPassword);
+    await this._otpRepository.deleteOtp(email);
   }
 }

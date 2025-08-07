@@ -4,13 +4,13 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IWalletUseCases } from '@application/useCaseInterfaces/user/IWalletUseCases';
 
 export class WalletController {
-  constructor(private walletUseCases: IWalletUseCases) {}
+  constructor(private _walletUseCases: IWalletUseCases) {}
 
   walletBalance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
 
-      const { balance } = await this.walletUseCases.getUserWallet(userId);
+      const { balance } = await this._walletUseCases.getUserWallet(userId);
 
       res.status(HttpStatus.OK).json({
         balance,
@@ -30,7 +30,7 @@ export class WalletController {
 
       //     console.log(req.query,'from wallet')
 
-      const { balance, transactions, total } = await this.walletUseCases.getUserWallet(userId, {
+      const { balance, transactions, total } = await this._walletUseCases.getUserWallet(userId, {
         page,
         limit,
         sort,
@@ -57,7 +57,7 @@ export class WalletController {
         return;
       }
 
-      const wallet = await this.walletUseCases.creditWallet(userId, amount, description);
+      const wallet = await this._walletUseCases.creditWallet(userId, amount, description);
       res.status(HttpStatus.OK).json({
         wallet,
         message: 'Wallet credited successfully',
@@ -77,7 +77,7 @@ export class WalletController {
         return;
       }
 
-      const wallet = await this.walletUseCases.debitWallet(userId, amount, description);
+      const wallet = await this._walletUseCases.debitWallet(userId, amount, description);
       res.status(HttpStatus.OK).json({
         wallet,
         message: 'Wallet debited successfully',

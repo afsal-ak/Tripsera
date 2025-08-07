@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
+
 export class BlogController {
-  constructor(private blogUseCases: IBlogUseCases) {}
+  constructor(private _blogUseCases: IBlogUseCases) {}
 
   getAllBlogs = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -17,7 +18,7 @@ export class BlogController {
         tags: req.query.tags ? (req.query.tags as string).split(',') : undefined,
       };
 
-      const result = await this.blogUseCases.getAllBlogs(page, limit, filters);
+      const result = await this._blogUseCases.getAllBlogs(page, limit, filters);
       res.status(200).json({ result, message: 'blog fetched successfully' });
     } catch (error) {
       next(error);
@@ -27,7 +28,7 @@ export class BlogController {
   getBlogById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const blogId = req.params.blogId;
-      const blog = await this.blogUseCases.getBlogById(blogId);
+      const blog = await this._blogUseCases.getBlogById(blogId);
 
       res.status(200).json({ blog, message: 'blog fetched successfully' });
     } catch (error) {
@@ -38,7 +39,7 @@ export class BlogController {
   deleteBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const blogId = req.params.blogId;
-      await this.blogUseCases.deleteBlog(blogId);
+      await this._blogUseCases.deleteBlog(blogId);
       res.status(200).json({ message: 'Blog deleted successfully' });
     } catch (error) {
       next(error);
@@ -49,7 +50,7 @@ export class BlogController {
     try {
       const blogId = req.params.blogId;
       const { isBlocked } = req.body;
-      await this.blogUseCases.changeBlogStatus(blogId, isBlocked);
+      await this._blogUseCases.changeBlogStatus(blogId, isBlocked);
       res.status(200).json({ message: 'Blog status updated' });
     } catch (error) {
       next(error);

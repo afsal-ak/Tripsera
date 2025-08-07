@@ -5,7 +5,7 @@ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 
 export class ReviewController {
-  constructor(private reviewUseCases: IReviewUseCases) {}
+  constructor(private _reviewUseCases: IReviewUseCases) {}
 
   createReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -18,7 +18,7 @@ export class ReviewController {
         userId,
       };
       console.log(data, 'data from review');
-      const review = await this.reviewUseCases.createReview(data);
+      const review = await this._reviewUseCases.createReview(data);
       res.status(HttpStatus.CREATED).json({
         review: toReviewResponseDTO(review),
         message: 'Review created successfully',
@@ -33,7 +33,7 @@ export class ReviewController {
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
-      const { data, pagination } = await this.reviewUseCases.getUserReview(userId, page, limit);
+      const { data, pagination } = await this._reviewUseCases.getUserReview(userId, page, limit);
       res.status(HttpStatus.OK).json({
         review: data.map(toReviewResponseDTO),
         pagination,
@@ -50,7 +50,7 @@ export class ReviewController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
 
-      const { review, pagination } = await this.reviewUseCases.getPackageReviews(
+      const { review, pagination } = await this._reviewUseCases.getPackageReviews(
         packageId,
         page,
         limit
@@ -72,7 +72,7 @@ export class ReviewController {
       const reviewId = req.params.reviewId;
       console.log(reviewId, 'reviewId');
 
-      const review = await this.reviewUseCases.getReviewById(reviewId);
+      const review = await this._reviewUseCases.getReviewById(reviewId);
       console.log(review, 'review');
       res.status(HttpStatus.OK).json({
         review: review,
@@ -85,7 +85,7 @@ export class ReviewController {
   getRatingSummary = async (req: Request, res: Response) => {
     const { packageId } = req.params;
     console.log(packageId, 'id ');
-    const summary = await this.reviewUseCases.getRatingSummary(packageId);
+    const summary = await this._reviewUseCases.getRatingSummary(packageId);
     console.log(summary, 'review');
     res.status(200).json(summary);
   };
@@ -93,7 +93,7 @@ export class ReviewController {
     try {
       const userId = getUserIdFromRequest(req);
       const reviewId = req.params.reviewId;
-      const result = await this.reviewUseCases.deleteReview(reviewId, userId);
+      const result = await this._reviewUseCases.deleteReview(reviewId, userId);
       res.status(HttpStatus.OK).json({
         result,
         message: 'Review deleted successfully',

@@ -2,11 +2,13 @@ import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { IBlog } from '@domain/entities/IBlog';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
+
 export class BlogUseCases implements IBlogUseCases {
-  constructor(private blogRepo: IBlogRepository) {}
+
+  constructor(private _blogRepo: IBlogRepository) {}
 
   async createBlog(userId: string, blogData: IBlog): Promise<IBlog> {
-    return await this.blogRepo.createBlog(userId, blogData);
+    return await this._blogRepo.createBlog(userId, blogData);
   }
 
   async editBlog(
@@ -15,7 +17,7 @@ export class BlogUseCases implements IBlogUseCases {
     existingImages: { public_id: string }[],
     newImages: { url: string; public_id: string }[]
   ): Promise<IBlog | null> {
-    const blog = await this.blogRepo.getBlogById(blogId);
+    const blog = await this._blogRepo.getBlogById(blogId);
     if (!blog) {
       throw new Error('blog not found');
     }
@@ -32,15 +34,15 @@ export class BlogUseCases implements IBlogUseCases {
       await deleteImageFromCloudinary(img.public_id);
     }
 
-    return await this.blogRepo.editBlog(blogId, blogData, deletedImages, newImages);
+    return await this._blogRepo.editBlog(blogId, blogData, deletedImages, newImages);
   }
 
   async getBlogById(blogId: string): Promise<IBlog | null> {
-    return await this.blogRepo.getBlogById(blogId);
+    return await this._blogRepo.getBlogById(blogId);
   }
   async getBlogByUser(userId: string, page: number, limit: number) {
     // console.log(userId,'userId')
-    return await this.blogRepo.getBlogByUser(userId, page, limit);
+    return await this._blogRepo.getBlogByUser(userId, page, limit);
   }
 
   async getAllBlog(
@@ -55,7 +57,7 @@ export class BlogUseCases implements IBlogUseCases {
       tags?: string[];
     }
   ) {
-    return await this.blogRepo.getAllBlog(page, limit, filters);
+    return await this._blogRepo.getAllBlog(page, limit, filters);
   }
   async getAllPublishedBlogs(
     page: number,
@@ -67,34 +69,34 @@ export class BlogUseCases implements IBlogUseCases {
       endDate?: string;
     }
   ) {
-    return await this.blogRepo.getAllPublishedBlogs(page, limit, filters);
+    return await this._blogRepo.getAllPublishedBlogs(page, limit, filters);
   }
 
   async getBySlug(slug: string): Promise<IBlog | null> {
-    return await this.blogRepo.getBySlug(slug);
+    return await this._blogRepo.getBySlug(slug);
   }
 
   async likeBlog(blogId: string, userId: string): Promise<IBlog | null> {
-    return await this.blogRepo.likeBlog(blogId, userId);
+    return await this._blogRepo.likeBlog(blogId, userId);
   }
 
   async unLikeBlog(blogId: string, userId: string): Promise<IBlog | null> {
-    return await this.blogRepo.unLikeBlog(blogId, userId);
+    return await this._blogRepo.unLikeBlog(blogId, userId);
   }
 
   async blockBlog(blogId: string, block: boolean): Promise<void> {
-    return await this.blogRepo.blockBlog(blogId, block);
+    return await this._blogRepo.blockBlog(blogId, block);
   }
 
   async deleteBlog(blogId: string): Promise<void> {
-    return await this.blogRepo.deleteBlog(blogId);
+    return await this._blogRepo.deleteBlog(blogId);
   }
 
   async changeBlogStatus(blogId: string, isActive: boolean): Promise<void> {
-    return await this.blogRepo.changeBlogStatus(blogId, isActive);
+    return await this._blogRepo.changeBlogStatus(blogId, isActive);
   }
 
   async getPublicBlogsByUser(userId: string, page: number, limit: number) {
-    return await this.blogRepo.getPublicBlogsByUser(userId, page, limit);
+    return await this._blogRepo.getPublicBlogsByUser(userId, page, limit);
   }
 }

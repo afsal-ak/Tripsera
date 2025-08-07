@@ -4,19 +4,20 @@ import { exportSalesReportExcel } from '@shared/utils/excelUtils';
 import { IBooking } from '@domain/entities/IBooking';
 
 export class SalesReportUseCase {
-  constructor(private salesRepo: ISalesReportRepository) {}
+
+  constructor(private _salesRepo: ISalesReportRepository) {}
 
   async getReportList(query: FilterQueryOptions, page: number, limit: number) {
     const filter = getSalesReportFilter(query);
     const skip = (page - 1) * limit;
 
-    const total = await this.salesRepo.count(filter);
-    const data = await this.salesRepo.find(filter, {
+    const total = await this._salesRepo.count(filter);
+    const data = await this._salesRepo.find(filter, {
       skip,
       limit,
       sort: { createdAt: -1 },
     });
-    const summary = await this.salesRepo.calculateSummary(filter);
+    const summary = await this._salesRepo.calculateSummary(filter);
 
     return {
       data,
@@ -30,11 +31,11 @@ export class SalesReportUseCase {
   // Download report as Excel
   async downloadExcel(query: FilterQueryOptions): Promise<Buffer> {
     const filter = getSalesReportFilter(query);
-    const bookings: IBooking[] = await this.salesRepo.find(filter, {
+    const bookings: IBooking[] = await this._salesRepo.find(filter, {
       sort: { createdAt: -1 },
     });
 
-    const summary = await this.salesRepo.calculateSummary(filter);
+    const summary = await this._salesRepo.calculateSummary(filter);
     const buffer = await exportSalesReportExcel(bookings, summary);
     return buffer;
   }

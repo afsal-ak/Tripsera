@@ -2,13 +2,15 @@ import { Request, Response, NextFunction } from 'express';
 import { IReferralUseCases } from '@application/useCaseInterfaces/admin/IReferralUserCases';
 import { toReferralResponseDTO, UpdateReferralDTO } from '@application/dtos/ReferralDto';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+
 export class ReferralController {
-  constructor(private referralUseCase: IReferralUseCases) {}
+
+  constructor(private _referralUseCase: IReferralUseCases) {}
 
   saveReferralSettings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data: UpdateReferralDTO = req.body;
-      const referral = await this.referralUseCase.upsertReferral(data);
+      const referral = await this._referralUseCase.upsertReferral(data);
       res.status(HttpStatus.CREATED).json({
         referral: toReferralResponseDTO(referral),
         message: 'Referral settings saved successfully',
@@ -20,7 +22,7 @@ export class ReferralController {
 
   getReferral = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const data = await this.referralUseCase.getReferral();
+      const data = await this._referralUseCase.getReferral();
 
       const referral = toReferralResponseDTO(data!);
 
@@ -38,7 +40,7 @@ export class ReferralController {
       const referralId = req.params.referralId;
       console.log(referralId, 'referralId');
 
-      const referral = await this.referralUseCase.getReferralById(referralId);
+      const referral = await this._referralUseCase.getReferralById(referralId);
       console.log(referral, 'referral');
       res.status(HttpStatus.OK).json({
         referral: referral,
@@ -52,7 +54,7 @@ export class ReferralController {
   deleteReferral = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const referralId = req.params.referralId;
-      const result = await this.referralUseCase.deleteReferral(referralId);
+      const result = await this._referralUseCase.deleteReferral(referralId);
       res.status(HttpStatus.OK).json({
         result,
         message: 'referral deleted successfully',
@@ -67,7 +69,7 @@ export class ReferralController {
       const referralId = req.params.referralId;
       const { status } = req.body;
       console.log({ status }, 'status');
-      const result = await this.referralUseCase.changeReferralStatus(referralId, status);
+      const result = await this._referralUseCase.changeReferralStatus(referralId, status);
       res.status(HttpStatus.OK).json({
         result,
         message: 'referral status successfully',

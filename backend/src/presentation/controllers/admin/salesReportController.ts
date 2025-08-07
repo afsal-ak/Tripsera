@@ -3,7 +3,8 @@ import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCa
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class SalesReportController {
-  constructor(private salesReportUseCase: SalesReportUseCase) {}
+
+  constructor(private _salesReportUseCase: SalesReportUseCase) {}
 
   getReportList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -21,7 +22,7 @@ export class SalesReportController {
         year: req.query.year as string,
       };
 
-      const result = await this.salesReportUseCase.getReportList(filters, page, limit);
+      const result = await this._salesReportUseCase.getReportList(filters, page, limit);
 
       res.status(HttpStatus.OK).json({
         success: true,
@@ -46,7 +47,7 @@ export class SalesReportController {
         year: req.query.year as string,
       };
 
-      const buffer = await this.salesReportUseCase.downloadExcel(filters);
+      const buffer = await this._salesReportUseCase.downloadExcel(filters);
 
       res.setHeader('Content-Disposition', 'attachment; filename="sales-report.xlsx"');
       res.setHeader(
