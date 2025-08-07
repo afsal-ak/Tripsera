@@ -27,6 +27,8 @@ const EditPackageForm = () => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
+  const [durationDays, setDurationDays] = useState<string>('');
+  const [durationNights, setDurationNights] = useState<string>('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [included, setIncluded] = useState<string[]>(['']);
@@ -56,10 +58,13 @@ const EditPackageForm = () => {
           return;
         }
         const data = await getPackageById(id);
+        console.log(data, 'pkd data')
         setTitle(data.title);
         setDescription(data.description);
         setPrice(data.price.toString());
-        setDuration(data.duration.toString());
+        //  setDuration(data.duration.toString());
+
+        //  setDuration(data.duration.toString());
         setStartDate(data.startDate?.split('T')[0] || '');
         setEndDate(data.endDate?.split('T')[0] || '');
         setCategory(data.category);
@@ -78,6 +83,9 @@ const EditPackageForm = () => {
             .filter((img: any) => img?.public_id && img?.url)
             .map((img: any) => ({ public_id: img.public_id, url: img.url }))
         );
+        setDurationDays((data.durationDays ?? 1).toString());
+        setDurationNights((data.durationNights ?? 1).toString());
+
       } catch {
         toast.error('Failed to fetch package details');
       }
@@ -164,8 +172,16 @@ const EditPackageForm = () => {
     if (!trimmedDescription) return toast.error('Description is required');
     if (!price || isNaN(priceValue) || priceValue <= 0)
       return toast.error('Price must be a positive number');
-    if (!duration || isNaN(durationValue) || durationValue <= 0)
-      return toast.error('Duration must be a positive number');
+    // if (!duration || isNaN(durationValue) || durationValue <= 0)
+    //   return toast.error('Duration must be a positive number');
+    const parsedDays = parseInt(durationDays);
+    const parsedNights = parseInt(durationNights);
+
+    const dayNightDiff = Math.abs(parsedDays - parsedNights);
+    if (dayNightDiff > 1) {
+      toast.error('The difference between days and nights cannot be more than 1');
+      return;
+    }
     if (!startDate || !endDate) return toast.error('Start and end dates are required');
     if (category.length === 0) return toast.error('Select at least one category');
     if (location.length === 0) {
@@ -226,7 +242,9 @@ const EditPackageForm = () => {
     formData.append('title', trimmedTitle);
     formData.append('description', trimmedDescription);
     formData.append('price', price);
-    formData.append('duration', duration);
+    //formData.append('duration', duration);
+    formData.append('durationDays', durationDays);
+    formData.append('durationNights', durationNights);
     formData.append('startDate', startDate);
     formData.append('endDate', endDate);
     formData.append('category', JSON.stringify(category));
@@ -289,9 +307,17 @@ const EditPackageForm = () => {
           <Label>Price</Label>
           <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
         </div>
-        <div>
+        {/* <div>
           <Label>Duration</Label>
           <Input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} />
+        </div> */}
+        <div>
+          <Label>Day Duration</Label>
+          <Input type="number" min={1} value={durationDays} onChange={(e) => setDurationDays(e.target.value)} />
+        </div>
+        <div>
+          <Label>Night Duration</Label>
+          <Input type="number" min={1} value={durationNights} onChange={(e) => setDurationNights(e.target.value)} />
         </div>
         <br />
         <div>

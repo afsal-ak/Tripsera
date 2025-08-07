@@ -96,7 +96,7 @@ const PackageDetails = () => {
   const handleClick = () => {
     navigate(`/checkout/${pkg?._id}`);
   };
-    
+
   const handleAddReview = () => {
     navigate(`/packages/${id}/review/add`);
   };
@@ -320,14 +320,26 @@ const PackageDetails = () => {
                 </div>
 
                 <div className="space-y-4 mb-8">
-                  <div className="flex items-center justify-between py-3 border-b">
+                  {/* <div className="flex items-center justify-between py-3 border-b">
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 text-orange mr-3" />
                       <span className="text-sm font-medium">Duration</span>
                     </div>
                     <span className="text-sm font-semibold">{pkg.duration}</span>
 
+                  </div> */}
+                  <div className="flex items-center justify-between py-3 border-b">
+                    <div className="flex items-center">
+                      <Clock className="w-4 h-4 text-orange mr-3" />
+                      <span className="text-sm font-medium">Duration</span>
+                    </div>
+                    <span className="text-sm font-semibold">
+                      {pkg.durationDays && pkg.durationNights
+                        ? `${pkg.durationDays} Days ${pkg.durationNights} Nights`
+                        : pkg.duration}
+                    </span>
                   </div>
+
                   <div className="flex items-center justify-between py-3">
                     <div className="flex items-center">
                       <Calendar className="w-4 h-4 text-orange mr-3" />
@@ -402,13 +414,13 @@ const PackageDetails = () => {
               </>
             ) : (
               <p className="text-gray-500 italic">Be the first one to review this package.</p>
-              
+
             )}
             <br /><br />
-             <div className="flex items-center justify-between mb-6">
-                 <button onClick={handleAddReview} className="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-dark transition">
-                    Write a Review
-                </button>
+            <div className="flex items-center justify-between mb-6">
+              <button onClick={handleAddReview} className="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-dark transition">
+                Write a Review
+              </button>
             </div>
           </section>
 

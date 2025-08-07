@@ -18,7 +18,11 @@ const AddPackageForm = () => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
+  const [durationDays, setDurationDays] = useState<string>('');
+  const [durationNights, setDurationNights] = useState<string>('');
   const [startDate, setStartDate] = useState('');
+
+
   const [endDate, setEndDate] = useState('');
   const [category, setCategory] = useState<string[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ _id: string; name: string }[]>([]);
@@ -102,26 +106,34 @@ const AddPackageForm = () => {
     const trimmedTitle = title.trim();
     const trimmedDescription = description.trim();
     const trimmedPrice = price.trim();
-    const trimmedDuration = duration.trim();
+  //  const trimmedDuration = duration.trim();
     const trimmedStartDate = startDate.trim();
     const trimmedEndDate = endDate.trim();
 
-    if (!trimmedTitle || !trimmedPrice || !trimmedDuration || images.length === 0) {
+    if (!trimmedTitle || !trimmedPrice || images.length === 0) {
       toast.error('Title, Price, Duration, and at least one image are required.');
       return;
     }
+const parsedDays = parseInt(durationDays);
+const parsedNights = parseInt(durationNights);
+
+const dayNightDiff = Math.abs(parsedDays - parsedNights);
+if (dayNightDiff > 1) {
+  toast.error('The difference between days and nights cannot be more than 1');
+  return;
+}
 
     // Validate price and duration
     const parsedPrice = parseFloat(trimmedPrice);
-    const parsedDuration = parseInt(trimmedDuration);
+    // const parsedDuration = parseInt(trimmedDuration);
     if (isNaN(parsedPrice) || parsedPrice <= 0) {
       toast.error('Price must be a positive number');
       return;
     }
-    if (isNaN(parsedDuration) || parsedDuration <= 0) {
-      toast.error('Duration must be a positive number');
-      return;
-    }
+    // if (isNaN(parsedDuration) || parsedDuration <= 0) {
+    //   toast.error('Duration must be a positive number');
+    //   return;
+    // }
 
     // Validate locations
     for (const loc of location) {
@@ -152,12 +164,15 @@ const AddPackageForm = () => {
         return;
       }
     }
-
+  //   durationDays: number;
+  // durationNights: number;
     const formData = new FormData();
     formData.append('title', trimmedTitle);
     formData.append('description', trimmedDescription);
     formData.append('price', trimmedPrice);
-    formData.append('duration', trimmedDuration);
+  //  formData.append('duration', trimmedDuration);
+    formData.append('durationDays', durationDays);
+    formData.append('durationNights', durationNights);
     formData.append('startDate', trimmedStartDate);
     formData.append('endDate', trimmedEndDate);
     images.forEach((img) => formData.append('images', img));
@@ -226,9 +241,17 @@ const AddPackageForm = () => {
               required
             />
           </div>
-          <div>
+          {/* <div>
             <Label>Duration</Label>
             <Input value={duration} onChange={(e) => setDuration(e.target.value)} required />
+          </div> */}
+             <div>
+            <Label>Day Duration</Label>
+            <Input    type="number"  min={1}  value={durationDays} onChange={(e) => setDurationDays(e.target.value)} required />
+          </div>
+             <div>
+            <Label>Nigth Duration</Label>
+            <Input  type="number" min={1} value={durationNights} onChange={(e) => setDurationNights(e.target.value)} required />
           </div>
         </div>
         {/* Dates */}
@@ -393,59 +416,7 @@ const AddPackageForm = () => {
             + Add Itinerary Day
           </Button>
         </div>
-        {/* Itinerary
-        <div>
-          <Label>Itinerary</Label>
-          {itinerary.map((item, index) => (
-            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2 items-center">
-              <Input
-                type="number"
-                placeholder="Day"
-                value={item.day}
-                onChange={(e) => {
-                  const updated = [...itinerary];
-                  updated[index].day = +e.target.value;
-                  setItinerary(updated);
-                }}
-                required
-              />
-              <Input
-                placeholder="Title"
-                value={item.title}
-                onChange={(e) => {
-                  const updated = [...itinerary];
-                  updated[index].title = e.target.value;
-                  setItinerary(updated);
-                }}
-                required
-              />
-              <Textarea
-                placeholder="Description"
-                value={item.description}
-                onChange={(e) => {
-                  const updated = [...itinerary];
-                  updated[index].description = e.target.value;
-                  setItinerary(updated);
-                }}
-                required
-
-              />
-
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                className="md:col-span-3 w-fit"
-                onClick={() => setItinerary(itinerary.filter((_, i) => i !== index))}
-              >
-                Remove Day {item.day}
-              </Button>
-            </div>
-          ))}
-          <Button type="button" onClick={() => setItinerary([...itinerary, { day: itinerary.length + 1, title: '', description: '' }])}>
-            + Add Itinerary Day
-          </Button>
-        </div> */}
+   
         {/* Locations */}
         <div>
           <Label>Locations</Label>

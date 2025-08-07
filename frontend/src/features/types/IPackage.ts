@@ -34,6 +34,8 @@ export interface IPackage {
   description?: string;
   price: number;
   duration: string;
+  durationDays?: string;
+  durationNights?: string;
   imageUrls: { url: string }[];
   category?: { _id: string; name: string }[];
   location?: ILocation[];
