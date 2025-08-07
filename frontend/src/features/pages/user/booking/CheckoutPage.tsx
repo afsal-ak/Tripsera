@@ -156,7 +156,7 @@ const CheckoutPage = () => {
     const travelerCount = travelers.length;
     const sub = basePrice * travelerCount;
     const discount = isCouponApplied ? couponDiscount : 0;
-    const afterDiscount = sub - discount;
+  const afterDiscount = Math.max(0, sub - discount);
 
     // Get selected payment method from react-hook-form
     const selectedMethod = watch('paymentMethod');
@@ -460,47 +460,7 @@ const CheckoutPage = () => {
               </CardContent>
             </Card>
 
-            {/* 
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Payment Method</h3>
-         <Controller
-  name="paymentMethod"
-  control={control}
-  rules={{ required: true }}
-  render={({ field }) => (
-    <RadioGroup
-      value={field.value}
-      onValueChange={field.onChange}
-      className="space-y-3"
-    >
-      <div className="flex items-center space-x-3 border p-3 rounded-lg">
-        <RadioGroupItem value="razorpay" id="razorpay_full" />
-        <Label htmlFor="razorpay">Razorpay (Full Payment)</Label>
-      </div>
-      <div className="flex items-center space-x-3 border p-3 rounded-lg">
-        <RadioGroupItem
-          value="wallet"
-          id="wallet_only"
-          disabled={walletBalance < amountAfterDiscount}
-        />
-        <Label htmlFor="wallet_only">Wallet Only (₹{walletBalance})</Label>
-      </div>
-      <div className="flex items-center space-x-3 border p-3 rounded-lg">
-        <RadioGroupItem value="wallet+razorpay" id="wallet_razorpay" />
-        <Label htmlFor="wallet_razorpay">Wallet + Razorpay</Label>
-      </div>
-    </RadioGroup>
-  )}
-/>
-
-                {errors.paymentMethod && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {errors.paymentMethod.message}
-                  </p>
-                )}
-              </CardContent>
-            </Card> */}
+          
             <Card className="shadow-travel">
               <CardContent className="p-6">
                 <div className="mb-6">

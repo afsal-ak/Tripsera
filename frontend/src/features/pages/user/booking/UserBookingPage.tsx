@@ -141,16 +141,19 @@ const UserBookingPage = () => {
                           <Edit className="w-4 h-4 mr-2" /> View
                         </Button>
                       </TableCell>
+
                     </TableRow>
+                    
                   ))
                 )}
+                                       <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
+            {paginationButtons}
+          </div>
               </TableBody>
             </Table>
           </div>
 
-          <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
-            {paginationButtons}
-          </div>
+         
         </CardContent>
       </Card>
     </div>

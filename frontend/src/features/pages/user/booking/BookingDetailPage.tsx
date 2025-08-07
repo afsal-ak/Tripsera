@@ -25,6 +25,7 @@ const BookingDetailPage = () => {
       try {
         const data = await getBookingById(id!);
         setBooking(data.booking);
+        console.log(data,'data')
       } catch {
         toast.error('Failed to load booking.');
         navigate('/account/bookings');
@@ -33,7 +34,7 @@ const BookingDetailPage = () => {
       }
     };
     if (id) loadBooking();
-  }, [id]);
+  }, [id,]);
 
   const handleCancel = async () => {
     if (!cancelReason.trim()) {
@@ -51,8 +52,7 @@ const BookingDetailPage = () => {
           ? {
             ...prev,
             bookingStatus: 'cancelled',
-            paymentStatus: 'failed',
-            updatedAt: new Date(),
+             updatedAt: new Date(),
           }
           : prev
       );
