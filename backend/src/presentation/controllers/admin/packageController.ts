@@ -60,6 +60,8 @@ export class PackageController {
         endDate: req.body.endDate ? new Date(req.body.endDate) : undefined,
         isBlocked: false,
       };
+      console.log(req.body,'packge body')
+      console.log(pkg,'packge updated body')
 
       const imageUrls = await Promise.all(
         files.map((file) => uploadCloudinary(file.path, 'packages'))
@@ -67,7 +69,7 @@ export class PackageController {
       pkg.imageUrls = imageUrls;
 
       const createdPkg = await this.packageUseCase.createPackage(pkg);
-      //console.log({createdPkg},'creted pkd')
+      console.log({createdPkg},'creted pkd')
       res.status(200).json({ message: 'Package created successfully', createdPkg });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });
@@ -92,6 +94,8 @@ export class PackageController {
         title: body.title,
         description: body.description,
         duration: body.duration,
+        durationDays:body.durationDays,
+        durationNights:body.durationNights,
         price: body.price ? Number(body.price) : undefined,
         location: body.location ? JSON.parse(body.location) : undefined,
         category: body.category ? JSON.parse(body.category) : undefined,
@@ -117,39 +121,7 @@ export class PackageController {
     }
   };
 
-  xeditPackage = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { id } = req.params;
-      const body = req.body;
-      const files = req.files as Express.Multer.File[];
-      // Parse fields if they are JSON strings
-      const deletedImages: { public_id: string }[] = body.deletedImages
-        ? JSON.parse(body.deletedImages)
-        : [];
-      console.log(deletedImages, 'edit pkg');
-
-      const location = body.location ? JSON.parse(body.location) : undefined;
-      const category = body.category ? JSON.parse(body.category) : undefined;
-
-      const pkgData: Partial<IPackage> = {
-        title: body.title,
-        description: body.description,
-        duration: body.duration,
-        price: body.price ? Number(body.price) : undefined,
-        location,
-        category,
-      };
-
-      const newImages: { url: string; public_id: string }[] = files?.length
-        ? await Promise.all(files.map((file) => uploadCloudinary(file.path, 'packages')))
-        : [];
-      await this.packageUseCase.editPackageData(id, pkgData, deletedImages, newImages);
-
-      res.status(200).json({ message: 'Package updated successfully' });
-    } catch (error: any) {
-      res.status(500).json({ message: error.message || 'Something went wrong' });
-    }
-  };
+  
 
   blockPackage = async (req: Request, res: Response): Promise<void> => {
     try {

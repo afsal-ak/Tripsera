@@ -65,7 +65,9 @@ const packageSchema = new Schema(
     },
     description: { type: String },
     price: { type: Number, required: true },
-    duration: { type: String, required: true },
+    duration: { type: String, required: false },
+durationDays: { type: Number, required: true },
+durationNights: { type: Number, required: true },
 
     imageUrls: [
       {

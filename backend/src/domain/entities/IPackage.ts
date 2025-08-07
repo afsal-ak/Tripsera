@@ -32,10 +32,13 @@ export interface ItineraryDay {
 
 export interface IPackage {
   title: string;
-  packageCode:string;
+  packageCode: string;
   description?: string;
   price: number;
-  duration: string;
+  duration?: string;
+  durationDays?: number;
+  durationNights?: number;
+
   imageUrls?: ImageInfo[];
   category?: Types.ObjectId[];
   location?: ILocation[];
