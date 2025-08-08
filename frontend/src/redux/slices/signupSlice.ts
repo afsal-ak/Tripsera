@@ -3,7 +3,7 @@ import {
   handlePreRegister,
   handleVerifyAndRegister,
   handleResendOtp,
-} from '@/features/services/auth/authService';
+} from '@/services/auth/authService';
 
 interface SignupState {
   email: string | null;

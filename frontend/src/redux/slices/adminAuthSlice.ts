@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { toast } from 'sonner';
-import { handleAdminLogin } from '@/features/services/admin/adminService';
-import type { IAdmin } from '@/features/types/IAdmin';
+import { handleAdminLogin } from '@/services/admin/adminService';
+import type { IAdmin } from '@/types/IAdmin';
 interface AdminAuthState {
   admin: IAdmin | null;
   accessToken: string | null;

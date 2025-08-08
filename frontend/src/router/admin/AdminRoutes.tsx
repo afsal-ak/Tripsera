@@ -1,31 +1,31 @@
 import { Routes, Route } from 'react-router-dom';
-import AdminLogin from '@/features/pages/admin/pages/AdminLogin';
+import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminLayout from '@/layouts/AdminLayout';
 import AdminPrivateRoute from './AdminPrivateRoute';
-import NotFoundPage from '@/features/components/NotFoundPage';
+import NotFoundPage from '@/components/NotFoundPage';
 
 // Admin pages
-import AdminDashboard from '@/features/pages/admin/pages/AdminDashboard';
-import UserList from '@/features/pages/admin/pages/UsersList';
-import AddCategory from '@/features/pages/admin/pages/category/AddCategory';
-import CategoryList from '@/features/pages/admin/pages/category/CategoryList';
-import EditCategory from '@/features/pages/admin/pages/category/EditCategory';
-import BannerList from '@/features/pages/admin/pages/banner/BannerList';
-import AddBanner from '@/features/pages/admin/pages/banner/AddBanner';
-import AddPackageForm from '@/features/pages/admin/pages/package/AddPackageForm';
-import PackageList from '@/features/pages/admin/pages/package/PackageList';
-import EditPackageForm from '@/features/pages/admin/pages/package/EditPackage';
-import CouponList from '@/features/pages/admin/pages/coupon/CouponList';
-import AddCouponForm from '@/features/pages/admin/pages/coupon/AddCouponForm';
-import EditCouponForm from '@/features/pages/admin/pages/coupon/EditCouponForm';
-import BookingList from '@/features/pages/admin/pages/booking/BookingsList';
-import BookingDetail from '@/features/pages/admin/pages/booking/BookingDetails';
-import AdminBlogList from '@/features/pages/admin/pages/blog/BlogListPage';
-import BlogDetail from '@/features/pages/admin/pages/blog/BlogDetail';
-import ReviewList from '@/features/pages/admin/pages/review/ReviewList';
-import ReviewDetail from '@/features/pages/admin/pages/review/ReviewDetail';
-import ReferralPage from '@/features/pages/admin/pages/referral/ReferralPage';
-import SalesReportPage from '@/features/pages/admin/pages/SalesReportPage';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import UserList from '@/pages/admin/UsersList';
+import AddCategory from '@/pages/admin/category/AddCategory';
+import CategoryList from '@/pages/admin/category/CategoryList';
+import EditCategory from '@/pages/admin/category/EditCategory';
+import BannerList from '@/pages/admin/banner/BannerList';
+import AddBanner from '@/pages/admin/banner/AddBanner';
+import AddPackageForm from '@/pages/admin/package/AddPackageForm';
+import PackageList from '@/pages/admin/package/PackageList';
+import EditPackageForm from '@/pages/admin/package/EditPackage';
+import CouponList from '@/pages/admin/coupon/CouponList';
+import AddCouponForm from '@/pages/admin/coupon/AddCouponForm';
+import EditCouponForm from '@/pages/admin/coupon/EditCouponForm';
+import BookingList from '@/pages/admin/booking/BookingsList';
+import BookingDetail from '@/pages/admin/booking/BookingDetails';
+import AdminBlogList from '@/pages/admin/blog/BlogListPage';
+import BlogDetail from '@/pages/admin/blog/BlogDetail';
+import ReviewList from '@/pages/admin/review/ReviewList';
+import ReviewDetail from '@/pages/admin/review/ReviewDetail';
+import ReferralPage from '@/pages/admin/referral/ReferralPage';
+import SalesReportPage from '@/pages/admin/SalesReportPage';
 const AdminRoutes = () => {
   return (
     <Routes>

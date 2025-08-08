@@ -1,26 +1,28 @@
 import { Route } from 'react-router-dom';
 import UserProtectedRoutes from './UserProtectedRoute';
-import Home from '@/features/pages/user/home/Home';
-import AccountLayout from '@/features/pages/user/accounts/AccountLayout';
-import Profile from '@/features/pages/user/accounts/profile/Profile';
-import EmailOtpPage from '@/features/pages/user/accounts/profile/EmailOtpPage';
-import Wishlist from '@/features/pages/user/accounts/Wishlist';
-import CouponList from '@/features/pages/user/accounts/coupons/CouponList';
-import WalletPage from '@/features/pages/user/accounts/wallet/WalletPage';
-import CheckoutPage from '@/features/pages/user/booking/CheckoutPage';
-import BookingSuccessPage from '@/features/pages/user/booking/BookingSuccessPage';
-import UserBookingPage from '@/features/pages/user/booking/UserBookingPage';
-import BookingDetailPage from '@/features/pages/user/booking/BookingDetailPage';
-import PaymentFailed from '@/features/pages/user/booking/PaymentFailed';
-import AddBlogForm from '@/features/pages/user/blog/AddBlogForm';
-import EditBlogForm from '@/features/pages/user/blog/EditBlogForm';
-import UserBlogsPage from '@/features/pages/user/blog/UserBlogsPage';
-import UserBlogDetails from '@/features/pages/user/blog/UserBlogDetail';
-import ReviewPage from '@/features/pages/user/reviews/ReviewPage';
-import ReviewForm from '@/features/pages/user/reviews/ReviewForm';
-import UserReviewPage from '@/features/pages/user/reviews/UserReview';
-import ReviewDetail from '@/features/pages/user/reviews/ReviewDetail';
-import PublicProfile from '@/features/pages/user/accounts/profile/PublicProfile';
+import Home from '@/pages/user/home/Home';
+import AccountLayout from '@/pages/user/accounts/AccountLayout';
+import Profile from '@/pages/user/accounts/profile/Profile';
+import EmailOtpPage from '@/pages/user/accounts/profile/EmailOtpPage';
+import Wishlist from '@/pages/user/accounts/Wishlist';
+import CouponList from '@/pages/user/accounts/coupons/CouponList';
+import WalletPage from '@/pages/user/accounts/wallet/WalletPage';
+import CheckoutPage from '@/pages/user/booking/CheckoutPage';
+import BookingSuccessPage from '@/pages/user/booking/BookingSuccessPage';
+import UserBookingPage from '@/pages/user/booking/UserBookingPage';
+import BookingDetailPage from '@/pages/user/booking/BookingDetailPage';
+import PaymentFailed from '@/pages/user/booking/PaymentFailed';
+import AddBlogForm from '@/pages/user/blog/AddBlogForm';
+import EditBlogForm from '@/pages/user/blog/EditBlogForm';
+import UserBlogsPage from '@/pages/user/blog/UserBlogsPage';
+import UserBlogDetails from '@/pages/user/blog/UserBlogDetail';
+import ReviewPage from '@/pages/user/reviews/ReviewPage';
+import ReviewForm from '@/pages/user/reviews/ReviewForm';
+import UserReviewPage from '@/pages/user/reviews/UserReview';
+import ReviewDetail from '@/pages/user/reviews/ReviewDetail';
+import PublicProfile from '@/pages/user/accounts/profile/PublicProfile';
+import StandardBookingDetail from '@/pages/user/booking/SBoking';
+import ReviewEditForm from '@/pages/user/reviews/ReviewEditForm';
 const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
@@ -47,6 +49,8 @@ const ProtectedRoutes = (
       <Route path="my-blogs/edit/:blogId" element={<EditBlogForm />} />
       <Route path="my-reviews" element={<UserReviewPage />} />
       <Route path="my-reviews/:reviewId" element={<ReviewDetail />} />
+      <Route path="my-reviews/:reviewId/edit" element={<ReviewEditForm />} />
+      <Route path="s:id" element={<StandardBookingDetail />} />
     </Route>
   </Route>
 );

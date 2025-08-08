@@ -1,9 +1,9 @@
 import { Route } from 'react-router-dom';
-import Home from '@/features/pages/user/home/Home';
-import Packages from '@/features/pages/user/packages/pages/Packages';
-import PackageDetails from '@/features/pages/user/packages/pages/PackageDetail';
-import BlogsPage from '@/features/pages/user/blog/BlogsPage';
-import BlogDetail from '@/features/pages/user/blog/BlogDetails';
+import Home from '@/pages/user/home/Home';
+import Packages from '@/pages/user/packages/pages/Packages';
+import PackageDetails from '@/pages/user/packages/pages/PackageDetail';
+import BlogsPage from '@/pages/user/blog/BlogsPage';
+import BlogDetail from '@/pages/user/blog/BlogDetails';
 import { Fragment } from 'react/jsx-runtime';
 const CommonRoutes = (
   <Fragment>
