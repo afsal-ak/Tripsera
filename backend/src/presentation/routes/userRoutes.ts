@@ -224,6 +224,7 @@ router.patch(BLOG_ROUTES.UNLIKE, userAuthMiddleware, blogController.unLikeBlog);
 //REVIEW ROUTES
 
 router.post(REVIEW_ROUTE.CREATE, userAuthMiddleware, reviewController.createReview);
+router.put(REVIEW_ROUTE.UPDATE, userAuthMiddleware, reviewController.updateReview);
 router.get(REVIEW_ROUTE.GET_USER_REVIEWS, userAuthMiddleware, reviewController.getUserReview);
 router.get(REVIEW_ROUTE.GET_BY_ID, userAuthMiddleware, reviewController.getReviewById);
 router.get(REVIEW_ROUTE.GET_BY_PACKAGE, reviewController.getPackageReviews);

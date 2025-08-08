@@ -50,6 +50,21 @@ export abstract class BaseRepository<T> {
     return result as T | null;
   }
 
+
+  async updateByFilter(filter: object, data: Partial<T>): Promise<T | null> {
+        console.log(filter,'id in db')
+
+    const result = await this.model
+      .findOneAndUpdate(
+        filter,
+        { $set: data } as UpdateQuery<T & Document>,
+        { new: true, lean: true }
+      )
+      .exec();
+
+    return result as T | null;
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.model.findByIdAndDelete(id);
     return !!result;

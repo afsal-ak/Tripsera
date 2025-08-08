@@ -4,6 +4,7 @@ export interface IReview {
   userId: Types.ObjectId | string;
   packageId: Types.ObjectId | string;
   rating: number;
+  title: string;
   comment: string;
   isBlocked?: boolean;
   createdAt?: Date;

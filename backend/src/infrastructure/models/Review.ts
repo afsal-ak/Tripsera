@@ -21,6 +21,7 @@ const ReviewSchema = new Schema<ReviewDocument>(
       min: 1,
       max: 5,
     },
+    title: { type: String, required: true },
     comment: { type: String, required: true },
     isBlocked: { type: Boolean, default: false },
   },

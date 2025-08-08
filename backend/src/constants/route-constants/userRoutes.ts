@@ -81,6 +81,6 @@ export const REVIEW_ROUTE = {
   GET_BY_ID: '/reviews/:reviewId',
   GET_REVIEW_RATING: '/reviews/summary/:packageId',
   CREATE: '/packages/:packageId/reviews',
-  EDIT: '/packages/:packageId/reviews/:reviewId',
+  UPDATE: '/reviews/:reviewId/edit',
   DELETE: '/reviews/:reviewId/delete',
 };

@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { IReviewUseCases } from '@application/useCaseInterfaces/user/IReviewUseCases';
-import { toReviewResponseDTO, CreateReviewDTO } from '@application/dtos/ReviewDTO';
+import { toReviewResponseDTO, CreateReviewDTO, UpdateReviewDTO } from '@application/dtos/ReviewDTO';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 
 export class ReviewController {
-  constructor(private _reviewUseCases: IReviewUseCases) {}
+  constructor(private _reviewUseCases: IReviewUseCases) { }
 
   createReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -27,6 +27,29 @@ export class ReviewController {
       next(error);
     }
   };
+
+  updateReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
+      const reviewId = req.params.reviewId
+console.log(userId,'userid')
+console.log(reviewId,'reviewId')
+      const data: UpdateReviewDTO = req.body
+
+      const result = await this._reviewUseCases.editReview(reviewId, userId, data)
+
+      const review = toReviewResponseDTO(result);
+
+      res.status(HttpStatus.OK).json({
+        review,
+        message: 'Review fetched successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
   getUserReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
@@ -70,7 +93,7 @@ export class ReviewController {
   getReviewById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const reviewId = req.params.reviewId;
-      console.log(reviewId, 'reviewId');
+    //  console.log(reviewId, 'reviewId');
 
       const review = await this._reviewUseCases.getReviewById(reviewId);
       console.log(review, 'review');
@@ -84,7 +107,7 @@ export class ReviewController {
   };
   getRatingSummary = async (req: Request, res: Response) => {
     const { packageId } = req.params;
-    console.log(packageId, 'id ');
+  //  console.log(packageId, 'id ');
     const summary = await this._reviewUseCases.getRatingSummary(packageId);
     console.log(summary, 'review');
     res.status(200).json(summary);

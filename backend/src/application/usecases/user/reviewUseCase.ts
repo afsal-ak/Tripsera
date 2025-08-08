@@ -1,6 +1,6 @@
 import { IReviewUseCases } from '@application/useCaseInterfaces/user/IReviewUseCases';
 import { IReviewRepository } from '@domain/repositories/IReviewRepository';
-import { CreateReviewDTO } from '@application/dtos/ReviewDTO';
+import { CreateReviewDTO, UpdateReviewDTO } from '@application/dtos/ReviewDTO';
 import { IReview } from '@domain/entities/IReview';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
@@ -25,6 +25,15 @@ export class ReviewUseCases implements IReviewUseCases {
       throw new AppError(HttpStatus.CONFLICT, 'You have already reviewed this package.');
     }
     return await this._reviewRepo.create(data);
+  }
+
+  async editReview(reviewId: string, userId: string, data: UpdateReviewDTO): Promise<IReview > {
+    console.log(reviewId,'id in usecase')
+    const result= await this._reviewRepo.updateByFilter({_id:reviewId,userId},data)
+     if (!result) {
+    throw new AppError(HttpStatus.NOT_FOUND,'Review not found or not owned by user');
+  }
+  return result
   }
 
   async getUserReview(

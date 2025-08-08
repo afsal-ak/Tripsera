@@ -1,15 +1,16 @@
 import { IReview } from '@domain/entities/IReview';
-import { CreateReviewDTO } from '@application/dtos/ReviewDTO';
+import { CreateReviewDTO,UpdateReviewDTO } from '@application/dtos/ReviewDTO';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 
 export interface IReviewUseCases {
+
   createReview(data: CreateReviewDTO): Promise<IReview>;
   getUserReview(
     userId: string,
     page: number,
     limit: number
   ): Promise<{ data: IReview[]; pagination: PaginationInfo }>;
-  //  updateReview(id: string, userId: string, data: UpdateReviewDTO): Promise<IReview | null>;
+    editReview(reviewId: string, userId: string, data: UpdateReviewDTO): Promise<IReview >;
   deleteReview(reviewId: string, userId: string): Promise<boolean>;
   getPackageReviews(
     packageId: string,

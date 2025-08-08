@@ -11,6 +11,8 @@ export interface IBaseRepository<T> {
   ): Promise<{ data: T[]; pagination: PaginationInfo }>;
 
   update(id: string, data: Partial<T>): Promise<T | null>;
+  updateByFilter(filter: object, data: Partial<T>): Promise<T | null>  
+  
 
   delete(id: string): Promise<boolean>;
 }

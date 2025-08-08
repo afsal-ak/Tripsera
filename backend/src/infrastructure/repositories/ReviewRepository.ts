@@ -103,23 +103,81 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
     return await this.model.findByIdAndUpdate(id, { isBlocked }, { new: true }).lean();
   }
 
-  async getPackageRatingSummary(packageId: string) {
-    const result = await ReviewModel.aggregate([
-      {
-        $match: {
-          packageId: new mongoose.Types.ObjectId(packageId),
-          isBlocked: false,
-        },
-      },
-      {
-        $group: {
-          _id: '$packageId',
-          averageRating: { $avg: '$rating' },
-          totalReviews: { $sum: 1 },
-        },
-      },
-    ]);
+  // async getPackageRatingSummary(packageId: string) {
+  //   const result = await ReviewModel.aggregate([
+  //     {
+  //       $match: {
+  //         packageId: new mongoose.Types.ObjectId(packageId),
+  //         isBlocked: false,
+  //       },
+  //     },
+  //     {
+  //       $group: {
+  //         _id: '$packageId',
+  //         averageRating: { $avg: '$rating' },
+  //         totalReviews: { $sum: 1 },
+  //       },
+  //     },
+  //   ]);
 
-    return result[0] || { averageRating: 0, totalReviews: 0 };
-  }
+  //   return result[0] || { averageRating: 0, totalReviews: 0 };
+  // }
+
+  async getPackageRatingSummary(packageId: string) {
+  const result = await ReviewModel.aggregate([
+    {
+      $match: {
+        packageId: new mongoose.Types.ObjectId(packageId),
+        isBlocked: false,
+      },
+    },
+    {
+      $group: {
+        _id: '$packageId',
+        averageRating: { $avg: '$rating' },
+        totalReviews: { $sum: 1 },
+        fiveStar: {
+          $sum: { $cond: [{ $eq: ['$rating', 5] }, 1, 0] }
+        },
+        fourStar: {
+          $sum: { $cond: [{ $eq: ['$rating', 4] }, 1, 0] }
+        },
+        threeStar: {
+          $sum: { $cond: [{ $eq: ['$rating', 3] }, 1, 0] }
+        },
+        twoStar: {
+          $sum: { $cond: [{ $eq: ['$rating', 2] }, 1, 0] }
+        },
+        oneStar: {
+          $sum: { $cond: [{ $eq: ['$rating', 1] }, 1, 0] }
+        }
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        averageRating: { $round: ['$averageRating', 1] },  
+        totalReviews: 1,
+        fiveStar: 1,
+        fourStar: 1,
+        threeStar: 1,
+        twoStar: 1,
+        oneStar: 1
+      }
+    }
+  ]);
+
+  return (
+    result[0] || {
+      averageRating: 0,
+      totalReviews: 0,
+      fiveStar: 0,
+      fourStar: 0,
+      threeStar: 0,
+      twoStar: 0,
+      oneStar: 0
+    }
+  );
+}
+
 }
