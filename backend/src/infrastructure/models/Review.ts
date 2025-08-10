@@ -10,11 +10,15 @@ const ReviewSchema = new Schema<ReviewDocument>(
       ref: 'Users',
       required: true,
     },
+    username: { type: String, required: false },
+
     packageId: {
       type: Schema.Types.ObjectId,
       ref: 'Package',
       required: true,
     },
+    packageTitle: { type: String, required: false },
+
     rating: {
       type: Number,
       required: true,

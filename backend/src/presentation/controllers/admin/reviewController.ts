@@ -2,16 +2,28 @@ import { Request, Response, NextFunction } from 'express';
 import { IAdminReviewUseCases } from '@application/useCaseInterfaces/admin/IReviewUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { toReviewResponseDTO } from '@application/dtos/ReviewDTO';
+import { IFilter } from '@domain/entities/IFilter';
 
 export class ReviewController {
 
-  constructor(private _reviewUsecases: IAdminReviewUseCases) {}
+  constructor(private _reviewUsecases: IAdminReviewUseCases) { }
 
   getAllReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 9;
-      const { review, pagination } = await this._reviewUsecases.getAllReviews(page, limit);
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const filters: IFilter = {
+        search: (req.query.search as string) || "",
+        status: (req.query.status as string) || "",
+        sort: (req.query.sort as string) || "",
+        startDate: (req.query.startDate as string) || "",
+        endDate: (req.query.endDate as string) || "",
+        rating: req.query.rating ? parseInt(req.query.rating as string, 10) : undefined,
+
+      };
+      console.log(filters)
+      const { review, pagination } = await this._reviewUsecases.getAllReviews(page, limit, filters);
 
       const reviews = review.map(toReviewResponseDTO);
 

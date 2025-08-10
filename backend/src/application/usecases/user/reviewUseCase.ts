@@ -6,12 +6,17 @@ import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { IPackageRepository } from '@domain/repositories/IPackageRepository';
+import { IUserRepository } from '@domain/repositories/IUserRepository';
+import { IFilter } from '@domain/entities/IFilter';
 
 export class ReviewUseCases implements IReviewUseCases {
   constructor(
     private _reviewRepo: IReviewRepository,
-    private _bookingRepo: IBookingRepository
-  ) {}
+    private _bookingRepo: IBookingRepository,
+    private _userRepo: IUserRepository,
+    private _packageRepo: IPackageRepository
+  ) { }
 
   async createReview(data: CreateReviewDTO): Promise<IReview> {
     const { userId, packageId } = data;
@@ -24,16 +29,26 @@ export class ReviewUseCases implements IReviewUseCases {
     if (existingReview) {
       throw new AppError(HttpStatus.CONFLICT, 'You have already reviewed this package.');
     }
-    return await this._reviewRepo.create(data);
+    const user = await this._userRepo.findById(userId);
+    const packageData = await this._packageRepo.findById(packageId);
+
+    const reviewData = {
+      ...data,
+      username: user?.username,
+      packageTitle: packageData?.title,
+    };
+
+
+    return await this._reviewRepo.create(reviewData);
   }
 
-  async editReview(reviewId: string, userId: string, data: UpdateReviewDTO): Promise<IReview > {
-    console.log(reviewId,'id in usecase')
-    const result= await this._reviewRepo.updateByFilter({_id:reviewId,userId},data)
-     if (!result) {
-    throw new AppError(HttpStatus.NOT_FOUND,'Review not found or not owned by user');
-  }
-  return result
+  async editReview(reviewId: string, userId: string, data: UpdateReviewDTO): Promise<IReview> {
+    console.log(reviewId, 'id in usecase')
+    const result = await this._reviewRepo.updateByFilter({ _id: reviewId, userId }, data)
+    if (!result) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'Review not found or not owned by user');
+    }
+    return result
   }
 
   async getUserReview(
@@ -50,9 +65,10 @@ export class ReviewUseCases implements IReviewUseCases {
   async getPackageReviews(
     packageId: string,
     page: number,
-    limit: number
+    limit: number,
+    filters?:IFilter
   ): Promise<{ review: IReview[]; pagination: PaginationInfo }> {
-    return await this._reviewRepo.findPackageReviews(packageId, page, limit);
+    return await this._reviewRepo.findPackageReviews(packageId, page, limit,filters);
   }
 
   async getReviewById(reviewId: string): Promise<IReview | null> {

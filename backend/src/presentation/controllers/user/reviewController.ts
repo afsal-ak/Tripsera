@@ -3,7 +3,7 @@ import { IReviewUseCases } from '@application/useCaseInterfaces/user/IReviewUseC
 import { toReviewResponseDTO, CreateReviewDTO, UpdateReviewDTO } from '@application/dtos/ReviewDTO';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
-
+import { IFilter } from '@domain/entities/IFilter';
 export class ReviewController {
   constructor(private _reviewUseCases: IReviewUseCases) { }
 
@@ -32,8 +32,8 @@ export class ReviewController {
     try {
       const userId = getUserIdFromRequest(req);
       const reviewId = req.params.reviewId
-console.log(userId,'userid')
-console.log(reviewId,'reviewId')
+      console.log(userId, 'userid')
+      console.log(reviewId, 'reviewId')
       const data: UpdateReviewDTO = req.body
 
       const result = await this._reviewUseCases.editReview(reviewId, userId, data)
@@ -71,12 +71,22 @@ console.log(reviewId,'reviewId')
     try {
       const packageId = req.params.packageId;
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 9;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const filters: IFilter = {
+        search: (req.query.search as string) || "",
+         sort: (req.query.sort as string) || "",
+        startDate: (req.query.startDate as string) || "",
+        endDate: (req.query.endDate as string) || "",
+        rating: req.query.rating ? parseInt(req.query.rating as string, 10) : undefined,
+
+      };
 
       const { review, pagination } = await this._reviewUseCases.getPackageReviews(
         packageId,
         page,
-        limit
+        limit,
+        filters
       );
       const reviewsWithUser = review.map(toReviewResponseDTO);
 
@@ -93,7 +103,7 @@ console.log(reviewId,'reviewId')
   getReviewById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const reviewId = req.params.reviewId;
-    //  console.log(reviewId, 'reviewId');
+      //  console.log(reviewId, 'reviewId');
 
       const review = await this._reviewUseCases.getReviewById(reviewId);
       console.log(review, 'review');
@@ -107,7 +117,7 @@ console.log(reviewId,'reviewId')
   };
   getRatingSummary = async (req: Request, res: Response) => {
     const { packageId } = req.params;
-  //  console.log(packageId, 'id ');
+    //  console.log(packageId, 'id ');
     const summary = await this._reviewUseCases.getRatingSummary(packageId);
     console.log(summary, 'review');
     res.status(200).json(summary);

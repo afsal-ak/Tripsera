@@ -1,10 +1,11 @@
 import { IReview } from '@domain/entities/IReview';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
-
+import { IFilter } from '../../../domain/entities/IFilter';
 export interface IAdminReviewUseCases {
   getAllReviews(
     page: number,
-    limit: number
+    limit: number,
+    filters?:IFilter
   ): Promise<{
     review: IReview[];
     pagination: PaginationInfo;

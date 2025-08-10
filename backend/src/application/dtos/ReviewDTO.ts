@@ -1,6 +1,8 @@
 import { IReview } from '@domain/entities/IReview';
 export interface CreateReviewDTO {
   userId: string;
+  username: string;
+  packageTitle: string;
   packageId: string;
   rating: number;
   title: string;
@@ -18,6 +20,8 @@ export interface ReviewResponseDTO {
   _id: string;
   userId: string;
   packageId: string;
+  username: string;
+  packageTitle: string;
   rating: number;
   title: string;
   comment: string;
@@ -31,6 +35,8 @@ export const toReviewResponseDTO = (review: IReview): ReviewResponseDTO => {
     _id: review._id!.toString(),
     userId: review.userId as string,
     packageId: review.packageId as string,
+    username: review.username,
+    packageTitle: review.packageTitle,
     rating: review.rating,
     title: review.title,
     comment: review.comment,

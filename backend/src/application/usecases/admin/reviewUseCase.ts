@@ -2,6 +2,7 @@ import { IReviewRepository } from '@domain/repositories/IReviewRepository';
 import { IReview } from '@domain/entities/IReview';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { IAdminReviewUseCases } from '@application/useCaseInterfaces/admin/IReviewUseCases';
+import { IFilter } from '@domain/entities/IFilter';
 
 export class ReviewUseCases implements IAdminReviewUseCases {
 
@@ -10,12 +11,12 @@ export class ReviewUseCases implements IAdminReviewUseCases {
   async getAllReviews(
     page: number,
     limit: number,
-    sort?: string
+     filters?:IFilter
   ): Promise<{
     review: IReview[];
     pagination: PaginationInfo;
   }> {
-    return await this._reviewRepo.findAllReviews(page, limit);
+    return await this._reviewRepo.findAllReviews(page, limit,filters);
   }
 
   async getReviewById(reviewId: string): Promise<IReview | null> {

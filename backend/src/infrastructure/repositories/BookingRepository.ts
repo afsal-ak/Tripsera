@@ -170,10 +170,7 @@ export class BookingRepository implements IBookingRepository {
   }
 
   async createBooking(userId: string, data: IBookingInput): Promise<IBooking> {
-    const isUserBooked = await BookingModel.find({ userId });
-    if (isUserBooked) {
-      throw new Error('user alredy booked');
-    }
+   
     const newBooking = await BookingModel.create({ userId, ...data });
     return newBooking.toObject();
   }

@@ -95,7 +95,7 @@ const blogUseCases = new BlogUseCases(blogRepository);
 const blogController = new BlogController(blogUseCases);
 
 const reviewRepository = new ReviewRepository();
-const reviewUseCases = new ReviewUseCases(reviewRepository, bookingRepository);
+const reviewUseCases = new ReviewUseCases(reviewRepository, bookingRepository,userRepository,packageRepository);
 const reviewController = new ReviewController(reviewUseCases);
 
 const router = Router();

@@ -1,7 +1,7 @@
 import { IReview } from '@domain/entities/IReview';
 import { CreateReviewDTO,UpdateReviewDTO } from '@application/dtos/ReviewDTO';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
-
+import { IFilter } from '@domain/entities/IFilter';
 export interface IReviewUseCases {
 
   createReview(data: CreateReviewDTO): Promise<IReview>;
@@ -15,7 +15,9 @@ export interface IReviewUseCases {
   getPackageReviews(
     packageId: string,
     page: number,
-    limit: number
+    limit: number,
+    filters?:IFilter
+  
   ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
   getReviewById(reviewId: string): Promise<IReview | null>;
   getRatingSummary(packageId: string): Promise<{ averageRating: number; totalReviews: number }>;
