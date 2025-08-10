@@ -1,119 +1,3 @@
-// import { useState, useEffect } from 'react';
-// import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-// import { handlePackageReview } from '@/features/services/user/reviewService';
-// import type { IReview } from '@/features/types/IReview';
-// import { usePaginationButtons } from '@/features/hooks/usePaginationButtons';
-// import { Star } from 'lucide-react';
-// import { formatTimeAgo } from '@/lib/utils/formatTime';
-
-// const ReviewPage = () => {
-
-//     const { packageId } = useParams()
-//     const navigate = useNavigate()
-//     const [reviews, setreviews] = useState<IReview[]>([]);
-//     const [searchParams, setSearchParams] = useSearchParams()
-//     const [totalPages, setTotalPages] = useState(1);
-
-//     const currentPage = parseInt(searchParams.get('page') || '1', 10);
-//     const limit = parseInt(searchParams.get('limit') || '10', 10);
-
-//     useEffect(() => {
-//         if (!packageId) {
-//             return
-//         }
-//         const fetchReviews = async () => {
-//             try {
-//                 const response = await handlePackageReview(packageId,currentPage,limit)
-//                 console.log(response)
-//                 setreviews(response.review)
-//                 setTotalPages(response.pagination.totalPages);
-
-//             } catch (error) {
-//                 console.log('failed to fetch review')
-//             }
-
-//         }
-//         fetchReviews()
-//     }, [searchParams])
-//     console.log(reviews, 'revies')
-//     const handlePageChange = (page: number) => {
-//         setSearchParams({
-//             page: page.toString(),
-//             limit: limit.toString(),
-//         });
-//     };
-//     const paginationButtons = usePaginationButtons({
-//         currentPage,
-//         totalPages,
-//         onPageChange: handlePageChange,
-//     });
-
-
-
-//   const handleAddReview = () => {
-//     navigate(`/packages/${packageId}/review/add`);
-//   };
-
-
-//     return (
-//         <div className="max-w-3xl mx-auto px-4 py-10">
-//             {/* Header */}
-//             <div className="flex items-center justify-between mb-6">
-//                 <h1 className="text-2xl font-semibold text-gray-800">Customer Reviews</h1>
-//                 <button onClick={handleAddReview} className="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-dark transition">
-//                     Write a Review
-//                 </button>
-//             </div>
-
-//             {/* Reviews */}
-//             <div className="space-y-6">
-//                 {reviews.map((review, idx) => (
-//                     <div
-//                         key={idx}
-//                         className="bg-white rounded-xl shadow p-5 flex items-start gap-4"
-//                     >
-//                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-//                             <img
-//                                 src={review?.userId?.profileImage?.url || "/profile-default.jpg"} // fallback
-//                                 alt={review.userId.username}
-//                                 className="w-full h-full object-cover"
-//                             />
-//                         </div>
-
-
-//                         {/* Review Content */}
-//                         <div className="flex-1">
-//                             <div className="flex items-center justify-between">
-//                                 <h3 className="font-semibold text-gray-900">{review.userId.username}</h3>
-//                                 <span className="text-sm text-gray-500"><span>{formatTimeAgo(review.createdAt)}</span></span>
-//                             </div>
-
-//                             {/* Stars */}
-//                             <div className="flex mt-1 mb-2">
-//                                 {[1, 2, 3, 4, 5].map((star) => (
-//                                     <Star
-//                                         key={star}
-//                                         className={`w-5 h-5 ${star <= review.rating ? 'fill-orange text-orange' : 'text-gray-300'
-//                                             }`}
-//                                         fill={star <= review.rating ? 'currentColor' : 'none'}
-//                                     />
-//                                 ))}
-//                             </div>
-
-//                             <p className="text-gray-700">{review.comment}</p>
-//                         </div>
-//                     </div>
-//                 ))}
-//             </div>
-//             <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
-//                 {paginationButtons}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default ReviewPage;
-
 
 import React, { useState, useEffect } from 'react';
 import { Star, ThumbsUp, ThumbsDown, MessageCircle, Filter, Search } from 'lucide-react';
@@ -124,6 +8,10 @@ import ReadMore from '@/components/ReadMore';
 import { handlePackageReview, handleAddReview, handleReviewRating } from '@/services/user/reviewService';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
 import { formatTimeAgo } from '@/lib/utils/formatTime';
+import { useSearchFilters } from '@/hooks/useSearchFilters';
+import { FilterBar } from '@/components/FilterBar ';
+import { useDebounce } from 'use-debounce';
+import { useCleanFilter } from '@/hooks/useCleanFilter ';
 export default function ReviewPage() {
 
 
@@ -137,6 +25,21 @@ export default function ReviewPage() {
 
     const currentPage = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '10', 10);
+    const {
+        searchQuery,
+        setSearchQuery,
+        startDate,
+        setStartDate,
+        endDate,
+        setEndDate,
+        sort,
+        rating,
+        setRating,
+        setSort,
+        applyFilters,
+    } = useSearchFilters();
+    const [debouncedSearch] = useDebounce(searchQuery, 500);
+    const cleanFilter = useCleanFilter()
 
     useEffect(() => {
         if (!packageId) {
@@ -144,11 +47,21 @@ export default function ReviewPage() {
         }
         const fetchReviews = async () => {
             try {
-                const response = await handlePackageReview(packageId, currentPage, limit)
+                const rawFilters = {
+                    search: debouncedSearch,
+                    sort,
+                    startDate,
+                    endDate,
+                    rating
+                };
+
+                // Remove any empty, null, or undefined filter fields to avoid sending unnecessary query parameters
+                const filters = cleanFilter(rawFilters);
+                const response = await handlePackageReview(packageId, currentPage, limit, filters)
                 const reviewRating = await handleReviewRating(packageId);
-                console.log(reviewRating, 'review')
+               // console.log(reviewRating, 'review')
                 setRatingSummary(reviewRating)
-                console.log(response)
+               // console.log(response)
                 setreviews(response.review)
                 setTotalPages(response.pagination.totalPages);
 
@@ -158,15 +71,31 @@ export default function ReviewPage() {
 
         }
         fetchReviews()
-    }, [searchParams])
+    }, [debouncedSearch, searchParams, currentPage]);
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams);
+        if (debouncedSearch) {
+            params.set('search', debouncedSearch);
+        }
+        else params.delete('search');
+        params.set('page', '1');
+        setSearchParams(params);
+    }, [debouncedSearch]);
 
-    console.log(reviews, 'revies')
     const handlePageChange = (page: number) => {
-        setSearchParams({
-            page: page.toString(),
-            limit: limit.toString(),
+        setSearchParams((prev) => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set('page', page.toString());
+            return newParams;
         });
     };
+    console.log(reviews, 'reavew page')
+    // const handlePageChange = (page: number) => {
+    //     setSearchParams({
+    //         page: page.toString(),
+    //         limit: limit.toString(),
+    //     });
+    // };
     const paginationButtons = usePaginationButtons({
         currentPage,
         totalPages,
@@ -174,14 +103,30 @@ export default function ReviewPage() {
     });
 
 
+    // Handlers passed to FilterBar
+    const handleSearchChange = (val: string) => setSearchQuery(val);
+     const handleSortChange = (val: string) => setSort(val);
+    const handleRatingChange = (val: string) => setRating(val);
+
+    const handleApplyFilters = () => {
+        applyFilters();
+    };
+
+    const handleClearFilters = () => {
+        setSearchQuery("");
+         setStartDate("");
+        setEndDate("");
+        setSort("");
+        setRating('')
+        setSearchParams({ page: "1" }); // reset to page 1
+    };
+
 
     const handleAddReview = () => {
         navigate(`/packages/${packageId}/review/add`);
     };
 
-    const [filter, setFilter] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
-
+     
 
     const renderStars = (rating: number) => {
         return [...Array(5)].map((_, i) => (
@@ -227,21 +172,37 @@ export default function ReviewPage() {
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="flex items-center gap-4">
                             <Filter className="w-5 h-5 text-gray-500" />
-                            <select
-                                value={filter}
-                                onChange={(e) => setFilter(e.target.value)}
-                                className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="all">All Reviews</option>
-                                <option value="5">5 Stars</option>
-                                <option value="4">4 Stars</option>
-                                <option value="3">3 Stars</option>
-                                <option value="2">2 Stars</option>
-                                <option value="1">1 Star</option>
-                            </select>
+                            <FilterBar
+                                searchValue={searchQuery}
+                                 startDateValue={startDate}
+                                endDateValue={endDate}
+                                sortValue={sort}
+                                ratingValue={rating}
+                                onSearchChange={handleSearchChange}
+                                 onStartDateChange={setStartDate}
+                                onEndDateChange={setEndDate}
+                                onSortChange={handleSortChange}
+                                onRatingChange={handleRatingChange}
+                                onApply={handleApplyFilters}
+                                onClear={handleClearFilters}
+                                
+                                sortOptions={[
+                                    { value: "asc", label: "Newest" },
+                                    { value: "desc", label: "Oldest" },
+                                    { value: "rating_highest", label: "Highest Rating" },
+                                    { value: "rating_lowest", label: "Lowest Rating" },
+                                ]}
+                                ratingOptions={[
+                                    { value: "1", label: "1 Star" },
+                                    { value: "2", label: "2 Star" },
+                                    { value: "3", label: "3 Star" },
+                                    { value: "4", label: "4 Star" },
+                                    { value: "5", label: "5 Star" },
+                                ]}
+                            />
                         </div>
 
-                        <div className="relative">
+                        {/* <div className="relative">
                             <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
                             <input
                                 type="text"
@@ -250,7 +211,7 @@ export default function ReviewPage() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
                             />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

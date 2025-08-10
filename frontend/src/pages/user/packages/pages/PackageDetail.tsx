@@ -14,9 +14,12 @@ import {
   checkPackageInWishlist,
 } from '@/services/user/wishlistService';
 import { handlePackageReview, handleReviewRating } from '@/services/user/reviewService';
+import RatingSummary from '../../reviews/RatingSummary';
 import type { IReview } from '@/types/IReview';
+import type { IRating } from '@/types/IReview';
 import { toast } from 'sonner';
 import { formatTimeAgo } from '@/lib/utils/formatTime';
+import ReadMore from '@/components/ReadMore';
 const PackageDetails = () => {
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
@@ -24,10 +27,7 @@ const PackageDetails = () => {
   const [isWishlisted, setWishlisted] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [previewReviews, setPreviewReviews] = useState<IReview[]>([]);
-  const [ratingSummary, setRatingSummary] = useState<{
-    averageRating: number;
-    totalReviews: number;
-  } | null>(null);
+  const [ratingSummary, setRatingSummary] = useState<IRating>()
 
   useEffect(() => {
     if (!id) {
@@ -82,12 +82,13 @@ const PackageDetails = () => {
 
   useEffect(() => {
     const fetchReviews = async () => {
-      const res = await handlePackageReview(id!, 1, 3);
+      const res = await handlePackageReview(id!, 1, 3, {});
+      console.log(res, 'review res ponse')
       const reviewRating = await handleReviewRating(id!);
-      console.log(reviewRating, 'review')
+       setRatingSummary(reviewRating)
+      //console.log(reviewRating, 'review')
       setPreviewReviews(res.review);
-      setRatingSummary(reviewRating)
-    };
+     };
     fetchReviews();
   }, []);
   console.log(ratingSummary, 'rating')
@@ -111,6 +112,14 @@ const PackageDetails = () => {
   );
   const currentImage = allImages[selectedImage] ?? '/fallback.jpg';
   const locationLabel = pkg.location?.map((l) => l.name).join(', ') ?? 'Unknown';
+   const renderStars = (rating: number) => {
+        return [...Array(5)].map((_, i) => (
+            <Star
+                key={i}
+                className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+            />
+        ));
+    };
 
   return (
     <div className="min-h-screen bg-background">
@@ -391,32 +400,69 @@ const PackageDetails = () => {
               </CardContent>
             </Card>
           </div>
+        
+
+        </div>
           <section className="mt-8">
             <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
 
-            {previewReviews.length > 0 ? (
-              <>
-                {previewReviews.map(review => (
-                  <div key={review._id} className="bg-white rounded-md shadow p-4 mb-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <strong>{review.username}</strong>
-                      <span className="text-xs text-gray-500">{formatTimeAgo(review.createdAt)}</span>
-                    </div>
-                    <p className="text-gray-600">{review.comment}</p>
-                  </div>
-                ))}
-                <button
+                <div>
+                    <RatingSummary summary={ratingSummary} />
+                </div>
+
+            {/* Reviews List */}
+                <div className="space-y-6">
+                    {previewReviews.map((review) => (
+                        <div key={review._id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
+                            <div className="flex items-start gap-4">
+                                <img
+                                    src={review?.userId?.profileImage?.url || "/profile-default.jpg"}
+                                    alt={review.userId.username}
+                                    className="w-12 h-12 rounded-full object-cover"
+                                />
+
+
+                                <div className="flex-1">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-3">
+                                            <h3 className="font-semibold text-gray-900">{review.userId.username}</h3>
+                                            {/* {review.verified && (
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                          Verified Purchase
+                        </span>
+                      )} */}
+                                        </div>
+                                        <span className="text-sm text-gray-500"><span>{formatTimeAgo(review.createdAt)}</span></span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="flex gap-1">
+                                            {renderStars(review.rating)}
+                                        </div>
+                                        <span className="text-sm font-medium text-gray-700">{review.rating}.0</span>
+                                    </div>
+
+                                    <h4 className="font-semibold text-gray-900 mb-2">{review.title}</h4>
+
+                                    <ReadMore text={review.comment} wordLimit={10} />
+                                    <div className="flex items-center gap-4 text-sm text-gray-500">
+
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
+                    ))}
+                </div>
+          
+             <button
                   onClick={() => navigate(`/packages/${id}/review?page=1&limit=10`)}
                   className="text-orange font-semibold mt-2 hover:underline"
                 >
                   See all reviews →
                 </button>
-              </>
-            ) : (
-              <p className="text-gray-500 italic">Be the first one to review this package.</p>
-
-            )}
-            <br /><br />
+                  <br /><br />
             <div className="flex items-center justify-between mb-6">
               <button onClick={handleAddReview} className="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-dark transition">
                 Write a Review
@@ -424,8 +470,6 @@ const PackageDetails = () => {
             </div>
           </section>
 
-
-        </div>
       </div>
     </div>
   );

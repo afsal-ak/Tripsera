@@ -1,10 +1,23 @@
-import adminApi from "@/lib/axios/adminAxios";
- 
-export const handleFetchReview=async(page:number,limit:number)=>{
-    const response=await adminApi.get(`/reviews`,)
-    return response.data
-}
- 
+ import adminApi from "@/lib/axios/adminAxios";
+import type { IFilter } from "@/types/IFilter";
+import { useCleanFilter } from "@/hooks/useCleanFilter ";
+
+
+export const handleFetchReview = async (
+  page: number,
+  limit: number,
+  filter: IFilter
+) => {
+  const params = {
+    page,
+    limit,
+    ...filter,
+  };
+
+  const response = await adminApi.get(`/reviews`, { params });
+  return response.data;
+};
+
  
 export const handleReviewDetail=async(reviewId:string)=>{
     const response=await adminApi.get(`reviews/${reviewId}`)

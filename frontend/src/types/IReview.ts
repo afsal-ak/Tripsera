@@ -29,6 +29,7 @@ export interface IReview {
     profileImage?: { url: string }
   };
   username?: string;
+  profileTitle?: string;
   profileImage?: { url: string };
   packageId: {
     title: string;

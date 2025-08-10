@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDebounce } from 'use-debounce'
 import { toast } from 'sonner';
 import { Edit } from 'lucide-react';
 import { Button } from '@/components/Button';
@@ -40,6 +41,7 @@ const BookingList = () => {
   const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || '');
   const [startDate, setStartDate] = useState(searchParams.get('startDate') || '');
   const [endDate, setEndDate] = useState(searchParams.get('endDate') || '');
+  const [debouncedSearch] = useDebounce(packageQuery, 500);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '5', 10);
@@ -51,13 +53,13 @@ const BookingList = () => {
         const response = await getAllBooking(
           currentPage,
           limit,
-          packageQuery,
-          statusFilter,
-          startDate,
-          endDate
+          debouncedSearch,
+          searchParams.get('status') || '',
+          searchParams.get('startDate') || '',
+          searchParams.get('endDate') || ''
         );
         setBookings(response.bookings);
-        setTotalPages(response.totalPages);
+        setTotalPages(response.totalPages / limit);
       } catch (error) {
         toast.error('Failed to fetch bookings.');
       } finally {
@@ -66,33 +68,58 @@ const BookingList = () => {
     };
 
     fetchBookings();
-  }, [currentPage, packageQuery, statusFilter, startDate, endDate]);
+  }, [currentPage, debouncedSearch,searchParams]);
   console.log(bookings, 'booki');
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (debouncedSearch) {
+      params.set('package', debouncedSearch);
+    }
+    else params.delete('package');
+    params.set('page', '1');
+    setSearchParams(params);
+  }, [debouncedSearch]);
+
+ 
+
   const handleFilterChange = () => {
-    setSearchParams({
-      page: '1',
-      limit: limit.toString(),
-      ...(packageQuery && { package: packageQuery }),
-      ...(statusFilter && { status: statusFilter }),
-      ...(startDate && { startDate }),
-      ...(endDate && { endDate }),
-    });
-  };
+  const params = new URLSearchParams(searchParams);
+  if (statusFilter) {
+    params.set('status', statusFilter);
+  } else {
+    params.delete('status');
+  }
+  if (startDate) {
+    params.set('startDate', startDate);
+  } else {
+    params.delete('startDate');
+  }
+  if (endDate) {
+    params.set('endDate', endDate);
+  } else {
+    params.delete('endDate');
+  }
+  params.set('page', '1'); 
+  setSearchParams(params);
+};
 
   const handleClearFilters = () => {
-    searchParams.delete('packageSearch');
-    searchParams.delete('status');
-    searchParams.delete('startDate');
-    searchParams.delete('endDate');
-    searchParams.set('page', '1');
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('package');
+    newParams.delete('status');
+    newParams.delete('startDate');
+    newParams.delete('endDate');
+    newParams.set('page', '1');
 
     setPackageQuery('');
     setStatusFilter('');
     setStartDate('');
     setEndDate('');
 
-    setSearchParams(searchParams);
+    setSearchParams(newParams);
   };
+
 
   const handlePageChange = (page: number) => {
     setSearchParams((prev) => {
@@ -198,13 +225,12 @@ const BookingList = () => {
                       </TableCell>
                       <TableCell>
                         <span
-                          className={`font-medium ${
-                            booking.bookingStatus === 'confirmed'
-                              ? 'text-green-600'
-                              : booking.bookingStatus === 'pending'
-                                ? 'text-yellow-600'
-                                : 'text-red-600'
-                          }`}
+                          className={`font-medium ${booking.bookingStatus === 'confirmed'
+                            ? 'text-green-600'
+                            : booking.bookingStatus === 'pending'
+                              ? 'text-yellow-600'
+                              : 'text-red-600'
+                            }`}
                         >
                           {booking.bookingStatus}
                         </span>

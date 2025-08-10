@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { handleFetchReview } from '@/services/admin/reviewService';
 import type { IReview } from '@/types/IReview';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
@@ -16,39 +16,79 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/Table';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-
+import { FilterBar } from '@/components/FilterBar ';
+import { useSearchFilters } from '@/hooks/useSearchFilters';
+import { useDebounce } from 'use-debounce';
+import { useCleanFilter } from '@/hooks/useCleanFilter ';
 const ReviewList = () => {
 
   const navigate = useNavigate()
   const [reviews, setreviews] = useState<IReview[]>([]);
   const [searchParams, setSearchParams] = useSearchParams()
   const [totalPages, setTotalPages] = useState(1);
+  const {
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    sort,
+    rating,
+    setRating,
+    setSort,
+    applyFilters,
+  } = useSearchFilters();
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '10', 10);
+  const cleanFilter = useCleanFilter()
 
   useEffect(() => {
-
     const fetchReviews = async () => {
       try {
-        const response = await handleFetchReview(currentPage, limit)
-        console.log(response)
-        setreviews(response.reviews)
+        const rawFilters = {
+          search: debouncedSearch,
+          status: statusFilter,
+          sort,
+          startDate,
+          endDate,
+          rating
+        };
+
+        // Remove any empty, null, or undefined filter fields to avoid sending unnecessary query parameters
+        const filters = cleanFilter(rawFilters);
+
+        const response = await handleFetchReview(currentPage, limit, filters);
+        setreviews(response.reviews);
         setTotalPages(response.pagination.totalPages);
-
+        //    console.log(response.pagination,'pagination')
       } catch (error) {
-        console.log('failed to fetch review')
+        console.log('failed to fetch review');
       }
+    };
+    fetchReviews();
+  }, [debouncedSearch, searchParams, currentPage]);
 
-    }
-    fetchReviews()
-  }, [searchParams])
   console.log(reviews, 'revies')
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (debouncedSearch) {
+      params.set('search', debouncedSearch);
+    }
+    else params.delete('search');
+    params.set('page', '1');
+    setSearchParams(params);
+  }, [debouncedSearch]);
+
   const handlePageChange = (page: number) => {
-    setSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set('page', page.toString());
+      return newParams;
     });
   };
   const paginationButtons = usePaginationButtons({
@@ -56,6 +96,29 @@ const ReviewList = () => {
     totalPages,
     onPageChange: handlePageChange,
   });
+
+
+
+
+  // Handlers passed to FilterBar
+  const handleSearchChange = (val: string) => setSearchQuery(val);
+  const handleStatusChange = (val: string) => setStatusFilter(val);
+  const handleSortChange = (val: string) => setSort(val);
+  const handleRatingChange = (val: string) => setRating(val);
+
+  const handleApplyFilters = () => {
+    applyFilters();
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("");
+    setStartDate("");
+    setEndDate("");
+    setSort("");
+    setRating('')
+    setSearchParams({ page: "1" }); // reset to page 1
+  };
 
   const handleClick = (reviewId: string) => {
     navigate(`/admin/reviews/${reviewId}`)
@@ -69,6 +132,41 @@ const ReviewList = () => {
         <CardTitle>Reviews</CardTitle>
       </CardHeader>
       <CardContent>
+
+
+        <FilterBar
+          searchValue={searchQuery}
+          statusValue={statusFilter}
+          startDateValue={startDate}
+          endDateValue={endDate}
+          sortValue={sort}
+          ratingValue={rating}
+          onSearchChange={handleSearchChange}
+          onStatusChange={handleStatusChange}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
+          onSortChange={handleSortChange}
+          onRatingChange={handleRatingChange}
+          onApply={handleApplyFilters}
+          onClear={handleClearFilters}
+          statusOptions={[
+            { value: "active", label: "Active" },
+            { value: "blocked", label: "Blocked" },
+          ]}
+          sortOptions={[
+            { value: "asc", label: "Newest" },
+            { value: "desc", label: "Oldest" },
+            { value: "rating_highest", label: "Highest Rating" },
+            { value: "rating_lowest", label: "Lowest Rating" },
+          ]}
+          ratingOptions={[
+            { value: "1", label: "1 Star" },
+            { value: "2", label: "2 Star" },
+            { value: "3", label: "3 Star" },
+            { value: "4", label: "4 Star" },
+            { value: "5", label: "5 Star" },
+          ]}
+        />
         <Table>
           <TableHeader>
             <TableRow>
@@ -128,7 +226,7 @@ const ReviewList = () => {
                   )}
                 </TableCell> */}
                 <Button
-                       className="mt-5 text-center"
+                  className="mt-5 text-center"
 
                   onClick={() => handleClick(review._id)}
                   variant="outline"
@@ -139,6 +237,7 @@ const ReviewList = () => {
               </TableRow>
             ))}
           </TableBody>
+
         </Table>
         <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
           {paginationButtons}

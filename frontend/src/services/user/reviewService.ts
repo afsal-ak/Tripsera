@@ -1,9 +1,25 @@
 import userApi from "@/lib/axios/userAxios";
+import type { IFilter } from "@/types/IFilter"; 
+
  
-export const handlePackageReview=async(packageId:string,page:number,limit:number)=>{
-    const response=await userApi.get(`/packages/${packageId}/reviews?page=${page}&limit=${limit}`,)
-    return response.data
-}
+export const handlePackageReview = async (
+  packageId: string,
+  page: number,
+  limit: number,
+  filter: IFilter = {}
+) => {
+ 
+  const params = {
+    page,
+    limit,
+    ...filter,
+  };
+
+  const response = await userApi.get(`/packages/${packageId}/reviews`, { params });
+  return response.data;
+};
+
+
 
 export const handleAddReview=async(packageId:string,rating:number,title:string,comment:string)=>{
     const response=await userApi.post(`/packages/${packageId}/reviews`,{rating,title,comment})
