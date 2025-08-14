@@ -86,6 +86,7 @@ export function useSearchFilters() {
   const [endDate, setEndDate] = useState(searchParams.get("endDate") || "");
   const [sort, setSort] = useState(searchParams.get("sort") || "");
   const [rating, setRating] = useState(searchParams.get("rating")|| ""); 
+  const [customFilter, setCustomFilter] = useState(searchParams.get("cutomFilter")|| ""); 
 
   // Apply filters only if they have a value
   const applyFilters = () => {
@@ -105,6 +106,7 @@ export function useSearchFilters() {
     setOrDelete("endDate", endDate);
     setOrDelete("rating", rating);
     setOrDelete("sort", sort);
+    setOrDelete("customFilter", customFilter);
 
     params.set("page", "1"); // reset page on filter change
     setSearchParams(params);
@@ -118,6 +120,7 @@ export function useSearchFilters() {
     setEndDate(searchParams.get("endDate") || "");
     setSort(searchParams.get("sort") || "");
     setRating(searchParams.get("rating") || "");
+    setCustomFilter(searchParams.get("customFilter") || "");
   }, [searchParams]);
 
   return {
@@ -132,6 +135,8 @@ export function useSearchFilters() {
     sort,
     setSort,
     rating,
+    customFilter,
+    setCustomFilter,
     setRating,
     applyFilters,
   };

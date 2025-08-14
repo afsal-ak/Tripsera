@@ -10,6 +10,10 @@ import { toast } from "sonner";
 import type { IPublicProfile } from "@/types/IPublicProfile";
 import type { IBlog } from "@/types/IBlog";
 import { useSearchParams, useParams } from "react-router-dom";
+import { OptionsDropdown } from "@/components/OptionsDropdown ";
+import ReportForm from "../report/ReportForm";
+import type { IReportedType, ISelectedReport } from "@/types/IReport";
+import Modal from "@/components/ui/Model";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 
@@ -25,6 +29,8 @@ const PublicProfile = () => {
     const [totalBlogs, setTotalBlogs] = useState(0);
     const [loading, setLoading] = useState(false);
 
+    const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null)
+    const [showReportModal, setShowReportModal] = useState(true)
     const [searchParams, setSearchParams] = useSearchParams();
     const currentPage = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "6", 10);
@@ -73,16 +79,16 @@ const PublicProfile = () => {
         try {
             setLoading(true);
             if (isFollowing) {
-              const response=  await handleUnFollow(profile._id);
+                const response = await handleUnFollow(profile._id);
                 setIsFollowing(false);
-                setFollowers(prev=>prev-1)
+                setFollowers(prev => prev - 1)
 
                 toast.success('unfollow  Succes')
 
             } else {
-              const response=  await handleFollow(profile._id);
+                const response = await handleFollow(profile._id);
                 setIsFollowing(true);
-               setFollowers(prev => prev + 1); 
+                setFollowers(prev => prev + 1);
                 toast.success('Following Succes')
 
             }
@@ -92,6 +98,18 @@ const PublicProfile = () => {
             setLoading(false);
         }
     };
+
+    const options = [{
+        label: 'Report',
+        value: 'report',
+        className: "text-red-500" 
+    }]
+    const handleOptionSelect = (value: string, _id: string, reportedType: IReportedType) => {
+        if (value == 'report') {
+            setSelectedReport({ _id, reportedType })
+            setShowReportModal(true)
+        }
+    }
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="h-64 bg-gradient-to-r from-blue-400 to-purple-500 relative">
@@ -132,7 +150,7 @@ const PublicProfile = () => {
                             </div>
                         </div>
                     )}
-
+                    <OptionsDropdown  options={options} onSelect={(value) => handleOptionSelect(value, profile?._id!, 'user')}  />
                 </div>
 
                 <div className="mt-8 grid grid-cols-3 gap-4 max-w-md mx-auto md:mx-0">
@@ -167,6 +185,17 @@ const PublicProfile = () => {
                     onPageChange={handlePageChange}
                 />
             </div>
+            {showReportModal && selectedReport && (
+                <Modal  onClose={() => setShowReportModal(false)}>
+
+                    <ReportForm
+                        id={selectedReport._id}
+                        status={selectedReport.reportedType}
+                        onSuccess={() => setShowReportModal(false)}
+                    />
+                </Modal>
+
+            )}
         </div>
     );
 };

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Star, ThumbsUp, ThumbsDown, MessageCircle, Filter, Search } from 'lucide-react';
+import { Star, AlertTriangle, Filter, Search } from 'lucide-react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import type { IReview, IRating } from '@/types/IReview';
 import RatingSummary from './RatingSummary';
@@ -12,14 +12,20 @@ import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { FilterBar } from '@/components/FilterBar ';
 import { useDebounce } from 'use-debounce';
 import { useCleanFilter } from '@/hooks/useCleanFilter ';
+import ReportForm from '../report/ReportForm';
+import { Button } from '@/components/ui/button';
+import type { ISelectedReport } from '@/types/IReport';
+import Modal from '@/components/ui/Model';
+
+
 export default function ReviewPage() {
-
-
 
     const { packageId } = useParams()
     const navigate = useNavigate()
     const [reviews, setreviews] = useState<IReview[]>([]);
     const [ratingSummary, setRatingSummary] = useState<IRating>()
+    const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null);
+
     const [searchParams, setSearchParams] = useSearchParams()
     const [totalPages, setTotalPages] = useState(1);
 
@@ -59,9 +65,9 @@ export default function ReviewPage() {
                 const filters = cleanFilter(rawFilters);
                 const response = await handlePackageReview(packageId, currentPage, limit, filters)
                 const reviewRating = await handleReviewRating(packageId);
-               // console.log(reviewRating, 'review')
+                // console.log(reviewRating, 'review')
                 setRatingSummary(reviewRating)
-               // console.log(response)
+                // console.log(response)
                 setreviews(response.review)
                 setTotalPages(response.pagination.totalPages);
 
@@ -90,12 +96,7 @@ export default function ReviewPage() {
         });
     };
     console.log(reviews, 'reavew page')
-    // const handlePageChange = (page: number) => {
-    //     setSearchParams({
-    //         page: page.toString(),
-    //         limit: limit.toString(),
-    //     });
-    // };
+
     const paginationButtons = usePaginationButtons({
         currentPage,
         totalPages,
@@ -105,7 +106,7 @@ export default function ReviewPage() {
 
     // Handlers passed to FilterBar
     const handleSearchChange = (val: string) => setSearchQuery(val);
-     const handleSortChange = (val: string) => setSort(val);
+    const handleSortChange = (val: string) => setSort(val);
     const handleRatingChange = (val: string) => setRating(val);
 
     const handleApplyFilters = () => {
@@ -114,7 +115,7 @@ export default function ReviewPage() {
 
     const handleClearFilters = () => {
         setSearchQuery("");
-         setStartDate("");
+        setStartDate("");
         setEndDate("");
         setSort("");
         setRating('')
@@ -126,7 +127,7 @@ export default function ReviewPage() {
         navigate(`/packages/${packageId}/review/add`);
     };
 
-     
+
 
     const renderStars = (rating: number) => {
         return [...Array(5)].map((_, i) => (
@@ -136,16 +137,6 @@ export default function ReviewPage() {
             />
         ));
     };
-
-
-
-    //   const filteredReviews = reviews.filter(review => {
-    //     const matchesFilter = filter === 'all' || review.rating.toString() === filter;
-    //     const matchesSearch = review.packageId.title.includes(searchTerm.toLowerCase()) ||
-    //                          review.comment.includes(searchTerm.toLowerCase()) ||
-    //                          review?.userId?.username!.includes(searchTerm.toLowerCase());
-    //     return matchesFilter && matchesSearch;
-    //   });
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -174,18 +165,18 @@ export default function ReviewPage() {
                             <Filter className="w-5 h-5 text-gray-500" />
                             <FilterBar
                                 searchValue={searchQuery}
-                                 startDateValue={startDate}
+                                startDateValue={startDate}
                                 endDateValue={endDate}
                                 sortValue={sort}
                                 ratingValue={rating}
                                 onSearchChange={handleSearchChange}
-                                 onStartDateChange={setStartDate}
+                                onStartDateChange={setStartDate}
                                 onEndDateChange={setEndDate}
                                 onSortChange={handleSortChange}
                                 onRatingChange={handleRatingChange}
                                 onApply={handleApplyFilters}
                                 onClear={handleClearFilters}
-                                
+
                                 sortOptions={[
                                     { value: "asc", label: "Newest" },
                                     { value: "desc", label: "Oldest" },
@@ -201,24 +192,16 @@ export default function ReviewPage() {
                                 ]}
                             />
                         </div>
-
-                        {/* <div className="relative">
-                            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-                            <input
-                                type="text"
-                                placeholder="Search reviews..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
-                            />
-                        </div> */}
                     </div>
                 </div>
 
                 {/* Reviews List */}
                 <div className="space-y-6">
                     {reviews.map((review) => (
-                        <div key={review._id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
+                        <div
+                            key={review._id}
+                            className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6"
+                        >
                             <div className="flex items-start gap-4">
                                 <img
                                     src={review?.userId?.profileImage?.url || "/profile-default.jpg"}
@@ -226,50 +209,58 @@ export default function ReviewPage() {
                                     className="w-12 h-12 rounded-full object-cover"
                                 />
 
-
                                 <div className="flex-1">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-3">
-                                            <h3 className="font-semibold text-gray-900">{review.userId.username}</h3>
-                                            {/* {review.verified && (
-                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                          Verified Purchase
-                        </span>
-                      )} */}
+                                            <h3 className="font-semibold text-gray-900">
+                                                {review.userId.username}
+                                            </h3>
+
+                                            
+                                            <button
+                                                onClick={() =>
+                                                    setSelectedReport({ _id: review._id, reportedType: 'review' })
+                                                } aria-label="Report this content"
+                                                className="inline-flex items-center gap-1 text-red-600 hover:text-yellow-800 text-sm font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded"
+                                            >
+                                                <AlertTriangle className="w-4 h-4" />
+                                                Report
+                                            </button>
                                         </div>
-                                        <span className="text-sm text-gray-500"><span>{formatTimeAgo(review.createdAt)}</span></span>
+
+                                        <span className="text-sm text-gray-500">
+                                            {formatTimeAgo(review.createdAt)}
+                                        </span>
                                     </div>
 
                                     <div className="flex items-center gap-2 mb-3">
-                                        <div className="flex gap-1">
-                                            {renderStars(review.rating)}
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-700">{review.rating}.0</span>
+                                        <div className="flex gap-1">{renderStars(review.rating)}</div>
+                                        <span className="text-sm font-medium text-gray-700">
+                                            {review.rating}.0
+                                        </span>
                                     </div>
 
-                                    <h4 className="font-semibold text-gray-900 mb-2">{review.title}</h4>
+                                    <h4 className="font-semibold text-gray-900 mb-2">
+                                        {review.title}
+                                    </h4>
 
                                     <ReadMore text={review.comment} wordLimit={10} />
-                                    <div className="flex items-center gap-4 text-sm text-gray-500">
-
-
-                                        {/* <button className="flex items-center gap-1 hover:text-green-600 transition-colors">
-                      <ThumbsUp className="w-4 h-4" />
-                      Helpful ({review.helpful})
-                    </button> */}
-                                        {/* <button className="flex items-center gap-1 hover:text-red-600 transition-colors">
-                      <ThumbsDown className="w-4 h-4" />
-                      Not helpful
-                    </button> */}
-                                        {/* <button className="flex items-center gap-1 hover:text-blue-600 transition-colors">
-                      <MessageCircle className="w-4 h-4" />
-                      Reply
-                    </button> */}
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     ))}
+
+                    {/* Modal for Report Form */}
+                    {selectedReport && (
+                        <Modal onClose={() => setSelectedReport(null)}>
+                            <ReportForm
+                                status="review"
+                                id={selectedReport._id}
+                                onSuccess={() => setSelectedReport(null)}
+                            />
+
+                        </Modal>
+                    )}
                 </div>
 
                 <div className="text-center mt-8">

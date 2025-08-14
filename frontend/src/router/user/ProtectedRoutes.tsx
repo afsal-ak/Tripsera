@@ -2,11 +2,11 @@ import { Route } from 'react-router-dom';
 import UserProtectedRoutes from './UserProtectedRoute';
 import Home from '@/pages/user/home/Home';
 import AccountLayout from '@/pages/user/accounts/AccountLayout';
-import Profile from '@/pages/user/accounts/profile/Profile';
-import EmailOtpPage from '@/pages/user/accounts/profile/EmailOtpPage';
+import Profile from '@/pages/user/profile/Profile';
+import EmailOtpPage from '@/pages/user/profile/EmailOtpPage';
 import Wishlist from '@/pages/user/accounts/Wishlist';
-import CouponList from '@/pages/user/accounts/coupons/CouponList';
-import WalletPage from '@/pages/user/accounts/wallet/WalletPage';
+import CouponList from '@/pages/user/coupons/CouponList';
+import WalletPage from '@/pages/user/wallet/WalletPage';
 import CheckoutPage from '@/pages/user/booking/CheckoutPage';
 import BookingSuccessPage from '@/pages/user/booking/BookingSuccessPage';
 import UserBookingPage from '@/pages/user/booking/UserBookingPage';
@@ -20,7 +20,7 @@ import ReviewPage from '@/pages/user/reviews/ReviewPage';
 import ReviewForm from '@/pages/user/reviews/ReviewForm';
 import UserReviewPage from '@/pages/user/reviews/UserReview';
 import ReviewDetail from '@/pages/user/reviews/ReviewDetail';
-import PublicProfile from '@/pages/user/accounts/profile/PublicProfile';
+import PublicProfile from '@/pages/user/profile/PublicProfile';
 import StandardBookingDetail from '@/pages/user/booking/SBoking';
 import ReviewEditForm from '@/pages/user/reviews/ReviewEditForm';
 const ProtectedRoutes = (
@@ -33,7 +33,7 @@ const ProtectedRoutes = (
     <Route path="/packages/:packageId/review" element={<ReviewPage />} />
     <Route path="/packages/:packageId/review/add" element={<ReviewForm />} />
     <Route path="/profile/:username" element={<PublicProfile />} />
-
+ 
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />
       <Route path="verify-otp" element={<EmailOtpPage />} />

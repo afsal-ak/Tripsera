@@ -6,7 +6,8 @@ import NotFoundPage from '@/components/NotFoundPage';
 
 // Admin pages
 import AdminDashboard from '@/pages/admin/AdminDashboard';
-import UserList from '@/pages/admin/UsersList';
+import UserList from '@/pages/admin/user/UsersList';
+import UserBookingPage from '@/pages/user/booking/UserBookingPage';
 import AddCategory from '@/pages/admin/category/AddCategory';
 import CategoryList from '@/pages/admin/category/CategoryList';
 import EditCategory from '@/pages/admin/category/EditCategory';
@@ -26,6 +27,9 @@ import ReviewList from '@/pages/admin/review/ReviewList';
 import ReviewDetail from '@/pages/admin/review/ReviewDetail';
 import ReferralPage from '@/pages/admin/referral/ReferralPage';
 import SalesReportPage from '@/pages/admin/SalesReportPage';
+import ReportList from '@/pages/admin/report/ReportList';
+import ReportDetails from '@/pages/admin/report/ReportDetails';
+import UserDetailsPage from '@/pages/admin/user/UserDetailsPage';
 const AdminRoutes = () => {
   return (
     <Routes>
@@ -36,6 +40,7 @@ const AdminRoutes = () => {
         <Route element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<UserList />} />
+          <Route path="users/:id" element={<UserDetailsPage/>} />
           <Route path="categories" element={<CategoryList />} />
           <Route path="categories/add" element={<AddCategory />} />
           <Route path="categories/edit/:id" element={<EditCategory />} />
@@ -62,6 +67,9 @@ const AdminRoutes = () => {
           <Route path="reviews/:reviewId" element={<ReviewDetail />} />
           <Route path="referral" element={<ReferralPage />} />
           <Route path="sales-report" element={<SalesReportPage />} />
+          <Route path="reports" element={<ReportList />} />
+          <Route path="reports/:reportId" element={<ReportDetails />} />
+
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

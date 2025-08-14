@@ -13,15 +13,21 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css';
 import { Navigation, Pagination } from 'swiper/modules';
-
+import { OptionsDropdown } from '@/components/OptionsDropdown ';
+import ReportForm from '../report/ReportForm';
+import type { IReportedType, ISelectedReport } from '@/types/IReport';
+import Modal from '@/components/ui/Model';
 const BlogDetail = () => {
   const { slug } = useParams();
-  const navigate=useNavigate()
+  const navigate = useNavigate()
   console.log(slug, 'from param');
   const [liked, setLiked] = useState(false);
   // const [savedPosts, setSavedPosts] = useState();
   const [blogData, setBlogData] = useState<IBlog | null>(null);
   const [likesCount, setLikesCount] = useState(0);
+
+  const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null)
+  const [showReportModal, setShowReportModal] = useState(true);
 
   useEffect(() => {
     const loadBlogDetail = async () => {
@@ -41,7 +47,7 @@ const BlogDetail = () => {
     loadBlogDetail();
   }, [slug]);
 
- 
+
   const toggleLike = async () => {
     if (!blogData?._id) return;
 
@@ -68,19 +74,35 @@ const BlogDetail = () => {
     return num.toString();
   };
 
-  const handleNavigateUseProfile=(username:string)=>{
+  const handleNavigateUseProfile = (username: string) => {
     navigate(`/profile/${username}`)
   }
+  const options = [
+    { label: "Report", value: "report",className: "text-red-500" },
+    // { label: "Delete", value: "delete" },
+    // { label: "Block User", value: "block" },
+  ];
 
+
+  function handleOptionSelect(value: string, _id: string, reportedType: IReportedType) {
+    console.log("Selected option:", value);
+    // Add your logic here based on value
+    if (value == 'report') {
+      setSelectedReport({ _id, reportedType })
+      setShowReportModal(true);
+
+
+    }
+  }
   return (
     <div className="min-h-screen bg-bg px-4 py-6">
       {blogData && (
         <article className="bg-white shadow-md rounded-xl overflow-hidden max-w-3xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <div onClick={()=>handleNavigateUseProfile(blogData.author.username)} className="flex items-center space-x-3">
+            <div onClick={() => handleNavigateUseProfile(blogData.author.username)} className="flex items-center space-x-3">
               <img
-                src={blogData.author?.profileImage?.url|| '/profile-default.jpg'}
+                src={blogData.author?.profileImage?.url || '/profile-default.jpg'}
                 alt={blogData.author?.username}
                 className="w-10 h-10 rounded-full object-cover ring-2 ring-orange/30"
               />
@@ -99,7 +121,7 @@ const BlogDetail = () => {
                 )} */}
               </div>
             </div>
-            <MoreHorizontal className="w-5 h-5 text-muted-foreground" />
+            <OptionsDropdown options={options} onSelect={(value) => handleOptionSelect(value, blogData?._id!, 'blog')} />
           </div>
 
           {/* Images */}
@@ -131,8 +153,8 @@ const BlogDetail = () => {
                 <button onClick={toggleLike}>
                   <Heart
                     className={`w-6 h-6 transition-all duration-200 ${liked
-                        ? 'fill-red-500 text-red-500'
-                        : 'text-darkText hover:text-muted-foreground'
+                      ? 'fill-red-500 text-red-500'
+                      : 'text-darkText hover:text-muted-foreground'
                       }`}
                   />
                 </button>
@@ -177,8 +199,19 @@ const BlogDetail = () => {
               {new Date(blogData?.createdAt!).toLocaleDateString()}
             </div>
           </div>
+
         </article>
       )}
+      {showReportModal && selectedReport && (
+        <Modal onClose={() => setShowReportModal(false)}>
+          <ReportForm
+            id={selectedReport._id}
+            status={selectedReport.reportedType}
+            onSuccess={() => setShowReportModal(false)}
+          />
+        </Modal>
+      )}
+
     </div>
   );
 };

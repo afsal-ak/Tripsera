@@ -15,7 +15,7 @@ import {
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 import type { IUser } from '@/types/IUser';
-import { fetchUsersData, blockUser, unBlockUser } from '@/services/admin/userService';
+import { fetchUsersData, toggleBlockUser } from '@/services/admin/userService';
 const UserList = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<IUser[]>([]);
@@ -26,6 +26,7 @@ const UserList = () => {
     const fetchUsers = async () => {
       try {
         const res = await fetchUsersData(currentPage, 5);
+        console.log(res, 'users')
         setUsers(res.data);
         setTotalPages(res.totalPages);
       } catch (error) {
@@ -38,10 +39,10 @@ const UserList = () => {
   const handleToggleBlock = async (id: string, shouldBlock: boolean) => {
     try {
       if (shouldBlock) {
-        await blockUser(id);
+        await toggleBlockUser(id);
         toast.success('User blocked successfully');
       } else {
-        await unBlockUser(id);
+        await toggleBlockUser(id);
         toast.success('User unblocked successfully');
       }
 
@@ -53,7 +54,9 @@ const UserList = () => {
       console.error('Block/unblock error:', error);
     }
   };
-
+  const handleNaviageDetail = (id: string) => {
+    navigate(`/admin/users/${id}`)
+  }
   return (
     <Card>
       <CardHeader>
@@ -109,7 +112,15 @@ const UserList = () => {
                       </Button>
                     </ConfirmDialog>
                   )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleNaviageDetail(user?._id!)}
+                  >
+                    View Details
+                  </Button>
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>

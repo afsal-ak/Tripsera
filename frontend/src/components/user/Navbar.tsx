@@ -59,9 +59,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* <Button variant="ghost" size="icon" className="hidden md:flex">
-              <Search className="h-4 w-4" />
-            </Button> */}
+            
 
             {isAuthenticated ? (
               <div className="relative hidden sm:flex items-center group">

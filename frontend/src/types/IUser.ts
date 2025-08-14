@@ -45,6 +45,8 @@ export interface IUser {
     zip?: string;
     country?: string;
   };
+  followersCount:number,
+  followingCount:number,
   googleId?: string;
   isGoogleUser?: boolean;
   createdAt?: Date;

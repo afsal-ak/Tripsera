@@ -5,10 +5,11 @@ export const fetchUsersData = async (page = 1, limit = 5) => {
   return response.data;
 };
 
-export const blockUser = async (userId: string) => {
-  return adminApi.patch(`/users/${userId}/block`);
+export const fetchUserDetails = async (id:string) => {
+  const response = await adminApi.get(`/users/${id}`);
+  return response.data;
 };
-
-export const unBlockUser = async (userId: string) => {
-  return adminApi.patch(`/users/${userId}/unblock`);
+ 
+export const toggleBlockUser = async (userId: string) => {
+  return adminApi.patch(`/users/${userId}/toggle-block`);
 };
