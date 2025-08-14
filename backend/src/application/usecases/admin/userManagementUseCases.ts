@@ -38,7 +38,18 @@ export class UserManagementUseCases implements IUserManagementUseCases {
     }
     return user;
   }
+async toggleUserBlockStatus(userId: string): Promise<boolean> {
+    const user = await this._userRepository.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
 
+    const newStatus = !user.isBlocked;
+    await this._userRepository.updateUserStatus(userId, newStatus);
+
+    return newStatus; // true if blocked, false if unblocked
+  }
+  
   async blockUser(userId: string): Promise<void> {
     const user = await this._userRepository.findById(userId);
     if (!user) {

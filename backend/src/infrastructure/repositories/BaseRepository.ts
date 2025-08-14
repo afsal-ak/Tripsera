@@ -45,14 +45,17 @@ export abstract class BaseRepository<T> {
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
     const result = await this.model
-      .findByIdAndUpdate(id, { $set: data } as UpdateQuery<T & Document>, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { $set: data } as UpdateQuery<T & Document>,
+        { new: true, runValidators: true })
       .lean();
     return result as T | null;
   }
 
 
   async updateByFilter(filter: object, data: Partial<T>): Promise<T | null> {
-        console.log(filter,'id in db')
+    console.log(filter, 'id in db')
 
     const result = await this.model
       .findOneAndUpdate(

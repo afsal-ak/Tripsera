@@ -11,8 +11,6 @@ export interface IUserManagementUseCases {
   }>;
 
   getSingleUser(userId: string): Promise<IUser>;
-
-  blockUser(userId: string): Promise<void>;
-
-  unblockUser(userId: string): Promise<void>;
+  toggleUserBlockStatus(userId: string): Promise<boolean>  
+ 
 }

@@ -5,4 +5,5 @@ export interface IFilter {
   endDate?: string;
   sort?:string;
   rating?:number
+  customFilter?:string;
 }

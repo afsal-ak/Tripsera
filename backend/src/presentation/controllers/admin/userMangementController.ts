@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
+import { mapToAdminUserListResponseDTO,mapToUserDetailsDTO } from "@application/dtos/UserDTO";
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class UserManagementController {
 
@@ -14,10 +16,11 @@ export class UserManagementController {
         page,
         limit
       );
-
-      res.status(200).json({
+      const user=users.map(mapToAdminUserListResponseDTO)
+      console.log(user, 'from admin')
+      res.status(HttpStatus.OK).json({
         message: 'Users fetched successfully',
-        data: users,
+        data: user,
         totalUsers,
         totalPages,
         currentPage: page,
@@ -31,33 +34,30 @@ export class UserManagementController {
   getSingleUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { userId } = req.params;
-      const user = await this._userManagementUseCases.getSingleUser(userId);
-      res.status(200).json({ message: 'User fetched successfully', user });
+      const data = await this._userManagementUseCases.getSingleUser(userId);
+      const user=mapToUserDetailsDTO(data)
+      res.status(HttpStatus.OK).json({ message: 'User fetched successfully', user });
     } catch (error: any) {
       console.error('Error fetching user:', error);
       res.status(500).json({ message: error.message || 'Something went wrong' });
     }
   };
-
-  blockUser = async (req: Request, res: Response): Promise<void> => {
+  
+ toggleBlockUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { userId } = req.params;
-      await this._userManagementUseCases.blockUser(userId);
-      res.status(200).json({ message: 'User blocked successfully' });
-    } catch (error: any) {
-      console.error('Error blocking user:', error);
-      res.status(500).json({ message: error.message || 'Something went wrong' });
-    }
-  };
+      const newStatus = await this._userManagementUseCases.toggleUserBlockStatus(userId);
 
-  unblockUser = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { userId } = req.params;
-      await this._userManagementUseCases.unblockUser(userId);
-      res.status(200).json({ message: 'User unblocked successfully' });
+      res.status(HttpStatus.OK).json({
+        message: newStatus ? 'User blocked successfully' : 'User unblocked successfully',
+        isBlocked: newStatus
+      });
     } catch (error: any) {
-      console.error('Error blocking user:', error);
-      res.status(500).json({ message: error.message || 'Something went wrong' });
+      console.error('Error toggling user block status:', error);
+      res
+        .status(500)
+        .json({ message: error.message || 'Something went wrong' });
     }
   };
+ 
 }

@@ -11,6 +11,7 @@ import {
   REVIEW_ROUTE,
   REFERRAL_ROUTE,
   SALES_REPORT_ROUTE,
+  REPORT_ROUTE,
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -59,6 +60,11 @@ import { SalesReportRepository } from '@infrastructure/repositories/SalesReportR
 import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
 import { SalesReportController } from '@presentation/controllers/admin/salesReportController';
 
+import { ReportRepository } from '@infrastructure/repositories/ReportRepository';
+import { ReportUseCases } from '@application/usecases/admin/reportUseCases';
+import { ReportController } from '@presentation/controllers/admin/reportController';
+
+
 const adminRepository = new UserRepository();
 const otpRepository = new OtpRepository();
 
@@ -104,6 +110,11 @@ const salesRepository = new SalesReportRepository();
 const salesuseCases = new SalesReportUseCase(salesRepository);
 const salesController = new SalesReportController(salesuseCases);
 
+const reportRepository=new ReportRepository()
+const reportUseCases=new ReportUseCases(reportRepository)
+const reportController=new ReportController(reportUseCases)
+
+
 const router = Router();
 
 // AUTH ROUTES
@@ -124,16 +135,9 @@ router.get(
   adminAuthMiddleware,
   userManagementController.getSingleUser
 );
-router.patch(
-  USER_MANAGEMENT_ROUTES.BLOCK_USER,
-  adminAuthMiddleware,
-  userManagementController.blockUser
-);
-router.patch(
-  USER_MANAGEMENT_ROUTES.UNBLOCK_USER,
-  adminAuthMiddleware,
-  userManagementController.unblockUser
-);
+router.patch(USER_MANAGEMENT_ROUTES.TOGGLE_BLOCK,adminAuthMiddleware, userManagementController.toggleBlockUser);
+
+
 
 //  BANNER ROUTES
 router.post(
@@ -159,18 +163,9 @@ router.patch(CATEGORY_ROUTES.UNBLOCK, adminAuthMiddleware, categoryController.un
 // PACKAGE ROUTES
 router.get(PACKAGE_ROUTES.GET_ALL, adminAuthMiddleware, packageController.getFullPackage);
 router.get(PACKAGE_ROUTES.GET_BY_ID, adminAuthMiddleware, packageController.getPackagesById);
-router.post(
-  PACKAGE_ROUTES.ADD,
-  adminAuthMiddleware,
-  upload.array('images', 4),
-  packageController.createPackage
+router.post(PACKAGE_ROUTES.ADD,adminAuthMiddleware,upload.array('images', 4),  packageController.createPackage
 );
-router.put(
-  PACKAGE_ROUTES.EDIT,
-  adminAuthMiddleware,
-  upload.array('images', 4),
-  packageController.editPackage
-);
+router.put(PACKAGE_ROUTES.EDIT,adminAuthMiddleware,upload.array('images', 4), packageController.editPackage);
 router.patch(PACKAGE_ROUTES.BLOCK, adminAuthMiddleware, packageController.blockPackage);
 router.patch(PACKAGE_ROUTES.UNBLOCK, adminAuthMiddleware, packageController.unblockPackage);
 
@@ -215,4 +210,9 @@ router.get(REFERRAL_ROUTE.GET_BY_ID, adminAuthMiddleware, referralController.get
 router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT, salesController.getReportList);
 router.get(SALES_REPORT_ROUTE.SALES_REPORT_DOWNLOAD, salesController.downloadExcel);
 
-export default router;
+
+//REPORT ROUTES
+router.get(REPORT_ROUTE.GET_REPORT,adminAuthMiddleware,reportController.getAllReports)
+router.get(REPORT_ROUTE.GET_REPORT_BY_ID,adminAuthMiddleware,reportController.getReportById)
+ router.patch(REPORT_ROUTE.UPDATE_REPORT_STATUS,adminAuthMiddleware,reportController.updateReportStatus)
+ export default router;

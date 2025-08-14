@@ -10,6 +10,7 @@ import {
   BOOKING_ROUTES,
   BLOG_ROUTES,
   REVIEW_ROUTE,
+  REPORT_ROUTE
 } from 'constants/route-constants/userRoutes';
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
@@ -51,6 +52,10 @@ import { ReviewUseCases } from '@application/usecases/user/reviewUseCase';
 import { ReviewController } from '@presentation/controllers/user/reviewController';
 
 import { ReferralRepository } from '@infrastructure/repositories/ReferralRepository';
+
+import { ReportRepository } from '@infrastructure/repositories/ReportRepository';
+import { ReportUseCases } from '@application/usecases/user/reportUseCases';
+import { ReportController } from '@presentation/controllers/user/reportController';
 
 const walletRepository = new WalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
@@ -97,6 +102,11 @@ const blogController = new BlogController(blogUseCases);
 const reviewRepository = new ReviewRepository();
 const reviewUseCases = new ReviewUseCases(reviewRepository, bookingRepository,userRepository,packageRepository);
 const reviewController = new ReviewController(reviewUseCases);
+
+const reportRepository = new ReportRepository();
+const reportUseCases = new ReportUseCases(reportRepository);
+const reportController = new ReportController(reportUseCases);
+
 
 const router = Router();
 
@@ -230,5 +240,9 @@ router.get(REVIEW_ROUTE.GET_BY_ID, userAuthMiddleware, reviewController.getRevie
 router.get(REVIEW_ROUTE.GET_BY_PACKAGE, reviewController.getPackageReviews);
 router.delete(REVIEW_ROUTE.DELETE, userAuthMiddleware, reviewController.deleteReview);
 router.get(REVIEW_ROUTE.GET_REVIEW_RATING, reviewController.getRatingSummary);
+
+//REPORT ROUTES
+
+router.post(REPORT_ROUTE.CREATE,userAuthMiddleware,reportController.createReport)
 
 export default router;

@@ -84,3 +84,7 @@ export const REVIEW_ROUTE = {
   UPDATE: '/reviews/:reviewId/edit',
   DELETE: '/reviews/:reviewId/delete',
 };
+
+export const REPORT_ROUTE = {
+  CREATE: '/report/:reportedId',
+};

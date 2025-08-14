@@ -52,8 +52,12 @@ export class BlogRepository implements IBlogRepository {
   }
 
   async getBlogById(blogId: string): Promise<IBlog | null> {
-    console.log(blogId, 'id');
-    return await BlogModel.findById(blogId);
+    return await BlogModel.findById(blogId)
+      .populate({
+        path: 'author',
+        select: 'username email profileImage.url',
+      })
+      .lean();
   }
 
   async getBlogByUser(

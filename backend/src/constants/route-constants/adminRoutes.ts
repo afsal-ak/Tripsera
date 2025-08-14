@@ -11,9 +11,8 @@ export const AUTH_ROUTES = {
 export const USER_MANAGEMENT_ROUTES = {
   GET_ALL_USERS: '/users',
   GET_SINGLE_USER: '/users/:userId',
-  BLOCK_USER: '/users/:userId/block',
-  UNBLOCK_USER: '/users/:userId/unblock',
-};
+  TOGGLE_BLOCK: '/users/:userId/toggle-block',
+ };
 
 // BANNER ROUTES
 export const BANNER_ROUTES = {
@@ -88,3 +87,12 @@ export const SALES_REPORT_ROUTE = {
   GET_SALES_REPORT: '/salesReport',
   SALES_REPORT_DOWNLOAD: '/salesReport/download',
 };
+
+
+export const REPORT_ROUTE = {
+  GET_REPORT: '/reports',
+  GET_REPORT_BY_ID: '/reports/:id',
+  GET_REPORT_BY_TYPE: '/reports/type/:reportedId/:type',
+  UPDATE_REPORT_STATUS: '/reports/:id/update',
+  UPDATE_REPORTED_ITEM_STATUS: '/reports/type/:reportedId/update',
+ };

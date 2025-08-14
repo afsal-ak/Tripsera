@@ -1,6 +1,6 @@
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
-
+import { IBlog } from '@domain/entities/IBlog';
 export class BlogUseCases implements IBlogUseCases {
   constructor(private _blogRepository: IBlogRepository) {}
 
@@ -27,7 +27,8 @@ export class BlogUseCases implements IBlogUseCases {
     await this._blogRepository.changeBlogStatus(blogId, isBlocked);
   }
 
-  async getBlogById(blogId: string) {
+  async getBlogById(blogId: string): Promise<IBlog | null> {
     return await this._blogRepository.getBlogById(blogId);
   }
+ 
 }
