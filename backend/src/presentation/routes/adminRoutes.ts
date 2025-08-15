@@ -205,12 +205,13 @@ router.post(
 );
 router.get(REFERRAL_ROUTE.GET_BY_ID, adminAuthMiddleware, referralController.getReferralById);
 
-//SALES ROUTES
+//SALES REPORT ROUTES
 
 router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT, salesController.getReportList);
-router.get(SALES_REPORT_ROUTE.SALES_REPORT_DOWNLOAD, salesController.downloadExcel);
+router.get(SALES_REPORT_ROUTE.SALES_REPORT_EXCEL_DOWNLOAD, salesController.downloadExcel);
+router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD, salesController.downloadPDF);
 
-
+// 
 //REPORT ROUTES
 router.get(REPORT_ROUTE.GET_REPORT,adminAuthMiddleware,reportController.getAllReports)
 router.get(REPORT_ROUTE.GET_REPORT_BY_ID,adminAuthMiddleware,reportController.getReportById)

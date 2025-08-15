@@ -1,6 +1,7 @@
 import { ISalesReportRepository } from '@domain/repositories/ISalesReportRepository';
 import { getSalesReportFilter, FilterQueryOptions } from '../helpers/getSalesReportFilter';
 import { exportSalesReportExcel } from '@shared/utils/excelUtils';
+import { exportSalesReportPDF } from '@shared/utils/pdfUtils';
 import { IBooking } from '@domain/entities/IBooking';
 
 export class SalesReportUseCase {
@@ -37,6 +38,17 @@ export class SalesReportUseCase {
 
     const summary = await this._salesRepo.calculateSummary(filter);
     const buffer = await exportSalesReportExcel(bookings, summary);
+    return buffer;
+  }
+
+    async downloadPDF(query: FilterQueryOptions): Promise<Buffer> {
+    const filter = getSalesReportFilter(query);
+    const bookings: IBooking[] = await this._salesRepo.find(filter, {
+      sort: { createdAt: -1 },
+    });
+
+    const summary = await this._salesRepo.calculateSummary(filter);
+    const buffer = await exportSalesReportPDF(bookings, summary);
     return buffer;
   }
 }

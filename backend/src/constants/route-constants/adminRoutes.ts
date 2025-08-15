@@ -85,7 +85,8 @@ export const REFERRAL_ROUTE = {
 
 export const SALES_REPORT_ROUTE = {
   GET_SALES_REPORT: '/salesReport',
-  SALES_REPORT_DOWNLOAD: '/salesReport/download',
+  SALES_REPORT_EXCEL_DOWNLOAD: '/salesReport/excel/download',
+  SALES_REPORT_PDF_DOWNLOAD: '/salesReport/pdf/download',
 };
 
 
