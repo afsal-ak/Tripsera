@@ -16,7 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/Table';
 
-import { fetchSalesReports, downloadSalesReportExcel } from '@/services/admin/salesReportService';
+import { fetchSalesReports, downloadSalesReportExcel,downloadSalesReportPDF } from '@/services/admin/salesReportService';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
 import type { IBooking } from '@/types/IBooking';
 
@@ -81,9 +81,13 @@ const SalesReportPage = () => {
     setSearchParams(newParams);
   };
 
-  const handleDownload = async () => {
+  const handleExcelDownload = async () => {
     await downloadSalesReportExcel(filters);
   };
+   const handlePDFDownload = async () => {
+    await downloadSalesReportPDF(filters);
+  };
+
 
   const clearFilters = () => {
     setSearchParams(new URLSearchParams({ page: '1', limit: limit.toString() }));
@@ -175,7 +179,8 @@ const SalesReportPage = () => {
   </div>
 </div>
 
-        <Button onClick={handleDownload}>Download Excel</Button>
+        <Button onClick={handleExcelDownload}>Download Excel</Button>
+        <Button onClick={handlePDFDownload}>Download PDF</Button>
         <Button onClick={clearFilters} variant="outline">Clear Filters</Button>
       </div>
 
