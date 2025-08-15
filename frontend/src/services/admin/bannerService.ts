@@ -1,13 +1,12 @@
-import adminApi from '@/lib/axios/adminAxios';
-
+import api from "@/lib/axios/api";
 export const fetchBannerData = async (page = 1, limit = 10) => {
-  const response = await adminApi.get(`/banners?page=${page}&limit=${limit}`);
+  const response = await api.get(`/admin/banners?page=${page}&limit=${limit}`);
   return response.data;
 };
 // src/features/services/admin/bannerService.ts
 
 export const addBanner = async (formData: FormData) => {
-  const response = await adminApi.post('/addBanner', formData, {
+  const response = await api.post('/admin/addBanner', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -17,7 +16,7 @@ export const addBanner = async (formData: FormData) => {
 
 export const blockBanner = async (id: string) => {
   try {
-    const response = await adminApi.patch(`/banners/${id}/block`);
+    const response = await api.patch(`/admin/banners/${id}/block`);
 
     return response.data;
   } catch (error) {
@@ -26,7 +25,7 @@ export const blockBanner = async (id: string) => {
 };
 export const unBlockBanner = async (id: string) => {
   try {
-    const response = await adminApi.patch(`/banners/${id}/unblock`);
+    const response = await api.patch(`/admin/banners/${id}/unblock`);
 
     return response.data;
   } catch (error) {
@@ -36,7 +35,7 @@ export const unBlockBanner = async (id: string) => {
 
 export const deleteBanner = async (id: string) => {
   try {
-    const response = await adminApi.delete(`/banners/${id}/delete`);
+    const response = await api.delete(`/admin/banners/${id}/delete`);
 
     return response.data;
   } catch (error) {

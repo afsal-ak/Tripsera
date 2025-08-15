@@ -1,7 +1,6 @@
-import adminApi from '@/lib/axios/adminAxios';
-
+import api from "@/lib/axios/api";
 export const addPackage = async (formData: FormData) => {
-  const response = await adminApi.post('/addPackage', formData, {
+  const response = await api.post('/admin/addPackage', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -10,28 +9,28 @@ export const addPackage = async (formData: FormData) => {
 };
 
 export const fetchPackagesData = async (page: number, limit: number) => {
-  const response = await adminApi.get(`/packages?page=${page}&limit=${limit}`);
+  const response = await api.get(`/admin/packages?page=${page}&limit=${limit}`);
   return response.data;
 };
 
 export const blockPackage = async (id: string) => {
-  const response = await adminApi.patch(`/packages/${id}/block`);
+  const response = await api.patch(`/admin/packages/${id}/block`);
   return response;
 };
 export const unBlockPackage = async (id: string) => {
-  const response = await adminApi.patch(`/packages/${id}/unblock`);
+  const response = await api.patch(`/admin/packages/${id}/unblock`);
   return response;
 };
 
 export const getPackageById = async (id: string) => {
-  const response = await adminApi.get(`/packages/${id}`);
+  const response = await api.get(`/admin/packages/${id}`);
   console.log(response.data?.packages, 'd');
   return response.data.packages;
 };
 
 export const updatePackage = async (id: string, formData: FormData) => {
   try {
-    const response = await adminApi.put(`/packages/${id}/edit`, formData, {
+    const response = await api.put(`/admin/packages/${id}/edit`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -45,6 +44,6 @@ export const updatePackage = async (id: string, formData: FormData) => {
 };
 
 export const getCategory = async () => {
-  const response = await adminApi.get('/category/active');
+  const response = await api.get('/admin/category/active');
   return response.data;
 };

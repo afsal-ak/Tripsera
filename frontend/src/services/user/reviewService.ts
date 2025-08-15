@@ -1,4 +1,4 @@
-import userApi from "@/lib/axios/userAxios";
+import api from '@/lib/axios/api';
 import type { IFilter } from "@/types/IFilter"; 
 
  
@@ -15,39 +15,39 @@ export const handlePackageReview = async (
     ...filter,
   };
 
-  const response = await userApi.get(`/packages/${packageId}/reviews`, { params });
+  const response = await api.get(`/user/packages/${packageId}/reviews`, { params });
   return response.data;
 };
 
 
 
 export const handleAddReview=async(packageId:string,rating:number,title:string,comment:string)=>{
-    const response=await userApi.post(`/packages/${packageId}/reviews`,{rating,title,comment})
+    const response=await api.post(`/user/packages/${packageId}/reviews`,{rating,title,comment})
     return response.data
 }
 
 export const handleEditReview=async(reviewId:string,rating:number,title:string,comment:string)=>{
-    const response=await userApi.put(`/reviews/${reviewId}/edit`,{rating,title,comment})
+    const response=await api.put(`/user/reviews/${reviewId}/edit`,{rating,title,comment})
     return response.data
 }
 
 
 export const handleUserReview=async(page:number,limit:number)=>{
-    const response=await userApi.get(`/users/me/reviews?page=${page}&limit=${limit}`)
+    const response=await api.get(`/user/users/me/reviews?page=${page}&limit=${limit}`)
      return response.data
 }
 
 export const handleReviewDetail=async(reviewId:string)=>{
-    const response=await userApi.get(`reviews/${reviewId}`)
+    const response=await api.get(`/user/reviews/${reviewId}`)
      return response.data
 }
 export const handleReviewRating=async(packageId:string)=>{
-    const response=await userApi.get(`reviews/summary/${packageId}`)
+    const response=await api.get(`/user/reviews/summary/${packageId}`)
      return response.data
 }
  
 export const handleDeleteReview=async(reviewId:string)=>{
-    const response=await userApi.delete(`reviews/${reviewId}/delete`)
+    const response=await api.delete(`/user/reviews/${reviewId}/delete`)
     console.log(response,'response from user review')
     return response.data
 }

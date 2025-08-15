@@ -1,16 +1,15 @@
-import adminApi from '@/lib/axios/adminAxios';
-
+ import api from '@/lib/axios/api';
 export const fetchBlogById = async (blogId: string) => {
-  const response = await adminApi.get(`/blog/${blogId}`);
+  const response = await api.get(`/admin/blog/${blogId}`);
   console.log(response, 'from servoce');
   return response.data;
 };
 export const getAllBlogs = async (page: number, limit: number) => {
-  const response = await adminApi.get(`/blogs?page=${page}&limit=${limit}`);
+  const response = await api.get(`/admin/blogs?page=${page}&limit=${limit}`);
   return response.data;
 };
 export const changeBlogStatus = async (blogId: string, isBlocked: boolean) => {
-  const res = await adminApi.patch(`/blog/status/${blogId}`, { isBlocked });
+  const res = await api.patch(`/admin/blog/status/${blogId}`, { isBlocked });
   return res.data;
 };
 
@@ -36,6 +35,6 @@ export const changeBlogStatus = async (blogId: string, isBlocked: boolean) => {
 //   return response.data;
 // };
 export const deleteBlogAdmin = async (blogId: string) => {
-  const response = await adminApi.delete(`/blog/${blogId}`);
+  const response = await api.delete(`/admin/blog/${blogId}`);
   return response.data;
 };

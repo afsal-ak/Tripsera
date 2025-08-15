@@ -1,9 +1,9 @@
-import userApi from '@/lib/axios/userAxios';
+import api from '@/lib/axios/api';
 import type { ProfileFormSchema } from '@/schemas/ProfileFormSchema';
 import type { AddressFormSchema } from '@/schemas/AddressFormSchema';
 
 export const updateProfilepic = async (formData: FormData) => {
-  const response = await userApi.put('/profile/uploadProfileImage', formData, {
+  const response = await api.put('/user/profile/uploadProfileImage', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -12,7 +12,7 @@ export const updateProfilepic = async (formData: FormData) => {
 };
 
 export const uploadCoverpic = async (formData: FormData) => {
-  const response = await userApi.put('/profile/uploadCoverImage', formData, {
+  const response = await api.put('/user/profile/uploadCoverImage', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -20,48 +20,48 @@ export const uploadCoverpic = async (formData: FormData) => {
   return response.data;
 };
 export const updateUserProfile = async (profileData: ProfileFormSchema) => {
-  const response = await userApi.put('/profile/update', { profileData });
+  const response = await api.put('/user/profile/update', { profileData });
   return response.data;
 };
 export const updateUserAddress = async (address: AddressFormSchema) => {
-  const response = await userApi.put('/profile/updateAddress', { address });
+  const response = await api.put('/user/profile/updateAddress', { address });
   console.log(response);
   return response.data;
 };
 
 export const getUserProfile = async () => {
-  const response = await userApi.get('/profile');
+  const response = await api.get('/user/profile');
   return response.data;
 };
 
 export const requestEmailChange = async (newEmail: string) => {
-  const response = await userApi.post('/email/request-change', { newEmail });
+  const response = await api.post('/user/email/request-change', { newEmail });
   return response.data;
 };
 
 export const emailChange = async (newEmail: string, otp: string) => {
-  const response = await userApi.post('/email/verify-change', { newEmail, otp });
+  const response = await api.post('/user/email/verify-change', { newEmail, otp });
   return response.data;
 };
 
 export const passwordChange = async (currentPassword: string, newPassword: string) => {
-  const response = await userApi.post('/password/change', { currentPassword, newPassword });
+  const response = await api.post('/user/password/change', { currentPassword, newPassword });
   return response.data;
 };
 
 //public profile
 
 export const fetchPublicProfile = async (username:string) => {
-  const response = await userApi.get(`/profile/${username}`);
+  const response = await api.get(`/user/profile/${username}`);
   return response.data;
 };
 
 export const handleFollow = async (userId:string) => {
-  const response = await userApi.post(`/follow/${userId}`);
+  const response = await api.post(`/user/follow/${userId}`);
   return response.data;
 };
 
 export const handleUnFollow = async (userId:string) => {
-  const response = await userApi.post(`/unfollow/${userId}`);
+  const response = await api.post(`/user/unfollow/${userId}`);
   return response.data;
 };

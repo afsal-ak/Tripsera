@@ -1,5 +1,5 @@
 import type { BookingFormSchema } from '@/schemas/BookingSchema';
-import userApi from '@/lib/axios/userAxios';
+import api from '@/lib/axios/api';
 import type { IBooking } from '@/types/IBooking';
 
 // router.get('/booking',userAuthMiddleware,bookingController.getUserBookings)
@@ -7,33 +7,33 @@ import type { IBooking } from '@/types/IBooking';
 // router.patch('/booking/cancel',userAuthMiddleware,bookingController.cancelBooking)
 
 export const getUserBooking = async (page: number, limit: number) => {
-  const response = await userApi.get(`/booking?page=${page}&limit=${limit}`);
+  const response = await api.get(`/user/booking?page=${page}&limit=${limit}`);
   return response.data;
 };
 
 export const getBookingById = async (id: string) => {
-  const response = await userApi.get(`/booking/${id}`);
+  const response = await api.get(`/user/booking/${id}`);
   return response.data;
 };
 
 export const cancelBooking = async (id: string, reason: string) => {
-  const response = await userApi.patch(`/booking/cancel/${id}`, { reason });
+  const response = await api.patch(`/user/booking/cancel/${id}`, { reason });
   return response.data;
 };
 
 export const applyCoupon = async (code: string, totalAmount: number) => {
-  const response = await userApi.post('/coupon/apply', { code, totalAmount });
+  const response = await api.post('/user/coupon/apply', { code, totalAmount });
   return response.data;
 };
 
 export const createBookingWithWalletPayment = async (data: BookingFormSchema) => {
-  const response = await userApi.post('/booking/wallet', data);
+  const response = await api.post('/user/booking/wallet', data);
   console.log(response, 'create booking walet');
   return response.data;
 };
 
 export const createBookingWithOnlinePayment = async (data: BookingFormSchema) => {
-  const response = await userApi.post('/booking/online', data);
+  const response = await api.post('/user/booking/online', data);
   return response.data;
 };
 
@@ -42,17 +42,17 @@ export const verifyRazorpayPayment = async (data: {
   razorpay_payment_id: string;
   razorpay_signature: string;
 }) => {
-  const res = await userApi.post('/booking/verify', data);
+  const res = await api.post('/user/booking/verify', data);
   return res.data.success;
 };
 
 export const retryBookingPayment = async (bookingId: string): Promise<IBooking> => {
-  const response = await userApi.post(`/retry-payment/${bookingId}`);
+  const response = await api.post(`/user/retry-payment/${bookingId}`);
   console.log(response, 'retry');
   return response.data;
 };
 
 export const cancelUnpaidBooking = async (bookingId: string): Promise<{ message: string }> => {
-  const response = await userApi.patch(`/payment-cancel/${bookingId}`);
+  const response = await api.patch(`/user/payment-cancel/${bookingId}`);
   return response.data;
 };

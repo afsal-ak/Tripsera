@@ -1,4 +1,4 @@
-import adminApi from '@/lib/axios/adminAxios';
+import api from "@/lib/axios/api";
 //  export const fetchCategoriesData=async()=>{
 //     try {
 //         const response=await adminApi.get('/categories');
@@ -8,28 +8,28 @@ import adminApi from '@/lib/axios/adminAxios';
 //     }
 // }
 export const fetchCategoriesData = async (page: number, limit: number) => {
-  const response = await adminApi.get(`/categories?page=${page}&limit=${limit}`);
+  const response = await api.get(`/admin/categories?page=${page}&limit=${limit}`);
   return response.data;
 };
 
 export const getCategoryById = async (id: string) => {
-  const response = await adminApi.get(`/category/${id}`);
+  const response = await api.get(`/admin/category/${id}`);
   return response.data;
 };
 
 export const createCategory = async (data: { name: string; isBlocked: boolean }) => {
-  const response = await adminApi.post('/addCategory', data);
+  const response = await api.post('/admin/addCategory', data);
   return response.data;
 };
 
 export const updateCategory = async (id: string, data: { name: string; isBlocked: boolean }) => {
-  const response = await adminApi.put(`/category/${id}`, data);
+  const response = await api.put(`/admin/category/${id}`, data);
   return response.data;
 };
 
 export const blockCategory = async (id: string) => {
   try {
-    const response = await adminApi.patch(`/category/${id}/block`);
+    const response = await api.patch(`/admin/category/${id}/block`);
 
     return response.data;
   } catch (error) {
@@ -38,7 +38,7 @@ export const blockCategory = async (id: string) => {
 };
 export const unBlockCategory = async (id: string) => {
   try {
-    const response = await adminApi.patch(`/category/${id}/unblock`);
+    const response = await api.patch(`/admin/category/${id}/unblock`);
 
     return response.data;
   } catch (error) {

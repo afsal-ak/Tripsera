@@ -1,5 +1,5 @@
 import type { IPackage } from '@/types/homeTypes';
-import userApi from '@/lib/axios/userAxios';
+import api from '@/lib/axios/api';
 
 interface PackageQueryParams {
   location?: string;
@@ -21,11 +21,11 @@ export const fetchActivePackages = async (
   currentPage: number;
   totalPages: number;
 }> => {
-  const res = await userApi.get('/packages', { params });
+  const res = await api.get('/user/packages', { params });
   return res.data;
 };
 
 export const fetchPackgeById = async (id: string): Promise<IPackage> => {
-  const res = await userApi.get(`/packages/${id}`);
+  const res = await api.get(`/user/packages/${id}`);
   return res.data.packages;
 };

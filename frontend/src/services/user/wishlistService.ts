@@ -1,22 +1,22 @@
-import userApi from '@/lib/axios/userAxios';
+import api from '@/lib/axios/api';
 
 export const getAllWishlist = async (page: number, limit: number) => {
-  const response = await userApi.get(`/wishlist?page=${page}&limit=${limit}`);
+  const response = await api.get(`/user/wishlist?page=${page}&limit=${limit}`);
   return response.data;
 };
 
 export const addToWishlist = async (packageId: string) => {
-  const response = await userApi.post('/wishlist/add', { packageId });
+  const response = await api.post('/user/wishlist/add', { packageId });
   return response.data;
 };
 
 export const checkPackageInWishlist = async (packageId: string) => {
-  const response = await userApi.get(`/wishlist/check?packageId=${packageId}`);
+  const response = await api.get(`/user/wishlist/check?packageId=${packageId}`);
   return response.data;
 };
 
 export const deleteFromWishlist = async (packageId: string) => {
-  const response = await userApi.delete('/wishlist/delete', {
+  const response = await api.delete('/user/wishlist/delete', {
     data: { packageId },
   });
   return response.data;

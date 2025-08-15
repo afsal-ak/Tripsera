@@ -1,13 +1,13 @@
-import adminApi from '@/lib/axios/adminAxios';
+import api from '@/lib/axios/api';
 import type { ReportFilter } from '@/types/IReportFilter ';
 
 export const fetchSalesReports = async (filters: ReportFilter) => {
-  const res = await adminApi.get('/salesReport', { params: filters });
+  const res = await api.get('/admin/salesReport', { params: filters });
   return res.data;
 };
 
 export const downloadSalesReportExcel = async (filters: ReportFilter) => {
-  const res = await adminApi.get('/salesReport/download', {
+  const res = await api.get('/admin/salesReport/download', {
     params: filters,
     responseType: 'blob',
   });

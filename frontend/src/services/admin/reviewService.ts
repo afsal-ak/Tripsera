@@ -1,6 +1,5 @@
- import adminApi from "@/lib/axios/adminAxios";
+import api from '@/lib/axios/api';
 import type { IFilter } from "@/types/IFilter";
-import { useCleanFilter } from "@/hooks/useCleanFilter ";
 
 
 export const handleFetchReview = async (
@@ -14,24 +13,24 @@ export const handleFetchReview = async (
     ...filter,
   };
 
-  const response = await adminApi.get(`/reviews`, { params });
+  const response = await api.get(`/admin/reviews`, { params });
   return response.data;
 };
 
  
 export const handleReviewDetail=async(reviewId:string)=>{
-    const response=await adminApi.get(`reviews/${reviewId}`)
+    const response=await api.get(`/admin/reviews/${reviewId}`)
      return response.data
 }
 
 export const handleChangeStatus=async(reviewId:string,status:boolean)=>{
-      const response=await adminApi.patch(`/reviews/${reviewId}/status`,{status})
+      const response=await api.patch(`/admin/reviews/${reviewId}/status`,{status})
     console.log(response,'response from admin review')
     return response.data
 }
  
 export const handleDeleteReview=async(reviewId:string)=>{
-    const response=await adminApi.delete(`reviews/${reviewId}/delete`)
+    const response=await api.delete(`/admin/reviews/${reviewId}/delete`)
     console.log(response,'response from admin review')
     return response.data
 }

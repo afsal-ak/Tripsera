@@ -1,6 +1,6 @@
-import userApi from '@/lib/axios/userAxios';
+import api from '@/lib/axios/api';
 
 export const getAllActiveCoupon = async (page: number, limit: number) => {
-  const response = await userApi.get(`/coupons?page=${page}&limit=${limit}`);
+  const response = await api.get(`/user/coupons?page=${page}&limit=${limit}`);
   return response.data;
 };
