@@ -56,3 +56,28 @@ export const cancelUnpaidBooking = async (bookingId: string): Promise<{ message:
   const response = await api.patch(`/user/payment-cancel/${bookingId}`);
   return response.data;
 };
+
+
+
+export const downloadInvoice = async (bookingId: string) => {
+    try {
+      console.log(bookingId)
+      const response = await api.get(
+       `/user/booking/invoice/${bookingId}/download`,
+        {
+          responseType: "blob", 
+        }
+      );
+ 
+      // Create blob link to download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `invoice-${bookingId}.pdf`); // filename
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading invoice", error);
+     }
+  };
