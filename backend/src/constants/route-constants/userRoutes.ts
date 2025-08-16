@@ -60,8 +60,9 @@ export const BOOKING_ROUTES = {
   CANCEL_UNPAID: '/payment-cancel/:id',
   RETRY_PAYMENT: '/retry-payment/:id',
   WALLET_BOOKING: '/booking/wallet',
+  INVOICE_DOWNLOAD: '/booking/invoice/:bookingId/download',
 };
-
+ 
 export const BLOG_ROUTES = {
   CREATE: '/blog/create',
   EDIT: '/blog/edit/:blogId',

@@ -120,6 +120,7 @@ export class BookingRepository implements IBookingRepository {
       userId: userId,
     })
       .populate('packageId', 'title imageUrls price travelDate packageCode')
+       .populate('userId')
       .lean();
 
     return booking ? booking : null;

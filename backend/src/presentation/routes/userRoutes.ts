@@ -209,6 +209,15 @@ router.post(
   userAuthMiddleware,
   bookingController.createBookingWithWalletPayment
 );
+router.get(
+  BOOKING_ROUTES.INVOICE_DOWNLOAD,
+  userAuthMiddleware,
+  bookingController.downloadInvoice
+);
+
+
+
+
 
 // BLOG ROUTES
 router.post(
