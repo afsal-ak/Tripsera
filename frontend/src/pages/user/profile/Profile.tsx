@@ -7,24 +7,23 @@ import EditProfileTab from './EditProfileTab';
 import SecurityTab from './SecurityTab';
 import AddressTab from './AddressTab';
 import Dashboard from './Dashboard';
-
-const Profile = () => {
+ const Profile = () => {
   const [user, setUser] = useState<IUser>();
   const [loading, setLoading] = useState(true);
 
+  const getUserInfo = async () => {
+    try {
+      setLoading(true);
+      const response = await getUserProfile();
+      setUser(response.userProfile);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to fetch user data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const getUserInfo = async () => {
-      try {
-        setLoading(true);
-        const response = await getUserProfile();
-        console.log(response,'response from profile')
-        setUser(response.userProfile);
-      } catch (error: any) {
-        toast.error(error?.response?.data?.message || 'Failed to fetch user data');
-      } finally {
-        setLoading(false);
-      }
-    };
     getUserInfo();
   }, []);
 
@@ -32,28 +31,20 @@ const Profile = () => {
     <div className="max-w-4xl mx-auto p-4">
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="flex gap-2 border-b mb-6 overflow-x-auto">
-          <TabsTrigger value="overview" className="px-4 py-2">
-            Dashboared
-          </TabsTrigger>
-          <TabsTrigger value="edit" className="px-4 py-2">
-            Edit Profile
-          </TabsTrigger>
-          <TabsTrigger value="address" className="px-4 py-2">
-            Address
-          </TabsTrigger>
-          <TabsTrigger value="security" className="px-4 py-2">
-            Security
-          </TabsTrigger>
+          <TabsTrigger value="overview">Dashboard</TabsTrigger>
+          <TabsTrigger value="edit">Edit Profile</TabsTrigger>
+          <TabsTrigger value="address">Address</TabsTrigger>
+          <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
-          <Dashboard user={user} loading={loading} />
+          <Dashboard user={user} loading={loading} refetchUser={getUserInfo} />
         </TabsContent>
         <TabsContent value="edit">
-          <EditProfileTab user={user} loading={loading} />
+          <EditProfileTab user={user} loading={loading} refetchUser={getUserInfo} />
         </TabsContent>
         <TabsContent value="address">
-          <AddressTab user={user} loading={loading} />
+          <AddressTab user={user} loading={loading} refetchUser={getUserInfo} />
         </TabsContent>
         <TabsContent value="security">
           <SecurityTab />
@@ -62,5 +53,4 @@ const Profile = () => {
     </div>
   );
 };
-
-export default Profile;
+export default Profile

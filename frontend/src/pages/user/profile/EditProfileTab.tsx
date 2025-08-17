@@ -19,9 +19,10 @@ import ProfileImageTab from './ProfileImageTab';
 type Props = {
   user?: IUser;
   loading: boolean;
+  refetchUser: () => Promise<void>;
 };
 
-const EditProfileTab = ({ user, loading }: Props) => {
+const EditProfileTab = ({ user, loading,refetchUser }: Props) => {
   const accessToken = useSelector((state: RootState) => state.userAuth.accessToken);
   const currentUser = useSelector((state: RootState) => state.userAuth.user);
   const dispatch = useDispatch<AppDispatch>();
@@ -56,6 +57,7 @@ const EditProfileTab = ({ user, loading }: Props) => {
           accessToken: accessToken!,
         })
       );
+      await refetchUser()
       toast.success('Profile updated successfully');
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Failed to update profile');
@@ -73,7 +75,7 @@ const EditProfileTab = ({ user, loading }: Props) => {
     {/* Profile Image Section */}
     <div className="bg-white p-6 rounded-md shadow-md space-y-4">
       <h2 className="text-xl font-semibold mb-2">Profile Image</h2>
-      <ProfileImageTab user={user} loading={loading} />
+      <ProfileImageTab user={user} loading={loading} refetchUser={refetchUser} />
     </div>
 
       {/* Profile Info Form */}

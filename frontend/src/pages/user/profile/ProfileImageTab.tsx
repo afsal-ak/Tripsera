@@ -12,9 +12,10 @@ import type { IUser } from '@/types/IUser';
  type Props = {
   user?: IUser;
   loading: boolean;
+  refetchUser:()=>Promise<void>
 };
 
-const ProfileImageTab = ({ user, loading }: Props) => {
+const ProfileImageTab = ({ user, loading,refetchUser }: Props) => {
   const accessToken = useSelector((state: RootState) => state.userAuth.accessToken);
   const currentUser = useSelector((state: RootState) => state.userAuth.user);
   const dispatch = useDispatch<AppDispatch>();

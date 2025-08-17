@@ -6,6 +6,7 @@ import NotFoundPage from '@/components/NotFoundPage';
 
 // Admin pages
 import AdminDashboard from '@/pages/admin/AdminDashboard';
+import DashboardPage from '@/pages/admin/dashboard/DashboardPage';
 import UserList from '@/pages/admin/user/UsersList';
 import UserBookingPage from '@/pages/user/booking/UserBookingPage';
 import AddCategory from '@/pages/admin/category/AddCategory';
@@ -38,7 +39,7 @@ const AdminRoutes = () => {
       {/*  Protected Admin Routes */}
       <Route element={<AdminPrivateRoute />}>
         <Route element={<AdminLayout />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="dashboard" element={<DashboardPage />} />
           <Route path="users" element={<UserList />} />
           <Route path="users/:id" element={<UserDetailsPage/>} />
           <Route path="categories" element={<CategoryList />} />

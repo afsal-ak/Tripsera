@@ -1,20 +1,39 @@
 import type { IUser } from '@/types/IUser';
-import { Mail, MapPin, Calendar, Edit, Share2, MessageCircle } from 'lucide-react';
-import { Button } from '@/component/ui/button';
+import { Mail, MapPin, Calendar, Lock, Globe, Share2, MessageCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import ReferralLinkBox from './ReferralLink';
+import { handleProfilePrivacy } from '@/services/user/profileService';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 type Props = {
   user?: IUser;
   loading: boolean;
+  refetchUser: () => Promise<void>;
 };
-const Dashboard = ({ user, loading }: Props) => {
+
+const Dashboard = ({ user, loading, refetchUser }: Props) => {
   const profilePic = user?.profileImage?.url
     ? user.profileImage.url.replace('/upload/', '/upload/f_webp,q_auto/')
     : '/profile-default.jpg';
+
   const coverPic = user?.coverImage?.url
     ? user.coverImage.url.replace('/upload/', '/upload/f_webp,q_auto/')
     : '/profile-default.jpg';
+
+  const handleProfilePrivacyToggle = async () => {
+    try {
+      const newStatus = !user?.isPrivate;
+      const result = await handleProfilePrivacy(newStatus);
+      await refetchUser();
+      if (result) {
+        toast.success(`Profile set to ${newStatus ? 'Private' : 'Public'}`);
+      }
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to update status');
+    }
+  };
 
   if (loading) {
     return (
@@ -40,15 +59,10 @@ const Dashboard = ({ user, loading }: Props) => {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 p-4">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Hero Profile Card */}
-        {/* Cover + Profile Image */}
-        <div className="relative w-full bg-white rounded-3xl  shadow-lg">
-          {/* Cover Image */}
+        <div className="relative w-full bg-white rounded-3xl shadow-lg">
+          {/* Cover */}
           <div className="w-full h-48 sm:h-56 md:h-64 relative">
-            <img
-              src={coverPic}
-              alt="Cover"
-              className="w-full h-full object-contain "
-            />
+            <img src={coverPic} alt="Cover" className="w-full h-full object-contain" />
           </div>
 
           {/* Profile Image */}
@@ -69,11 +83,10 @@ const Dashboard = ({ user, loading }: Props) => {
         {/* Spacer */}
         <div className="h-20"></div>
 
-        {/* Profile Card Content */}
+        {/* Profile Info */}
         <Card className="bg-white rounded-3xl shadow-xl border-0 overflow-hidden hover:shadow-2xl transition-all duration-500">
           <CardContent className="p-8 md:p-12">
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
-              {/* Profile Info */}
               <div className="flex-1 text-center lg:text-left space-y-4">
                 <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
                   {user?.fullName || 'User Name'}
@@ -90,30 +103,50 @@ const Dashboard = ({ user, loading }: Props) => {
                 )}
 
                 {user?.bio && (
-                  <div className="max-w-2xl">
-                    <p className="text-gray-700 leading-relaxed text-base">{user.bio}</p>
-                  </div>
+                  <p className="text-gray-700 leading-relaxed text-base max-w-2xl">{user.bio}</p>
                 )}
 
-                {/* Action Buttons */}
                 <div className="flex flex-wrap justify-center lg:justify-start gap-3 pt-4">
-                  <Button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Profile
-                  </Button>
+                  <ConfirmDialog
+                    title={user?.isPrivate ? 'Make profile Public' : 'Make profile Private'}
+                    actionLabel={user?.isPrivate ? 'Public' : 'Private'}
+                    onConfirm={handleProfilePrivacyToggle}
+
+                  >
+                    <Button
+                      className={`px-6 py-2 rounded-full flex items-center gap-2 transition-all duration-300
+                      ${user?.isPrivate
+                          ? 'bg-red-600 text-white hover:bg-red-700'
+                          : 'bg-green-600 text-white hover:bg-green-700'
+                        }`}
+                    >
+                      {user?.isPrivate ? (
+                        <>
+                          <Lock className="w-4 h-4" />
+                          Make Public
+                        </>
+                      ) : (
+                        <>
+                          <Globe className="w-4 h-4" />
+                          Make Private
+                        </>
+                      )}
+                    </Button>
+                  </ConfirmDialog>
+
+
                   <Button
                     variant="outline"
                     className="border-orange-200 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full transition-all duration-300"
                   >
-                    <Share2 className="w-4 h-4 mr-2" />
-                    Share
+                    <Share2 className="w-4 h-4 mr-2" /> Share
                   </Button>
+
                   <Button
                     variant="outline"
                     className="border-orange-200 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full transition-all duration-300"
                   >
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Message
+                    <MessageCircle className="w-4 h-4 mr-2" /> Message
                   </Button>
                 </div>
               </div>
@@ -121,15 +154,14 @@ const Dashboard = ({ user, loading }: Props) => {
           </CardContent>
         </Card>
 
-
-        {/* Stats Cards */}
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Followers Card */}
+          {/* Followers */}
           <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
+                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-orange-600">
                     {user?.followers?.length || 0}
                   </h3>
                   <p className="text-gray-600 font-medium">Followers</p>
@@ -138,21 +170,15 @@ const Dashboard = ({ user, loading }: Props) => {
                   <div className="w-6 h-6 bg-orange-500 rounded-full"></div>
                 </div>
               </div>
-              <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transform origin-left transition-transform duration-700 hover:scale-x-110"
-                  style={{ width: '75%' }}
-                ></div>
-              </div>
             </CardContent>
           </Card>
 
-          {/* Following Card */}
+          {/* Following */}
           <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
+                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-orange-600">
                     {user?.following?.length || 0}
                   </h3>
                   <p className="text-gray-600 font-medium">Following</p>
@@ -161,24 +187,18 @@ const Dashboard = ({ user, loading }: Props) => {
                   <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
                 </div>
               </div>
-              <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transform origin-left transition-transform duration-700 hover:scale-x-110"
-                  style={{ width: '60%' }}
-                ></div>
-              </div>
             </CardContent>
           </Card>
         </div>
-        <ReferralLinkBox referralCode={user?.referralCode||''} />
 
-        {/* Additional Info Cards */}
+        {/* Referral */}
+        <ReferralLinkBox referralCode={user?.referralCode || ''} />
+
+        {/* Extra Info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-8 h-8 text-green-600" />
-              </div>
+              <Calendar className="w-8 h-8 text-green-600 mx-auto mb-4" />
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Member Since</h4>
               <p className="text-gray-600">
                 {user?.createdAt ? new Date(user.createdAt).toISOString().slice(0, 10) : ''}
@@ -188,9 +208,7 @@ const Dashboard = ({ user, loading }: Props) => {
 
           <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-purple-600" />
-              </div>
+              <MapPin className="w-8 h-8 text-purple-600 mx-auto mb-4" />
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Location</h4>
               <p className="text-gray-600">{user?.address?.state}</p>
             </CardContent>
@@ -198,11 +216,8 @@ const Dashboard = ({ user, loading }: Props) => {
 
           <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Badge className="w-8 h-8 text-orange-600" />
-              </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Status</h4>
               <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Active</Badge>
+              <h4 className="text-lg font-semibold text-gray-900 mt-2">Status</h4>
             </CardContent>
           </Card>
         </div>

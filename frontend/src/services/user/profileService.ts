@@ -65,3 +65,9 @@ export const handleUnFollow = async (userId:string) => {
   const response = await api.post(`/user/unfollow/${userId}`);
   return response.data;
 };
+
+export const handleProfilePrivacy = async (isPrivate:boolean) => {
+  const response = await api.patch(`/user/profile/privacy`,{isPrivate});
+  return response.data;
+};
+

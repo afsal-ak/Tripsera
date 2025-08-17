@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-
+import { Search, Filter, MoreHorizontal, Shield, ShieldOff } from "lucide-react"
+import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import {
@@ -13,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/Table';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
 
 import type { IUser } from '@/types/IUser';
 import { fetchUsersData, toggleBlockUser } from '@/services/admin/userService';
@@ -57,10 +59,46 @@ const UserList = () => {
   const handleNaviageDetail = (id: string) => {
     navigate(`/admin/users/${id}`)
   }
+
+   // const [statusFilter, setStatusFilter] = useState<string>("all")
+  // const [searchTerm, setSearchTerm] = useState("")
+  // const getInitials = (name: string) => {
+  //   return name.split(' ').map(n => n[0]).join('').toUpperCase()
+  // }
+
+  // const filteredUsers = users.filter(user => {
+  //   const matchesSearch = user?.username!.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //                        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //                        user?._id!.toLowerCase().includes(searchTerm.toLowerCase())
+  //   const matchesStatus = statusFilter === "all" || user?.isBlocked! === true
+  //   return matchesSearch && matchesStatus
+  // })
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Users</CardTitle>
+          {/* <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search users..."
+              // value={searchTerm}
+              // onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+           <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-48">
+              <Filter className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="blocked">Blocked</SelectItem>
+            </SelectContent>
+          </Select> */}
       </CardHeader>
       <CardContent>
         <Table>
@@ -73,6 +111,7 @@ const UserList = () => {
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
+          
           <TableBody>
             {users.map((user, index) => (
               <TableRow key={user._id}>

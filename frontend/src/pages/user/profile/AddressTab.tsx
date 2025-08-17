@@ -10,10 +10,12 @@ import { updateUserAddress } from '@/services/user/profileService';
 import { toast } from 'sonner';
 type Props = {
   user?: IUser;
-  loading?: boolean;
+  loading: boolean;
+  refetchUser: () => Promise<void>;
 };
 
-const AddressTab = ({ user, loading }: Props) => {
+
+const AddressTab = ({ user, loading,refetchUser }: Props) => {
   const {
     register,
     handleSubmit,

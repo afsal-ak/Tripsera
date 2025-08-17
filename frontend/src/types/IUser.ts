@@ -18,6 +18,7 @@ export interface IUser {
   password?: string;
   role?: 'user' | 'admin';
   isBlocked?: boolean;
+  isPrivate?: boolean;
   fullName?: string;
   dob?: Date;
   gender?: 'male' | 'female';
