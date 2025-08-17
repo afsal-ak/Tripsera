@@ -30,6 +30,7 @@ export const PROFILE_ROUTES = {
   GET_PUBLIC_PROFILE: '/profile/:username',
   FOLLOW: '/follow/:userId',
   UNFOLLOW: '/unfollow/:userId',
+  SET_PROFILE_PRIVACY: '/profile/privacy',
 };
 
 export const WISHLIST_ROUTES = {

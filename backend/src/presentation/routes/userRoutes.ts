@@ -163,6 +163,7 @@ router.get(
 );
 router.post(PROFILE_ROUTES.FOLLOW, userAuthMiddleware, profileController.followUser);
 router.post(PROFILE_ROUTES.UNFOLLOW, userAuthMiddleware, profileController.unfollowUser);
+router.patch(PROFILE_ROUTES.SET_PROFILE_PRIVACY, userAuthMiddleware, profileController.setProfilePrivacy);
 
 // WISHLIST ROUTES
 router.get(WISHLIST_ROUTES.GET_ALL, userAuthMiddleware, wishlistController.getAllWishlist);

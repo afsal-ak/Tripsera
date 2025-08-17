@@ -56,4 +56,9 @@ export class ProfileUseCases implements IProfileUseCases {
 
     await this._userRepo.unFollowAndFollowing(followerId, followingId);
   }
+
+  async setProfilePrivacy(userId: string, isPrivate: boolean): Promise<IUser|null>{
+    return this._userRepo.setProfilePrivacy(userId,isPrivate)
+  }
+
 }

@@ -24,4 +24,5 @@ export interface IUserRepository {
     coverImageImage: { url: string; public_id: string }
   ): Promise<IUser | null>;
   getUserProfile(id: string): Promise<IUser | null>;
+  setProfilePrivacy(id:string,isPrivate:boolean):Promise<IUser | null>
 }

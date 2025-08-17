@@ -22,4 +22,7 @@ export interface IProfileUseCases {
   followUser(followerId: string, followingId: string): Promise<void>;
 
   unfollowUser(followerId: string, followingId: string): Promise<void>;
+
+  setProfilePrivacy(userId: string, isPrivate: boolean): Promise<IUser|null>;
+
 }

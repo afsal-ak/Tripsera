@@ -162,4 +162,19 @@ export class ProfileController {
       next(error);
     }
   };
+
+  setProfilePrivacy=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+    try {
+      const userId=getUserIdFromRequest(req)
+      const {isPrivate}=req.body
+      const user=await this._profileUseCases.setProfilePrivacy(userId,isPrivate)
+      res.status(HttpStatus.OK).json({
+        profile:user,
+        message:'Profile privacy status changed successfully'
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }

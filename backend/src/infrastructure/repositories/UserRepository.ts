@@ -176,4 +176,13 @@ export class UserRepository implements IUserRepository {
     }
     return updated;
   }
+
+  async setProfilePrivacy(id: string, isPrivate: boolean): Promise<IUser | null> {
+    const user = await UserModel.findByIdAndUpdate(
+      id,
+      { isPrivate },
+      { new: true, select: "_id isPrivate" }
+    )
+    return user
+  }
 }
