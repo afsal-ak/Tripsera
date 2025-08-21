@@ -205,7 +205,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
 
       {/* Actions */}
       {(onApply || onClear) && (
-        <div className="flex gap-2">
+        <div className="flex gap-2 pt-8">
           {onApply && (
             <Button variant="default" onClick={onApply}>
               Apply

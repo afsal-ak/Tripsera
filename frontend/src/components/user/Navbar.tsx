@@ -49,6 +49,10 @@ const Navbar = () => {
               <Link to="/blog" className="text-foreground hover:text-orange transition-colors">
                 Blog
               </Link>
+               <Link to="/custom-package" className="text-foreground hover:text-orange transition-colors">
+               Custom Package
+              </Link>
+ 
               <Link to="/about" className="text-foreground hover:text-orange transition-colors">
                 About Us
               </Link>

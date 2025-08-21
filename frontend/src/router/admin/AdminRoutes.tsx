@@ -31,6 +31,8 @@ import SalesReportPage from '@/pages/admin/SalesReportPage';
 import ReportList from '@/pages/admin/report/ReportList';
 import ReportDetails from '@/pages/admin/report/ReportDetails';
 import UserDetailsPage from '@/pages/admin/user/UserDetailsPage';
+import CustomPackagePage from '@/pages/admin/cutomPackage/CustomPackagePage';
+import CustomPackageDetails from '@/pages/admin/cutomPackage/CustomPackageDetailsPage';
 const AdminRoutes = () => {
   return (
     <Routes>
@@ -70,6 +72,8 @@ const AdminRoutes = () => {
           <Route path="sales-report" element={<SalesReportPage />} />
           <Route path="reports" element={<ReportList />} />
           <Route path="reports/:reportId" element={<ReportDetails />} />
+          <Route path="custom-packages" element={<CustomPackagePage />} />
+          <Route path="custom-packages/:pkgId" element={<CustomPackageDetails />} />
 
         </Route>
       </Route>

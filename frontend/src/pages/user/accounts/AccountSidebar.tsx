@@ -15,6 +15,7 @@ const menuItems = [
   { path: 'my-bookings', label: 'My Bookings', icon: Calendar },
   { path: 'my-blogs', label: 'My Blogs', icon: IdCard },
   { path: 'my-reviews', label: 'My Reviews', icon: List },
+  { path: 'my-custom-package', label: 'My-Custom Package', icon: List },
 ];
 
 const AccountSidebar = ({ isOpen, onToggle }: Props) => {

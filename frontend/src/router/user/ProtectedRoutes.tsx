@@ -23,6 +23,10 @@ import ReviewDetail from '@/pages/user/reviews/ReviewDetail';
 import PublicProfile from '@/pages/user/profile/PublicProfile';
 import StandardBookingDetail from '@/pages/user/booking/SBoking';
 import ReviewEditForm from '@/pages/user/reviews/ReviewEditForm';
+import AddCustomPkgForm from '@/pages/user/customPkg/AddCustomPackageForm';
+import EditCustomPkgForm from '@/pages/user/customPkg/EditCustomPkgForm';
+import CustomPackagePage from '@/pages/user/customPkg/CustomPackagePage';
+import CustomPackageDetails from '@/pages/user/customPkg/CustomPackageDetailsPage';
 const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
@@ -33,6 +37,7 @@ const ProtectedRoutes = (
     <Route path="/packages/:packageId/review" element={<ReviewPage />} />
     <Route path="/packages/:packageId/review/add" element={<ReviewForm />} />
     <Route path="/profile/:username" element={<PublicProfile />} />
+    <Route path="/custom-package" element={<AddCustomPkgForm />} />
  
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />
@@ -50,7 +55,11 @@ const ProtectedRoutes = (
       <Route path="my-reviews" element={<UserReviewPage />} />
       <Route path="my-reviews/:reviewId" element={<ReviewDetail />} />
       <Route path="my-reviews/:reviewId/edit" element={<ReviewEditForm />} />
-      <Route path="s:id" element={<StandardBookingDetail />} />
+      <Route path="my-custom-package" element={<CustomPackagePage />} />
+      <Route path="my-custom-package/:pkgId" element={<CustomPackageDetails />} />
+          <Route path="my-custom-package/edit/:id" element={<EditCustomPkgForm />} />
+
+      <Route path="s/:id" element={<StandardBookingDetail />} />
     </Route>
   </Route>
 );
