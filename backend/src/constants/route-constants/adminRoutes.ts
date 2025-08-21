@@ -97,3 +97,11 @@ export const REPORT_ROUTE = {
   UPDATE_REPORT_STATUS: '/reports/:id/update',
   UPDATE_REPORTED_ITEM_STATUS: '/reports/type/:reportedId/update',
  };
+
+
+ export const CUSTOM_PACKAGE_ROUTE = {
+  CHANGE_STATUS: '/custom-package/:packageId/edit',
+  GET_BY_ID: '/custom-package/:packageId',
+  GET_ALL_PKG: '/custom-package',
+  DELETE: '/custom-package/:packageId/delete',
+};

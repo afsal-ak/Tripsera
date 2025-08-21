@@ -10,7 +10,8 @@ import {
   BOOKING_ROUTES,
   BLOG_ROUTES,
   REVIEW_ROUTE,
-  REPORT_ROUTE
+  REPORT_ROUTE,
+  CUSTOM_PACKAGE_ROUTE
 } from 'constants/route-constants/userRoutes';
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
@@ -56,6 +57,11 @@ import { ReferralRepository } from '@infrastructure/repositories/ReferralReposit
 import { ReportRepository } from '@infrastructure/repositories/ReportRepository';
 import { ReportUseCases } from '@application/usecases/user/reportUseCases';
 import { ReportController } from '@presentation/controllers/user/reportController';
+
+import { CustomPackageRepository } from '@infrastructure/repositories/CustomPackageRepository';
+import { CustomPackageUseCases } from '@application/usecases/user/customPackageUseCases';
+import { CustomPackageController } from '@presentation/controllers/user/customPackageController';
+
 
 const walletRepository = new WalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
@@ -106,6 +112,10 @@ const reviewController = new ReviewController(reviewUseCases);
 const reportRepository = new ReportRepository();
 const reportUseCases = new ReportUseCases(reportRepository);
 const reportController = new ReportController(reportUseCases);
+
+const customPkgRepository = new CustomPackageRepository();
+const customPkgUseCases = new CustomPackageUseCases(customPkgRepository);
+const customPkgController = new CustomPackageController(customPkgUseCases);
 
 
 const router = Router();
@@ -254,5 +264,13 @@ router.get(REVIEW_ROUTE.GET_REVIEW_RATING, reviewController.getRatingSummary);
 //REPORT ROUTES
 
 router.post(REPORT_ROUTE.CREATE,userAuthMiddleware,reportController.createReport)
+
+//CUSTOM PACAKGE ROUTES
+
+router.post(CUSTOM_PACKAGE_ROUTE.CREATE, userAuthMiddleware, customPkgController.createCustomPkg);
+router.put(CUSTOM_PACKAGE_ROUTE.UPDATE, userAuthMiddleware, customPkgController.updateCustomPkg);
+router.get(CUSTOM_PACKAGE_ROUTE.GET_BY_ID, userAuthMiddleware, customPkgController.getCustomPkgById);
+router.get(CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG, userAuthMiddleware, customPkgController.getAllCustomPkgs);
+router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, userAuthMiddleware,customPkgController.deleteCustomPkg);
 
 export default router;

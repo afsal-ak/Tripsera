@@ -61,7 +61,7 @@ export abstract class BaseRepository<T> {
       .findOneAndUpdate(
         filter,
         { $set: data } as UpdateQuery<T & Document>,
-        { new: true, lean: true }
+        { new: true, runValidators: true, lean: true }
       )
       .exec();
 
@@ -72,4 +72,9 @@ export abstract class BaseRepository<T> {
     const result = await this.model.findByIdAndDelete(id);
     return !!result;
   }
+  async deleteByFilter(filter: object): Promise<boolean> {
+  const result = await this.model.findOneAndDelete(filter);
+  return !!result;
+}
+
 }

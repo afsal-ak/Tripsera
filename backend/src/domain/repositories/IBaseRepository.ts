@@ -15,4 +15,6 @@ export interface IBaseRepository<T> {
   
 
   delete(id: string): Promise<boolean>;
+      deleteByFilter(filter: object): Promise<boolean> 
+
 }

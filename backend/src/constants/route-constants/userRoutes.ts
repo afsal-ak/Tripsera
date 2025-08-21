@@ -63,7 +63,7 @@ export const BOOKING_ROUTES = {
   WALLET_BOOKING: '/booking/wallet',
   INVOICE_DOWNLOAD: '/booking/invoice/:bookingId/download',
 };
- 
+
 export const BLOG_ROUTES = {
   CREATE: '/blog/create',
   EDIT: '/blog/edit/:blogId',
@@ -89,4 +89,12 @@ export const REVIEW_ROUTE = {
 
 export const REPORT_ROUTE = {
   CREATE: '/report/:reportedId',
+};
+
+export const CUSTOM_PACKAGE_ROUTE = {
+  CREATE: '/custom-package/create',
+  UPDATE: '/custom-package/:packageId/edit',
+  GET_BY_ID: '/custom-package/:packageId',
+  GET_ALL_PKG: '/custom-package',
+  DELETE: '/custom-package/:packageId/delete',
 };

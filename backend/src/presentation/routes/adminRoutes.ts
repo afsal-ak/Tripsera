@@ -12,6 +12,7 @@ import {
   REFERRAL_ROUTE,
   SALES_REPORT_ROUTE,
   REPORT_ROUTE,
+  CUSTOM_PACKAGE_ROUTE
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -64,6 +65,10 @@ import { ReportRepository } from '@infrastructure/repositories/ReportRepository'
 import { ReportUseCases } from '@application/usecases/admin/reportUseCases';
 import { ReportController } from '@presentation/controllers/admin/reportController';
 
+import { CustomPackageRepository } from '@infrastructure/repositories/CustomPackageRepository';
+import { CustomPackageUseCases } from '@application/usecases/admin/customPackageUseCases';
+import { CustomPackageController } from '@presentation/controllers/admin/customPackageController';
+
 
 const adminRepository = new UserRepository();
 const otpRepository = new OtpRepository();
@@ -113,6 +118,12 @@ const salesController = new SalesReportController(salesuseCases);
 const reportRepository=new ReportRepository()
 const reportUseCases=new ReportUseCases(reportRepository)
 const reportController=new ReportController(reportUseCases)
+
+
+const customPkgRepository = new CustomPackageRepository();
+const customPkgUseCases = new CustomPackageUseCases(customPkgRepository);
+const customPkgController = new CustomPackageController(customPkgUseCases);
+
 
 
 const router = Router();
@@ -216,4 +227,14 @@ router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD, salesController.downloa
 router.get(REPORT_ROUTE.GET_REPORT,adminAuthMiddleware,reportController.getAllReports)
 router.get(REPORT_ROUTE.GET_REPORT_BY_ID,adminAuthMiddleware,reportController.getReportById)
  router.patch(REPORT_ROUTE.UPDATE_REPORT_STATUS,adminAuthMiddleware,reportController.updateReportStatus)
+
+
+//CUSTOM PACAKGE ROUTES
+router.get(CUSTOM_PACKAGE_ROUTE.GET_BY_ID, adminAuthMiddleware, customPkgController.getCustomPkgById);
+router.get(CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG, adminAuthMiddleware, customPkgController.getAllCustomPkgs);
+router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS, adminAuthMiddleware, customPkgController.changeCustomPkgStatus);
+router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, adminAuthMiddleware,customPkgController.deleteCustomPkg);
+
+
+
  export default router;
