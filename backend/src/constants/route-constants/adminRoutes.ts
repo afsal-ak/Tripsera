@@ -105,3 +105,12 @@ export const REPORT_ROUTE = {
   GET_ALL_PKG: '/custom-package',
   DELETE: '/custom-package/:packageId/delete',
 };
+
+
+export const DASHBOARD_ROUTE = {
+   GET_DASHBOARD_SUMMARY: '/dashboard/summary',
+   GET_TOP_PACKAGES: '/dashboard/top-packages',
+   GET_TOP_CATEGORIES: '/dashboard/top-category',
+   GET_BOOKING_CHART: '/dashboard/booking-chart',
+ };
+ 

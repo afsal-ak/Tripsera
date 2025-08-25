@@ -12,7 +12,8 @@ import {
   REFERRAL_ROUTE,
   SALES_REPORT_ROUTE,
   REPORT_ROUTE,
-  CUSTOM_PACKAGE_ROUTE
+  CUSTOM_PACKAGE_ROUTE,
+  DASHBOARD_ROUTE
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -69,6 +70,9 @@ import { CustomPackageRepository } from '@infrastructure/repositories/CustomPack
 import { CustomPackageUseCases } from '@application/usecases/admin/customPackageUseCases';
 import { CustomPackageController } from '@presentation/controllers/admin/customPackageController';
 
+import { DashboardRepository } from '@infrastructure/repositories/DashboardRepository';
+import { DashboardUseCases } from '@application/usecases/admin/dashboardUseCases';
+import { DashboardController } from '@presentation/controllers/admin/dashboardController';
 
 const adminRepository = new UserRepository();
 const otpRepository = new OtpRepository();
@@ -123,6 +127,11 @@ const reportController=new ReportController(reportUseCases)
 const customPkgRepository = new CustomPackageRepository();
 const customPkgUseCases = new CustomPackageUseCases(customPkgRepository);
 const customPkgController = new CustomPackageController(customPkgUseCases);
+
+
+const dashboardRepository = new DashboardRepository();
+const dashboardUseCases = new DashboardUseCases(dashboardRepository);
+const dashboardController = new DashboardController(dashboardUseCases);
 
 
 
@@ -234,6 +243,12 @@ router.get(CUSTOM_PACKAGE_ROUTE.GET_BY_ID, adminAuthMiddleware, customPkgControl
 router.get(CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG, adminAuthMiddleware, customPkgController.getAllCustomPkgs);
 router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS, adminAuthMiddleware, customPkgController.changeCustomPkgStatus);
 router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, adminAuthMiddleware,customPkgController.deleteCustomPkg);
+
+// // DASHBOARD ROUTES
+router.get(DASHBOARD_ROUTE.GET_DASHBOARD_SUMMARY, adminAuthMiddleware, dashboardController.getDashboardSummary);
+router.get(DASHBOARD_ROUTE.GET_TOP_PACKAGES, adminAuthMiddleware, dashboardController.getTopBookedPackages);
+router.get(DASHBOARD_ROUTE.GET_TOP_CATEGORIES, adminAuthMiddleware, dashboardController.getTopBookedCategories);
+router.get(DASHBOARD_ROUTE.GET_BOOKING_CHART, adminAuthMiddleware, dashboardController.getBookingChart);
 
 
 

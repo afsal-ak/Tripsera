@@ -30,6 +30,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "acorn": "^8.14.1",
     "acorn-walk": "^8.3.4",
     "arg": "^4.1.3",
