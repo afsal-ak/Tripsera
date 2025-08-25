@@ -1,199 +1,283 @@
-import React, { useState } from "react";
-import { Line, Pie } from "react-chartjs-2";
+// import { useEffect, useState } from "react";
+// import { Package, Users, ClipboardList, FileText, Layers } from "lucide-react";
+// import { toast } from "sonner";
+// import {
+//   handleSummary,
+//   handleTopPackage,
+//   handleTopCategory,
+//   handleBookingChart,
+// } from "@/services/admin/dashboardService";
+// import BookingsChart from "./BookingsChart";
+// import DateFilterControls from "./DateFilterControls";
+// import StatCard from "./StatCard";
+// import DataTable from "./DataTable";
+// import type {
+//   ITopPackage,
+//   ITopCategory,
+//   IDateFilter,
+//   IDashboardSummary,
+//   IBookingsChartPoint,
+// } from "@/types/IDashboard";
+// import { useDashboardParams } from "@/hooks/useDashboardParams";
+// import ErrorBoundary from "./ErrorBoundary";
+// export default function TravelAdminDashboard() {
+//   const { params, updateParams } = useDashboardParams();
+
+//   const [summary, setSummary] = useState<IDashboardSummary | null>(null);
+//   const [topPackages, setTopPackages] = useState<ITopPackage[]>([]);
+//   const [topCategories, setTopCategories] = useState<ITopCategory[]>([]);
+//   const [chartData, setChartData] = useState<IBookingsChartPoint[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const fetchDashboardData = async () => {
+//       try {
+//         setLoading(true);
+//         setError(null);
+
+//         const [summaryRes, packagesRes, categoriesRes, chartRes] = await Promise.all([
+//           handleSummary(params),
+//           handleTopPackage(params),
+//           handleTopCategory(params),
+//           handleBookingChart(params),
+//         ]);
+
+//         setSummary(summaryRes);
+//         setTopPackages(packagesRes);
+//         setTopCategories(categoriesRes);
+//         setChartData(chartRes);
+//       } catch (err: any) {
+//         console.error(err);
+//         setError("Failed to fetch dashboard data");
+//         toast.error(err?.response?.data?.message || "Something went wrong!");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchDashboardData();
+//   }, [params]);
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+//       {/* Header */}
+//       <div className="mb-6 flex flex-col md:flex-row md:items-center gap-3">
+//         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Travel Admin Dashboard</h1>
+//         {error && (
+//           <span className="md:ml-auto text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-800">
+//             {error}
+//           </span>
+//         )}
+//       </div>
+
+//       {/* Filters */}
+//       <div className="mb-6">
+//         <DateFilterControls value={params} onChange={updateParams} />
+//       </div>
+
+//       {/* Summary Cards */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+//         <StatCard icon={Users} label="Users" value={summary?.totalUsers ?? "—"} />
+//         <StatCard icon={Package} label="Packages" value={summary?.totalPackages ?? "—"} />
+//         <StatCard icon={ClipboardList} label="Bookings" value={summary?.totalBookings ?? "—"} />
+//         <StatCard icon={Layers} label="Custom Plans" value={summary?.totalCustomPlans ?? "—"} />
+//         <StatCard icon={FileText} label="Blogs" value={summary?.totalBlogs ?? "—"} />
+//       </div>
+
+//       {/* Main Grid */}
+//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//         {/* Chart */}
+//         <div className="lg:col-span-2">
+//    <BookingsChart data={chartData || []} type="line" />
+//          </div>
+
+//         {/* Top Tables */}
+//         <div className="space-y-6">
+//           <ErrorBoundary>
+
+//           <DataTable<ITopPackage>
+//             title="Top Booked Packages"
+//             columns={[
+//               { key: "packageName", label: "Package" },
+//               { key: "totalBookings", label: "Bookings", width: "w-24" },
+//             ]}
+//             rows={topPackages}
+//             emptyText="No packages in this range"
+//           />
+//            </ErrorBoundary>
+
+// <ErrorBoundary>
+//           <DataTable<ITopCategory>
+//             title="Top Categories"
+//             columns={[
+//               { key: "name", label: "Category" },
+//               { key: "totalBookings", label: "Bookings", width: "w-24" },
+//             ]}
+//             rows={topCategories}
+//             emptyText="No categories in this range"
+//           />
+//            </ErrorBoundary>
+
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+import { useEffect, useState, useCallback } from "react";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+  Package,
+  Users,
+  ClipboardList,
+  FileText,
+  Layers,
+  BarChart3,
+} from "lucide-react";
+import { toast } from "sonner";
+import {
+  handleSummary,
+  handleTopPackage,
+  handleTopCategory,
+  handleBookingChart,
+} from "@/services/admin/dashboardService";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  ArcElement,
-  Tooltip,
-  Legend
-);
+import BookingsChart from "./BookingsChart";
+import DateFilterControls from "./DateFilterControls";
+import StatCard from "./StatCard";
+import DataTable from "./DataTable";
+import { useDashboardParams } from "@/hooks/useDashboardParams";
 
-const AdminDashboardPage = () => {
-  const [filter, setFilter] = useState({
-    category: "All",
-    status: "All",
-    dateRange: "30",
-  });
+import type {
+  ITopPackage,
+  ITopCategory,
+   IDashboardSummary,
+  IBookingsChartPoint,
+} from "@/types/IDashboard";
 
-  // Dummy data
-  const metrics = {
-    totalUsers: 250,
-    newUsers: 25,
-    totalBookings: 120,
-    revenue: 450000,
-  };
+export default function TravelAdminDashboard() {
+  const { params, updateParams } = useDashboardParams();
 
-  const bookingStats = {
-    confirmed: 90,
-    pending: 20,
-    cancelled: 10,
-  };
+  const [summary, setSummary] = useState<IDashboardSummary | null>(null);
+  const [topPackages, setTopPackages] = useState<ITopPackage[]>([]);
+  const [topCategories, setTopCategories] = useState<ITopCategory[]>([]);
+  const [chartData, setChartData] = useState<IBookingsChartPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const revenueTrends = [30000, 40000, 50000, 60000, 70000, 80000];
+  //  Fetch dashboard data 
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  const topCategories = [
-    { category: "Kerala Tour", bookings: 35 },
-    { category: "Goa Beach Trip", bookings: 25 },
-    { category: "Himalayan Trek", bookings: 15 },
-  ];
+      const [summaryRes, packagesRes, categoriesRes, chartRes] = await Promise.all([
+        handleSummary(params),
+        handleTopPackage(params),
+        handleTopCategory(params),
+        handleBookingChart(params),
+      ]);
 
-  const topUsers = [
-    { username: "Alice", bookings: 5 },
-    { username: "Bob", bookings: 4 },
-    { username: "Charlie", bookings: 3 },
-  ];
-
-  // Chart data
-  const lineChartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        label: "Revenue",
-        data: revenueTrends,
-        borderColor: "#3B82F6",
-        backgroundColor: "rgba(59,130,246,0.2)",
-        tension: 0.4,
-      },
-    ],
-  };
-
-  const pieChartData = {
-    labels: ["Confirmed", "Pending", "Cancelled"],
-    datasets: [
-      {
-        data: [bookingStats.confirmed, bookingStats.pending, bookingStats.cancelled],
-        backgroundColor: ["#10B981", "#F59E0B", "#EF4444"],
-      },
-    ],
-  };
-
+      setSummary(summaryRes.data);
+      setTopPackages(packagesRes.data);
+      setTopCategories(categoriesRes.data);
+      console.log(chartRes,'res')
+      setChartData(chartRes.data);
+    } catch (err: any) {
+      console.error(err);
+      setError("Failed to fetch dashboard data");
+      toast.error(err?.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+  }, [params]);
+console.log(summary,'sum')
+  //  Fetch only when params change
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+console.log(chartData,'chart')
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <select
-          value={filter.category}
-          onChange={(e) => setFilter({ ...filter, category: e.target.value })}
-          className="px-4 py-2 rounded border"
-        >
-          <option value="All">All Categories</option>
-          <option value="Kerala Tour">Kerala Tour</option>
-          <option value="Goa Beach Trip">Goa Beach Trip</option>
-          <option value="Himalayan Trek">Himalayan Trek</option>
-        </select>
-
-        <select
-          value={filter.status}
-          onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-          className="px-4 py-2 rounded border"
-        >
-          <option value="All">All Status</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="pending">Pending</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-
-        <select
-          value={filter.dateRange}
-          onChange={(e) => setFilter({ ...filter, dateRange: e.target.value })}
-          className="px-4 py-2 rounded border"
-        >
-          <option value="7">Last 7 days</option>
-          <option value="30">Last 30 days</option>
-          <option value="90">Last 90 days</option>
-        </select>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      {/* ---------- Header ---------- */}
+      <div className="mb-6 flex flex-col md:flex-row md:items-center gap-3">
+        <div className="flex items-center gap-3">
+          <BarChart3 size={28} className="text-blue-600" />
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Travel Admin Dashboard
+          </h1>
+        </div>
+        {error && (
+          <span className="md:ml-auto text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-800">
+            {error}
+          </span>
+        )}
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm text-gray-500">Total Users</h3>
-          <p className="text-2xl font-bold">{metrics.totalUsers}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm text-gray-500">New Users</h3>
-          <p className="text-2xl font-bold">{metrics.newUsers}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm text-gray-500">Bookings</h3>
-          <p className="text-2xl font-bold">{metrics.totalBookings}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-sm text-gray-500">Revenue</h3>
-          <p className="text-2xl font-bold">₹{metrics.revenue}</p>
-        </div>
+      {/* ---------- Filters ---------- */}
+      <div className="mb-6">
+        <DateFilterControls value={params} onChange={updateParams} />
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-lg font-semibold mb-4">Revenue Trends</h3>
-          <Line data={lineChartData} />
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h3 className="text-lg font-semibold mb-4">Booking Status</h3>
-          <Pie data={pieChartData} />
-        </div>
+      {/* ---------- Summary Cards ---------- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <StatCard
+          icon={Users}
+          label="Total Users"
+          value={loading ? "…" : summary?.totalUsers ?? "—"}
+        />
+        <StatCard
+          icon={Package}
+          label="Total Packages"
+          value={loading ? "…" : summary?.totalPackages ?? "—"}
+        />
+        <StatCard
+          icon={ClipboardList}
+          label="Total Bookings"
+          value={loading ? "…" : summary?.totalBookings ?? "—"}
+        />
+        <StatCard
+          icon={Layers}
+          label="Custom Plans"
+          value={loading ? "…" : summary?.totalCustomPlans ?? "—"}
+        />
+        <StatCard
+          icon={FileText}
+          label="Total Blogs"
+          value={loading ? "…" : summary?.totalBlogs ?? "—"}
+        />
       </div>
 
-      {/* Top Categories Table */}
-      <div className="bg-white p-4 rounded shadow mb-6">
-        <h3 className="text-lg font-semibold mb-4">Top Categories</h3>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2 text-left">Category</th>
-              <th className="border px-4 py-2 text-left">Bookings</th>
-            </tr>
-          </thead>
-          <tbody>
-            {topCategories.map((cat, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
-                <td className="border px-4 py-2">{cat.category}</td>
-                <td className="border px-4 py-2">{cat.bookings}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* ---------- Main Grid ---------- */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ---------- Booking Chart ---------- */}
+        <div className="lg:col-span-2">
+             <BookingsChart data={chartData || []} type="line" />
+         </div>
 
-      {/* Top Users Table */}
-      <div className="bg-white p-4 rounded shadow mb-6">
-        <h3 className="text-lg font-semibold mb-4">Top Users</h3>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2 text-left">User</th>
-              <th className="border px-4 py-2 text-left">Bookings</th>
-            </tr>
-          </thead>
-          <tbody>
-            {topUsers.map((user, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
-                <td className="border px-4 py-2">{user.username}</td>
-                <td className="border px-4 py-2">{user.bookings}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {/* ---------- Top Packages & Categories ---------- */}
+        <div className="space-y-6">
+             <DataTable<ITopPackage>
+              title="Top Booked Packages"
+              columns={[
+                { key: "packageName", label: "Package" },
+                { key: "totalBookings", label: "Bookings", width: "w-24" },
+                { key: "totalRevenue", label: "Revenue", width: "w-24" },
+              ]}
+              rows={topPackages}
+              emptyText="No packages in this range"
+            />
+ 
+             <DataTable<ITopCategory>
+              title="Top Categories"
+              columns={[
+                { key: "name", label: "Category" },
+                { key: "totalBookings", label: "Bookings", width: "w-24" },
+              ]}
+              rows={topCategories}
+              emptyText="No categories in this range"
+            />
+         </div>
       </div>
     </div>
   );
-};
-
-export default AdminDashboardPage;
+}
