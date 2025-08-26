@@ -62,6 +62,14 @@ import { CustomPackageRepository } from '@infrastructure/repositories/CustomPack
 import { CustomPackageUseCases } from '@application/usecases/user/customPackageUseCases';
 import { CustomPackageController } from '@presentation/controllers/user/customPackageController';
 
+import { GeminiChatbotService } from '@infrastructure/services/chatbot/GeminiChatService';
+import { ChatbotUseCase } from '@application/usecases/user/chatBotUseCase';
+import { ChatController } from '@presentation/controllers/user/chatbotController';
+
+
+const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
+const chatbotUseCase = new ChatbotUseCase(chatbotService);
+const chatController = new ChatController(chatbotUseCase);
 
 const walletRepository = new WalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
@@ -273,4 +281,8 @@ router.get(CUSTOM_PACKAGE_ROUTE.GET_BY_ID, userAuthMiddleware, customPkgControll
 router.get(CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG, userAuthMiddleware, customPkgController.getAllCustomPkgs);
 router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, userAuthMiddleware,customPkgController.deleteCustomPkg);
 
+//CHATBOT
+router.post('/chatbot', userAuthMiddleware, chatController.chatBot);
+
+ 
 export default router;
