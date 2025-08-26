@@ -1,4 +1,4 @@
-import type { IPackage } from '../types/IPackage';
+import type{ IPackage } from '@/types/IPackage';
 import { useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
 interface Props {

@@ -5,8 +5,7 @@ import AdminPrivateRoute from './AdminPrivateRoute';
 import NotFoundPage from '@/components/NotFoundPage';
 
 // Admin pages
-import AdminDashboard from '@/pages/admin/AdminDashboard';
-import DashboardPage from '@/pages/admin/dashboard/DashboardPage';
+ import DashboardPage from '@/pages/admin/dashboard/DashboardPage';
 import UserList from '@/pages/admin/user/UsersList';
 import UserBookingPage from '@/pages/user/booking/UserBookingPage';
 import AddCategory from '@/pages/admin/category/AddCategory';

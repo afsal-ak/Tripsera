@@ -10,15 +10,9 @@ import { toast } from 'sonner';
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  // const {  isAuthenticated } = useSelector(
-  //   (state: RootState) => state.userAuth
-  // );
+
   const { isAuthenticated, accessToken, user } = useSelector((state: RootState) => state.userAuth);
   useEffect(() => {
-    console.log(isAuthenticated, 'fromnavbar');
-    console.log(user, 'from redux navbar');
-    //const token=localStorage.getItem("accessToken")
-    console.log(accessToken, 'fromnavbar tokrn');
 
     if (!accessToken) {
       dispatch(logoutUser());
@@ -49,10 +43,13 @@ const Navbar = () => {
               <Link to="/blog" className="text-foreground hover:text-orange transition-colors">
                 Blog
               </Link>
-               <Link to="/custom-package" className="text-foreground hover:text-orange transition-colors">
-               Custom Package
+              <Link to="/custom-package" className="text-foreground hover:text-orange transition-colors">
+                Custom Package
               </Link>
- 
+              <Link to="/chatbot" className="text-foreground hover:text-orange transition-colors">
+                Chat Bot
+              </Link>
+
               <Link to="/about" className="text-foreground hover:text-orange transition-colors">
                 About Us
               </Link>
@@ -63,7 +60,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            
+
 
             {isAuthenticated ? (
               <div className="relative hidden sm:flex items-center group">

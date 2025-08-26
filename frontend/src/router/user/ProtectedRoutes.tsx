@@ -27,7 +27,8 @@ import AddCustomPkgForm from '@/pages/user/customPkg/AddCustomPackageForm';
 import EditCustomPkgForm from '@/pages/user/customPkg/EditCustomPkgForm';
 import CustomPackagePage from '@/pages/user/customPkg/CustomPackagePage';
 import CustomPackageDetails from '@/pages/user/customPkg/CustomPackageDetailsPage';
-const ProtectedRoutes = (
+import ChatBot from '@/pages/user/chatbot/ChatBot';
+  const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
     <Route path="/checkout/:id" element={<CheckoutPage />} />
@@ -38,7 +39,8 @@ const ProtectedRoutes = (
     <Route path="/packages/:packageId/review/add" element={<ReviewForm />} />
     <Route path="/profile/:username" element={<PublicProfile />} />
     <Route path="/custom-package" element={<AddCustomPkgForm />} />
- 
+    <Route path="/chatbot" element={<ChatBot />} />
+   
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />
       <Route path="verify-otp" element={<EmailOtpPage />} />
