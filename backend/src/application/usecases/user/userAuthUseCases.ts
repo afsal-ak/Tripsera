@@ -3,7 +3,7 @@ import { IOtpRepository } from '../../../domain/repositories/IOtpRepository';
 import { sendOtpMail } from '@infrastructure/services/mail/mailer';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { hashPassword, comparePassword } from '@shared/utils/hash';
-import { IUser } from '../../../domain/entities/IUser';
+import { IRole, IUser } from '../../../domain/entities/IUser';
 import { IOTP } from '@domain/entities/IOTP';
 import { generateOtp } from '@shared/utils/generateOtp';
 import { verifyGoogleToken } from '@infrastructure/services/googleAuth/googleAuthService';
@@ -262,4 +262,9 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     const hashNewPassword = await hashPassword(newPassword);
     await this._userRepository.changePassword(userId, hashNewPassword);
   }
+
+  async searchUsersForChat(userId: string, search: string, role: IRole): Promise<IUser[] | null> {
+    return await this._userRepository.searchUsersForChat(userId,search,role)
+  }
+
 }

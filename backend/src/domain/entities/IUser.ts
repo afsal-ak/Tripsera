@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
-
+export type IRole='user'|'admin'
 export interface IUser {
   _id?: Types.ObjectId | string;
   username?: string;
   email: string;
   phone?: number;
   password?: string;
-  role?: 'user' | 'admin';
+  role?: IRole
   isBlocked?: boolean;
   fullName?: string;
   dob?: Date;

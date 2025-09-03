@@ -1,4 +1,4 @@
-import { IUser } from '@domain/entities/IUser';
+import { IRole, IUser } from '@domain/entities/IUser';
 
 export interface IUserAuthUseCases {
   preRegistration(userData: any): Promise<void>;
@@ -19,4 +19,6 @@ export interface IUserAuthUseCases {
   requestEmailChange(userId: string, newEmail: string): Promise<void>;
   verifyAndUpdateEmail(userId: string, newEmail: string, otp: string): Promise<IUser | null>;
   changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void>;
+searchUsersForChat(userId:string,search:string,role:IRole):Promise<IUser[]|null> 
+  
 }

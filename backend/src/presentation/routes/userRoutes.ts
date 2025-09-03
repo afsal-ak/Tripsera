@@ -4,6 +4,7 @@ import {
   AUTH_ROUTES,
   HOME_ROUTES,
   PROFILE_ROUTES,
+  USER_ROUTES,
   WISHLIST_ROUTES,
   COUPON_ROUTES,
   WALLET_ROUTES,
@@ -11,7 +12,9 @@ import {
   BLOG_ROUTES,
   REVIEW_ROUTE,
   REPORT_ROUTE,
-  CUSTOM_PACKAGE_ROUTE
+  CUSTOM_PACKAGE_ROUTE,
+  CHAT_ROOM_ROUTE,
+  MESSAGE_ROUTE
 } from 'constants/route-constants/userRoutes';
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
@@ -66,10 +69,27 @@ import { GeminiChatbotService } from '@infrastructure/services/chatbot/GeminiCha
 import { ChatbotUseCase } from '@application/usecases/user/chatBotUseCase';
 import { ChatController } from '@presentation/controllers/user/chatbotController';
 
+import { ChatRoomRepository } from '@infrastructure/repositories/ChatRoomRepository';
+import { ChatRoomUseCase } from '@application/usecases/user/chatRoomUseCases';
+import { ChatRoomController } from '@presentation/controllers/user/ChatRoomController';
+
+import { MessageRepository } from '@infrastructure/repositories/MessageRepository';
+import { MessageUseCases } from '@application/usecases/user/messageUseCases';
+import { MessageController } from '@presentation/controllers/user/MessageController';
+
 
 const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
 const chatbotUseCase = new ChatbotUseCase(chatbotService);
 const chatController = new ChatController(chatbotUseCase);
+
+const chatRoomRepository = new ChatRoomRepository();
+const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
+const chatRoomController = new ChatRoomController(chatRoomUseCase);
+
+const messageRepository=new MessageRepository()
+const messageUseCases=new MessageUseCases(messageRepository,chatRoomRepository)
+const messageController=new MessageController(messageUseCases)
+
 
 const walletRepository = new WalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
@@ -150,6 +170,9 @@ router.post(
   userAuthController.verifyAndUpdateEmail
 );
 router.post(AUTH_ROUTES.PASSWORD_CHANGE, userAuthMiddleware, userAuthController.changePassword);
+
+
+router.get(USER_ROUTES.SEARCH_USERS_FOR_CHAT,userAuthMiddleware,userAuthController.searchUsersForChat)
 
 // HOME ROUTES
 router.get(HOME_ROUTES.HOME, homeController.getHome);
@@ -284,5 +307,20 @@ router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, userAuthMiddleware,customPkgControlle
 //CHATBOT
 router.post('/chatbot', userAuthMiddleware, chatController.chatBot);
 
- 
+//CHAT ROOM ROUTES
+ router.post(CHAT_ROOM_ROUTE.CREATE, userAuthMiddleware, chatRoomController.createRoom);
+router.put(CHAT_ROOM_ROUTE.UPDATE, userAuthMiddleware, chatRoomController.updateRoom);
+router.get(CHAT_ROOM_ROUTE.GET_BY_ID, userAuthMiddleware, chatRoomController.getRoomById);
+router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, userAuthMiddleware, chatRoomController.getUserRooms);
+router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware,chatRoomController.deleteRoom);
+
+//MESSAGE ROUTES
+ router.post(MESSAGE_ROUTE.SEND, userAuthMiddleware, messageController.sendMessage);
+ router.get(MESSAGE_ROUTE.GET_BY_ROOM, userAuthMiddleware, messageController.getMessages);
+router.patch(MESSAGE_ROUTE.MARK_AS_READ, userAuthMiddleware, messageController.markMessageRead);
+ router.delete(MESSAGE_ROUTE.DELETE, userAuthMiddleware,messageController.deleteMessage);
+
+
+
+
 export default router;

@@ -1,4 +1,4 @@
-import { IUser } from '@domain/entities/IUser';
+import { IRole, IUser } from '@domain/entities/IUser';
 import { UserModel } from '@infrastructure/models/User';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { AppError } from '@shared/utils/AppError';
@@ -86,6 +86,10 @@ export class UserRepository implements IUserRepository {
 
   async findAll(skip: number, limit: number): Promise<IUser[]> {
     return UserModel.find({}).skip(skip).limit(limit).select('-password').lean();
+  }
+
+  async findAllUnblockedUser(skip: number, limit: number): Promise<IUser[]> {
+    return UserModel.find({isBlocked:false}).skip(skip).limit(limit).select('-password').lean();
   }
 
   async countAll(): Promise<number> {
@@ -185,4 +189,65 @@ export class UserRepository implements IUserRepository {
     )
     return user
   }
+
+async searchUsersForChat(userId: string, search: string, role: IRole): Promise<IUser[]> {
+   
+  const searchRegex =   { $regex: search, $options: "i" }  ;
+
+  // If admin → search all non-blocked users
+  if (role === "admin") {
+    const query: any = { isBlocked: false };
+
+    // Apply regex only if search exists
+    if (searchRegex) {
+      query.$or = [
+        { username: searchRegex },
+        { fullName: searchRegex },
+      ];
+    }
+
+    return UserModel.find(query)
+      .select("_id username fullName profileImage role");
+  }
+
+  // For normal users → fetch only followed users + admins
+  const currentUser = await UserModel.findById(userId).select("following");
+
+  const query: any = {
+    isBlocked: false,
+    $or: [],
+  };
+
+  // If following users exist, add them to search
+  if (currentUser?.following?.length) {
+    const followingBlock: any = {
+      _id: { $in: currentUser.following },
+    };
+
+    if (searchRegex) {
+      followingBlock.$or = [
+        { username: searchRegex },
+        { fullName: searchRegex },
+      ];
+    }
+
+    query.$or.push(followingBlock);
+  }
+
+  // Always allow chatting with admins
+  const adminBlock: any = { role: "admin" };
+  if (searchRegex) {
+    adminBlock.$or = [
+      { username: searchRegex },
+      { fullName: searchRegex },
+    ];
+  }
+
+  query.$or.push(adminBlock);
+
+  return UserModel.find(query)
+    .select("_id username fullName profileImage role");
+}
+
+
 }

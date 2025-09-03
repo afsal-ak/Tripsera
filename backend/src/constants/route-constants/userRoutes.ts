@@ -32,6 +32,9 @@ export const PROFILE_ROUTES = {
   UNFOLLOW: '/unfollow/:userId',
   SET_PROFILE_PRIVACY: '/profile/privacy',
 };
+export const USER_ROUTES = {
+  SEARCH_USERS_FOR_CHAT: '/users/search'
+};
 
 export const WISHLIST_ROUTES = {
   GET_ALL: '/wishlist',
@@ -97,4 +100,21 @@ export const CUSTOM_PACKAGE_ROUTE = {
   GET_BY_ID: '/custom-package/:packageId',
   GET_ALL_PKG: '/custom-package',
   DELETE: '/custom-package/:packageId/delete',
+};
+
+
+export const CHAT_ROOM_ROUTE = {
+  CREATE: "/chatrooms",                           // POST → Create a chat room
+  UPDATE: "/chatrooms/:roomId",                   // PUT/PATCH → Update chat room details
+  GET_BY_ID: "/chatrooms/:roomId",                // GET → Get specific chat room by ID
+  GET_USER_ROOMS: "/chatrooms",      // GET → Get all chat rooms for a user
+  DELETE: "/chatrooms/:roomId",                   // DELETE → Delete a chat room
+};
+
+
+export const MESSAGE_ROUTE = {
+  SEND: "/chatrooms/messages",                // POST → Send message to a chat room
+  GET_BY_ROOM: "/chatrooms/:roomId/messages",         // GET → Fetch all messages in a room
+  MARK_AS_READ: "/messages/:messageId/read",          // PATCH → Mark a specific message as read
+  DELETE: "/messages/:messageId",                     // DELETE → Delete a specific message
 };

@@ -1,4 +1,4 @@
-import { IUser } from '../entities/IUser';
+import { IUser,IRole } from '../entities/IUser';
 
 export interface IUserRepository {
   findByEmail(email: string): Promise<IUser | null>;
@@ -25,4 +25,9 @@ export interface IUserRepository {
   ): Promise<IUser | null>;
   getUserProfile(id: string): Promise<IUser | null>;
   setProfilePrivacy(id:string,isPrivate:boolean):Promise<IUser | null>
+   searchUsersForChat(
+    userId: string,
+    search: string,
+    role:IRole
+  ): Promise<IUser[]>   
 }
