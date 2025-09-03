@@ -71,3 +71,8 @@ export const handleProfilePrivacy = async (isPrivate:boolean) => {
   return response.data;
 };
 
+
+export const handleSearchUserForChat = async (search:string) => {
+  const response = await api.get(`/user/users/search?search=${search}`);
+  return response.data;
+};

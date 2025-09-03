@@ -49,6 +49,9 @@ const Navbar = () => {
               <Link to="/chatbot" className="text-foreground hover:text-orange transition-colors">
                 Chat Bot
               </Link>
+              <Link to="/chat" className="text-foreground hover:text-orange transition-colors">
+                Chat
+              </Link>
 
               <Link to="/about" className="text-foreground hover:text-orange transition-colors">
                 About Us

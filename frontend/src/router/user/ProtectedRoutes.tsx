@@ -28,6 +28,7 @@ import EditCustomPkgForm from '@/pages/user/customPkg/EditCustomPkgForm';
 import CustomPackagePage from '@/pages/user/customPkg/CustomPackagePage';
 import CustomPackageDetails from '@/pages/user/customPkg/CustomPackageDetailsPage';
 import ChatBot from '@/pages/user/chatbot/ChatBot';
+import TravelChatApp from '@/pages/chat/TravelChatApp';
   const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
@@ -40,7 +41,15 @@ import ChatBot from '@/pages/user/chatbot/ChatBot';
     <Route path="/profile/:username" element={<PublicProfile />} />
     <Route path="/custom-package" element={<AddCustomPkgForm />} />
     <Route path="/chatbot" element={<ChatBot />} />
-   
+    <Route path="/chat" element={<TravelChatApp isUser={true}/>} />
+      {/* <Route path="/chats" element={<ChatListPage />} />
+        <Route path="/chats/:id" element={<MessagePage />} /> */}
+ {/* <Route path="/chats/:id" element={<MessagePage />} /> */}
+
+{/* <Route
+  path="/chat/room"
+  element={<ChatRoom/>} */}
+{/* />    */}
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />
       <Route path="verify-otp" element={<EmailOtpPage />} />
