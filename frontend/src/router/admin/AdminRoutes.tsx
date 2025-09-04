@@ -32,7 +32,7 @@ import ReportDetails from '@/pages/admin/report/ReportDetails';
 import UserDetailsPage from '@/pages/admin/user/UserDetailsPage';
 import CustomPackagePage from '@/pages/admin/cutomPackage/CustomPackagePage';
 import CustomPackageDetails from '@/pages/admin/cutomPackage/CustomPackageDetailsPage';
-import TravelChatApp from '@/pages/chat/TravelChatApp';
+import TravelChatApp from '@/pages/admin/chat/TravelChatApp';
 const AdminRoutes = () => {
   return (
     <Routes>
@@ -74,7 +74,7 @@ const AdminRoutes = () => {
           <Route path="reports/:reportId" element={<ReportDetails />} />
           <Route path="custom-packages" element={<CustomPackagePage />} />
           <Route path="custom-packages/:pkgId" element={<CustomPackageDetails />} />
-          <Route path="chat" element={<TravelChatApp isUser={false}/>} />
+          <Route path="chat" element={<TravelChatApp />} />
 
         </Route>
       </Route>

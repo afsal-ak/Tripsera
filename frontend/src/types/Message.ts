@@ -50,7 +50,7 @@ export interface ISender{
 export interface IMessage {
   _id: string;
   roomId: string;
-  sender: ISender  
+  senderId: ISender  
   content: string;
   type: IMessageType;
   attachments: string[];
@@ -61,10 +61,10 @@ export interface IMessage {
 }
 
 export interface ISendMessage {
-  roomId?: string;             // If provided, use existing room
-  senderId: string;            // Logged-in user
-  receiverId?: string;         // Needed when creating a new room
-  content: string;             // Message text/content
-  type?: IMessageType;          // Default: "text"
-  attachments?: string[];      // For images, files, etc.
+  roomId?: string;             
+  senderId: string;            
+  receiverId?: string;         
+  content: string;             
+  type?: IMessageType;        
+  attachments?: string[];     
 }

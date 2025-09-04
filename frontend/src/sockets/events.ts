@@ -11,3 +11,4 @@ MESSAGE_DELETED: "message:deleted",
   STOP_TYPING: "stopTyping",
 MESSAGE_SEND:"message:send",
 }
+ 
