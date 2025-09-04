@@ -467,6 +467,7 @@ const EditPackageForm = () => {
               <div key={actIndex} className="flex gap-2 mb-1">
                 <Input
                   type="text"
+                  placeholder='activity'
                   value={activity}
                   onChange={(e) => {
                     const updated = [...itinerary];
@@ -525,13 +526,99 @@ const EditPackageForm = () => {
       >
         + Add Itinerary Day
       </button>
+      {location.map((loc, index) => (
+        <div
+          key={index}
+          className="grid grid-cols-12 gap-4 items-center border border-border p-4 rounded-md"
+        >
+          {/* Location Name */}
+          <div className="col-span-4 flex flex-col">
+            <label htmlFor={`location-name-${index}`} className="text-sm font-medium mb-1">
+              Location Name
+            </label>
+            <input
+              id={`location-name-${index}`}
+              type="text"
+              placeholder="Enter location name"
+              value={loc.name}
+              onChange={(e) => {
+                const updated = [...location];
+                updated[index].name = e.target.value;
+                setLocation(updated);
+              }}
+              className="px-3 py-2 border rounded text-sm"
+            />
+          </div>
 
+          {/* Latitude */}
+          <div className="col-span-3 flex flex-col">
+            <label htmlFor={`latitude-${index}`} className="text-sm font-medium mb-1">
+              Latitude
+            </label>
+            <input
+              id={`latitude-${index}`}
+              type="number"
+              placeholder="Enter latitude"
+              value={loc.lat}
+              onChange={(e) => {
+                const updated = [...location];
+                updated[index].lat = Number(e.target.value);
+                setLocation(updated);
+              }}
+              className="px-3 py-2 border rounded text-sm"
+            />
+          </div>
+
+          {/* Longitude */}
+          <div className="col-span-3 flex flex-col">
+            <label htmlFor={`longitude-${index}`} className="text-sm font-medium mb-1">
+              Longitude
+            </label>
+            <input
+              id={`longitude-${index}`}
+              type="number"
+              placeholder="Enter longitude"
+              value={loc.lng}
+              onChange={(e) => {
+                const updated = [...location];
+                updated[index].lng = Number(e.target.value);
+                setLocation(updated);
+              }}
+              className="px-3 py-2 border rounded text-sm"
+            />
+          </div>
+
+          {/* Remove Button */}
+          {location.length > 0 && (
+            <div className="col-span-2 flex items-end">
+              <button
+                type="button"
+                onClick={() => removeLocation(index)}
+                className="text-red-500 hover:underline text-sm"
+              >
+                ✖ Remove
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Add More Location Button */}
+      <button
+        type="button"
+        onClick={addLocation}
+        className="bg-orange text-white px-5 py-2 rounded mb-8 mt-3"
+      >
+        Add More Location
+      </button>
+
+      {/* 
       {location.map((loc, index) => (
         <div
           key={index}
           className="grid grid-cols-12 gap-2 items-center border border-border p-4 rounded-md"
         >
-          <input
+           <input
             type="text"
             placeholder="Location name"
             value={loc.name}
@@ -592,7 +679,7 @@ const EditPackageForm = () => {
         className="bg-orange text-white px-5 py-2 rounded mb-8"
       >
         Add More Location
-      </button>
+      </button> */}
       <div></div>
       <div>
         <Label>Images</Label>
