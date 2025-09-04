@@ -12,6 +12,8 @@ export const USER_MANAGEMENT_ROUTES = {
   GET_ALL_USERS: '/users',
   GET_SINGLE_USER: '/users/:userId',
   TOGGLE_BLOCK: '/users/:userId/toggle-block',
+    SEARCH_USERS: '/users/search-all'
+
  };
 
 // BANNER ROUTES

@@ -65,4 +65,10 @@ async toggleUserBlockStatus(userId: string): Promise<boolean> {
     }
     await this._userRepository.updateUserStatus(userId, false);
   }
+
+async  searchAllUsersForAdmin(search: string): Promise<IUser[]> {
+    return await this._userRepository.searchAllUsersForAdmin(search)
+  }
+
+  
 }

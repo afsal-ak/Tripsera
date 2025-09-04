@@ -172,6 +172,8 @@ router.get(
   adminAuthMiddleware,
   userManagementController.getAllUser
 );
+router.get(USER_MANAGEMENT_ROUTES.SEARCH_USERS,adminAuthMiddleware, userManagementController.searchAllUsersForAdmin);
+
 router.get(
   USER_MANAGEMENT_ROUTES.GET_SINGLE_USER,
   adminAuthMiddleware,

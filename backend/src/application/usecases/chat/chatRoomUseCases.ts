@@ -2,29 +2,39 @@ import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
 import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatUseCases";
 import { CreateChatRoomDTO, UpdateChatRoomDTO } from "@application/dtos/ChatDTO";
 import { IChatRoom } from "@domain/entities/IChatRoom";
+import { AppError } from "@shared/utils/AppError";
+import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 
 export class ChatRoomUseCase implements IChatRoomUseCase {
-    constructor(private readonly _chatRoomRepo:IChatRoomRepository){}
+    constructor(private readonly _chatRoomRepo: IChatRoomRepository) { }
 
-    async createChatRoom(data:CreateChatRoomDTO){
-        return await this._chatRoomRepo.createChatRoom(data)
+    async createChatRoom(data: CreateChatRoomDTO):Promise<IChatRoom|null> {
+        const existingRoom = await this._chatRoomRepo.findRoomByParticipants(data.participants, data.isGroup);
+
+        if (existingRoom) {
+           return existingRoom
+        }
+
+        // Create a new room if none exists
+        const newRoom = await this._chatRoomRepo.createChatRoom(data);
+        return newRoom
     }
 
-    async updateChatRoom(roomId:string,data:UpdateChatRoomDTO):Promise<IChatRoom|null>{
-        return await this._chatRoomRepo.updateChatRoom(roomId,data)
+    async updateChatRoom(roomId: string, data: UpdateChatRoomDTO): Promise<IChatRoom | null> {
+        return await this._chatRoomRepo.updateChatRoom(roomId, data)
     }
 
-    async deleteChatRoom(roomId:string):Promise<boolean>{
+    async deleteChatRoom(roomId: string): Promise<boolean> {
         return await this._chatRoomRepo.deleteChatRoom(roomId)
     }
-    
-    async getChatRoomById(roomId:string):Promise<IChatRoom|null>{
+
+    async getChatRoomById(roomId: string): Promise<IChatRoom | null> {
         return await this._chatRoomRepo.getChatRoomById(roomId)
     }
 
-      async getUserChatRooms(userId: string): Promise<IChatRoom[]> {
+    async getUserChatRooms(userId: string): Promise<IChatRoom[]> {
         return await this._chatRoomRepo.getUserChatRooms(userId)
-      }
+    }
 
 
 }

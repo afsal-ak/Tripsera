@@ -23,6 +23,7 @@ export class MessageUseCases implements IMessageUseCases {
     // }
 
   async sendMessage(data: SendMessageDTO): Promise<IMessage> {
+    console.log(data,'send mesage')
     let chatRoom;
 
     if (data.roomId) {

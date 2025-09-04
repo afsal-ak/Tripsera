@@ -18,7 +18,7 @@ export class ChatRoomController {
       const userId = getUserIdFromRequest(req);
 
       const { participants, name, isGroup } = req.body;
-
+ 
       //  Ensure the current user is added to participants automatically
       const updatedParticipants = Array.from(new Set([...(participants || []), userId]));
 
@@ -28,13 +28,12 @@ export class ChatRoomController {
         isGroup,
         createdBy: userId,
       };
-
       const room = await this._chatRoomUseCases.createChatRoom(data);
 
       res.status(201).json({
         success: true,
         message: "Chat room created successfully",
-        data: toChatRoomResponseDTO(room),
+        data: toChatRoomResponseDTO(room!),
       });
     } catch (error) {
       next(error);
@@ -52,7 +51,7 @@ export class ChatRoomController {
         res.status(HttpStatus.NOT_FOUND).json({ success: false, message: "Chat room not found" });
         return;
       }
-      console.log(room, 'roooooom')
+    //  console.log(room, 'roooooom')
       res.status(HttpStatus.OK).json({
         success: true,
         data: toChatRoomResponseDTO(room),

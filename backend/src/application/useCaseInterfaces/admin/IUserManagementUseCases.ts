@@ -12,5 +12,7 @@ export interface IUserManagementUseCases {
 
   getSingleUser(userId: string): Promise<IUser>;
   toggleUserBlockStatus(userId: string): Promise<boolean>  
- 
+ searchAllUsersForAdmin(
+  search: string
+): Promise<IUser[]>
 }

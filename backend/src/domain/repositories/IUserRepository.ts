@@ -30,4 +30,6 @@ export interface IUserRepository {
     search: string,
     role:IRole
   ): Promise<IUser[]>   
+     searchAllUsersForAdmin(search: string): Promise<IUser[]> 
+  
 }

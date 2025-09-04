@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response,NextFunction } from 'express';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
 import { mapToAdminUserListResponseDTO,mapToUserDetailsDTO } from "@application/dtos/UserDTO";
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
@@ -59,5 +59,23 @@ export class UserManagementController {
         .json({ message: error.message || 'Something went wrong' });
     }
   };
+
+  
+    searchAllUsersForAdmin = async (req: Request,res: Response,next:NextFunction):Promise<void> => {
+  try {
+    const search = (req.query.search as string) || "";
+console.error(search,'saechhhh')
+    const users = await this._userManagementUseCases.searchAllUsersForAdmin(search);
+
+     res.status(HttpStatus.OK).json({
+      success: true,
+      message: "Users fetched successfully",
+      data: users,
+    });
+  } catch (error) {
+  next(error)
+  }
+};
+ 
  
 }
