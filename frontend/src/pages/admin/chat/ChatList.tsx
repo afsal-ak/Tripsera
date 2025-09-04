@@ -61,18 +61,18 @@ export const ChatList: React.FC<{
         const otherParticipant =
           room.participants.find((p) => p._id !== currentUserId) ||
           room.participants[0];
-
+ 
         const searchTerm = search.toLowerCase();
         return (
           otherParticipant?.username?.toLowerCase().includes(searchTerm) ||
           (room.isGroup &&
             room.name?.toLowerCase().includes(searchTerm)) ||
           room.lastMessageContent?.toLowerCase().includes(searchTerm)
+          
         );
       })
     : [];
-
-  // Collapsed sidebar view
+   // Collapsed sidebar view
   if (isCollapsed) {
     return (
       <div
@@ -106,8 +106,8 @@ export const ChatList: React.FC<{
                 <div className="relative">
                   <img
                     src={
-                      otherParticipant?.profileImage?.url ||
-                      "/default-default.png"
+                      otherParticipant.profileImage?.url ||
+                      "/profile-default.jpg"
                     }
                     alt={otherParticipant?.username || "User"}
                     className="w-10 h-10 rounded-full object-cover"

@@ -42,7 +42,7 @@ export const ChatRoomItem: React.FC<{
     >
       <div className="relative mr-3">
         <img
-          src={otherParticipant.avatar || '/default-avatar.png'}
+          src={otherParticipant.profileImage?.url || '/profile-default.jpg'}
           alt={otherParticipant.username}
           className="w-12 h-12 rounded-full object-cover"
         />
