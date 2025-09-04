@@ -1,11 +1,12 @@
 
 import { Search } from "lucide-react";
-
+import UserSearchForChat from "./UserSearchForChat";
 // Search Bar Component
 export const SearchBar: React.FC<{ search: string; setSearch: (value: string) => void }> = ({ 
   search, 
   setSearch 
 }) => (
+       
   <div className="p-3 bg-blue-50 border-b border-blue-100">
     <div className="relative">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -17,5 +18,6 @@ export const SearchBar: React.FC<{ search: string; setSearch: (value: string) =>
         onChange={(e) => setSearch(e.target.value)}
       />
     </div>
+    
   </div>
 );

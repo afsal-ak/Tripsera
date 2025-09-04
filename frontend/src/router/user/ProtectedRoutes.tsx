@@ -29,6 +29,7 @@ import CustomPackagePage from '@/pages/user/customPkg/CustomPackagePage';
 import CustomPackageDetails from '@/pages/user/customPkg/CustomPackageDetailsPage';
 import ChatBot from '@/pages/user/chatbot/ChatBot';
 import TravelChatApp from '@/pages/user/chat/TravelChatApp';
+import UserSearchAndMessage from '@/components/chat/UserSearchForChat';
   const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
@@ -42,6 +43,7 @@ import TravelChatApp from '@/pages/user/chat/TravelChatApp';
     <Route path="/custom-package" element={<AddCustomPkgForm />} />
     <Route path="/chatbot" element={<ChatBot />} />
     <Route path="/chat" element={<TravelChatApp/>} />
+    <Route path="/user" element={<UserSearchAndMessage/>} />
       {/* <Route path="/chats" element={<ChatListPage />} />
         <Route path="/chats/:id" element={<MessagePage />} /> */}
  {/* <Route path="/chats/:id" element={<MessagePage />} /> */}

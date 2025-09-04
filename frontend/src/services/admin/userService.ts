@@ -13,3 +13,8 @@ export const fetchUserDetails = async (id:string) => {
 export const toggleBlockUser = async (userId: string) => {
   return api.patch(`/admin/users/${userId}/toggle-block`);
 };
+
+export const handleSearchUser = async (search:string) => {
+  const response = await api.get(`/admin/users/search-all?search=${search}`);
+  return response.data;
+};

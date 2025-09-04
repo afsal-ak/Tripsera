@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { IChatRoom } from "@/types/Message";
-import { handleSearchUserForChat } from "@/services/user/profileService";
-import { getUserRoom } from "@/services/user/messageService";
+ import { getUserRoom } from "@/services/user/messageService";
 import { MessageCircle, Menu } from "lucide-react";
  import { SearchBar } from "@/components/chat/SearchBar";
 
@@ -12,6 +11,7 @@ import { ChatListHeader } from "@/components/chat/ChatListHeader";
 import { toast } from "sonner";
 import type {  RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import UserSearchForChat from "@/components/chat/UserSearchForChat";
 
 export const ChatList: React.FC<{
   className?: string;
@@ -129,11 +129,20 @@ export const ChatList: React.FC<{
     <div
       className={`bg-white border-r border-gray-200 flex flex-col h-full ${className}`}
     >
+
       <ChatListHeader
         onToggleSidebar={onToggleSidebar}
         showToggle={!!onToggleSidebar}
       />
-      <SearchBar search={search} setSearch={setSearch} />
+      {/* <SearchBar search={search} setSearch={setSearch} /> */}
+       <UserSearchForChat
+    onRoomCreated={(newRoom) => {
+        setRooms((prevRooms) => {
+            const exists = prevRooms.some((room) => room._id === newRoom._id);
+            return exists ? prevRooms : [newRoom, ...prevRooms];  
+        });
+    }}
+/>
 
       <div className="flex-1 overflow-y-auto">
         {loading ? (

@@ -1,10 +1,22 @@
 import api from "@/lib/axios/api";
 
-
-export const createUserRoom=async()=>{
-    const response=await api.post(`/user/chatrooms`)
-    return response.data
+ 
+interface CreateChatRoomPayload {
+  participants: string[];
+  name?: string;
+  isGroup: boolean;
 }
+
+export const createChatRoom = async (payload: CreateChatRoomPayload) => {
+ 
+    const response = await api.post("/user/chatrooms", payload);
+    return response.data;
+
+};
+// export const createUserRoom=async()=>{
+//     const response=await api.post(`/user/chatrooms`)
+//     return response.data
+// }
 
 export const updateUserRoom=async(roomId:string)=>{
     const response=await api.post(`/user/chatrooms/${roomId}`)
