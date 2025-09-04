@@ -53,7 +53,7 @@ export class WalletController {
       const { amount, description }: { amount: number; description: string } = req.body;
 
       if (typeof amount !== 'number' || amount <= 0) {
-        res.status(400).json({ message: 'Invalid amount' });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: 'Invalid amount' });
         return;
       }
 
@@ -73,7 +73,7 @@ export class WalletController {
       const { amount, description }: { amount: number; description: string } = req.body;
 
       if (typeof amount !== 'number' || amount <= 0) {
-        res.status(400).json({ message: 'Invalid amount' });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: 'Invalid amount' });
         return;
       }
 

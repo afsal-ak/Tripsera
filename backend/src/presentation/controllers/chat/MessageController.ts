@@ -32,7 +32,7 @@ export class MessageController {
     try {
       const roomId = req.params.roomId;
       console.log(roomId,'room id')
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 40;
       const skip = parseInt(req.query.skip as string) || 0;
 
       const messages = await this._messageUseCases.getMessagesByRoom(roomId.toString(), limit, skip);

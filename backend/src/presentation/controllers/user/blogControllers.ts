@@ -53,9 +53,7 @@ export class BlogController {
         : [];
       console.log(newImages, 'new Images');
       console.log(existingImageUrls, 'exist Images');
-      //  Pass correct data to use case
-      //    await this.blogUseCases.editBlog(id, pkgData, existingImageUrls, newImages);
-
+       
       const blog = await this._blogUseCases.editBlog(blogId, blogData, existingImageUrls, newImages);
       res.status(HttpStatus.OK).json({ message: 'Blog updated successfully', blog });
     } catch (err) {
@@ -65,12 +63,9 @@ export class BlogController {
 
   getBlogById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log('id');
-
+ 
       const { blogId } = req.params;
-      // console.log(blogId, 'id')
-      // console.log('id')
-
+    
       const blog = await this._blogUseCases.getBlogById(blogId);
       res.status(HttpStatus.OK).json(blog);
     } catch (err) {
@@ -83,8 +78,7 @@ export class BlogController {
       const userId = getUserIdFromRequest(req);
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      //console.log(page,limit,'from blog  user')
-      const blogs = await this._blogUseCases.getBlogByUser(userId, page, limit);
+       const blogs = await this._blogUseCases.getBlogByUser(userId, page, limit);
       res.status(HttpStatus.OK).json(blogs);
     } catch (err) {
       next(err);
@@ -119,8 +113,7 @@ export class BlogController {
       const limit = parseInt(req.query.limit as string) || 10;
 
       const { search, tags, startDate, endDate } = req.query;
-      //   console.log(req.query, 'search')
-      const blogs = await this._blogUseCases.getAllPublishedBlogs(page, limit, {
+       const blogs = await this._blogUseCases.getAllPublishedBlogs(page, limit, {
         search: search?.toString(),
         tags: tags ? tags.toString().split(',') : undefined,
         startDate: startDate?.toString(),
@@ -137,7 +130,7 @@ export class BlogController {
     try {
       const { slug } = req.params;
 
-      // Try to extract userId if user is logged in, otherwise undefined
+      //   extract userId if user is logged in, otherwise undefined
       let userId: string | undefined;
       try {
         userId = getUserIdFromRequest(req);

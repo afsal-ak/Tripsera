@@ -31,13 +31,13 @@ export class WishlistController {
       const packageId = req.query.packageId as string;
       console.log(packageId, 'packge id in wishlist');
       if (!packageId) {
-        res.status(400).json({ message: 'packageId is required' });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: 'packageId is required' });
         return;
       }
 
       const result = await this._wishlistUseCases.checkPackageInWishlist(userId, packageId);
       console.log(result, 'result');
-      res.status(200).json({ result, message: 'Package check successful' });
+      res.status(HttpStatus.OK).json({ result, message: 'Package check successful' });
     } catch (error: any) {
       next(error);
     }
@@ -50,12 +50,12 @@ export class WishlistController {
       const { packageId } = req.body;
       //  console.log(req.body,'wishlist')
       if (!userId) {
-        res.status(401).json({ message: 'unauthorised' });
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: 'unauthorised' });
         return;
       }
 
       await this._wishlistUseCases.removeFromWishList(userId, packageId);
-      res.status(200).json({ message: 'package removed successfully' });
+      res.status(HttpStatus.OK).json({ message: 'package removed successfully' });
     } catch (error: any) {
       next(error);
     }
@@ -71,7 +71,7 @@ export class WishlistController {
       console.log(page, limit, 'page and limit');
       const result = await this._wishlistUseCases.getUserWishlist(userId, page, limit);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         ...result,
         message: 'wishlist fetched successfully',
       });

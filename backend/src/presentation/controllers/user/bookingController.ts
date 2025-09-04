@@ -43,9 +43,8 @@ export class BookingController {
       );
 
       if (!isValid) {
-        res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ success: false, message: 'Invalid Razorpay signature' });
+        res.status(HttpStatus.BAD_REQUEST).json(
+          { success: false, message: 'Invalid Razorpay signature' });
         return;
       }
 

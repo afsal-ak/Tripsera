@@ -4,7 +4,7 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
 
 export class UserAuthController {
-  constructor(private _userAuthUseCases: IUserAuthUseCases) {}
+  constructor(private _userAuthUseCases: IUserAuthUseCases) { }
 
   preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -181,26 +181,26 @@ export class UserAuthController {
   };
 
 
-    searchUsersForChat = async (req: Request, res: Response,next:NextFunction):Promise<void> => {
-  try {
-    const  search  = (req.query.search as string) || "";
-    const userId = getUserIdFromRequest(req)
-    const role = 'user'
-console.log(search,'search')
-    const users = await this._userAuthUseCases.searchUsersForChat(
-      userId,
-      search,
-      role
-    );
+  searchUsersForChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const search = (req.query.search as string) || "";
+      const userId = getUserIdFromRequest(req)
+      const role = 'user'
+      console.log(search, 'search')
+      const users = await this._userAuthUseCases.searchUsersForChat(
+        userId,
+        search,
+        role
+      );
 
-     res.status(HttpStatus.OK).json({
-      success: true,
-      message: "Users fetched successfully",
-      data: users
-    });
-  } catch (error) {
-   next(error)
-  }
-
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Users fetched successfully",
+        data: users
+      });
+    } catch (error) {
+      next(error)
     }
+
+  }
 }

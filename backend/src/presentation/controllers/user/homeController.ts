@@ -40,8 +40,7 @@ export class HomeController {
         sort: sortBy,
         search: searchQuery,
       });
-      // console.log(search, 'search');
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         message: 'Active packages fetched successfully',
         ...result,
       });
@@ -54,8 +53,7 @@ export class HomeController {
     try {
       const { id } = req.params;
       const packages = await this._homeUseCases.getPackageById(id);
-      // console.log(packages,'pkg')
-
+ 
       res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
     } catch (error: any) {
       res.status(500).json({ message: error.message || 'Something went wrong' });

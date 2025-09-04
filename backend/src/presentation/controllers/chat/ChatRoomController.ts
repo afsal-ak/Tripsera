@@ -6,61 +6,40 @@ import {
   toChatRoomResponseDTO,
 } from "@application/dtos/ChatDTO";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
+import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 
 export class ChatRoomController {
-  constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) {}
-
-  // //  Create a new chat room
-  // createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  //   try {
-  //     const userId = getUserIdFromRequest(req);
-
-  //     const data: CreateChatRoomDTO = {
-  //       ...req.body,
-  //       createdBy: userId,
-  //     };
-
-  //     const room = await this._chatRoomUseCases.createChatRoom(data);
-
-  //     res.status(201).json({
-  //       success: true,
-  //       message: "Chat room created successfully",
-  //       data: toChatRoomResponseDTO(room),
-  //     });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
+  constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) { }
 
 
-// Create a new chat room
-createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const userId = getUserIdFromRequest(req);
+  // Create a new chat room
+  createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
 
-    const { participants, name, isGroup } = req.body;
+      const { participants, name, isGroup } = req.body;
 
-    //  Ensure the current user is added to participants automatically
-    const updatedParticipants = Array.from(new Set([...(participants || []), userId]));
+      //  Ensure the current user is added to participants automatically
+      const updatedParticipants = Array.from(new Set([...(participants || []), userId]));
 
-    const data: CreateChatRoomDTO = {
-      name,
-      participants: updatedParticipants,
-      isGroup,
-      createdBy: userId,
-    };
+      const data: CreateChatRoomDTO = {
+        name,
+        participants: updatedParticipants,
+        isGroup,
+        createdBy: userId,
+      };
 
-    const room = await this._chatRoomUseCases.createChatRoom(data);
+      const room = await this._chatRoomUseCases.createChatRoom(data);
 
-    res.status(201).json({
-      success: true,
-      message: "Chat room created successfully",
-      data: toChatRoomResponseDTO(room),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      res.status(201).json({
+        success: true,
+        message: "Chat room created successfully",
+        data: toChatRoomResponseDTO(room),
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   //  Get chat room by ID
   getRoomById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -70,11 +49,11 @@ createRoom = async (req: Request, res: Response, next: NextFunction): Promise<vo
       const room = await this._chatRoomUseCases.getChatRoomById(roomId);
 
       if (!room) {
-        res.status(404).json({ success: false, message: "Chat room not found" });
+        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: "Chat room not found" });
         return;
       }
-console.log(room,'roooooom')
-      res.status(200).json({
+      console.log(room, 'roooooom')
+      res.status(HttpStatus.OK).json({
         success: true,
         data: toChatRoomResponseDTO(room),
       });
@@ -87,10 +66,10 @@ console.log(room,'roooooom')
   getUserRooms = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-console.log(userId,'id')
+      console.log(userId, 'id')
       const rooms = await this._chatRoomUseCases.getUserChatRooms(userId);
-console.log(rooms,'rooms')
-      res.status(200).json({
+      console.log(rooms, 'rooms')
+      res.status(HttpStatus.OK).json({
         success: true,
         data: rooms.map(toChatRoomResponseDTO),
       });
@@ -99,7 +78,7 @@ console.log(rooms,'rooms')
     }
   };
 
-  //  Update chat room (e.g., rename group)
+  //  Update chat room (rename group)
   updateRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const roomId = req.params.roomId;
@@ -108,11 +87,11 @@ console.log(rooms,'rooms')
       const updatedRoom = await this._chatRoomUseCases.updateChatRoom(roomId, data);
 
       if (!updatedRoom) {
-        res.status(404).json({ success: false, message: "Chat room not found" });
+        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: "Chat room not found" });
         return;
       }
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         success: true,
         message: "Chat room updated successfully",
         data: toChatRoomResponseDTO(updatedRoom),
@@ -130,11 +109,11 @@ console.log(rooms,'rooms')
       const deleted = await this._chatRoomUseCases.deleteChatRoom(roomId);
 
       if (!deleted) {
-        res.status(404).json({ success: false, message: "Chat room not found" });
+        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: "Chat room not found" });
         return;
       }
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         success: true,
         message: "Chat room deleted successfully",
       });

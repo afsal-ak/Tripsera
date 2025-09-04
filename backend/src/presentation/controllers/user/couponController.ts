@@ -1,24 +1,24 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { ICouponUseCases } from '@application/useCaseInterfaces/user/ICouponUseCases';
 
 export class CouponController {
   constructor(private _couponUseCase: ICouponUseCases) {}
 
-  getActiveCoupons = async (req: Request, res: Response): Promise<void> => {
+  getActiveCoupons = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
 
       const { coupons, total } = await this._couponUseCase.getActiveCoupons(page, limit);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         coupons,
         total,
         message: 'Coupons fetched successfully',
       });
-    } catch (error: any) {
-      res.status(400).json({ message: error.message });
+    } catch (error) {
+      next(error)
     }
   };
 
