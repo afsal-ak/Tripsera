@@ -70,12 +70,12 @@ import { ChatbotUseCase } from '@application/usecases/user/chatBotUseCase';
 import { ChatController } from '@presentation/controllers/user/chatbotController';
 
 import { ChatRoomRepository } from '@infrastructure/repositories/ChatRoomRepository';
-import { ChatRoomUseCase } from '@application/usecases/user/chatRoomUseCases';
-import { ChatRoomController } from '@presentation/controllers/user/ChatRoomController';
+import { ChatRoomUseCase } from '@application/usecases/chat/chatRoomUseCases';
+import { ChatRoomController } from '@presentation/controllers/chat/ChatRoomController';
 
 import { MessageRepository } from '@infrastructure/repositories/MessageRepository';
-import { MessageUseCases } from '@application/usecases/user/messageUseCases';
-import { MessageController } from '@presentation/controllers/user/MessageController';
+import { MessageUseCases } from '@application/usecases/chat/messageUseCases';
+import { MessageController } from '@presentation/controllers/chat/MessageController';
 
 
 const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
@@ -315,10 +315,10 @@ router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, userAuthMiddleware, chatRoomControlle
 router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware,chatRoomController.deleteRoom);
 
 //MESSAGE ROUTES
- router.post(MESSAGE_ROUTE.SEND, userAuthMiddleware, messageController.sendMessage);
+ //router.post(MESSAGE_ROUTE.SEND, userAuthMiddleware, messageController.sendMessage);
  router.get(MESSAGE_ROUTE.GET_BY_ROOM, userAuthMiddleware, messageController.getMessages);
-router.patch(MESSAGE_ROUTE.MARK_AS_READ, userAuthMiddleware, messageController.markMessageRead);
- router.delete(MESSAGE_ROUTE.DELETE, userAuthMiddleware,messageController.deleteMessage);
+//router.patch(MESSAGE_ROUTE.MARK_AS_READ, userAuthMiddleware, messageController.markMessageRead);
+// router.delete(MESSAGE_ROUTE.DELETE, userAuthMiddleware,messageController.deleteMessage);
 
 
 

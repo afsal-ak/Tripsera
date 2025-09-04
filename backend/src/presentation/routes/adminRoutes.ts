@@ -13,7 +13,9 @@ import {
   SALES_REPORT_ROUTE,
   REPORT_ROUTE,
   CUSTOM_PACKAGE_ROUTE,
-  DASHBOARD_ROUTE
+  DASHBOARD_ROUTE,
+  MESSAGE_ROUTE,
+  CHAT_ROOM_ROUTE
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -73,6 +75,26 @@ import { CustomPackageController } from '@presentation/controllers/admin/customP
 import { DashboardRepository } from '@infrastructure/repositories/DashboardRepository';
 import { DashboardUseCases } from '@application/usecases/admin/dashboardUseCases';
 import { DashboardController } from '@presentation/controllers/admin/dashboardController';
+
+
+import { ChatRoomRepository } from '@infrastructure/repositories/ChatRoomRepository';
+import { ChatRoomUseCase } from '@application/usecases/chat/chatRoomUseCases';
+import { ChatRoomController } from '@presentation/controllers/chat/ChatRoomController';
+
+import { MessageRepository } from '@infrastructure/repositories/MessageRepository';
+import { MessageUseCases } from '@application/usecases/chat/messageUseCases';
+import { MessageController } from '@presentation/controllers/chat/MessageController';
+
+
+
+const chatRoomRepository = new ChatRoomRepository();
+const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
+const chatRoomController = new ChatRoomController(chatRoomUseCase);
+
+const messageRepository=new MessageRepository()
+const messageUseCases=new MessageUseCases(messageRepository,chatRoomRepository)
+const messageController=new MessageController(messageUseCases)
+
 
 const adminRepository = new UserRepository();
 const otpRepository = new OtpRepository();
@@ -250,6 +272,19 @@ router.get(DASHBOARD_ROUTE.GET_TOP_PACKAGES, adminAuthMiddleware, dashboardContr
 router.get(DASHBOARD_ROUTE.GET_TOP_CATEGORIES, adminAuthMiddleware, dashboardController.getTopBookedCategories);
 router.get(DASHBOARD_ROUTE.GET_BOOKING_CHART, adminAuthMiddleware, dashboardController.getBookingChart);
 
+
+//CHAT ROOM ROUTES
+ router.post(CHAT_ROOM_ROUTE.CREATE, adminAuthMiddleware, chatRoomController.createRoom);
+router.put(CHAT_ROOM_ROUTE.UPDATE, adminAuthMiddleware, chatRoomController.updateRoom);
+router.get(CHAT_ROOM_ROUTE.GET_BY_ID, adminAuthMiddleware, chatRoomController.getRoomById);
+router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, adminAuthMiddleware, chatRoomController.getUserRooms);
+router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware,chatRoomController.deleteRoom);
+
+//MESSAGE ROUTES
+// router.post(MESSAGE_ROUTE.SEND, adminAuthMiddleware, messageController.sendMessage);
+ router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
+//router.patch(MESSAGE_ROUTE.MARK_AS_READ, adminAuthMiddleware, messageController.markMessageRead);
+ //router.delete(MESSAGE_ROUTE.DELETE, adminAuthMiddleware,messageController.deleteMessage);
 
 
  export default router;

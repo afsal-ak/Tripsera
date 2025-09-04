@@ -70,6 +70,7 @@ import express from "express";
 import mongoose from "mongoose";
 import userRoutes from "@presentation/routes/userRoutes";
 import adminRoutes from "@presentation/routes/adminRoutes";
+// import chatRoutes from "@presentation/routes/chatRoutes";
 import { errorHandler } from "@presentation/middlewares/errorHandler";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
@@ -77,7 +78,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import morganLogger from "@presentation/middlewares/logger";
 import { Server } from "socket.io";
-import { MessageUseCases } from "@application/usecases/user/messageUseCases";
+import { MessageUseCases } from "@application/usecases/chat/messageUseCases";
 import { ChatRoomRepository } from "@infrastructure/repositories/ChatRoomRepository";
 import { MessageRepository } from "@infrastructure/repositories/MessageRepository";
 import { SocketService } from "@infrastructure/sockets/SocketService";
@@ -86,7 +87,7 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4001;
 
 const connectMongoDB = async () => {
   try {
@@ -129,6 +130,7 @@ app.use(bodyParser.json());
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
+//app.use("/api/chat", chatRoutes);
 
 // Error handler
 app.use(errorHandler);

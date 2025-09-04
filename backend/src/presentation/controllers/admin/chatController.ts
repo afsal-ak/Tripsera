@@ -1,7 +1,7 @@
 import { Request, Response,NextFunction } from "express";
 import { IChatRoom } from "@domain/entities/IChatRoom";
 import { CreateChatRoomDTO, toChatRoomResponseDTO } from "@application/dtos/ChatDTO";
-import { IChatRoomUseCase } from "@application/useCaseInterfaces/user/IChatUseCases";
+import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatUseCases";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 
 

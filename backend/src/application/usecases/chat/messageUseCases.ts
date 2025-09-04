@@ -1,5 +1,5 @@
 import { IMessageRepository } from "@domain/repositories/IMessageRepository";
-import { IMessageUseCases } from "@application/useCaseInterfaces/user/IMessageUseCases";
+import { IMessageUseCases } from "@application/useCaseInterfaces/chat/IMessageUseCases";
 import { IMessage } from "@domain/entities/IMessage";
 import { SendMessageDTO } from "@application/dtos/MessageDTO";
 import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
@@ -26,14 +26,12 @@ export class MessageUseCases implements IMessageUseCases {
     let chatRoom;
 
     if (data.roomId) {
-        // If roomId is provided → fetch existing chat room
-        chatRoom = await this._chatRoomRepo.getChatRoomById(data.roomId);
+         chatRoom = await this._chatRoomRepo.getChatRoomById(data.roomId);
         if (!chatRoom) {
             throw new Error("Chat room not found");
         }
     } else {
-        // No roomId → find existing private chat between sender & receiver
-        chatRoom = await this._chatRoomRepo.findOneByParticipants(
+         chatRoom = await this._chatRoomRepo.findOneByParticipants(
             data.senderId,
             data.receiverId!
         );
@@ -70,6 +68,7 @@ export class MessageUseCases implements IMessageUseCases {
     }
 
     async deleteMessage(messageId: string): Promise<boolean> {
+        console.log(messageId,'id')
         return await this._messageRepo.deleteMessage(messageId)
     }
 

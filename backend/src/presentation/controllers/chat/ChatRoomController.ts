@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { IChatRoomUseCase } from "@application/useCaseInterfaces/user/IChatUseCases";
+import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatUseCases";
 import {
   CreateChatRoomDTO,
   UpdateChatRoomDTO,
@@ -87,7 +87,7 @@ console.log(room,'roooooom')
   getUserRooms = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-
+console.log(userId,'id')
       const rooms = await this._chatRoomUseCases.getUserChatRooms(userId);
 console.log(rooms,'rooms')
       res.status(200).json({

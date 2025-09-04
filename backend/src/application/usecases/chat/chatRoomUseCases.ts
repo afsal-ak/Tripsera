@@ -1,5 +1,5 @@
 import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
-import { IChatRoomUseCase } from "@application/useCaseInterfaces/user/IChatUseCases";
+import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatUseCases";
 import { CreateChatRoomDTO, UpdateChatRoomDTO } from "@application/dtos/ChatDTO";
 import { IChatRoom } from "@domain/entities/IChatRoom";
 
