@@ -41,7 +41,7 @@ export class PackageRepository implements IPackageRepository {
   }
 
   async findAll(skip: number, limit: number): Promise<IPackage[]> {
-    return PackageModel.find({}).skip(skip).populate('category').limit(limit).lean();
+    return PackageModel.find({}).skip(skip).sort({createdAt:-1}).populate('category').limit(limit).lean();
   }
 
   async countDocument(): Promise<number> {
@@ -56,10 +56,10 @@ export class PackageRepository implements IPackageRepository {
   async getHomeData(): Promise<IPackage[]> {
     const pkg = await PackageModel.find({
       isBlocked: false,
-      startDate: { $gte: Date.now() },
     })
       .limit(4)
       .lean();
+      console.log(pkg,'pkg home')
     return pkg;
   }
 
