@@ -32,7 +32,8 @@ export interface IBooking {
   paymentStatus: 'paid' | 'pending' | 'failed' | 'refunded';
   bookingStatus: 'confirmed' | 'booked' | 'cancelled' | 'pending';
   cancelReason?: string;
-  walletUsed?: number;
+  walletUsed?: boolean;
+  walletAmountUsed?:number;
   amountPaid: number;
   contactDetails: {
     name: string;

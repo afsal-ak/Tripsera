@@ -376,7 +376,7 @@ const PackageDetails = () => {
             </Card>
 
             {/* Quick Info */}
-            <Card className="border shadow-sm">
+            {/* <Card className="border shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Quick Info</h3>
                 <div className="space-y-4 text-sm">
@@ -398,7 +398,7 @@ const PackageDetails = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         
 
