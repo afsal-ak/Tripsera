@@ -121,7 +121,6 @@ const CheckoutPage = () => {
       }
       try {
         const data = await fetchPackgeById(id);
-        //   console.log(checkWishlist.result,'check')
         setPackageData(data);
       } catch (error) {
         console.error('Failed to fetch package details', error);
@@ -145,7 +144,7 @@ const CheckoutPage = () => {
       travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
       contactDetails: {
         name: userData?.fullName || '',
-        phone: userData?.phone || '',
+        phone: userData?.phone ? String(userData.phone) : '',
         alternatePhone: '',
         email: userData?.email || '',
       },
@@ -470,8 +469,13 @@ const CheckoutPage = () => {
                   type="date"
                   min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
                   {...register('travelDate')}
-                  className="border-gray-300"
-                />
+                  max={
+                    packageData?.endDate
+                      ? new Date(packageData.endDate).toISOString().split("T")[0]
+                      : undefined
+                  }
+                  {...register("travelDate")}
+                  className="border-gray-300" />
                 {errors.travelDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.travelDate.message}</p>
                 )}
