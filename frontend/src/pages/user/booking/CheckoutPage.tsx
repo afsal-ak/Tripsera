@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
 import { BookingSchema, type BookingFormSchema } from '@/schemas/BookingSchema';
 import {
   applyCoupon,
@@ -15,7 +17,6 @@ import { getWalletBalance } from '@/services/user/walletService';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/Button';
-// import { RadioGroup, RadioGroupItem } from '@/features/components/ui/radio-group';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/Label';
 import { Separator } from '@/components/ui/separator';
@@ -32,6 +33,8 @@ declare global {
 const CheckoutPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const userData = useSelector((state: RootState) => state.userAuth.user)
 
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [couponCode, setCouponCode] = useState('');
@@ -101,6 +104,15 @@ const CheckoutPage = () => {
       setCouponError(err?.response?.data?.message || 'Invalid coupon');
     }
   };
+
+  const handleCouponRemove = () => {
+    setCouponCode("");
+    setCouponDiscount(0);
+    setIsCouponApplied(false);
+    setCouponError("");
+  };
+
+  //console.log(localStorage.getItem('user'), 'reduc user info')
   console.log(couponCode, couponDiscount, 'coupon in payment');
   useEffect(() => {
     const loadPackage = async () => {
@@ -132,10 +144,10 @@ const CheckoutPage = () => {
       travelDate: '',
       travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
       contactDetails: {
-        name: '',
-        phone: '',
+        name: userData?.fullName || '',
+        phone: userData?.phone || '',
         alternatePhone: '',
-        email: '',
+        email: userData?.email || '',
       },
       couponCode: '',
       discount: 0,
@@ -156,7 +168,7 @@ const CheckoutPage = () => {
     const travelerCount = travelers.length;
     const sub = basePrice * travelerCount;
     const discount = isCouponApplied ? couponDiscount : 0;
-  const afterDiscount = Math.max(0, sub - discount);
+    const afterDiscount = Math.max(0, sub - discount);
 
     // Get selected payment method from react-hook-form
     const selectedMethod = watch('paymentMethod');
@@ -312,33 +324,64 @@ const CheckoutPage = () => {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input placeholder="Name *" {...register('contactDetails.name')} />
-                  {errors.contactDetails?.name && (
-                    <p className="text-red-500 text-sm">{errors.contactDetails.name.message}</p>
-                  )}
+                  {/* Name */}
+                  <div className="flex flex-col">
+                    <Input
+                      placeholder="Name *"
+                      defaultValue={userData?.fullName || ""}
+                      {...register("contactDetails.name")}
+                    />
+                    {errors.contactDetails?.name && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.contactDetails.name.message}
+                      </p>
+                    )}
+                  </div>
 
-                  <Input placeholder="Email *" {...register('contactDetails.email')} />
-                  {errors.contactDetails?.email && (
-                    <p className="text-red-500 text-sm">{errors.contactDetails.email.message}</p>
-                  )}
+                  {/* Email */}
+                  <div className="flex flex-col">
+                    <Input
+                      placeholder="Email *"
+                      defaultValue={userData?.email || ""}
+                      {...register("contactDetails.email")}
+                    />
+                    {errors.contactDetails?.email && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.contactDetails.email.message}
+                      </p>
+                    )}
+                  </div>
 
-                  <Input placeholder="Phone *" {...register('contactDetails.phone')} />
-                  {errors.contactDetails?.phone && (
-                    <p className="text-red-500 text-sm">{errors.contactDetails.phone.message}</p>
-                  )}
+                  {/* Phone */}
+                  <div className="flex flex-col">
+                    <Input
+                      placeholder="Phone *"
+                      defaultValue={userData?.phone || ""}
+                      {...register("contactDetails.phone")}
+                    />
+                    {errors.contactDetails?.phone && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.contactDetails.phone.message}
+                      </p>
+                    )}
+                  </div>
 
-                  <Input
-                    placeholder="Alternate Phone *"
-                    {...register('contactDetails.alternatePhone')}
-                  />
-                  {errors.contactDetails?.alternatePhone && (
-                    <p className="text-red-500 text-sm">
-                      {errors.contactDetails.alternatePhone.message}
-                    </p>
-                  )}
+                  {/* Alternate Phone */}
+                  <div className="flex flex-col">
+                    <Input
+                      placeholder="Alternate Phone *"
+                      {...register("contactDetails.alternatePhone")}
+                    />
+                    {errors.contactDetails?.alternatePhone && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.contactDetails.alternatePhone.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
+
 
             <Card>
               <CardContent className="p-6">
@@ -434,7 +477,6 @@ const CheckoutPage = () => {
                 )}
               </CardContent>
             </Card>
-
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Coupon Code</h3>
@@ -443,24 +485,40 @@ const CheckoutPage = () => {
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
                     placeholder="Enter coupon code"
+                    disabled={isCouponApplied} // disable input if coupon is applied
                   />
-                  <Button
-                    type="button"
-                    onClick={handleCouponApply}
-                    variant="outline"
-                    className="text-orange border-orange hover:bg-orange hover:text-white"
-                  >
-                    Apply
-                  </Button>
+
+                  {!isCouponApplied ? (
+                    <Button
+                      type="button"
+                      onClick={handleCouponApply}
+                      variant="outline"
+                      className="text-orange border-orange hover:bg-orange hover:text-white"
+                    >
+                      Apply
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={handleCouponRemove}
+                      variant="destructive"
+                      className="bg-red-500 hover:bg-red-600 text-white"
+                    >
+                      Remove
+                    </Button>
+                  )}
                 </div>
+
+                {/* Success message */}
                 {isCouponApplied && !couponError && (
                   <p className="text-green-600 text-sm mt-2">Coupon applied successfully!</p>
                 )}
+
+                {/* Error message */}
                 {couponError && <p className="text-red-600 text-sm mt-2">{couponError}</p>}
               </CardContent>
             </Card>
 
-          
             <Card className="shadow-travel">
               <CardContent className="p-6">
                 <div className="mb-6">
@@ -587,11 +645,11 @@ const CheckoutPage = () => {
 
                   {(watch('paymentMethod') === 'wallet' ||
                     watch('paymentMethod') === 'wallet+razorpay') && (
-                    <div className="flex justify-between">
-                      <span>Wallet Used:</span>
-                      <span>- ₹{walletUsed.toLocaleString()}</span>
-                    </div>
-                  )}
+                      <div className="flex justify-between">
+                        <span>Wallet Used:</span>
+                        <span>- ₹{walletUsed.toLocaleString()}</span>
+                      </div>
+                    )}
 
                   <Separator />
 

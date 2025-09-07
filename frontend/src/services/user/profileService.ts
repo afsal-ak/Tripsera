@@ -31,6 +31,7 @@ export const updateUserAddress = async (address: AddressFormSchema) => {
 
 export const getUserProfile = async () => {
   const response = await api.get('/user/profile');
+  console.log(response,'profile')
   return response.data;
 };
 

@@ -1,17 +1,14 @@
-import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/redux/store';
 import { setUser } from '@/redux/slices/userAuthSlice';
-import { useImageUpload } from '@/hooks/useImageUpload';
-import { updateProfilepic, updateUserProfile } from '@/services/user/profileService';
+import {  updateUserProfile } from '@/services/user/profileService';
 import { ProfileSchema, type ProfileFormSchema } from '@/schemas/ProfileFormSchema';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/Button';
 import { Textarea } from '@/components/ui/textarea';
-import ImageCropper from '@/components/ImageCropper';
 import type { IUser } from '@/types/IUser';
 import CoverImageTab from './CoverImage';
 import { toast } from 'sonner';
@@ -28,7 +25,7 @@ const EditProfileTab = ({ user, loading,refetchUser }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
 
 
-
+// console.log(currentUser,'resux user')
   const {
     register,
     handleSubmit,
@@ -53,6 +50,9 @@ const EditProfileTab = ({ user, loading,refetchUser }: Props) => {
           user: {
             ...currentUser!,
             username: response?.userProfile?.username,
+            fullName:response?.userProfile?.fullName,
+            phone:response?.userProfile?.phone,
+
           },
           accessToken: accessToken!,
         })

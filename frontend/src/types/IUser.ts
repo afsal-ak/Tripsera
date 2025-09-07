@@ -14,7 +14,7 @@ export interface IUser {
   _id?: string;
   username?: string;
   email: string;
-  phone?: number;
+  phone?: string;
   password?: string;
   role?: 'user' | 'admin';
   isBlocked?: boolean;
