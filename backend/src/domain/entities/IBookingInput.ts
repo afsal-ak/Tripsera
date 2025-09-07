@@ -17,7 +17,7 @@ export interface IBookingInput {
   totalAmount: number;
   discount?: number;
   couponCode?: string;
-  walletUsed?: number;
+  walletUsed?: boolean;
   walletAmountUsed?: number;
   amountPaid: number;
   paymentMethod?: 'wallet' | 'razorpay' | 'wallet+razorpay';

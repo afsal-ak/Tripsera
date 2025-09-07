@@ -53,8 +53,8 @@ const BookingSchema = new Schema<IBookingDocument>(
       default: 'pending',
     },
     walletUsed: {
-      type: Number,
-      default: 0,
+      type: Boolean,
+      default: false,
     },
     walletAmountUsed: {
       type: Number,

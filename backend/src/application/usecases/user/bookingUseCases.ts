@@ -6,6 +6,7 @@ import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUs
 import { RazorpayService } from '@infrastructure/services/razorpay/razorpayService';
 import { AppError } from '@shared/utils/AppError';
 import { generateBookingCode } from '@shared/utils/generateBookingCode';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class BookingUseCases implements IBookingUseCases {
   constructor(
@@ -227,7 +228,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     if (!useWallet) {
       // If user didn't select wallet, skip this route
-      throw new AppError(400, 'Wallet usage not requested');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Wallet usage not requested');
     }
 
     const wallet = await this._walletRepo.getUserWallet(userId);
@@ -254,7 +255,8 @@ export class BookingUseCases implements IBookingUseCases {
       totalAmount,
       discount,
       couponCode,
-      walletUsed: totalAmount,
+      walletUsed: true,
+      walletAmountUsed: totalAmount,
       amountPaid: 0,
       paymentMethod: 'wallet',
       bookingStatus: 'confirmed',
