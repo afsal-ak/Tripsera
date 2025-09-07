@@ -150,16 +150,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
-
-    const publicUser = {
-      _id: user._id,
-      email: user.email,
-      username: user.username,
-      profileImage: user.profileImage,
-      role: user.role,
-      isBlocked: user.isBlocked,
-    } as IUser;
-    return { user: publicUser, accessToken, refreshToken };
+    return { user, accessToken, refreshToken };
   }
 
   async forgotPasswordOtp(email: string): Promise<void> {

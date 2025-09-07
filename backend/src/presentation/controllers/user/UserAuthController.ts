@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
-
+import { LoginResponseDTO, mapToLoginResponseDTO } from '@application/dtos/UserAuthDTO';
 export class UserAuthController {
   constructor(private _userAuthUseCases: IUserAuthUseCases) { }
 
@@ -58,20 +58,18 @@ export class UserAuthController {
         email,
         password
       );
-      console.log(accessToken, 'toekn from user login');
-      res.cookie('userRefreshToken', refreshToken, {
+       res.cookie('userRefreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: '/',
       });
-
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         success: true,
         message: 'Login successful',
         accessToken,
-        user,
+        user:mapToLoginResponseDTO(user),
       });
     } catch (error: any) {
       next(error);
