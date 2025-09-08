@@ -1,11 +1,17 @@
  import api from '@/lib/axios/api';
+ import type { IFilter } from '@/types/IFilter';
 export const fetchBlogById = async (blogId: string) => {
   const response = await api.get(`/admin/blog/${blogId}`);
   console.log(response, 'from servoce');
   return response.data;
 };
-export const getAllBlogs = async (page: number, limit: number) => {
-  const response = await api.get(`/admin/blogs?page=${page}&limit=${limit}`);
+export const getAllBlogs = async (page: number, limit: number,filter:IFilter) => {
+     const params={
+        page,
+        limit,
+        ...filter
+    }
+  const response = await api.get(`/admin/blogs`,{params});
   return response.data;
 };
 export const changeBlogStatus = async (blogId: string, isBlocked: boolean) => {
@@ -13,27 +19,7 @@ export const changeBlogStatus = async (blogId: string, isBlocked: boolean) => {
   return res.data;
 };
 
-// export const getAllBlogs = async (
-//   page: number,
-//   limit: number,
-//   packageQuery?: string,
-//   status?: string,
-//   startDate?: string,
-//   endDate?: string
-// ) => {
-//   const params = new URLSearchParams({
-//     page: page.toString(),
-//     limit: limit.toString(),
-//   });
 
-//   if (packageQuery) params.append("package", packageQuery);
-//   if (status) params.append("status", status);
-//   if (startDate) params.append("startDate", startDate);
-//   if (endDate) params.append("endDate", endDate);
-
-//   const response = await adminApi.get(`/blogs?${params.toString()}`);
-//   return response.data;
-// };
 export const deleteBlogAdmin = async (blogId: string) => {
   const response = await api.delete(`/admin/blog/${blogId}`);
   return response.data;

@@ -17,19 +17,39 @@ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
 import { getAllBlogs } from '@/services/admin/blogService';
 import type { IBlog } from '@/types/IBlog';
 
+
+import { useDebounce } from 'use-debounce';
+import { useCleanFilter } from '@/hooks/useCleanFilter ';
+import { FilterBar } from '@/components/FilterBar ';
+import { useSearchFilters } from '@/hooks/useSearchFilters';
+
 const AdminBlogList = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const cleanFilter = useCleanFilter()
 
   const [blogs, setBlogs] = useState<IBlog[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  //   const [titleSearch, setTitleSearch] = useState(searchParams.get("blogSearch") || "");
-  //   const [status, setStatus] = useState(searchParams.get("status") || "");
-  //   const [authorUsername, setAuthorUsername] = useState(searchParams.get("authorUsername") || "");
-  //   const [startDate, setStartDate] = useState(searchParams.get("startDate") || "");
-  //   const [endDate, setEndDate] = useState(searchParams.get("endDate") || "");
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    sort,
+    customFilter,
+    setCustomFilter,
+    setSort,
+    applyFilters,
+  } = useSearchFilters();
+
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '5', 10);
@@ -38,9 +58,19 @@ const AdminBlogList = () => {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
-        const response = await getAllBlogs(currentPage, limit);
-        setBlogs(response.result.blogs);
-        setTotalPages(response.result.totalPages);
+        const rawFilters = {
+          search: debouncedSearch,
+          status: statusFilter,
+          sort,
+          startDate,
+          endDate,
+          customFilter
+        }
+        const filter = cleanFilter(rawFilters)
+        const response = await getAllBlogs(currentPage, limit, filter);
+        console.log(response, 'bl;og res')
+        setBlogs(response.data);
+        setTotalPages(response.pagination.totalPages);
       } catch (error) {
         toast.error('Failed to fetch blogs');
       } finally {
@@ -49,34 +79,56 @@ const AdminBlogList = () => {
     };
     fetchBlogs();
   }, [searchParams]);
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams)
+    if (debouncedSearch) {
+      params.set('search', debouncedSearch)
+    } else {
+      params.delete('search')
+    }
+    params.set('page', '1')
+    setSearchParams(params)
+  }, [debouncedSearch])
 
   const handlePageChange = (page: number) => {
-    setSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-    });
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev)
+      newParams.set('page', page.toString())
+      return newParams
+    })
+  }
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams)
+    if (debouncedSearch) {
+      params.set('search', debouncedSearch)
+    } else {
+      params.delete('search')
+    }
+    params.set('page', '1')
+    setSearchParams(params)
+  }, [debouncedSearch])
+
+
+  // Handlers passed to FilterBar
+  const handleSearchChange = (val: string) => setSearchQuery(val);
+  const handleStatusChange = (val: string) => setStatusFilter(val);
+  const handleSortChange = (val: string) => setSort(val);
+  const handleReportType = (val: string) => setCustomFilter(val);
+
+  const handleApplyFilters = () => {
+    applyFilters();
   };
 
-  //   const handleFilterChange = () => {
-  //     setSearchParams({
-  //       page: "1",
-  //       limit: limit.toString(),
-  //       ...(titleSearch && { blogSearch: titleSearch }),
-  //       ...(status && { status }),
-  //       ...(startDate && { startDate }),
-  //       ...(endDate && { endDate }),
-  //       ...(authorUsername && { authorUsername }),
-  //     });
-  //   };
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("");
+    setStartDate("");
+    setEndDate("");
+    setSort("");
+    setCustomFilter("")
+    setSearchParams({ page: "1" });
+  };
 
-  //   const handleClearFilters = () => {
-  //     setTitleSearch("");
-  //     setStatus("");
-  //     setAuthorUsername("");
-  //     setStartDate("");
-  //     setEndDate("");
-  //     setSearchParams({ page: "1", limit: limit.toString() });
-  //   };
 
   const paginationButtons = usePaginationButtons({
     currentPage,
@@ -91,27 +143,34 @@ const AdminBlogList = () => {
           <CardTitle>All Blogs</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <Input placeholder="Search title" value={titleSearch} onChange={(e) => setTitleSearch(e.target.value)} />
-            <Input placeholder="Author username" value={authorUsername} onChange={(e) => setAuthorUsername(e.target.value)} />
-            <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-            <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-            <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="published">Published</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
+          <FilterBar
+            searchValue={searchQuery}
+            statusValue={statusFilter}
+            startDateValue={startDate}
+            endDateValue={endDate}
+            sortValue={sort}
+            customFilterValue={customFilter}
+            customLabel="Report Type"
 
-          {/* <div className="flex justify-end mt-4 gap-2">
-            <Button onClick={handleFilterChange}>Apply Filters</Button>
-            <Button variant="outline" onClick={handleClearFilters}>Clear</Button>
-          </div> */}
+            onSearchChange={handleSearchChange}
+            onStatusChange={handleStatusChange}
+            onStartDateChange={setStartDate}
+            onEndDateChange={setEndDate}
+            onSortChange={handleSortChange}
+            onCustomFilterChange={handleReportType}
+            onApply={handleApplyFilters}
+            onClear={handleClearFilters}
+            statusOptions={[
+              { value: "active", label: "Active" },
+              { value: "blocked", label: "Blocked" },
+              // { value: "dismissed", label: "Dismissed" },
+            ]}
+            sortOptions={[
+              { value: "asc", label: "Oldest" },
+              { value: "desc", label: "Newest" },
+            ]}
+
+          />
 
           <div className="overflow-auto">
             <Table>
@@ -153,8 +212,9 @@ const AdminBlogList = () => {
               </TableBody>
             </Table>
           </div>
-          <div className="mt-4 flex justify-center">{paginationButtons}</div>
-        </CardContent>
+          <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
+            {paginationButtons}
+          </div>        </CardContent>
       </Card>
     </div>
   );
