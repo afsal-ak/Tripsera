@@ -1,20 +1,14 @@
 import { IBlog } from '@domain/entities/IBlog';
-
+import { IFilter } from '@domain/entities/IFilter';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 export interface IBlogUseCases {
   getAllBlogs(
     page: number,
     limit: number,
-    filters?: {
-      blogSearch?: string;
-      status?: string;
-      startDate?: string;
-      endDate?: string;
-      authorUsername?: string;
-      tags?: string[];
-    }
+    filters?:IFilter
   ): Promise<{
     blogs: IBlog[];
-    totalBlogs: number;
+    pagination: PaginationInfo;
   }>;
 
   deleteBlog(blogId: string): Promise<void>;

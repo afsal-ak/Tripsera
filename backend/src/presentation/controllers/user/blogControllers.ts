@@ -85,28 +85,6 @@ export class BlogController {
     }
   };
 
-  getAllBlog = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-
-      const { blogSearch, status, startDate, endDate, authorUsername, tags } = req.query;
-
-      const blogs = await this._blogUseCases.getAllBlog(page, limit, {
-        blogSearch: blogSearch?.toString(),
-        status: status?.toString(),
-        startDate: startDate?.toString(),
-        endDate: endDate?.toString(),
-        authorUsername: authorUsername?.toString(),
-        tags: tags ? tags.toString().split(',') : undefined,
-      });
-
-      res.status(HttpStatus.OK).json(blogs);
-    } catch (err) {
-      next(err);
-    }
-  };
-
   getAllPublishedBlogs = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const page = parseInt(req.query.page as string) || 1;

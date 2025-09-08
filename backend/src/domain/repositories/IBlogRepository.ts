@@ -1,4 +1,6 @@
 import { IBlog } from '@domain/entities/IBlog';
+import { IFilter } from '@domain/entities/IFilter';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 export interface IBlogRepository {
   createBlog(userId: string, blogData: IBlog): Promise<IBlog>;
   editBlog(
@@ -11,15 +13,8 @@ export interface IBlogRepository {
   getAllBlog(
     page: number,
     limit: number,
-    filters?: {
-      blogSearch?: string;
-      status?: string;
-      startDate?: string;
-      endDate?: string;
-      authorUsername?: string;
-      tags?: string[];
-    }
-  ): Promise<{ blogs: IBlog[]; totalBlogs: number }>;
+    filters?:IFilter
+  ): Promise<{ blogs: IBlog[]; pagination: PaginationInfo }>;
 
   getAllPublishedBlogs(
     page: number,

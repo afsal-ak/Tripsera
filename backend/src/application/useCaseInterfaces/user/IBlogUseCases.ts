@@ -21,22 +21,6 @@ export interface IBlogUseCases {
     totalBlogs: number;
   }>;
 
-  getAllBlog(
-    page: number,
-    limit: number,
-    filters?: {
-      blogSearch?: string;
-      status?: string;
-      startDate?: string;
-      endDate?: string;
-      authorUsername?: string;
-      tags?: string[];
-    }
-  ): Promise<{
-    blogs: IBlog[];
-    totalBlogs: number;
-  }>;
-
   getAllPublishedBlogs(
     page: number,
     limit: number,

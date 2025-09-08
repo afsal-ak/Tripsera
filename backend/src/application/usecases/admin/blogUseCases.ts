@@ -1,21 +1,16 @@
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
 import { IBlog } from '@domain/entities/IBlog';
+import { IFilter } from '@domain/entities/IFilter';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 export class BlogUseCases implements IBlogUseCases {
   constructor(private _blogRepository: IBlogRepository) {}
 
   async getAllBlogs(
     page: number,
     limit: number,
-    filters?: {
-      blogSearch?: string;
-      status?: string;
-      startDate?: string;
-      endDate?: string;
-      authorUsername?: string;
-      tags?: string[];
-    }
-  ) {
+    filters?:IFilter
+  ):Promise<{blogs:IBlog[],pagination: PaginationInfo;}> {
     return await this._blogRepository.getAllBlog(page, limit, filters);
   }
 

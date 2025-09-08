@@ -45,20 +45,20 @@ export class BlogUseCases implements IBlogUseCases {
     return await this._blogRepo.getBlogByUser(userId, page, limit);
   }
 
-  async getAllBlog(
-    page: number,
-    limit: number,
-    filters?: {
-      blogSearch?: string;
-      status?: string;
-      startDate?: string;
-      endDate?: string;
-      authorUsername?: string;
-      tags?: string[];
-    }
-  ) {
-    return await this._blogRepo.getAllBlog(page, limit, filters);
-  }
+  // async getAllBlog(
+  //   page: number,
+  //   limit: number,
+  //   filters?: {
+  //     blogSearch?: string;
+  //     status?: string;
+  //     startDate?: string;
+  //     endDate?: string;
+  //     authorUsername?: string;
+  //     tags?: string[];
+  //   }
+  // ) {
+  //   return await this._blogRepo.getAllBlog(page, limit, filters);
+  // }
   async getAllPublishedBlogs(
     page: number,
     limit: number,
