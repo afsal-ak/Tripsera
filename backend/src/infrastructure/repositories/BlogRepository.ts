@@ -133,29 +133,29 @@ export class BlogRepository implements IBlogRepository {
     ]);
     const total = totalResult[0]?.total || 0;
 
-     aggregatePipeline.push(
+    aggregatePipeline.push(
       { $sort: sortOption },
       { $skip: skip },
       { $limit: limit },
       {
-      $project: {
-        _id: 1,
-        title: 1,
-        content: 1,
-        createdAt: 1,
-        updatedAt: 1,
-        isBlocked: 1,
-        "author._id": 1,
-        "author.username": 1,  
-        "author.email": 1,    
-      },
-    }
+        $project: {
+          _id: 1,
+          title: 1,
+          content: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          isBlocked: 1,
+          "author._id": 1,
+          "author.username": 1,
+          "author.email": 1,
+        },
+      }
     );
 
     //  Fetch paginated blogs
     const blogs = await BlogModel.aggregate(aggregatePipeline);
-console.log(blogs,'bolg')
-     const pagination: PaginationInfo = {
+    console.log(blogs, 'bolg')
+    const pagination: PaginationInfo = {
       totalItems: total,
       currentPage: page,
       pageSize: limit,
@@ -196,7 +196,14 @@ console.log(blogs,'bolg')
     }
 
     const [blogs, totalBlogs] = await Promise.all([
-      BlogModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+      BlogModel.find(query)
+        .populate({
+          path: 'author',
+          select: 'username email profileImage.url',
+        })
+        .skip(skip).limit(limit)
+        .sort({ createdAt: -1 })
+        .lean(),
       BlogModel.countDocuments(query),
     ]);
     return { blogs, totalBlogs };
