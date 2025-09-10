@@ -124,7 +124,7 @@
 import { useState,useEffect } from "react";
 import { ChatList } from "@/pages/chat/ChatList"; 
 import MessagePage from "./MessagePage";
-import type{ IChatRoom } from "@/types/Message";
+import type{ IChatRoom } from "@/types/IMessage";
 import { 
   
   MessageCircle,

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import socket from "@/sockets/socket";
 import { SOCKET_EVENTS } from "@/sockets/events";
-import type { IMessage, ISendMessage } from "@/types/Message";
+import type { IMessage, ISendMessage } from "@/types/IMessage";
 
 interface UseChatSocketProps {
   roomId: string,

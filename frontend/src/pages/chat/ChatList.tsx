@@ -321,7 +321,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { IChatRoom } from "@/types/Message";
+import type { IChatRoom } from "@/types/IMessage";
 import { handleSearchUserForChat } from "@/services/user/profileService";
 import { getUserRoom } from "@/services/user/messageService";
 import { MessageCircle, Menu } from "lucide-react";

@@ -2,7 +2,7 @@
 import { useState,useEffect } from "react";
 import { ChatList } from "./ChatList";
 import MessagePage from "./MessagePage";
-import type{ IChatRoom } from "@/types/Message";
+import type{ IChatRoom } from "@/types/IMessage";
 import { 
   
   MessageCircle,
@@ -44,8 +44,7 @@ console.log(selectedRoom,'selcte rom')
   };
 
   if (isMobile) {
-    // Mobile Layout: Either show chat list OR message page
-    return (
+     return (
       <div className="flex h-screen bg-white">
         {!showChat ? (
           <ChatList
@@ -57,9 +56,7 @@ console.log(selectedRoom,'selcte rom')
         ) : selectedRoom ? (
           <MessagePage
             room={selectedRoom}
-            // onBack={handleBackToList}
-            // showBackButton={true}
-            // className="w-full"
+            onBack={handleBackToList} 
           />
         ) : null}
       </div>

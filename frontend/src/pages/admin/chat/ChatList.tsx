@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { IChatRoom } from "@/types/Message";
+import type { IChatRoom } from "@/types/IMessage";
  import { getUserRoom } from "@/services/admin/messageService";
 import { MessageCircle, Menu } from "lucide-react";
  import { SearchBar } from "@/components/chat/SearchBar";

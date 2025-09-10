@@ -1,17 +1,23 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
-import type { IMessage, ISendMessage, IChatRoom } from "@/types/Message";
+import type { IMessage, ISendMessage, IChatRoom } from "@/types/IMessage";
 import { getMessagesByRoom } from "@/services/user/messageService";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import TypingIndicator from "@/components/chat/TypingIndicator";
 import { useChatSocket } from "@/hooks/useChatSocket";
-import { MessageType } from "@/types/Message";
+import { MessageType } from "@/types/IMessage";
 import type { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import { formatMessageDate } from "@/lib/utils/dateUtils";
 
-const MessagePage: React.FC<{ room: IChatRoom }> = ({ room }) => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
+import { ChatHeader } from "@/components/chat/ChatHeader";
+
+const MessagePage: React.FC<{ room: IChatRoom; onBack?: () => void }> = ({
+  room,
+  onBack,
+}) => { 
+   const [messages, setMessages] = useState<IMessage[]>([]);
+
   const [messageInput, setMessageInput] = useState("");
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -42,6 +48,23 @@ const MessagePage: React.FC<{ room: IChatRoom }> = ({ room }) => {
     onStopTyping: () => setTypingUser(null),
   });
 
+  // Sort messages by date (ascending)
+  const sortedMessages = [...messages].sort(
+    (a, b) =>
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
+  // Group messages by date (Today, Yesterday, or Date)
+  const groupedMessages = sortedMessages.reduce(
+    (groups: Record<string, IMessage[]>, message) => {
+      const dateKey = formatMessageDate(message.createdAt);
+      if (!groups[dateKey]) groups[dateKey] = [];
+      groups[dateKey].push(message);
+      return groups;
+    },
+    {}
+  );
+
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;
 
@@ -55,24 +78,48 @@ const MessagePage: React.FC<{ room: IChatRoom }> = ({ room }) => {
     sendMessage(newMessage);
     setMessageInput("");
   };
-console.log(user?.username,'username')
+
   return (
     <div className="flex flex-col h-full max-h-screen bg-white w-full">
       {/* Messages Section */}
+         <ChatHeader 
+         room={room} 
+         onBack={onBack} 
+         isMobile={window.innerWidth < 1024
+
+         } />
+
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4">
-        {messages.map((message) => (
-          <MessageBubble
-            key={message._id}
-            message={message}
-            isOwn={
-              typeof message.senderId === "string"
-                ? message.senderId === user?._id
-                : message.senderId?._id === user?._id
-            }
-            onDelete={deleteMessage}
-          />
+        {Object.keys(groupedMessages).map((date) => (
+          <div key={date}>
+            {/* Date Separator */}
+            <div className="flex justify-center my-3">
+              <span className="bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full shadow-sm">
+                {date}
+              </span>
+            </div>
+
+            {/* Messages under this date */}
+            {groupedMessages[date].map((message) => (
+              <MessageBubble
+                key={message._id}
+                message={message}
+                isOwn={
+                  typeof message.senderId === "string"
+                    ? message.senderId === user?._id
+                    : message.senderId?._id === user?._id
+                }
+                onDelete={deleteMessage}
+                currentUser={user || undefined}
+              />
+            ))}
+          </div>
         ))}
-{typingUser && <TypingIndicator username={typingUser} />}
+
+        {/* Typing Indicator */}
+        {typingUser && <TypingIndicator username={typingUser} />}
+
+        {/* Scroll Ref */}
         <div ref={messagesEndRef} />
       </div>
 

@@ -1,4 +1,4 @@
- import type { IChatRoom } from "@/types/Message";
+ import type { IChatRoom } from "@/types/IMessage";
 
 import { MapPin } from "lucide-react";
 // Chat Room Item Component

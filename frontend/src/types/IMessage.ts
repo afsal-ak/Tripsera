@@ -68,3 +68,22 @@ export interface ISendMessage {
   type?: IMessageType;        
   attachments?: string[];     
 }
+
+export interface IMessageUserInfo{
+_id?: string;
+  username?: string;
+  email: string;
+  phone?: string;
+   role?: 'user' | 'admin';
+  isBlocked?: boolean;
+  fullName?: string;
+  dob?: Date;
+  gender?: 'male' | 'female';
+  profileImage?: {
+    url: string;
+    public_id: string;
+  };
+ 
+
+ 
+}

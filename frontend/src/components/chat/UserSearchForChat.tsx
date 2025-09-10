@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import type { IUser } from "@/types/IUser";
-import type { IChatRoom } from "@/types/Message";
+import type { IChatRoom } from "@/types/IMessage";
 
 interface Props {
     onUserSelected?: () => void;

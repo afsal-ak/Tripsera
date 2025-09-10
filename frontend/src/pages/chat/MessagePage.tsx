@@ -225,12 +225,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
-import type { IMessage,ISendMessage, IChatRoom } from "@/types/Message";
+import type { IMessage,ISendMessage, IChatRoom } from "@/types/IMessage";
 import { getMessagesByRoom } from "@/services/user/messageService";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import TypingIndicator from "@/components/chat/TypingIndicator";
 import { useChatSocket } from "@/hooks/useChatSocket";
-import { MessageType } from "@/types/Message";
+import { MessageType } from "@/types/IMessage";
 import type { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 const MessagePage: React.FC<{ room: IChatRoom }> = ({ room }) => {

@@ -2,7 +2,7 @@
 import { useState,useEffect } from "react";
 import { ChatList } from "./ChatList";
 import MessagePage from "./MessagePage";
-import type{ IChatRoom } from "@/types/Message";
+import type{ IChatRoom } from "@/types/IMessage";
 import { 
   
   MessageCircle,
@@ -60,9 +60,8 @@ const TravelChatApp = () => {
         ) : selectedRoom ? (
           <MessagePage
             room={selectedRoom}
-        //    onBack={handleBackToList}
-            //showBackButton={true}
-           /// className="w-full"
+            onBack={handleBackToList}
+          
           />
         ) : null}
       </div>
