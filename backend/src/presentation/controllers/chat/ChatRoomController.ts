@@ -4,6 +4,7 @@ import {
   CreateChatRoomDTO,
   UpdateChatRoomDTO,
   toChatRoomResponseDTO,
+  toChatRoom1to1DTO
 } from "@application/dtos/ChatDTO";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
@@ -44,6 +45,7 @@ export class ChatRoomController {
   getRoomById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const roomId = req.params.roomId;
+      const userId = getUserIdFromRequest(req);
 
       const room = await this._chatRoomUseCases.getChatRoomById(roomId);
 
@@ -54,7 +56,7 @@ export class ChatRoomController {
     //  console.log(room, 'roooooom')
       res.status(HttpStatus.OK).json({
         success: true,
-        data: toChatRoomResponseDTO(room),
+        data: toChatRoom1to1DTO(room,userId),
       });
     } catch (error) {
       next(error);

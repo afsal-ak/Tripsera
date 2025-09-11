@@ -14,42 +14,6 @@ export interface UpdateChatRoomDTO {
   lastMessage?:string;
   lastMessageContent?:string;
 }
-// export interface ChatParticipantDTO {
-//   _id: string;
-//   username: string;
-//   profileImage?: string;
-//   lastMessageContent?: string;
-// }
-
-// export interface ChatRoomResponseDTO {
-//   _id: string;
-//   name?: string;
-//   participants: ChatParticipantDTO[]; 
-//   createdBy: string;
-//   isGroup: boolean;
-// lastMessageContent?:string;
-//   unreadCounts?: {
-//     [userId: string]: number;
-//   };
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
-
-// export const toChatRoomResponseDTO = (
-//   room: IChatRoom,
-// ): ChatRoomResponseDTO => {
-//   return {
-//     _id: room._id!.toString(),
-//     name: room.name,
-//     participants: room.participants as any,
-//     createdBy: room.createdBy.toString(),
-//     isGroup: room.isGroup,
-//     lastMessageContent:room?.lastMessageContent,
-//     unreadCounts: room.unreadCounts,
-//     createdAt: room.createdAt!,
-//     updatedAt: room.updatedAt!,
-//   };
-// };
 
 export interface ChatParticipantDTO {
   _id: string;
@@ -97,3 +61,44 @@ export const toChatRoomResponseDTO = (
     updatedAt: room.updatedAt!,
   };
 };
+
+export interface ChatRoom1to1DTO {
+  _id: string;
+  otherUser: ChatParticipantDTO | null; 
+  createdBy: string;
+  isGroup: boolean; // always false
+  lastMessageContent?: string | null;
+  unreadCounts?: {
+    [userId: string]: number;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const toChatRoom1to1DTO = (
+  room: IChatRoom,
+  currentUserId: string
+): ChatRoom1to1DTO => {
+  const participants: ChatParticipantDTO[] = Array.isArray(room.participants)
+    ? (room.participants as any[]).map((p) => ({
+        _id: p._id.toString(),
+        username: p.username,
+        profileImage: p.profileImage || null,
+      }))
+    : [];
+
+  // find the "other" user
+  const otherUser = participants.find((p) => p._id !== currentUserId) || null;
+
+  return {
+    _id: room._id!.toString(),
+    otherUser,
+    createdBy: room.createdBy.toString(),
+    isGroup: false,
+    lastMessageContent: room?.lastMessageContent || null,
+    unreadCounts: room.unreadCounts || {},
+    createdAt: room.createdAt!,
+    updatedAt: room.updatedAt!,
+  };
+};
+
