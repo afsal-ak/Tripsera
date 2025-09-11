@@ -24,13 +24,10 @@ export const MessageBubble: React.FC<Props> = ({
   };
 
   // Sender details
-  const sender =
-    typeof message.senderId === "string"
-      ? null
-      : message.senderId || currentUser;
+  const sender = message.senderId || currentUser;
 
   const senderName = isOwn ? "You" : sender?.username || "Unknown";
-  const senderAvatar = isOwn
+   const senderAvatar = isOwn
     ? currentUser?.profileImage?.url
     : sender?.profileImage?.url;
 

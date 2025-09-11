@@ -1,49 +1,40 @@
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { MessageCircle } from "lucide-react";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
+import { getUserRoom } from "@/services/user/messageService";
+import type { RootState } from "@/redux/store";
 import type { IChatRoom } from "@/types/IMessage";
- import { getUserRoom } from "@/services/user/messageService";
-import { MessageCircle, Menu } from "lucide-react";
- import { SearchBar } from "@/components/chat/SearchBar";
-
 import { ChatRoomItem } from "@/components/chat/ChatRoomItem";
 import { ChatListHeader } from "@/components/chat/ChatListHeader";
-import { toast } from "sonner";
-import type {  RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
 import UserSearchForChat from "@/components/chat/UserSearchForChat";
 
-export const ChatList: React.FC<{
-  className?: string;
+interface ChatListProps {
   onRoomSelect: (room: IChatRoom) => void;
-   selectedRoomId?: string;
-  isCollapsed?: boolean;
-  onToggleSidebar?: () => void;
-}> = ({
-  className = "",
+  selectedRoomId?: string;
+}
+
+export const ChatList: React.FC<ChatListProps> = ({
   onRoomSelect,
-   selectedRoomId,
-  isCollapsed = false,
-  onToggleSidebar,
+  selectedRoomId,
 }) => {
   const [rooms, setRooms] = useState<IChatRoom[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [searchParams] = useSearchParams();
-     
-  let currentUserId=useSelector((state:RootState)=>state.userAuth.user?._id)
-  console.log(currentUserId,'curebnt')
-   
+
+  const currentUserId = useSelector(
+    (state: RootState) => state.userAuth.user?._id
+  );
 
   useEffect(() => {
     fetchRooms();
   }, []);
-//console.log(rooms,'rooooom')
+
   const fetchRooms = async () => {
     try {
       setLoading(true);
       const response = await getUserRoom();
-      console.log(response)
       setRooms(response.data || []);
     } catch (error: any) {
       console.error("Error fetching rooms:", error);
@@ -63,87 +54,28 @@ export const ChatList: React.FC<{
         const searchTerm = search.toLowerCase();
         return (
           otherParticipant?.username?.toLowerCase().includes(searchTerm) ||
-          (room.isGroup &&
-            room.name?.toLowerCase().includes(searchTerm)) ||
+          (room.isGroup && room.name?.toLowerCase().includes(searchTerm)) ||
           room.lastMessageContent?.toLowerCase().includes(searchTerm)
         );
       })
     : [];
 
-  // Collapsed sidebar view
-  if (isCollapsed) {
-    return (
-      <div
-        className={`w-16 bg-white border-r border-gray-200 flex flex-col h-full ${className}`}
-      >
-        <div className="flex items-center justify-center p-4 bg-blue-600">
-          <button
-            onClick={onToggleSidebar}
-            className="p-2 hover:bg-blue-700 rounded-full transition-colors text-white"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto py-2">
-          {filteredRooms.slice(0, 8).map((room) => {
-            const otherParticipant =
-              room.participants.find((p) => p._id !== currentUserId) ||
-              room.participants[0];
-
-            const unreadCount = room.unreadCounts?.[currentUserId!] || 0;
-
-            return (
-              <div
-                key={room._id}
-                onClick={() => onRoomSelect(room)}
-                className={`flex items-center justify-center p-2 mx-2 my-1 cursor-pointer rounded-lg hover:bg-blue-50 transition-colors relative ${
-                  selectedRoomId === room._id ? "bg-blue-100" : ""
-                }`}
-              >
-                <div className="relative">
-                  <img
-                    src={
-                      otherParticipant?.profileImage?.url ||
-                      "/profile-default.jpg"
-                    }
-                    alt={otherParticipant?.username || "User"}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  {unreadCount > 0 && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
-  // Expanded sidebar view
   return (
-    <div
-      className={`bg-white border-r border-gray-200 flex flex-col h-full ${className}`}
-    >
+    <div className="bg-white flex flex-col h-full">
+      {/* Sticky Chat List Header */}
+      <div className="sticky top-0 z-10 bg-white shadow-sm">
+        <ChatListHeader />
+        <UserSearchForChat
+          onRoomCreated={(newRoom) => {
+            setRooms((prevRooms) => {
+              const exists = prevRooms.some((room) => room._id === newRoom._id);
+              return exists ? prevRooms : [newRoom, ...prevRooms];
+            });
+          }}
+        />
+      </div>
 
-      <ChatListHeader
-        onToggleSidebar={onToggleSidebar}
-        showToggle={!!onToggleSidebar}
-      />
-      {/* <SearchBar search={search} setSearch={setSearch} /> */}
-       <UserSearchForChat
-    onRoomCreated={(newRoom) => {
-        setRooms((prevRooms) => {
-            const exists = prevRooms.some((room) => room._id === newRoom._id);
-            return exists ? prevRooms : [newRoom, ...prevRooms];  
-        });
-    }}
-/>
-
+      {/* Chat Rooms */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center h-32">

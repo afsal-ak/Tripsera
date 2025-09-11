@@ -28,9 +28,10 @@ import EditCustomPkgForm from '@/pages/user/customPkg/EditCustomPkgForm';
 import CustomPackagePage from '@/pages/user/customPkg/CustomPackagePage';
 import CustomPackageDetails from '@/pages/user/customPkg/CustomPackageDetailsPage';
 import ChatBot from '@/pages/user/chatbot/ChatBot';
-import TravelChatApp from '@/pages/user/chat/TravelChatApp';
 import UserSearchAndMessage from '@/components/chat/UserSearchForChat';
-  const ProtectedRoutes = (
+import MessagePage from '@/pages/user/chat/MessagePage';
+import ChatLayout from '@/layouts/ChatLayout';
+const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
     <Route path="/checkout/:id" element={<CheckoutPage />} />
@@ -42,16 +43,15 @@ import UserSearchAndMessage from '@/components/chat/UserSearchForChat';
     <Route path="/profile/:username" element={<PublicProfile />} />
     <Route path="/custom-package" element={<AddCustomPkgForm />} />
     <Route path="/chatbot" element={<ChatBot />} />
-    <Route path="/chat" element={<TravelChatApp/>} />
-    <Route path="/user" element={<UserSearchAndMessage/>} />
-      {/* <Route path="/chats" element={<ChatListPage />} />
-        <Route path="/chats/:id" element={<MessagePage />} /> */}
- {/* <Route path="/chats/:id" element={<MessagePage />} /> */}
+     <Route path="/user" element={<UserSearchAndMessage />} />
 
-{/* <Route
-  path="/chat/room"
-  element={<ChatRoom/>} */}
-{/* />    */}
+
+
+    <Route path='/chat' element={<ChatLayout />}>
+      <Route path=":roomId" element={<MessagePage />} />
+    </Route>
+
+
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />
       <Route path="verify-otp" element={<EmailOtpPage />} />
@@ -70,7 +70,7 @@ import UserSearchAndMessage from '@/components/chat/UserSearchForChat';
       <Route path="my-reviews/:reviewId/edit" element={<ReviewEditForm />} />
       <Route path="my-custom-package" element={<CustomPackagePage />} />
       <Route path="my-custom-package/:pkgId" element={<CustomPackageDetails />} />
-          <Route path="my-custom-package/edit/:id" element={<EditCustomPkgForm />} />
+      <Route path="my-custom-package/edit/:id" element={<EditCustomPkgForm />} />
 
       <Route path="s/:id" element={<StandardBookingDetail />} />
     </Route>

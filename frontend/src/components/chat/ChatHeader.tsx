@@ -10,8 +10,10 @@ interface Props {
 }
 
 export const ChatHeader: React.FC<Props> = ({ room, onBack, isMobile }) => {
+   
 
-    const otherUser = !room.isGroup ? room.participants[0] : null;
+    const otherUser = !room.isGroup ? room?.otherUser : null;
+ console.log(otherUser,'header')
 
     const displayName = room.isGroup ? room.name : otherUser?.username;
     const displayAvatar = room.isGroup

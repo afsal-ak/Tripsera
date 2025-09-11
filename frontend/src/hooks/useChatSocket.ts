@@ -34,7 +34,7 @@ export const useChatSocket = ({
     }
 
     //join room
-
+// console.log(roomId,'room id in socket')
     socket.emit(SOCKET_EVENTS.JOIN_ROOM, roomId)
 
     socket.on(SOCKET_EVENTS.NEW_MESSAGE, (message: IMessage) => {

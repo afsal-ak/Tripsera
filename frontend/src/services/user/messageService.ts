@@ -29,6 +29,10 @@ export const deleteUserRoom=async(roomId:string)=>{
     return response.data
 }
 
+export const getChatRoomById=async(roomId:string)=>{
+    const response=await api.get(`/user/chatrooms/${roomId}`)
+    return response.data
+}
 
 export const getUserRoom=async()=>{
     const response=await api.get(`/user/chatrooms`)

@@ -15,6 +15,7 @@ export interface IChatRoom {
   _id: string;
   name?: string;
   participants: IChatParticipant[];
+  otherUser?:IChatParticipant
   createdBy: string;
   isGroup: boolean;
   lastMessageContent?: string;

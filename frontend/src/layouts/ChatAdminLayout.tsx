@@ -1,8 +1,8 @@
 import { Outlet, useParams, useNavigate } from "react-router-dom";
-import { ChatListPage } from "@/pages/user/chat/ChatListPage";
+import { ChatListPage } from "@/pages/admin/chat/ChatListPage";
 import { ArrowLeft } from "lucide-react";
 
-const ChatLayout = () => {
+const ChatAdminLayout = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const ChatLayout = () => {
             {/* Mobile Back Header */}
             <div className="lg:hidden p-3 border-b flex items-center gap-3 bg-white sticky top-0 z-10 shadow-sm">
               <button
-                onClick={() => navigate("/chat")}
+                onClick={() => navigate("/admin/chat")}
                 className="p-2 rounded-full hover:bg-gray-100 transition"
               >
                 <ArrowLeft size={20} />
@@ -56,4 +56,4 @@ const ChatLayout = () => {
   );
 };
 
-export default ChatLayout;
+export default ChatAdminLayout;

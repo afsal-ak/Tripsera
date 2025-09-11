@@ -5,7 +5,7 @@ import AdminPrivateRoute from './AdminPrivateRoute';
 import NotFoundPage from '@/components/NotFoundPage';
 
 // Admin pages
- import DashboardPage from '@/pages/admin/dashboard/DashboardPage';
+import DashboardPage from '@/pages/admin/dashboard/DashboardPage';
 import UserList from '@/pages/admin/user/UsersList';
 import UserBookingPage from '@/pages/user/booking/UserBookingPage';
 import AddCategory from '@/pages/admin/category/AddCategory';
@@ -32,7 +32,8 @@ import ReportDetails from '@/pages/admin/report/ReportDetails';
 import UserDetailsPage from '@/pages/admin/user/UserDetailsPage';
 import CustomPackagePage from '@/pages/admin/cutomPackage/CustomPackagePage';
 import CustomPackageDetails from '@/pages/admin/cutomPackage/CustomPackageDetailsPage';
-import TravelChatApp from '@/pages/admin/chat/TravelChatApp';
+import MessagePage from '@/pages/admin/chat/MessagePage';
+import ChatAdminLayout from '@/layouts/ChatAdminLayout';
 const AdminRoutes = () => {
   return (
     <Routes>
@@ -43,7 +44,7 @@ const AdminRoutes = () => {
         <Route element={<AdminLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="users" element={<UserList />} />
-          <Route path="users/:id" element={<UserDetailsPage/>} />
+          <Route path="users/:id" element={<UserDetailsPage />} />
           <Route path="categories" element={<CategoryList />} />
           <Route path="categories/add" element={<AddCategory />} />
           <Route path="categories/edit/:id" element={<EditCategory />} />
@@ -74,7 +75,11 @@ const AdminRoutes = () => {
           <Route path="reports/:reportId" element={<ReportDetails />} />
           <Route path="custom-packages" element={<CustomPackagePage />} />
           <Route path="custom-packages/:pkgId" element={<CustomPackageDetails />} />
-          <Route path="chat" element={<TravelChatApp />} />
+
+          <Route path='/chat' element={<ChatAdminLayout />}>
+            <Route path=":roomId" element={<MessagePage />} />
+          </Route>
+
 
         </Route>
       </Route>

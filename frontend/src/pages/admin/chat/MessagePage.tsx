@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
 import type { IMessage, ISendMessage, IChatRoom } from "@/types/IMessage";
-import { getMessagesByRoom } from "@/services/admin/messageService";
+import { getMessagesByRoom, getChatRoomById } from "@/services/admin/messageService";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import TypingIndicator from "@/components/chat/TypingIndicator";
 import { useChatSocket } from "@/hooks/useChatSocket";
@@ -11,36 +11,49 @@ import type { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { formatMessageDate } from "@/lib/utils/dateUtils";
 import { ChatHeader } from "@/components/chat/ChatHeader";
+import { useParams } from "react-router-dom";
 
-const MessagePage: React.FC<{ room: IChatRoom; onBack?: () => void }> = ({
-  room,
-  onBack,
-}) => { 
-  
+const MessagePage: React.FC = () => {
+
+  const { roomId } = useParams<{ roomId: string }>();
+  const [room, setRoom] = useState<IChatRoom | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [messageInput, setMessageInput] = useState("");
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const user = useSelector((state: RootState) => state.adminAuth.admin);
 
+  // Fetch room details
   useEffect(() => {
+    const fetchRoom = async () => {
+      if (!roomId) return;
+      const response = await getChatRoomById(roomId);
+      console.log(response.data, 'get by id')
+      setRoom(response.data);
+    };
+    fetchRoom();
+  }, [roomId]);
+
+  // Fetch messages for the current room
+  useEffect(() => {
+    if (!roomId) return;
     const fetchMessages = async () => {
-      const response = await getMessagesByRoom(room._id);
+      const response = await getMessagesByRoom(roomId);
       setMessages(response.data);
+      scrollToBottom()
     };
     fetchMessages();
-  }, [room._id]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
+  }, [roomId]);
+  
   const { sendMessage, deleteMessage, startTyping, stopTyping } = useChatSocket({
-    roomId: room._id,
+    roomId: room?._id as string,
     currentUserId: user?._id!,
     currentUsername: user?.username!,
-    onMessageReceived: (newMessage) =>
-      setMessages((prev) => [...prev, newMessage]),
+    onMessageReceived: (newMessage) => {
+      setMessages((prev) => [...prev, newMessage]);
+      scrollToBottom();
+    },
     onMessageDeleted: (messageId) =>
       setMessages((prev) => prev.filter((m) => m._id !== messageId)),
     onMessageRead: () => { },
@@ -48,7 +61,6 @@ const MessagePage: React.FC<{ room: IChatRoom; onBack?: () => void }> = ({
     onStopTyping: () => setTypingUser(null),
   });
 
-  
   // Sort messages by date (ascending)
   const sortedMessages = [...messages].sort(
     (a, b) =>
@@ -65,30 +77,40 @@ const MessagePage: React.FC<{ room: IChatRoom; onBack?: () => void }> = ({
     },
     {}
   );
+
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;
 
     const newMessage: ISendMessage = {
-      roomId: room._id,
+      roomId: room?._id,
       senderId: user?._id!,
       content: messageInput,
       type: MessageType.TEXT,
     };
-
-    sendMessage(newMessage);
+     sendMessage(newMessage);
     setMessageInput("");
   };
 
+  const scrollToBottom = () => {
+        setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+    };
+
+   if (!roomId) {
+    return (
+      <div className="flex flex-1 items-center justify-center text-gray-400 text-lg">
+        Select a chat to start messaging
+      </div>
+    );
+  }
+ 
   return (
     <div className="flex flex-col h-full max-h-screen bg-white w-full">
+      {/* Chat Header */}
+      {room && <ChatHeader room={room} isMobile={window.innerWidth < 1024} />}
+
       {/* Messages Section */}
-               <ChatHeader 
-               room={room} 
-               onBack={onBack} 
-               isMobile={window.innerWidth < 1024
-      
-               } />
-               
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4">
         {Object.keys(groupedMessages).map((date) => (
           <div key={date}>
@@ -104,11 +126,7 @@ const MessagePage: React.FC<{ room: IChatRoom; onBack?: () => void }> = ({
               <MessageBubble
                 key={message._id}
                 message={message}
-                isOwn={
-                  typeof message.senderId === "string"
-                    ? message.senderId === user?._id
-                    : message.senderId?._id === user?._id
-                }
+                isOwn={message.senderId?._id === user?._id}
                 onDelete={deleteMessage}
                 currentUser={user || undefined}
               />
@@ -124,6 +142,7 @@ const MessagePage: React.FC<{ room: IChatRoom; onBack?: () => void }> = ({
       </div>
 
       {/* Input Section */}
+
       <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
         <div className="flex items-center gap-2 sm:gap-3">
           <input
