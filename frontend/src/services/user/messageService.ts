@@ -46,6 +46,16 @@ export const getMessagesByRoom=async(roomId:string)=>{
 }
 
 
+export const uploadFile = async (formData: FormData) => {
+  const response = await api.post('/admin/messages/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  console.log(response,'response chat')
+  return response.data;
+};
+
 export const CHAT_ROOM_ROUTE = {
   CREATE: "/chatrooms",                           // POST → Create a chat room
   UPDATE: "/chatrooms/:roomId",                   // PUT/PATCH → Update chat room details

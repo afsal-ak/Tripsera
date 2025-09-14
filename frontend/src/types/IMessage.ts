@@ -1,9 +1,9 @@
 
- export interface IChatParticipant {
+export interface IChatParticipant {
   _id: string;
   username: string;
   avatar?: string;
- profileImage?: {
+  profileImage?: {
     url: string;
     public_id: string;
   };
@@ -15,7 +15,7 @@ export interface IChatRoom {
   _id: string;
   name?: string;
   participants: IChatParticipant[];
-  otherUser?:IChatParticipant
+  otherUser?: IChatParticipant
   createdBy: string;
   isGroup: boolean;
   lastMessageContent?: string;
@@ -30,6 +30,7 @@ export const MessageType = {
   TEXT: 'text',
   IMAGE: 'image',
   FILE: 'file',
+  AUDIO: 'audio',
 } as const;
 
 export type IMessageType = (typeof MessageType)[keyof typeof MessageType];
@@ -39,22 +40,23 @@ export type IMessageType = (typeof MessageType)[keyof typeof MessageType];
 //       profileImage: [Object]
 //     },
 
-export interface ISender{
+export interface ISender {
   _id: string,
-      username?:string,
- profileImage?: {
+  username?: string,
+  profileImage?: {
     url: string;
     public_id: string;
-  };}
+  };
+}
 
 
 export interface IMessage {
   _id: string;
   roomId: string;
-  senderId: ISender  
-  content: string;
+  senderId: ISender
+  content?: string;
   type: IMessageType;
-  attachments: string[];
+  mediaUrl?: string;
   isRead: boolean;
   readBy: string[];
   createdAt: Date;
@@ -62,20 +64,20 @@ export interface IMessage {
 }
 
 export interface ISendMessage {
-  roomId?: string;             
-  senderId: string;            
-  receiverId?: string;         
-  content: string;             
-  type?: IMessageType;        
-  attachments?: string[];     
+  roomId?: string;
+  senderId: string;
+  receiverId?: string;
+  content?: string;
+  type?: IMessageType;
+  mediaUrl?: string;
 }
 
-export interface IMessageUserInfo{
-_id?: string;
+export interface IMessageUserInfo {
+  _id?: string;
   username?: string;
   email: string;
   phone?: string;
-   role?: 'user' | 'admin';
+  role?: 'user' | 'admin';
   isBlocked?: boolean;
   fullName?: string;
   dob?: Date;
@@ -84,7 +86,7 @@ _id?: string;
     url: string;
     public_id: string;
   };
- 
 
- 
+
+
 }

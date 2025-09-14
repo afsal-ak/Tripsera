@@ -68,7 +68,7 @@ const ImageCropper: React.FC<Props> = ({ image, onCropComplete, onCancel, aspect
         <Button variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button onClick={handleDone}>Crop & Compress</Button>
+        <Button onClick={handleDone}>Crop</Button>
       </div>
     </div>
   );

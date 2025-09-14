@@ -7,36 +7,36 @@ interface CreateChatRoomPayload {
   isGroup: boolean;
 }
 
-export const createChatRoom = async (payload: CreateChatRoomPayload) => {
+export const adminCreateChatRoom = async (payload: CreateChatRoomPayload) => {
  
     const response = await api.post("/admin/chatrooms", payload);
     return response.data;
 
 };
-export const updateUserRoom=async(roomId:string)=>{
-    const response=await api.post(`/admin/chatrooms/${roomId}`)
-    return response.data
-}
+// export const updateUserRoom=async(roomId:string)=>{
+//     const response=await api.post(`/admin/chatrooms/${roomId}`)
+//     return response.data
+// }
 
 
-export const deleteUserRoom=async(roomId:string)=>{
+export const adminDeleteUserRoom=async(roomId:string)=>{
     const response=await api.delete(`/admin/chatrooms/${roomId}`)
     return response.data
 }
 
-export const getChatRoomById=async(roomId:string)=>{
+export const adminGetChatRoomById=async(roomId:string)=>{
     const response=await api.get(`/admin/chatrooms/${roomId}`)
     return response.data
 }
 
 
-export const getUserRoom=async()=>{
+export const adminGetUserRoom=async()=>{
     const response=await api.get(`/admin/chatrooms`)
     console.log(response,'respo')
     return response.data
 }
 
-export const getMessagesByRoom=async(roomId:string)=>{
+export const adminGetMessagesByRoom=async(roomId:string)=>{
     const response=await api.get(`/admin/chatrooms/${roomId}/messages`)
     return response.data
 }

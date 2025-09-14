@@ -31,6 +31,8 @@ import ChatBot from '@/pages/user/chatbot/ChatBot';
 import UserSearchAndMessage from '@/components/chat/UserSearchForChat';
 import MessagePage from '@/pages/user/chat/MessagePage';
 import ChatLayout from '@/layouts/ChatLayout';
+import UploadImage from '@/pages/user/chat/UploadImage';
+import MessageMainPage from '@/pages/user/chat/MessageMainPage';
 const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
@@ -48,9 +50,10 @@ const ProtectedRoutes = (
 
 
     <Route path='/chat' element={<ChatLayout />}>
-      <Route path=":roomId" element={<MessagePage />} />
+      <Route path=":roomId" element={<MessageMainPage />} />
     </Route>
 
+      <Route path="/file" element={<UploadImage />} />
 
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />

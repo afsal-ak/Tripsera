@@ -1,7 +1,7 @@
 import React from "react";
 import { Check, CheckCheck, Trash2 } from "lucide-react";
 import type { IMessage, IMessageUserInfo } from "@/types/IMessage";
-
+import ImageViewer from "./ImageViewer";
 interface Props {
   message: IMessage;
   isOwn: boolean;
@@ -22,7 +22,7 @@ export const MessageBubble: React.FC<Props> = ({
       minute: "2-digit",
     });
   };
-
+console.log(message,'mssg')
   // Sender details
   const sender = message.senderId || currentUser;
 
@@ -61,8 +61,24 @@ export const MessageBubble: React.FC<Props> = ({
           </p>
         )}
 
-        {/* Message content */}
-        <p className="text-sm sm:text-base break-words">{message.content}</p>
+ {message.type === "image" && message.mediaUrl ? (
+  <div className="flex flex-col max-w-xs sm:max-w-sm">
+    {/* <img
+      src={message.mediaUrl}
+      alt="sent"
+      className="rounded-lg object-cover"
+    /> */}
+      <ImageViewer src={message.mediaUrl} className="max-w-xs sm:max-w-sm" />
+
+     {message.content?.trim() && (
+      <p className="mt-1 text-xs sm:text-sm text-black-200 break-words">
+        {message.content}
+      </p>
+    )}
+  </div>
+) : (
+  <p className="text-sm sm:text-base break-words">{message.content}</p>
+)}
 
         {/* Timestamp + Read Status */}
         <div

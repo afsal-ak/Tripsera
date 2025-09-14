@@ -32,7 +32,7 @@ import ReportDetails from '@/pages/admin/report/ReportDetails';
 import UserDetailsPage from '@/pages/admin/user/UserDetailsPage';
 import CustomPackagePage from '@/pages/admin/cutomPackage/CustomPackagePage';
 import CustomPackageDetails from '@/pages/admin/cutomPackage/CustomPackageDetailsPage';
-import MessagePage from '@/pages/admin/chat/MessagePage';
+import MessageMainPage from '@/pages/admin/chat/MessageMainPage';
 import ChatAdminLayout from '@/layouts/ChatAdminLayout';
 const AdminRoutes = () => {
   return (
@@ -77,7 +77,7 @@ const AdminRoutes = () => {
           <Route path="custom-packages/:pkgId" element={<CustomPackageDetails />} />
 
           <Route path='/chat' element={<ChatAdminLayout />}>
-            <Route path=":roomId" element={<MessagePage />} />
+            <Route path=":roomId" element={<MessageMainPage />} />
           </Route>
 
 

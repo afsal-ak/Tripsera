@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { MessageCircle } from "lucide-react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import { getUserRoom } from "@/services/admin/messageService";
+import { adminGetUserRoom } from "@/services/admin/messageService";
 import type { RootState } from "@/redux/store";
 import type { IChatRoom } from "@/types/IMessage";
 import { ChatRoomItem } from "@/components/chat/ChatRoomItem";
@@ -34,7 +34,7 @@ export const ChatList: React.FC<ChatListProps> = ({
   const fetchRooms = async () => {
     try {
       setLoading(true);
-      const response = await getUserRoom();
+      const response = await adminGetUserRoom();
       setRooms(response.data || []);
     } catch (error: any) {
       console.error("Error fetching rooms:", error);

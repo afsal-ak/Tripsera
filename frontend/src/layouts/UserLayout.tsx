@@ -20,7 +20,7 @@ const UserLayout = () => {
 
       {/*  Hide footer only on chat pages */}
       {!isChatPage && <Footer />}
-      <ChatbotLauncher />
+      {!isChatPage && <ChatbotLauncher />}
 
     </div>
   );
