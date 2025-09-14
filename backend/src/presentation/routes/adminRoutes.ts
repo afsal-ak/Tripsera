@@ -28,6 +28,8 @@ import { UserManagementUseCases } from '@application/usecases/admin/userManageme
 import { UserManagementController } from '@presentation/controllers/admin/userMangementController';
 
 import { upload } from '@presentation/middlewares/upload';
+import { chatUpload } from '@presentation/middlewares/chatUpload';
+
 import { BannerMangementController } from '@presentation/controllers/admin/bannerController';
 import { BannerMangementUseCases } from '@application/usecases/admin/bannerUseCases';
 import { BannerRepository } from '@infrastructure/repositories/BannerRepository';
@@ -285,6 +287,7 @@ router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware,chatRoomController.del
 //MESSAGE ROUTES
 // router.post(MESSAGE_ROUTE.SEND, adminAuthMiddleware, messageController.sendMessage);
  router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
+ router.post(MESSAGE_ROUTE.UPLOAD_MEDIA, adminAuthMiddleware,chatUpload.single('file'), messageController.uploadMediaToChat);
 //router.patch(MESSAGE_ROUTE.MARK_AS_READ, adminAuthMiddleware, messageController.markMessageRead);
  //router.delete(MESSAGE_ROUTE.DELETE, adminAuthMiddleware,messageController.deleteMessage);
 

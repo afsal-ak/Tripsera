@@ -104,17 +104,19 @@ export const CUSTOM_PACKAGE_ROUTE = {
 
 
 export const CHAT_ROOM_ROUTE = {
-  CREATE: "/chatrooms",                          
-  UPDATE: "/chatrooms/:roomId",                   
-  GET_BY_ID: "/chatrooms/:roomId",                
-  GET_USER_ROOMS: "/chatrooms",     
-  DELETE: "/chatrooms/:roomId",               
+  CREATE: "/chatrooms",
+  UPDATE: "/chatrooms/:roomId",
+  GET_BY_ID: "/chatrooms/:roomId",
+  GET_USER_ROOMS: "/chatrooms",
+  DELETE: "/chatrooms/:roomId",
 };
 
 
 export const MESSAGE_ROUTE = {
-  SEND: "/chatrooms/messages",               
-  GET_BY_ROOM: "/chatrooms/:roomId/messages",         
-  MARK_AS_READ: "/messages/:messageId/read",      
-  DELETE: "/messages/:messageId",                  
+  SEND: "/chatrooms/messages",
+  GET_BY_ROOM: "/chatrooms/:roomId/messages",
+  MARK_AS_READ: "/messages/:messageId/read",
+  DELETE: "/messages/:messageId",
+  UPLOAD_MEDIA: '/messages/upload'
+
 };

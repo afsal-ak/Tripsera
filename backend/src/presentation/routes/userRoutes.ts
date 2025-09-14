@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { upload } from '@presentation/middlewares/upload';
+import { chatUpload } from '@presentation/middlewares/chatUpload';
 import {
   AUTH_ROUTES,
   HOME_ROUTES,
@@ -14,7 +15,7 @@ import {
   REPORT_ROUTE,
   CUSTOM_PACKAGE_ROUTE,
   CHAT_ROOM_ROUTE,
-  MESSAGE_ROUTE
+  MESSAGE_ROUTE,
 } from 'constants/route-constants/userRoutes';
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
@@ -319,6 +320,7 @@ router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware,chatRoomController.dele
  router.get(MESSAGE_ROUTE.GET_BY_ROOM, userAuthMiddleware, messageController.getMessages);
 //router.patch(MESSAGE_ROUTE.MARK_AS_READ, userAuthMiddleware, messageController.markMessageRead);
 // router.delete(MESSAGE_ROUTE.DELETE, userAuthMiddleware,messageController.deleteMessage);
+ router.post(MESSAGE_ROUTE.UPLOAD_MEDIA, userAuthMiddleware,chatUpload.single('file'), messageController.uploadMediaToChat);
 
 
 

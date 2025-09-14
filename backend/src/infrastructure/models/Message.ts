@@ -1,51 +1,4 @@
-// import { Schema, model, Document } from "mongoose";
-// import { IMessage } from "@domain/entities/IMessage";
 
-//  type MessageDocument = IMessage& Document 
- 
-// const messageSchema = new Schema<MessageDocument>(
-//   {
-//     roomId: {
-//       type: Schema.Types.ObjectId,
-//       ref: "ChatRoom",//for chat group name
-//       required: true,
-//     },
-//     senderId: {
-//       type: Schema.Types.ObjectId,
-//       ref: "Users", // Could also reference Admin if needed
-//       required: true,
-//     },
-//     content: {
-//       type: String,
-//       required: true,
-//     },
-//     type: {
-//       type: String,
-//       enum: ["text", "image", "file"],
-//       default: "text",
-//     },
-//     attachments: [
-//       {
-//         type: String,
-//       },
-//     ],
-//     isRead: {
-//       type: Boolean,
-//       default: false,
-//     },
-//     readBy: [
-//       {
-//         type: Schema.Types.ObjectId,
-//         ref: "User",
-//       },
-//     ],
-//   },
-//   {
-//     timestamps: true,
-//   }
-// );
-
-// export const MessageModel = model<MessageDocument>("Message", messageSchema);
 import { Schema, model, Document } from "mongoose";
 import { IMessage } from "@domain/entities/IMessage";
 
@@ -67,20 +20,26 @@ const messageSchema = new Schema<MessageDocument>(
 
     content: {
       type: String,
-      default: "", // ✅ Allow empty if attachments-only message
+      default: "",
     },
 
     type: {
       type: String,
-      enum: ["text", "image", "file", "blog", "package"], // ✅ Keep interface & schema consistent
+      enum: ["text", "image", "file", "blog", "package", "audio"],
       default: "text",
     },
 
-    attachments: [
-      {
-        type: String,
-      },
-    ],
+    // attachments: [
+    //   {
+    //     type: String,
+    //   },
+    // ],
+
+
+    mediaUrl: {
+      type: String,
+      default: "",
+    },
 
     isRead: {
       type: Boolean,
@@ -90,7 +49,7 @@ const messageSchema = new Schema<MessageDocument>(
     readBy: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Users", 
+        ref: "Users",
       },
     ],
   },

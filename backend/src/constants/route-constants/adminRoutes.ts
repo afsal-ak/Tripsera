@@ -131,5 +131,6 @@ export const MESSAGE_ROUTE = {
   SEND: "/chatrooms/messages",                
   GET_BY_ROOM: "/chatrooms/:roomId/messages",         
   MARK_AS_READ: "/messages/:messageId/read",          
-  DELETE: "/messages/:messageId",                    
+  DELETE: "/messages/:messageId",      
+  UPLOAD_MEDIA:'/messages/upload'              
 };
