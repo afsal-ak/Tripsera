@@ -1,5 +1,5 @@
 import { Outlet, useParams, useNavigate } from "react-router-dom";
-import { ChatListPage } from "@/pages/admin/chat/ChatListPage";
+import ChatListPage from "@/pages/admin/chat/ChatListPage";
 import { ArrowLeft } from "lucide-react";
 
 const ChatAdminLayout = () => {

@@ -27,55 +27,83 @@ export const useChatSocket = ({
   onTyping,
   onStopTyping,
 }: UseChatSocketProps) => {
+useEffect(() => {
+  if (!roomId) return;
 
-  useEffect(() => {
-    if (!roomId) {
-      return
-    }
+  socket.emit(SOCKET_EVENTS.JOIN_ROOM, roomId);
 
-    //join room
-// console.log(roomId,'room id in socket')
-    socket.emit(SOCKET_EVENTS.JOIN_ROOM, roomId)
+  socket.on(SOCKET_EVENTS.NEW_MESSAGE, onMessageReceived);
+  socket.on(SOCKET_EVENTS.MESSAGE_SEND, onMessageReceived);
+  socket.on(SOCKET_EVENTS.MESSAGE_DELETED, ({ messageId }) => onMessageDeleted(messageId));
+  socket.on(SOCKET_EVENTS.MESSAGE_READ, ({ messageId, userId }) => onMessageRead(messageId, userId));
 
-    socket.on(SOCKET_EVENTS.NEW_MESSAGE, (message: IMessage) => {
-      onMessageReceived(message)
-    })
+  socket.on(SOCKET_EVENTS.TYPING, ({ userId, username }) => {
+    if (userId !== currentUserId) onTyping?.(userId, username);
+  });
 
-    socket.on(SOCKET_EVENTS.MESSAGE_SEND, (message: IMessage) => {
-      onMessageReceived(message)
-    })
+  socket.on(SOCKET_EVENTS.STOP_TYPING, ({ userId }) => {
+    if (userId !== currentUserId) onStopTyping?.(userId);
+  });
 
-    socket.on(SOCKET_EVENTS.MESSAGE_DELETED, ({ messageId }) => {
-      onMessageDeleted(messageId);
-    })
+  return () => {
+    socket.emit(SOCKET_EVENTS.LEAVE_ROOM, roomId);
+    socket.off(SOCKET_EVENTS.NEW_MESSAGE, onMessageReceived);
+    socket.off(SOCKET_EVENTS.MESSAGE_SEND, onMessageReceived);
+    socket.off(SOCKET_EVENTS.MESSAGE_DELETED);
+    socket.off(SOCKET_EVENTS.MESSAGE_READ);
+    socket.off(SOCKET_EVENTS.TYPING);
+    socket.off(SOCKET_EVENTS.STOP_TYPING);
+  };
+}, [roomId, currentUserId, onMessageReceived, onMessageDeleted, onMessageRead, onTyping, onStopTyping]);
 
-    socket.on(SOCKET_EVENTS.MESSAGE_READ, ({ messageId, userId }) => {
-      onMessageRead(messageId, userId);
-    });
+//   useEffect(() => {
+//     if (!roomId) {
+//       return
+//     }
 
-    //typing indicator
-    socket.on(SOCKET_EVENTS.TYPING, ({ userId, username }) => {
-      if (userId !== currentUserId) {
-        onTyping?.(userId, username)
-      }
-    })
+//     //join room
+// // console.log(roomId,'room id in socket')
+//     socket.emit(SOCKET_EVENTS.JOIN_ROOM, roomId)
 
-      socket.on(SOCKET_EVENTS.STOP_TYPING, ({ userId }) => {
-        if (userId !== currentUserId) onStopTyping?.(userId);
-      });
+//     socket.on(SOCKET_EVENTS.NEW_MESSAGE, (message: IMessage) => {
+//       onMessageReceived(message)
+//     })
 
-      return()=>{
-        socket.emit(SOCKET_EVENTS.LEAVE_ROOM,roomId);
-        socket.off(SOCKET_EVENTS.NEW_MESSAGE)
-         socket.off(SOCKET_EVENTS.MESSAGE_SEND);   
-      socket.off(SOCKET_EVENTS.MESSAGE_DELETED);
-      socket.off(SOCKET_EVENTS.MESSAGE_READ);
-      socket.off(SOCKET_EVENTS.TYPING);
-      socket.off(SOCKET_EVENTS.STOP_TYPING);
+//     socket.on(SOCKET_EVENTS.MESSAGE_SEND, (message: IMessage) => {
+//       onMessageReceived(message)
+//     })
+
+//     socket.on(SOCKET_EVENTS.MESSAGE_DELETED, ({ messageId }) => {
+//       onMessageDeleted(messageId);
+//     })
+
+//     socket.on(SOCKET_EVENTS.MESSAGE_READ, ({ messageId, userId }) => {
+//       onMessageRead(messageId, userId);
+//     });
+
+//     //typing indicator
+//     socket.on(SOCKET_EVENTS.TYPING, ({ userId, username }) => {
+//       if (userId !== currentUserId) {
+//         onTyping?.(userId, username)
+//       }
+//     })
+
+//       socket.on(SOCKET_EVENTS.STOP_TYPING, ({ userId }) => {
+//         if (userId !== currentUserId) onStopTyping?.(userId);
+//       });
+
+//       return()=>{
+//         socket.emit(SOCKET_EVENTS.LEAVE_ROOM,roomId);
+//         socket.off(SOCKET_EVENTS.NEW_MESSAGE)
+//          socket.off(SOCKET_EVENTS.MESSAGE_SEND);   
+//       socket.off(SOCKET_EVENTS.MESSAGE_DELETED);
+//       socket.off(SOCKET_EVENTS.MESSAGE_READ);
+//       socket.off(SOCKET_EVENTS.TYPING);
+//       socket.off(SOCKET_EVENTS.STOP_TYPING);
     
-      }
+//       }
 
-    },[roomId])
+//     },[roomId])
 
     const sendMessage=(messageData:ISendMessage)=>{
       socket.emit(SOCKET_EVENTS.SEND_MESSAGE,messageData);
@@ -86,6 +114,7 @@ const deleteMessage=(messageId:string)=>{
  
 
   const markAsRead = (messageId: string) => {
+    console.log('mesfgff')
     socket.emit(SOCKET_EVENTS.MARK_AS_READ, { roomId, messageId });
   };
 
@@ -103,6 +132,9 @@ const deleteMessage=(messageId:string)=>{
       userId: currentUserId,
     });
   };
+socket.onAny((event, ...args) => {
+  console.log("Socket event:", event, args);
+});
 
    return { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping };
 }

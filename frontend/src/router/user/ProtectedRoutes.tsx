@@ -29,9 +29,9 @@ import CustomPackagePage from '@/pages/user/customPkg/CustomPackagePage';
 import CustomPackageDetails from '@/pages/user/customPkg/CustomPackageDetailsPage';
 import ChatBot from '@/pages/user/chatbot/ChatBot';
 import UserSearchAndMessage from '@/components/chat/UserSearchForChat';
-import MessagePage from '@/pages/user/chat/MessagePage';
+// import MessagePage from '@/pages/user/chat/MessagePage';
 import ChatLayout from '@/layouts/ChatLayout';
-import UploadImage from '@/pages/user/chat/UploadImage';
+// import UploadImage from '@/pages/user/chat/UploadImage';
 import MessageMainPage from '@/pages/user/chat/MessageMainPage';
 const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
@@ -53,7 +53,6 @@ const ProtectedRoutes = (
       <Route path=":roomId" element={<MessageMainPage />} />
     </Route>
 
-      <Route path="/file" element={<UploadImage />} />
 
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />

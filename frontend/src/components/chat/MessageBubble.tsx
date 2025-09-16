@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect,useRef} from "react";
 import { Check, CheckCheck, Trash2 } from "lucide-react";
 import type { IMessage, IMessageUserInfo } from "@/types/IMessage";
 import ImageViewer from "./ImageViewer";
@@ -7,6 +7,7 @@ interface Props {
   isOwn: boolean;
   onDelete: (messageId: string) => void;
   currentUser?: IMessageUserInfo;
+ // onVisible:(messageId:string)=>void 
 }
 
 export const MessageBubble: React.FC<Props> = ({
@@ -14,6 +15,7 @@ export const MessageBubble: React.FC<Props> = ({
   isOwn,
   onDelete,
   currentUser,
+//  onVisible
 }) => {
   // Format time like WhatsApp (HH:MM AM/PM)
   const formatTime = (date: Date | string) => {
@@ -22,7 +24,7 @@ export const MessageBubble: React.FC<Props> = ({
       minute: "2-digit",
     });
   };
-console.log(message,'mssg')
+//console.log(message,'mssg')
   // Sender details
   const sender = message.senderId || currentUser;
 
@@ -30,6 +32,25 @@ console.log(message,'mssg')
    const senderAvatar = isOwn
     ? currentUser?.profileImage?.url
     : sender?.profileImage?.url;
+
+//     const ref = useRef<HTMLDivElement>(null);
+
+//  useEffect(() => {
+//   const observer = new IntersectionObserver(
+//     (entries) => {
+//       entries.forEach((entry) => {
+//         if (entry.isIntersecting) {
+//           onVisible?.(message._id);
+//           observer.disconnect();
+//         }
+//       });
+//     },
+//     { threshold: 0.6 } // 60% visible
+//   );
+
+//   if (ref.current) observer.observe(ref.current);
+//   return () => observer.disconnect();
+// }, []);
 
   return (
     <div
@@ -88,7 +109,7 @@ console.log(message,'mssg')
         >
           <span>{formatTime(message.createdAt)}</span>
           {isOwn &&
-            (message.readBy?.length > 1 ? (
+            (message.isRead ? (
               <CheckCheck className="w-4 h-4 text-blue-300" />
             ) : (
               <Check className="w-4 h-4 text-gray-300" />

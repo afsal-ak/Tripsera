@@ -17,8 +17,13 @@ interface Props {
     roomId: string
     user: IMessageUserInfo
 }
+import { useDispatch } from "react-redux";
+import { addMessageToRoom, deleteMessageFromRoom, markMessageAsReadInRoom } from "@/redux/slices/chatRoomSlice";
+
 
 const MessagePage = ({ roomId, user }: Props) => {
+
+    const dispatch = useDispatch();
 
     const [room, setRoom] = useState<IChatRoom | null>(null);
     const [messages, setMessages] = useState<IMessage[]>([]);
@@ -29,7 +34,7 @@ const MessagePage = ({ roomId, user }: Props) => {
 
     const [showMenu, setShowMenu] = useState(false);
     const [selectedUpload, setSelectedUpload] = useState<"image" | "audio" | "file" | null>(null);
-    console.log(user, 'usesr')
+    //  console.log(user, 'usesr')
 
 
     // Fetch room details
@@ -68,21 +73,58 @@ const MessagePage = ({ roomId, user }: Props) => {
         fetchMessages();
     }, [roomId]);
 
-    //console.log(messages,'mess')
-    const { sendMessage, deleteMessage, startTyping, stopTyping } = useChatSocket({
-        roomId: room?._id as string,
-        currentUserId: user?._id!,
-        currentUsername: user?.username!,
-        onMessageReceived: (newMessage) => {
+
+    const { sendMessage, deleteMessage, startTyping, stopTyping, markAsRead } = useChatSocket({
+        roomId: roomId,
+        currentUserId: user._id!,
+        currentUsername: user.username!,
+        onMessageReceived: (newMessage: IMessage) => {
             setMessages((prev) => [...prev, newMessage]);
             scrollToBottom();
+
+            // Update Redux for chat list
+            dispatch(addMessageToRoom({ roomId: newMessage.roomId, message: newMessage, currentUserId: user._id! }));
         },
-        onMessageDeleted: (messageId) =>
-            setMessages((prev) => prev.filter((m) => m._id !== messageId)),
-        onMessageRead: () => { },
+        onMessageDeleted: (messageId) => {
+            setMessages((prev) => prev.filter((m) => m._id !== messageId))
+            dispatch(deleteMessageFromRoom({ roomId, messageId }))
+        } // update Redux for chat list
+        ,
+        //onMessageRead: (messageId,currentUserId) => {},
+        onMessageRead: (messageId, userId) => {
+            //  markAsRead(messageId)
+            // 1. Update Redux unread count
+            dispatch(markMessageAsReadInRoom({ roomId, userId }));
+            markAsRead(messageId)
+            setMessages((prev) =>
+                prev.map((m) =>
+                    m._id === messageId && !m.readBy?.includes(user._id!)
+                        ? { ...m, readBy: [...(m.readBy || []), user._id!] }
+                        : m
+                )
+            );
+
+        },
+
         onTyping: (_, username) => setTypingUser(username),
         onStopTyping: () => setTypingUser(null),
     });
+    // Mark unread messages from others as read
+    useEffect(() => {
+        messages.forEach((msg) => {
+            console.log(msg, 'message fromusefe')
+            // const senderId = typeof msg.senderId === "string" ? msg.senderId : msg.senderId?._id;
+            const senderId = msg.senderId._id
+            console.log(senderId, 'kdssdA')
+            console.log(user._id, 'curent')
+
+            if (!msg.isRead && senderId !== user._id) {
+                console.log(' read true')
+                markAsRead(msg._id); // emit to server
+            }
+        });
+    }, [messages, user._id]);
+
 
     // Sort messages by date (ascending)
     const sortedMessages = [...messages].sort(
@@ -132,10 +174,14 @@ const MessagePage = ({ roomId, user }: Props) => {
         }, 100);
     };
 
+    // //for making message read only when tab is open
+    // const handleMessageVisible = (messageId: string) => {
+    //     if (document.hidden) {
+    //         return; //  don't mark if tab not active
+    //     }
 
-
-
-    // If no room selected, show empty state
+    //     markAsRead(messageId);       // emit to server
+    // };
     if (!roomId) {
         return (
             <div className="flex flex-1 items-center justify-center text-gray-400 text-lg">
@@ -168,6 +214,7 @@ const MessagePage = ({ roomId, user }: Props) => {
                                 isOwn={message.senderId?._id === user?._id}
                                 onDelete={deleteMessage}
                                 currentUser={user || undefined}
+                            // onVisible={handleMessageVisible} 
                             />
                         ))}
                     </div>
