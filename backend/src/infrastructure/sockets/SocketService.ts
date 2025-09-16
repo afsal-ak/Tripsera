@@ -57,7 +57,9 @@ export class SocketService {
         }
       });
  
-      socket.on(SOCKET_EVENTS.MARK_AS_READ, ({ roomId, messageId, userId }) => {
+      socket.on(SOCKET_EVENTS.MARK_AS_READ, async({ roomId, messageId, userId }) => {
+                  await this._messageUseCases.markMessageAsRead(messageId,userId);
+
         socket.to(roomId).emit(SOCKET_EVENTS.MESSAGE_READ, {
           messageId,
           userId,

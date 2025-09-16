@@ -24,11 +24,15 @@ export class MessageRepository implements IMessageRepository {
   }
 
   async markMessageAsRead(messageId: string, userId: string): Promise<IMessage | null> {
-    return await MessageModel.findByIdAndUpdate(
-      messageId,
-      { $addToSet: { readBy: userId } }, //  Don't blindly set isRead for groups
-      { new: true }
+    console.log(messageId,'id')
+     return await MessageModel.findByIdAndUpdate(messageId,
+      {isRead:true}
     ).lean();
+    // return await MessageModel.findByIdAndUpdate(
+    //   messageId,
+    //   { $addToSet: { readBy: userId } }, //  Don't blindly set isRead for groups
+    //   { new: true }
+    // ).lean();
   }
 
   async deleteMessage(messageId: string): Promise<boolean> {

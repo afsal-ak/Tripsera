@@ -39,6 +39,7 @@ export class MessageUseCases implements IMessageUseCases {
     }
 
     async markMessageAsRead(messageId: string, userId: string): Promise<IMessage | null> {
+        console.log('jjjjjjjjjjjjjjjj')
         return await this._messageRepo.markMessageAsRead(messageId, userId)
     }
 
