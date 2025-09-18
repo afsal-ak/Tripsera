@@ -4,13 +4,12 @@ import AdminNavbar from '@/components/admin/AdminNavbar';
 import { AdminSidebar } from '@/components/admin/AdminSideBar';
 import { useSelector } from 'react-redux';
 import type{ RootState } from '@/redux/store';
-import { useAdminNotifications } from '@/hooks/useAdminNotifications';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 const AdminLayout = () => {
   const adminId = useSelector((state: RootState) => state.adminAuth.admin?._id);
 
-  // Hook ensures admin joins room & receives updates
-  useNotificationSocket(adminId!);
+   useNotificationSocket(adminId!);
+   
   const [sidebarOpen, setSidebarOpen] = useState(false); // for mobile
   const [collapsed, setCollapsed] = useState(false); // for desktop collapse
 
