@@ -55,8 +55,8 @@ const Navbar = () => {
 
               <Link to="/about" className="text-foreground hover:text-orange transition-colors">
                 About Us
-              </Link> <Link to="/file" className="text-foreground hover:text-orange transition-colors">
-                file
+              </Link> <Link to="/notification" className="text-foreground hover:text-orange transition-colors">
+                Notification
               </Link>
               <Link to="/contact" className="text-foreground hover:text-orange transition-colors">
                 Contact

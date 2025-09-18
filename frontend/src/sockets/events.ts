@@ -11,3 +11,13 @@ export const SOCKET_EVENTS = {
   STOP_TYPING: "stopTyping",
   MESSAGE_SEND: "message:send",
 }
+
+
+export const SOCKET_NOTIFICATION_EVENTS = {
+  JOIN: "notification:join",             // User joins their personal room
+  NEW: "notification:new",               // Server emits new notification
+  MARK_AS_READ: "notification:markAsRead",
+  NOTIFICATION_READ: "notification:read",
+  FETCH: "notification:fetch",
+  FETCH_RESULT: "notification:fetchResult",
+};

@@ -17,7 +17,8 @@ import {
   Flag,
   Settings,
   Menu,
-  MessageCircle
+  MessageCircle,
+  NotebookIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/Button";
@@ -45,6 +46,7 @@ export const AdminSidebar = ({
     { path: "coupons", label: "Coupons", icon: BadgePercent },
     { path: "custom-packages", label: "Custom Packages", icon: Briefcase },
     { path: "chat", label: "Chat", icon: MessageCircle },
+    { path: "notification", label: "Notification", icon: NotebookIcon },
 
   ];
 

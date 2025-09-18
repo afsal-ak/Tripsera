@@ -33,7 +33,10 @@ import UserSearchAndMessage from '@/components/chat/UserSearchForChat';
 import ChatLayout from '@/layouts/ChatLayout';
 // import UploadImage from '@/pages/user/chat/UploadImage';
 import MessageMainPage from '@/pages/user/chat/MessageMainPage';
+import NotificationPage from '@/pages/user/notification/Notifications';
+
 const ProtectedRoutes = (
+  
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
     <Route path="/checkout/:id" element={<CheckoutPage />} />
@@ -46,6 +49,7 @@ const ProtectedRoutes = (
     <Route path="/custom-package" element={<AddCustomPkgForm />} />
     <Route path="/chatbot" element={<ChatBot />} />
      <Route path="/user" element={<UserSearchAndMessage />} />
+     <Route path="/notification" element={<NotificationPage />} />
 
 
 
