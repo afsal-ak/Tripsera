@@ -51,6 +51,11 @@ export const handleUnLikeBlog = async (blogId: string) => {
   const response = await api.patch(`/user/blog/unlike/${blogId}`);
   return response.data;
 };
+
+export const fetchBlogLikeList = async (blogId: string) => {
+  const response = await api.get(`/user/blog/likeList/${blogId}`);
+  return response.data;
+};
 // //
 export const handleAllUserBlogs = async (page: number, limit: number) => {
   const response = await api.get(`/user/blogs/user?page=${page}&limit=${limit}`);
@@ -62,3 +67,5 @@ export const handlePublicUserBlogs = async (userId:string,page: number, limit: n
   const response = await api.get(`/user/blogs/public/${userId}?page=${page}&limit=${limit}`);
   return response.data;
 };
+
+//  BLOG_LIKE_LIST: '/blog/likeList/:blogId',

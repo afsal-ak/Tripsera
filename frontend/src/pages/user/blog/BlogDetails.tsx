@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Verified } from 'lucide-react';
+import { Heart, MessageCircle, Send, Bookmark,  Verified } from 'lucide-react';
 import {
   fetchBlogBySlug,
   handleLikeBlog,
   handleUnLikeBlog,
+  fetchBlogLikeList
 } from '@/services/user/blogService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -17,14 +18,18 @@ import { OptionsDropdown } from '@/components/OptionsDropdown ';
 import ReportForm from '../report/ReportForm';
 import type { IReportedType, ISelectedReport } from '@/types/IReport';
 import Modal from '@/components/ui/Model';
+import UserList from '@/components/UserList';
+import type { UserBasicInfo } from '@/types/UserBasicInfo';
 const BlogDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate()
-  console.log(slug, 'from param');
+  //console.log(slug, 'from param');
   const [liked, setLiked] = useState(false);
   // const [savedPosts, setSavedPosts] = useState();
   const [blogData, setBlogData] = useState<IBlog | null>(null);
   const [likesCount, setLikesCount] = useState(0);
+  const [likedUsers, setLikedUsers] = useState<UserBasicInfo[]>([]);
+  const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
 
   const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null)
   const [showReportModal, setShowReportModal] = useState(true);
@@ -39,6 +44,13 @@ const BlogDetail = () => {
         setBlogData(response.blog);
         setLiked(response.blog?.isLiked || false);
         setLikesCount(response.blog?.likes?.length || 0);
+         if (response.blog?._id) {
+                  console.log(response.blog._id,'llllll')
+
+        const likesResponse = await fetchBlogLikeList(response.blog._id);
+        setLikedUsers(likesResponse)
+        console.log(likesResponse, 'blog likes');
+      }
       } catch (error: any) {
         console.error('Failed to fetch blog details', error);
       }
@@ -46,7 +58,7 @@ const BlogDetail = () => {
 
     loadBlogDetail();
   }, [slug]);
-
+  
 
   const toggleLike = async () => {
     if (!blogData?._id) return;
@@ -166,11 +178,20 @@ const BlogDetail = () => {
             </div>
 
             {/* Likes */}
-            <div className="text-sm font-semibold text-darkText mb-2">
-              {formatNumber(likesCount)} likes
-            </div>
-
-            {/* Content */}
+<div
+        className="text-sm font-semibold text-darkText mb-2 cursor-pointer hover:underline"
+        onClick={() => setIsLikesModalOpen(true)}
+      >
+        {formatNumber(likesCount)} likes
+      </div>
+              
+  <UserList
+        title="Liked by"
+        users={likedUsers}
+        isOpen={isLikesModalOpen}
+        onClose={() => setIsLikesModalOpen(false)}
+      />
+             {/* Content */}
             <div className="mb-3">
               <span className="font-semibold text-sm text-darkText mr-2">
                 {blogData.author?.username}
