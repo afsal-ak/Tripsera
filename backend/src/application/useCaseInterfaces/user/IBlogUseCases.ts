@@ -1,5 +1,5 @@
 import { IBlog } from '@domain/entities/IBlog';
-
+import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
 export interface IBlogUseCases {
   createBlog(userId: string, blogData: IBlog): Promise<IBlog>;
 
@@ -40,6 +40,9 @@ export interface IBlogUseCases {
   likeBlog(blogId: string, userId: string): Promise<IBlog | null>;
 
   unLikeBlog(blogId: string, userId: string): Promise<IBlog | null>;
+
+   getBlogLikeList(blogId:string):Promise<UserBasicInfoDto[]|null>
+  
 
   blockBlog(blogId: string, block: boolean): Promise<void>;
 

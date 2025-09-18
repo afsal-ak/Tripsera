@@ -7,6 +7,8 @@ import { SortOrder } from 'mongoose';
 //import { CommentModel } from "@infrastructure/models/Comment";
 import { FilterQuery } from 'mongoose';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { IUser } from '@domain/entities/IUser';
+import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
 export class BlogRepository implements IBlogRepository {
   async createBlog(userId: string, blogData: IBlog): Promise<IBlog> {
     const { author, ...restData } = blogData;
@@ -224,6 +226,47 @@ export class BlogRepository implements IBlogRepository {
     });
     return updatedBlog;
   }
+
+ 
+ async getLikedList(blogId: string): Promise<UserBasicInfoDto[] | null> {
+  const blog = await BlogModel.findById(blogId)
+    .populate("likes", "_id username email profileImage.url"); 
+
+  if (!blog || !blog.likes) return null;
+
+  return (blog.likes as IUser[]).map((user) => ({
+    _id: user._id!?.toString(),
+    username: user.username,
+    email: user.email,
+    profileImage:user.profileImage?.url
+  }));
+}
+
+
+// async getLikedList(
+//   blogId: string,
+//   page: number = 1,
+//   limit: number = 10
+// ): Promise<UserBasicInfoDto[] | null> {
+//   const skip = (page - 1) * limit;
+
+//   const blog = await BlogModel.findById(blogId)
+//     .populate({
+//       path: "likes",
+//       select: "_id username email",
+//       options: { skip, limit, sort: { username: 1 } } // optional sorting
+//     });
+
+//   if (!blog || !blog.likes) return [];
+
+//   const populatedLikes = blog.likes as IUser[];
+
+//   return populatedLikes.map((user) => ({
+//     _id: user._id,
+//     username: user.username,
+//     email: user.email,
+//   }));
+// }
 
   async unLikeBlog(blogId: string, userId: string): Promise<IBlog | null> {
     const updatedBlog = await BlogModel.findByIdAndUpdate(

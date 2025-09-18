@@ -78,6 +78,7 @@ export const BLOG_ROUTES = {
   DELETE: '/blog/delete/:blogId',
   LIKE: '/blog/like/:blogId',
   UNLIKE: '/blog/unlike/:blogId',
+  BLOG_LIKE_LIST: '/blog/likeList/:blogId',
 };
 
 export const REVIEW_ROUTE = {

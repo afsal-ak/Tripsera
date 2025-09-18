@@ -163,6 +163,20 @@ export class BlogController {
     }
   };
 
+  getBlogLikeList=async (req: Request, res: Response, next: NextFunction) => {
+    try {
+       const { blogId } = req.params;
+
+       const data=await this._blogUseCases.getBlogLikeList(blogId)
+       console.log(data,'blog like')
+      res.status(HttpStatus.OK).json(data);
+
+    } catch (error) {
+            next(error);
+
+    }
+  }
+
   blockBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { blogId } = req.params;

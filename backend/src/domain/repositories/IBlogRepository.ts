@@ -1,6 +1,8 @@
 import { IBlog } from '@domain/entities/IBlog';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
+import { IUser } from '@domain/entities/IUser';
 export interface IBlogRepository {
   createBlog(userId: string, blogData: IBlog): Promise<IBlog>;
   editBlog(
@@ -40,6 +42,7 @@ export interface IBlogRepository {
   unLikeBlog(blogId: string, userId: string): Promise<IBlog | null>;
   blockBlog(blogId: string, block: boolean): Promise<void>;
 
+ getLikedList(blogId: string): Promise<UserBasicInfoDto[] | null>
   getPublicBlogsByUser(
     author: string,
     page: number,

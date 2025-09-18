@@ -2,6 +2,8 @@ import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { IBlog } from '@domain/entities/IBlog';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
+import { IUser } from '@domain/entities/IUser';
+import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
 
 export class BlogUseCases implements IBlogUseCases {
 
@@ -45,20 +47,7 @@ export class BlogUseCases implements IBlogUseCases {
     return await this._blogRepo.getBlogByUser(userId, page, limit);
   }
 
-  // async getAllBlog(
-  //   page: number,
-  //   limit: number,
-  //   filters?: {
-  //     blogSearch?: string;
-  //     status?: string;
-  //     startDate?: string;
-  //     endDate?: string;
-  //     authorUsername?: string;
-  //     tags?: string[];
-  //   }
-  // ) {
-  //   return await this._blogRepo.getAllBlog(page, limit, filters);
-  // }
+ 
   async getAllPublishedBlogs(
     page: number,
     limit: number,
@@ -78,6 +67,10 @@ export class BlogUseCases implements IBlogUseCases {
 
   async likeBlog(blogId: string, userId: string): Promise<IBlog | null> {
     return await this._blogRepo.likeBlog(blogId, userId);
+  }
+
+  async getBlogLikeList(blogId:string):Promise<UserBasicInfoDto[]|null>{
+    return await this._blogRepo.getLikedList(blogId)
   }
 
   async unLikeBlog(blogId: string, userId: string): Promise<IBlog | null> {

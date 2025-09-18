@@ -277,9 +277,6 @@ router.get(
 );
 
 
-
-
-
 // BLOG ROUTES
 router.post(
   BLOG_ROUTES.CREATE,
@@ -300,6 +297,7 @@ router.get(BLOG_ROUTES.GET_BY_SLUG, optionalAuthMiddleware, blogController.getBy
 router.delete(BLOG_ROUTES.DELETE, userAuthMiddleware, blogController.deleteBlog);
 router.patch(BLOG_ROUTES.LIKE, userAuthMiddleware, blogController.likeBlog);
 router.patch(BLOG_ROUTES.UNLIKE, userAuthMiddleware, blogController.unLikeBlog);
+router.get(BLOG_ROUTES.BLOG_LIKE_LIST, userAuthMiddleware, blogController.getBlogLikeList);
 
 //REVIEW ROUTES
 

@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { IUser } from './IUser';
 
 export interface IBlog {
   _id?: Types.ObjectId | string;
@@ -14,7 +15,7 @@ export interface IBlog {
   author: Types.ObjectId | string;
   //userId: Types.ObjectId | string;
   //isPublished?: boolean;
-  likes?: (Types.ObjectId | string)[];
+  likes?: (Types.ObjectId | string|IUser)[];
   status: 'draft' | 'published' | 'archived';
   isBlocked?: boolean;
   createdAt?: Date;
