@@ -50,6 +50,7 @@ export class BookingUseCases implements IBookingUseCases {
     }
 
     return await this._bookingRepo.cancelBooking(userId, bookingId, reason);
+    
   }
 
   async createBookingWithOnlinePayment(
@@ -112,6 +113,20 @@ export class BookingUseCases implements IBookingUseCases {
         orderId: razorpayOrder.id,
       },
     });
+
+    
+    const notification = await this._notificationUseCases.sendNotification({
+    
+  role:'admin',
+  title: "New Booking",
+  entityType:'booking',
+  bookingId:booking?._id?.toString(),
+  packageId:booking?.packageId.toString(),
+  //message: `User ${userId} booked package ${packageId}`,
+  type: "success",
+  triggeredBy: userId,
+  metadata: { bookingId: booking._id }, // optional for deep linking
+});
     return {
       booking,
       razorpayOrder,
@@ -137,7 +152,7 @@ export class BookingUseCases implements IBookingUseCases {
   ): Promise<void> {
     const booking = await this._bookingRepo.findByRazorpayOrderId(orderId);
     if (!booking) {
-      throw new AppError(404, 'Booking not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
     if (booking.walletAmountUsed && booking.walletAmountUsed > 0) {
       await this._walletRepo.debitWallet(booking.userId.toString(), booking.walletAmountUsed);
@@ -153,6 +168,9 @@ export class BookingUseCases implements IBookingUseCases {
     };
 
     await this._bookingRepo.updateBooking(booking._id!.toString(), booking);
+
+ 
+
   }
 
   async cancelUnpaidBooking(userId: string, bookingId: string): Promise<void> {
@@ -272,7 +290,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     const booking = await this._bookingRepo.createBooking(userId, bookingData);
 
-// // 1. Save notification in DB
+//  Save notification in DB
 const notification = await this._notificationUseCases.sendNotification({
   //userId: "admin123",   // admin userId
   role:'admin',

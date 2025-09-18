@@ -3,8 +3,16 @@ import { IUser } from '@domain/entities/IUser';
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
 import { AppError } from '@shared/utils/AppError';
 import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
+import { IUserRepository } from '@domain/repositories/IUserRepository';
+import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
+
+
 export class ProfileUseCases implements IProfileUseCases {
-  constructor(private _userRepo: UserRepository) {}
+
+  constructor(
+    private _userRepo: IUserRepository,
+    private _notificationUseCases: INotificationUseCases
+  ) { }
 
   async getUserProfile(userId: string): Promise<IUser | null> {
     return await this._userRepo.getUserProfile(userId);
@@ -43,22 +51,33 @@ export class ProfileUseCases implements IProfileUseCases {
 
   async followUser(followerId: string, followingId: string): Promise<void> {
     if (followerId === followingId) {
-      throw new AppError(400, 'Cannot follow yourself');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot follow yourself');
     }
 
     await this._userRepo.addFollowerAndFollowing(followerId, followingId);
+    const notification = await this._notificationUseCases.sendNotification({
+      userId: followingId,
+      role: 'user',
+      title: "New Follower",
+      entityType: 'follow',
+
+      //message: `User ${userId} booked package ${packageId}`,
+      type: "success",
+      triggeredBy: followerId,
+
+    });
   }
 
   async unfollowUser(followerId: string, followingId: string): Promise<void> {
     if (followerId === followingId) {
-      throw new AppError(400, 'Cannot follow yourself');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot follow yourself');
     }
 
     await this._userRepo.unFollowAndFollowing(followerId, followingId);
   }
 
-  async setProfilePrivacy(userId: string, isPrivate: boolean): Promise<IUser|null>{
-    return this._userRepo.setProfilePrivacy(userId,isPrivate)
+  async setProfilePrivacy(userId: string, isPrivate: boolean): Promise<IUser | null> {
+    return this._userRepo.setProfilePrivacy(userId, isPrivate)
   }
 
 }

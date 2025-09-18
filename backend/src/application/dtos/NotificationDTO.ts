@@ -15,6 +15,7 @@ export interface CreateNotificationDto {
   // optional metadata
   bookingId?: string;
   packageId?: string;
+  reportedId?:string;
   triggeredBy?: string;
 }
 
@@ -35,6 +36,8 @@ export interface NotificationResponseDto {
 
   bookingId?: string;
   packageId?: string;
+    reportedId?:string;
+
   metadata?: Record<string, any>;
 
   triggeredBy?: string;
@@ -66,7 +69,7 @@ export const mapToNotificationDTO = (
       : undefined,
     // metadata (convert ObjectIds to string if present)
     bookingId: notification.bookingId?.toString(),
-    packageId: notification.packageId?.toString(),
+  reportedId: notification.reportedId?.toString(),
     triggeredBy: notification.triggeredBy?.toString(),
 
     createdAt: notification.createdAt.toISOString(),

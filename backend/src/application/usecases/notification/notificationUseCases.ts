@@ -19,28 +19,26 @@ export class NotificationUseCases implements INotificationUseCases {
 
 
   async sendNotification(data: CreateNotificationDto): Promise<INotification> {
- 
+
     let message = "";
     if (data.entityType === "booking") {
       const user = data.triggeredBy ? await this._userRepo.findById(data.triggeredBy) : null;
       const packageData = data.packageId ? await this._packageRepo.findById(data.packageId) : null;
-      message = `${user?.username ?? "Someone"} booked ${packageData?.title ?? "a package"}`;
+      message = `${user?.username} booked ${packageData?.title ?? "a package"}`;
     }
 
-    else if (data.entityType === "review") {
-      const user = data.userId ? await this._userRepo.findById(data.userId) : null;
-      message = `${user?.username ?? "Someone"} left a review`;
-    }
+    
+    else if (data.entityType === "follow") {
+      const user = data.triggeredBy ? await this._userRepo.findById(data.triggeredBy) : null;
 
-    // else if (data.entityType === "wallet") {
-    //   message = `Wallet updated with ₹${data.metadata?.amount ?? 0}`;
-    // } 
+      message = `${user?.username} started following you`;
+    }
 
     else {
       message = data.message || "New notification";
     }
 
-    // 2. Save the notification in DB
+    //  Save the notification in DB
     const notificationPayload = {
       ...data,
       message,
@@ -48,7 +46,7 @@ export class NotificationUseCases implements INotificationUseCases {
 
     const notification = await this._notificationRepo.create(notificationPayload);
 
-     
+
     const socketService = getNotificationSocketService();
 
     if (notification.role === "admin") {
@@ -70,7 +68,7 @@ export class NotificationUseCases implements INotificationUseCases {
     return this._notificationRepo.findByUserId(userId, page, limit, filters)
   }
 
-    async getAdminNotifications(page: number, limit: number, filters: IFilter): Promise<{ notification: INotification[], pagination: PaginationInfo }> {
+  async getAdminNotifications(page: number, limit: number, filters: IFilter): Promise<{ notification: INotification[], pagination: PaginationInfo }> {
     return this._notificationRepo.findAdminNotifications(page, limit, filters)
   }
 

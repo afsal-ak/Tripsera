@@ -20,6 +20,7 @@ entityType:{type:String},
     // optional metadata
     bookingId: { type: Schema.Types.ObjectId, ref: "Booking" },
     packageId: { type: Schema.Types.ObjectId, ref: "Package" },
+    reportedId: { type: Schema.Types.ObjectId, ref: "Package" },
     metadata: {
       type: Map,
       of: Schema.Types.Mixed, // can hold bookingId, packageId, walletId, etc.

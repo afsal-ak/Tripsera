@@ -15,7 +15,6 @@ export class NotificationController {
 
             const filters: IFilter = {
                 status: (req.query.status as string) || "",
-                sort: (req.query.sort as string) || "",
             };
             console.log(filters, 'filters in notification')
             console.log(filters)

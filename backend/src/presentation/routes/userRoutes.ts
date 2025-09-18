@@ -131,13 +131,14 @@ const couponRepository = new CouponRepository();
 const couponUseCases = new CouponUseCases(couponRepository);
 const couponController = new CouponController(couponUseCases);
 
-const profileRepository = new UserRepository();
-const profileUseCases = new ProfileUseCases(profileRepository);
-const profileController = new ProfileController(profileUseCases);
 
 const notificationRepository=new NotificationRepository()
 const notificationUseCases=new NotificationUseCases(notificationRepository,userRepository,packageRepository)
 const notificationController=new NotificationController(notificationUseCases)
+
+const profileRepository = new UserRepository();
+const profileUseCases = new ProfileUseCases(profileRepository,notificationUseCases);
+const profileController = new ProfileController(profileUseCases);
 
  const notificationSocketService=new NotificationSocketService(io,notificationUseCases)
 
@@ -156,7 +157,7 @@ const reviewUseCases = new ReviewUseCases(reviewRepository, bookingRepository,us
 const reviewController = new ReviewController(reviewUseCases);
 
 const reportRepository = new ReportRepository();
-const reportUseCases = new ReportUseCases(reportRepository);
+const reportUseCases = new ReportUseCases(reportRepository,notificationUseCases);
 const reportController = new ReportController(reportUseCases);
 
 const customPkgRepository = new CustomPackageRepository();
@@ -340,6 +341,7 @@ router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware,chatRoomController.dele
  router.post(MESSAGE_ROUTE.UPLOAD_MEDIA, userAuthMiddleware,chatUpload.single('file'), messageController.uploadMediaToChat);
 
 router.get(NOTIFICATION_ROUTE.FETCH_NOTIFICATION,userAuthMiddleware,notificationController.getNotifications)
+ router.patch(NOTIFICATION_ROUTE.MARK_AS_READ,userAuthMiddleware,notificationController.markAsRead)
 
 
 export default router;

@@ -124,5 +124,5 @@ export const MESSAGE_ROUTE = {
 
 export const NOTIFICATION_ROUTE={
   FETCH_NOTIFICATION:'/notification',
-  MARK_AS_READ:'/mark-read'
+  MARK_AS_READ:'/mark-read/:id'
 }

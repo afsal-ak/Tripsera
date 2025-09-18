@@ -32,5 +32,9 @@ export interface IUserRepository {
     role:IRole
   ): Promise<IUser[]>   
      searchAllUsersForAdmin(search: string): Promise<IUser[]> 
+
+   updateUserAddress(userId: string, addressData: Partial<IUser>): Promise<IUser | null> 
+   addFollowerAndFollowing(followerId: string, followingId: string): Promise<void> 
+   unFollowAndFollowing(followerId: string, followingId: string): Promise<void> 
   
 }
