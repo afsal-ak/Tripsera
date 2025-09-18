@@ -1,6 +1,6 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { IChatbotService } from "@domain/entities/IChatbotService";
+import { IChatbotService } from "@domain/entities/IChatBotService";
 import { AppError } from "@shared/utils/AppError";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 
@@ -11,6 +11,12 @@ export class GeminiChatbotService implements IChatbotService {
     const genAI = new GoogleGenerativeAI(apiKey);
     this.model = genAI.getGenerativeModel({
       model: process.env.GEMINI_MODEL || "gemini-1.5-flash",
+        systemInstruction: `
+        You are a travel assistant chatbot.
+        ONLY answer travel-related questions (flights, hotels, destinations, activities, culture, tourism).
+        If the user asks something unrelated, reply:
+        " Please ask a travel-related question."
+      `,
     });
   }
 
