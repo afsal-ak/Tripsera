@@ -1,5 +1,6 @@
 import { IBooking } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
+import { INotification } from '@domain/entities/INotification';
 
 export interface IBookingUseCases {
   getAllUserBooking(

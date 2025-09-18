@@ -4,6 +4,12 @@ import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { AppError } from '@shared/utils/AppError';
 
 export class UserRepository implements IUserRepository {
+  
+  async getAllAdmins(): Promise<IUser[]> {
+     return await UserModel.find({role:'admin', isBlocked: false });
+  }
+
+
   async findByEmail(email: string): Promise<IUser | null> {
     const user = await UserModel.findOne({ email: email });
     return user ? user.toObject() : null;

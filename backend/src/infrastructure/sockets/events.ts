@@ -12,3 +12,20 @@ MESSAGE_DELETED: "message:deleted",
 MESSAGE_SEND:"message:send",
 }
  
+
+// export const SOCKET_NOTIFICATION_EVENTS = {
+//   JOIN: "notification:join",
+//   NEW: "notification:new",
+//   MARK_AS_READ: "notification:markAsRead",
+//   NOTIFICATION_READ: "notification:read",
+// };
+
+
+export const SOCKET_NOTIFICATION_EVENTS = {
+  JOIN: "notification:join",             // User joins their personal room
+  NEW: "notification:new",               // Server emits new notification
+  MARK_AS_READ: "notification:markAsRead",
+  NOTIFICATION_READ: "notification:read",
+  FETCH: "notification:fetch",
+  FETCH_RESULT: "notification:fetchResult",
+};

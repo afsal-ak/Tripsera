@@ -15,7 +15,8 @@ import {
   CUSTOM_PACKAGE_ROUTE,
   DASHBOARD_ROUTE,
   MESSAGE_ROUTE,
-  CHAT_ROOM_ROUTE
+  CHAT_ROOM_ROUTE,
+  NOTIFICATION_ROUTE
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -88,6 +89,10 @@ import { MessageUseCases } from '@application/usecases/chat/messageUseCases';
 import { MessageController } from '@presentation/controllers/chat/MessageController';
 
 
+import { NotificationUseCases } from '@application/usecases/notification/notificationUseCases';
+import { NotificationRepository } from '@infrastructure/repositories/NotificationRepository';
+import { NotificationController } from '@presentation/controllers/admin/notificationController';
+
 
 const chatRoomRepository = new ChatRoomRepository();
 const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
@@ -101,11 +106,13 @@ const messageController=new MessageController(messageUseCases)
 const adminRepository = new UserRepository();
 const otpRepository = new OtpRepository();
 
+
 const adminAuthUseCases = new AdminAuthUseCases(adminRepository, otpRepository);
 const adminAuthController = new AdminAuthController(adminAuthUseCases);
 
 const userManagementUseCases = new UserManagementUseCases(adminRepository);
 const userManagementController = new UserManagementController(userManagementUseCases);
+
 
 const bannerRepository = new BannerRepository();
 const bannerMangementUseCases = new BannerMangementUseCases(bannerRepository);
@@ -118,6 +125,10 @@ const categoryController = new CategoryController(categoryUseCase);
 const packageRepository = new PackageRepository();
 const packageUseCase = new PackageUseCases(packageRepository);
 const packageController = new PackageController(packageUseCase);
+
+const notificationRepository=new NotificationRepository()
+const notificationUseCases=new NotificationUseCases(notificationRepository,adminRepository,packageRepository)
+const notificationController=new NotificationController(notificationUseCases)
 
 const couponRepository = new CouponRepository();
 const couponUseCase = new CouponUseCases(couponRepository);
@@ -291,5 +302,10 @@ router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware,chatRoomController.del
 //router.patch(MESSAGE_ROUTE.MARK_AS_READ, adminAuthMiddleware, messageController.markMessageRead);
  //router.delete(MESSAGE_ROUTE.DELETE, adminAuthMiddleware,messageController.deleteMessage);
 
+
+ router.get(NOTIFICATION_ROUTE.FETCH_NOTIFICATION,adminAuthMiddleware,notificationController.getNotifications)
+ router.patch(NOTIFICATION_ROUTE.MARK_AS_READ,adminAuthMiddleware,notificationController.markAsRead)
+ 
+ 
 
  export default router;

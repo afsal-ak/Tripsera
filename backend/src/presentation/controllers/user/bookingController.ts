@@ -5,8 +5,13 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUseCases ';
 import { generateBookingInvoice } from '@shared/utils/generateBookingInvoice';
 import { generateInvoiceCode } from '@shared/utils/generateInvoiceCode';
+import { NotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
+import { initNotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
+import { getNotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
 export class BookingController {
-  constructor(private _bookingUseCases: IBookingUseCases) { }
+  constructor(
+    private _bookingUseCases: IBookingUseCases,
+    ) { }
 
   createBookingWithOnlinePayment = async (
     req: Request,
@@ -105,11 +110,18 @@ export class BookingController {
       const data = req.body;
       console.log(data, 'wallet payment');
 
-      const { booking } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
+      const { booking  } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
 
       if (!booking) {
         throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
       }
+        // Emit notification 
+             // console.log(notification,'notifica caontrol')
+  //  const socketService = getNotificationSocketService();
+  //   socketService.emitNotificationToUser(notification.userId.toString(), {
+  //     title: "Booking Confirmed",
+  //     message: "Your booking was successful 🎉",
+  //   });
       res.status(HttpStatus.CREATED).json({
         message: 'Booking created successfully using wallet',
         booking,

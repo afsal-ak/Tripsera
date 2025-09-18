@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { upload } from '@presentation/middlewares/upload';
 import { chatUpload } from '@presentation/middlewares/chatUpload';
+
 import {
   AUTH_ROUTES,
   HOME_ROUTES,
@@ -16,6 +17,7 @@ import {
   CUSTOM_PACKAGE_ROUTE,
   CHAT_ROOM_ROUTE,
   MESSAGE_ROUTE,
+  NOTIFICATION_ROUTE,
 } from 'constants/route-constants/userRoutes';
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
@@ -78,6 +80,13 @@ import { MessageRepository } from '@infrastructure/repositories/MessageRepositor
 import { MessageUseCases } from '@application/usecases/chat/messageUseCases';
 import { MessageController } from '@presentation/controllers/chat/MessageController';
 
+import { NotificationUseCases } from '@application/usecases/notification/notificationUseCases';
+import { NotificationRepository } from '@infrastructure/repositories/NotificationRepository';
+import { NotificationController } from '@presentation/controllers/user/notificationController';
+import { NotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
+import { io } from 'app';
+// import { notificationSocketService } from 'app';
+
 
 const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
 const chatbotUseCase = new ChatbotUseCase(chatbotService);
@@ -108,6 +117,7 @@ const userAuthUseCases = new UserAuthUsecases(
 );
 const userAuthController = new UserAuthController(userAuthUseCases);
 
+
 const bannerRepository = new BannerRepository();
 const packageRepository = new PackageRepository();
 const homeUseCases = new HomeUseCases(packageRepository, bannerRepository);
@@ -125,9 +135,16 @@ const profileRepository = new UserRepository();
 const profileUseCases = new ProfileUseCases(profileRepository);
 const profileController = new ProfileController(profileUseCases);
 
+const notificationRepository=new NotificationRepository()
+const notificationUseCases=new NotificationUseCases(notificationRepository,userRepository,packageRepository)
+const notificationController=new NotificationController(notificationUseCases)
+
+ const notificationSocketService=new NotificationSocketService(io,notificationUseCases)
+
+
 const bookingRepository = new BookingRepository();
 const razorpayService = new RazorpayService();
-const bookingUseCases = new BookingUseCases(bookingRepository, walletRepository, razorpayService);
+const bookingUseCases = new BookingUseCases(bookingRepository, walletRepository, razorpayService,notificationUseCases);
 const bookingController = new BookingController(bookingUseCases);
 
 const blogRepository = new BlogRepository();
@@ -322,7 +339,7 @@ router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware,chatRoomController.dele
 // router.delete(MESSAGE_ROUTE.DELETE, userAuthMiddleware,messageController.deleteMessage);
  router.post(MESSAGE_ROUTE.UPLOAD_MEDIA, userAuthMiddleware,chatUpload.single('file'), messageController.uploadMediaToChat);
 
-
+router.get(NOTIFICATION_ROUTE.FETCH_NOTIFICATION,userAuthMiddleware,notificationController.getNotifications)
 
 
 export default router;

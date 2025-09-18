@@ -120,3 +120,9 @@ export const MESSAGE_ROUTE = {
   UPLOAD_MEDIA: '/messages/upload'
 
 };
+
+
+export const NOTIFICATION_ROUTE={
+  FETCH_NOTIFICATION:'/notification',
+  MARK_AS_READ:'/mark-read'
+}

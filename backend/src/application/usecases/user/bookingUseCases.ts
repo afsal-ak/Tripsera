@@ -7,13 +7,17 @@ import { RazorpayService } from '@infrastructure/services/razorpay/razorpayServi
 import { AppError } from '@shared/utils/AppError';
 import { generateBookingCode } from '@shared/utils/generateBookingCode';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
-
+import { NotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
+// import { NotificationUseCases } from './notificationUseCases';
+import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
+import { INotification } from '@domain/entities/INotification';
 export class BookingUseCases implements IBookingUseCases {
   constructor(
     private _bookingRepo: IBookingRepository,
     private _walletRepo: IWalletRepository,
-    private _razorpayService: RazorpayService
-  ) {}
+    private _razorpayService: RazorpayService,
+    private _notificationUseCases:INotificationUseCases,
+  ) { }
 
   async getAllUserBooking(
     userId: string,
@@ -233,13 +237,13 @@ export class BookingUseCases implements IBookingUseCases {
 
     const wallet = await this._walletRepo.getUserWallet(userId);
     if (!wallet) {
-      throw new AppError(404, 'Wallet not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
     }
     const walletBalance = wallet.balance;
 
     if (walletBalance < totalAmount) {
       // Wallet not enough, should redirect to Razorpay flow
-      throw new AppError(400, 'Insufficient wallet balance');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
     }
 
     // Wallet fully covers booking
@@ -267,6 +271,22 @@ export class BookingUseCases implements IBookingUseCases {
     };
 
     const booking = await this._bookingRepo.createBooking(userId, bookingData);
-    return { booking };
+
+// // 1. Save notification in DB
+const notification = await this._notificationUseCases.sendNotification({
+  //userId: "admin123",   // admin userId
+  role:'admin',
+  title: "New Booking",
+  entityType:'booking',
+  bookingId:booking?._id?.toString(),
+  packageId:booking?.packageId.toString(),
+  //message: `User ${userId} booked package ${packageId}`,
+  type: "success",
+  triggeredBy: userId,
+  metadata: { bookingId: booking._id }, // optional for deep linking
+});
+
+
+return { booking };
   }
 }

@@ -12,6 +12,7 @@ export interface IUserRepository {
   updateUserEmail(id: string, email: string): Promise<IUser | null>;
   changePassword(id: string, newPassword: string): Promise<IUser | null>;
   findUserByReferralCode(referredReferralCode: string): Promise<IUser | null>;
+  getAllAdmins(): Promise<IUser[]>;
 
   updateUserProfile(id: string, profileData: Partial<IUser>): Promise<IUser | null>;
   updateUserProfile(id: string, addressData: Partial<IUser>): Promise<IUser | null>;

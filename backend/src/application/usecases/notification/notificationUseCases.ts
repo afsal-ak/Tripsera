@@ -1,0 +1,85 @@
+
+import { INotificationUseCases } from "@application/useCaseInterfaces/notification/INotificationUseCases";
+import { INotificationRepository } from "@domain/repositories/INotificationRepository";
+import { INotification } from "@domain/entities/INotification";
+import { IFilter } from "@domain/entities/IFilter";
+import { PaginationInfo } from "@application/dtos/PaginationDto";
+import { CreateNotificationDto, MarkAsReadDto, NotificationResponseDto } from "@application/dtos/NotificationDTO";
+import { NotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
+import { IUserRepository } from "@domain/repositories/IUserRepository";
+import { getNotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
+import { IPackageRepository } from "@domain/repositories/IPackageRepository";
+
+export class NotificationUseCases implements INotificationUseCases {
+  constructor(
+    private readonly _notificationRepo: INotificationRepository,
+    private readonly _userRepo: IUserRepository,
+    private readonly _packageRepo: IPackageRepository,
+  ) { }
+
+
+  async sendNotification(data: CreateNotificationDto): Promise<INotification> {
+ 
+    let message = "";
+    if (data.entityType === "booking") {
+      const user = data.triggeredBy ? await this._userRepo.findById(data.triggeredBy) : null;
+      const packageData = data.packageId ? await this._packageRepo.findById(data.packageId) : null;
+      message = `${user?.username ?? "Someone"} booked ${packageData?.title ?? "a package"}`;
+    }
+
+    else if (data.entityType === "review") {
+      const user = data.userId ? await this._userRepo.findById(data.userId) : null;
+      message = `${user?.username ?? "Someone"} left a review`;
+    }
+
+    // else if (data.entityType === "wallet") {
+    //   message = `Wallet updated with ₹${data.metadata?.amount ?? 0}`;
+    // } 
+
+    else {
+      message = data.message || "New notification";
+    }
+
+    // 2. Save the notification in DB
+    const notificationPayload = {
+      ...data,
+      message,
+    };
+
+    const notification = await this._notificationRepo.create(notificationPayload);
+
+     
+    const socketService = getNotificationSocketService();
+
+    if (notification.role === "admin") {
+      //console.log('jjjjjjjjjjjj')
+      const admins = await this._userRepo.getAllAdmins();
+      for (const admin of admins) {
+        console.log(admin._id, 'asdmin')
+
+        socketService.emitNotificationToUser(admin._id!.toString(), notification);
+      }
+    } else {
+      socketService.emitNotificationToUser(data.userId!.toString(), notification);
+    }
+
+    return notification;
+  }
+
+  async getNotifications(userId: string, page: number, limit: number, filters: IFilter): Promise<{ notification: INotification[], pagination: PaginationInfo }> {
+    return this._notificationRepo.findByUserId(userId, page, limit, filters)
+  }
+
+    async getAdminNotifications(page: number, limit: number, filters: IFilter): Promise<{ notification: INotification[], pagination: PaginationInfo }> {
+    return this._notificationRepo.findAdminNotifications(page, limit, filters)
+  }
+
+  async markAsRead(notificationId: string): Promise<INotification | null> {
+    return await this._notificationRepo.markAsRead(notificationId);
+
+  }
+
+  async deleteNotification(notificationId: string): Promise<boolean> {
+    return await this._notificationRepo.delete(notificationId);
+  }
+}
