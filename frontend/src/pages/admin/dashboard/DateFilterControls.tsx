@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { IDateFilter, DateFilter } from "@/types/IDashboard";
 import { CalendarDays } from "lucide-react";
+import { toast } from "sonner";
 
 export default function DateFilterControls({
   value,
@@ -20,11 +21,24 @@ export default function DateFilterControls({
 
   const handleApplyCustom = () => {
     if (!customStart || !customEnd) {
-      alert("Please select both start and end dates!");
+      toast.error("Please select both start and end dates!");
+      return;
+    }
+
+      if (customEnd < customStart) {
+      toast.error("End date cannot be earlier than start date!");
+      return;
+    }
+
+    const today = new Date().toISOString().split("T")[0];
+    if (customStart > today || customEnd > today) {
+      toast.error("Dates cannot be in the future!");
       return;
     }
     onChange({ filter: "custom", startDate: customStart, endDate: customEnd });
   };
+
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="w-full flex flex-col md:flex-row md:items-end gap-3">
@@ -66,6 +80,8 @@ export default function DateFilterControls({
               type="date"
               className="px-3 py-2 rounded-xl border border-gray-300"
               value={customStart}
+                            max={today}
+
               onChange={(e) => setCustomStart(e.target.value)}
             />
           </div>
@@ -75,6 +91,8 @@ export default function DateFilterControls({
               type="date"
               className="px-3 py-2 rounded-xl border border-gray-300"
               value={customEnd}
+              min={customStart || undefined}  
+              max={today}
               onChange={(e) => setCustomEnd(e.target.value)}
             />
           </div>

@@ -13,7 +13,7 @@ function DataTable<T>({
   rows,
   emptyText = "No data",
 }: DataTableProps<T>) {
-  // ✅ Always ensure we have safe defaults
+  //  Always ensure we have safe defaults
   const safeColumns = Array.isArray(columns) ? columns : [];
   const safeRows = Array.isArray(rows) ? rows : [];
 
