@@ -51,6 +51,8 @@ import { BookingUseCases } from '@application/usecases/admin/bookingUseCases';
 import { BookingRepository } from '@infrastructure/repositories/BookingRepository';
 import { BookingController } from '@presentation/controllers/admin/bookingController';
 
+import { WalletRepository } from '@infrastructure/repositories/WalletRepository ';
+
 import { BlogRepository } from '@infrastructure/repositories/BlogRepository';
 import { BlogUseCases } from '@application/usecases/admin/blogUseCases';
 import { BlogController } from '@presentation/controllers/admin/blogController';
@@ -134,8 +136,10 @@ const couponRepository = new CouponRepository();
 const couponUseCase = new CouponUseCases(couponRepository);
 const couponController = new CouponController(couponUseCase);
 
+const walletRepository=new WalletRepository()
+
 const bookingRepository = new BookingRepository();
-const bookingUseCase = new BookingUseCases(bookingRepository);
+const bookingUseCase = new BookingUseCases(bookingRepository,walletRepository);
 const bookingController = new BookingController(bookingUseCase);
 
 const blogRepository = new BlogRepository();

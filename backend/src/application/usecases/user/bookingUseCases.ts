@@ -16,7 +16,7 @@ export class BookingUseCases implements IBookingUseCases {
     private _bookingRepo: IBookingRepository,
     private _walletRepo: IWalletRepository,
     private _razorpayService: RazorpayService,
-    private _notificationUseCases:INotificationUseCases,
+    private _notificationUseCases: INotificationUseCases,
   ) { }
 
   async getAllUserBooking(
@@ -34,23 +34,23 @@ export class BookingUseCases implements IBookingUseCases {
   async cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null> {
     const booking = await this._bookingRepo.getBookingById(userId, bookingId);
     if (!booking) {
-      throw new AppError(404, 'Booking not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
 
     if (booking.bookingStatus === 'cancelled') {
-      throw new AppError(400, 'Booking already cancelled');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Booking already cancelled');
     }
 
     if (booking.paymentStatus === 'paid' && booking.amountPaid > 0) {
       await this._walletRepo.creditWallet(
         userId,
         booking.amountPaid,
-        `Refund for cancelled booking`
+        `Refund for cancelled booking ${booking.bookingCode}`
       );
     }
 
     return await this._bookingRepo.cancelBooking(userId, bookingId, reason);
-    
+
   }
 
   async createBookingWithOnlinePayment(
@@ -114,19 +114,19 @@ export class BookingUseCases implements IBookingUseCases {
       },
     });
 
-    
+
     const notification = await this._notificationUseCases.sendNotification({
-    
-  role:'admin',
-  title: "New Booking",
-  entityType:'booking',
-  bookingId:booking?._id?.toString(),
-  packageId:booking?.packageId.toString(),
-  //message: `User ${userId} booked package ${packageId}`,
-  type: "success",
-  triggeredBy: userId,
-  metadata: { bookingId: booking._id }, // optional for deep linking
-});
+
+      role: 'admin',
+      title: "New Booking",
+      entityType: 'booking',
+      bookingId: booking?._id?.toString(),
+      packageId: booking?.packageId.toString(),
+      //message: `User ${userId} booked package ${packageId}`,
+      type: "success",
+      triggeredBy: userId,
+      metadata: { bookingId: booking._id }, // optional for deep linking
+    });
     return {
       booking,
       razorpayOrder,
@@ -169,7 +169,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     await this._bookingRepo.updateBooking(booking._id!.toString(), booking);
 
- 
+
 
   }
 
@@ -263,11 +263,11 @@ export class BookingUseCases implements IBookingUseCases {
       // Wallet not enough, should redirect to Razorpay flow
       throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
     }
+    const bookingCode = await generateBookingCode();
 
     // Wallet fully covers booking
-    await this._walletRepo.debitWallet(userId, totalAmount, 'Used for booking');
+    await this._walletRepo.debitWallet(userId, totalAmount, `Used for booking ${bookingCode}`);
 
-    const bookingCode = await generateBookingCode();
 
     const bookingData: IBookingInput = {
       packageId: packageId.toString(),
@@ -290,21 +290,21 @@ export class BookingUseCases implements IBookingUseCases {
 
     const booking = await this._bookingRepo.createBooking(userId, bookingData);
 
-//  Save notification in DB
-const notification = await this._notificationUseCases.sendNotification({
-  //userId: "admin123",   // admin userId
-  role:'admin',
-  title: "New Booking",
-  entityType:'booking',
-  bookingId:booking?._id?.toString(),
-  packageId:booking?.packageId.toString(),
-  //message: `User ${userId} booked package ${packageId}`,
-  type: "success",
-  triggeredBy: userId,
-  metadata: { bookingId: booking._id }, // optional for deep linking
-});
+    //  Save notification in DB
+    const notification = await this._notificationUseCases.sendNotification({
+      //userId: "admin123",   // admin userId
+      role: 'admin',
+      title: "New Booking",
+      entityType: 'booking',
+      bookingId: booking?._id?.toString(),
+      packageId: booking?.packageId.toString(),
+      //message: `User ${userId} booked package ${packageId}`,
+      type: "success",
+      triggeredBy: userId,
+      metadata: { bookingId: booking._id }, // optional for deep linking
+    });
 
 
-return { booking };
+    return { booking };
   }
 }

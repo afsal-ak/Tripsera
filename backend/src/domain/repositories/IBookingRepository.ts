@@ -1,6 +1,8 @@
 import { IBooking } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
-export interface IBookingRepository {
+import { IBaseRepository } from './IBaseRepository';
+
+export interface IBookingRepository extends IBaseRepository<IBooking>{
   getAllBooking(filters: {
     page: number;
     limit: number;

@@ -2,7 +2,17 @@ import { IBooking } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { BookingModel } from '@infrastructure/models/Booking';
-export class BookingRepository implements IBookingRepository {
+import { BaseRepository } from './BaseRepository';
+// export class CustomPackageRepository extends BaseRepository<ICustomPackage> implements ICustomPackageRepository {
+//     constructor() {
+//         super(CustomPackage)
+//     }
+export class BookingRepository extends BaseRepository<IBooking> implements IBookingRepository {
+
+  constructor(){
+    super(BookingModel)
+  }
+
   async getAllBooking({
     page,
     limit,

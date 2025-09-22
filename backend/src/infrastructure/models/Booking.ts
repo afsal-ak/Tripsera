@@ -1,9 +1,12 @@
 import mongoose, { Schema, model, Document } from 'mongoose';
 import { IBooking } from '@domain/entities/IBooking';
 
-interface IBookingDocument extends Omit<IBooking, '_id'>, Document {
-  _id: mongoose.Types.ObjectId;
-}
+// interface IBookingDocument extends Omit<IBooking, '_id'>, Document {
+//   _id: mongoose.Types.ObjectId;
+// }
+
+type IBookingDocument =IBooking & Document
+
 const TravelerSchema = new Schema(
   {
     fullName: { type: String, required: true },

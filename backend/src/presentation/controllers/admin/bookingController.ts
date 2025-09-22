@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingUseCases';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class BookingController {
 
@@ -10,8 +11,8 @@ export class BookingController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const packageSearch = req.query.package as string; // optional search
-      const status = req.query.status as string; // e.g., 'cancelled'
+      const packageSearch = req.query.package as string;  
+      const status = req.query.status as string;  
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
 
@@ -24,7 +25,7 @@ export class BookingController {
         endDate,
       });
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         bookings,
         total,
         currentPage: page,
@@ -46,7 +47,7 @@ export class BookingController {
 
       const booking = await this._bookingUseCases.getBookingByIdForAdmin(bookingId);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         booking,
         message: 'Booking details retrieved',
       });
@@ -62,7 +63,7 @@ export class BookingController {
 
       const booking = await this._bookingUseCases.cancelBookingByAdmin(bookingId, reason);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         booking,
         message: 'Booking cancelled successfully',
       });
