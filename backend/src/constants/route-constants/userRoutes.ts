@@ -127,3 +127,11 @@ export const NOTIFICATION_ROUTE={
   FETCH_NOTIFICATION:'/notification',
   MARK_AS_READ:'/mark-read/:id'
 }
+
+
+export const BLOCK_ROUTE={
+  BLOCK:'/block',
+  UNBLOCK:'/unblock',
+  IS_BLOCKED:'/blocked/:blockedId',
+  GELL_ALL:'blocked'
+}

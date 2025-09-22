@@ -1,12 +1,12 @@
-
 import http from "http";
 import express from "express";
-import mongoose from "mongoose";
+import mongoose from "mongoose"
+import dotenv from "dotenv";
+dotenv.config();
 import userRoutes from "@presentation/routes/userRoutes";
 import adminRoutes from "@presentation/routes/adminRoutes";
 import { errorHandler } from "@presentation/middlewares/errorHandler";
 import bodyParser from "body-parser";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import morganLogger from "@presentation/middlewares/logger";
@@ -27,7 +27,6 @@ import { UserRepository } from "@infrastructure/repositories/UserRepository";
 import { PackageRepository } from "@infrastructure/repositories/PackageRepository";
 
 import { initNotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
-dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
