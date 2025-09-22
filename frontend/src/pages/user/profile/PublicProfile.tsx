@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/ui/Card";
@@ -17,6 +17,8 @@ import Modal from "@/components/ui/Model";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 
+import { handleBlockUser, handelUnBlockUser, handelIsBlocked } from "@/services/user/blockService";
+
 const PublicProfile = () => {
     const { username } = useParams();
     const userId = useSelector((state: RootState) => state.userAuth.user?._id)
@@ -25,6 +27,7 @@ const PublicProfile = () => {
     const [profile, setProfile] = useState<IPublicProfile>();
     const [isFollowing, setIsFollowing] = useState<Boolean>(false);
     const [followers, setFollowers] = useState<number>(0);
+    const [isBlocked, setIsBlocked] = useState<boolean>();
     const [blogs, setBlogs] = useState<IBlog[]>([]);
     const [totalBlogs, setTotalBlogs] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -47,6 +50,13 @@ const PublicProfile = () => {
                 setProfile(response.profile);
                 setFollowers(response.profile.followersCount)
                 setIsFollowing(response.isFollowing)
+                if (response.profile?._id) {
+                    console.log('is bloked')
+
+                    const isBlocked = await handelIsBlocked(response.profile?._id!)
+                    setIsBlocked(isBlocked.data)
+                    console.log(isBlocked, 'is bloked')
+                }
             } catch (error) {
                 toast.error("Failed to fetch profile");
             }
@@ -99,15 +109,58 @@ const PublicProfile = () => {
         }
     };
 
-    const options = [{
-        label: 'Report',
-        value: 'report',
-        className: "text-red-500" 
-    }]
+
+    const blockUser = async () => {
+        if (!profile?._id) {
+            return
+        }
+        setLoading(true);
+
+        try {
+            const response = await handleBlockUser(profile?._id)
+            toast.success(response.message)
+        } catch (error: any) {
+            toast.error(error?.response?.data.message || 'Something went wrong')
+        } finally {
+            setLoading(false);
+
+        }
+    }
+
+    const unblockUser = async () => {
+        if (!profile?._id) {
+            return
+        }
+        setLoading(true);
+
+        try {
+            const response = await handelUnBlockUser(profile?._id)
+            toast.success(response.message)
+        } catch (error: any) {
+            toast.error(error?.response?.data.message || 'Something went wrong')
+        } finally {
+            setLoading(false);
+
+        }
+    }
+
+    const options = useMemo(() => [
+        { label: 'Report', value: 'report', className: 'text-red-500' },
+        isBlocked
+            ? { label: 'Unblock', value: 'unblock', className: 'text-green-500' }
+            : { label: 'Block', value: 'block', className: 'text-red-500' }
+    ], [isBlocked]);
+
     const handleOptionSelect = (value: string, _id: string, reportedType: IReportedType) => {
         if (value == 'report') {
             setSelectedReport({ _id, reportedType })
             setShowReportModal(true)
+        } else if (value == 'block') {
+            blockUser()
+            setIsBlocked(true)
+        } else if (value == 'unblock') {
+            unblockUser()
+            setIsBlocked(false)
         }
     }
     return (
@@ -150,7 +203,7 @@ const PublicProfile = () => {
                             </div>
                         </div>
                     )}
-                    <OptionsDropdown  options={options} onSelect={(value) => handleOptionSelect(value, profile?._id!, 'user')}  />
+                    <OptionsDropdown options={options} onSelect={(value) => handleOptionSelect(value, profile?._id!, 'user')} />
                 </div>
 
                 <div className="mt-8 grid grid-cols-3 gap-4 max-w-md mx-auto md:mx-0">
@@ -186,7 +239,7 @@ const PublicProfile = () => {
                 />
             </div>
             {showReportModal && selectedReport && (
-                <Modal  onClose={() => setShowReportModal(false)}>
+                <Modal onClose={() => setShowReportModal(false)}>
 
                     <ReportForm
                         id={selectedReport._id}

@@ -1,4 +1,4 @@
- import { Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { IBlog } from "@/types/IBlog";
 import { usePaginationButtons } from "@/hooks/usePaginationButtons";
@@ -52,6 +52,8 @@ const ProfileGallery = ({
             <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center space-x-4 transition-opacity duration-200">
               <div className="flex items-center text-white">
                 <Heart className="h-6 w-6 mr-2" />
+                {post.likes?.length}
+
               </div>
             </div>
           </div>
