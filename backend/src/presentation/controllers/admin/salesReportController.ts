@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
- import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class SalesReportController {
 
-  constructor(private _salesReportUseCase: SalesReportUseCase) {}
+  constructor(private _salesReportUseCase: SalesReportUseCase) { }
 
   getReportList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -61,26 +61,26 @@ export class SalesReportController {
   };
 
   downloadPDF = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const filters = {
-      status: req.query.status as string,
-      paymentMethod: req.query.paymentMethod as string,
-      from: req.query.from as string,
-      to: req.query.to as string,
-      day: req.query.day as string,
-      week: req.query.week as string,
-      month: req.query.month as string,
-      year: req.query.year as string,
-    };
+    try {
+      const filters = {
+        status: req.query.status as string,
+        paymentMethod: req.query.paymentMethod as string,
+        from: req.query.from as string,
+        to: req.query.to as string,
+        day: req.query.day as string,
+        week: req.query.week as string,
+        month: req.query.month as string,
+        year: req.query.year as string,
+      };
 
-    const buffer = await this._salesReportUseCase.downloadPDF(filters);
-console.log(buffer,'buffer')
-    res.setHeader('Content-Disposition', 'attachment; filename="sales-report.pdf"');
-    res.setHeader('Content-Type', 'application/pdf');
-    res.status(HttpStatus.OK).send(buffer);
-  } catch (error) {
-    next(error);
-  }
-};
+      const buffer = await this._salesReportUseCase.downloadPDF(filters);
+      console.log(buffer, 'buffer')
+      res.setHeader('Content-Disposition', 'attachment; filename="sales-report.pdf"');
+      res.setHeader('Content-Type', 'application/pdf');
+      res.status(HttpStatus.OK).send(buffer);
+    } catch (error) {
+      next(error);
+    }
+  };
 
 }
