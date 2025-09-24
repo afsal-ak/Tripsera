@@ -20,7 +20,7 @@ import type { IRating } from '@/types/IReview';
 import { toast } from 'sonner';
 import { formatTimeAgo } from '@/lib/utils/formatTime';
 import ReadMore from '@/components/ReadMore';
-const PackageDetails = () => {
+ const PackageDetails = () => {
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
   const [loading, setLoading] = useState(false);

@@ -5,6 +5,7 @@ import ChatbotLauncher from '@/pages/user/chatbot/ChatbotLauncher';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
+import WhatsAppButton from '@/components/WhatsAppButton';
 const UserLayout = () => {
 
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
@@ -13,7 +14,9 @@ const UserLayout = () => {
     const location = useLocation();
 
     const isChatPage = location.pathname.startsWith("/chat");
-
+    const isCheckOutPage = location.pathname.startsWith("/checkout");
+const adminPhone = import.meta.env.VITE_ADMIN_PHONE_NUMBER!;
+ 
   return (
 
     
@@ -28,6 +31,7 @@ const UserLayout = () => {
       {/*  Hide footer only on chat pages */}
       {!isChatPage && <Footer />}
       {!isChatPage && <ChatbotLauncher />}
+      {isCheckOutPage && <WhatsAppButton adminPhone={adminPhone}/>}
 
     </div>
   );
