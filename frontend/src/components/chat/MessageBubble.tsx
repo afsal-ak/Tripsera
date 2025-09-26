@@ -1,4 +1,4 @@
-import React,{useEffect,useRef} from "react";
+import React, { useEffect, useRef } from "react";
 import { Check, CheckCheck, Trash2 } from "lucide-react";
 import type { IMessage, IMessageUserInfo } from "@/types/IMessage";
 import ImageViewer from "./ImageViewer";
@@ -7,7 +7,9 @@ interface Props {
   isOwn: boolean;
   onDelete: (messageId: string) => void;
   currentUser?: IMessageUserInfo;
- // onVisible:(messageId:string)=>void 
+  isPartnerOnline: Boolean
+
+  // onVisible:(messageId:string)=>void 
 }
 
 export const MessageBubble: React.FC<Props> = ({
@@ -15,7 +17,9 @@ export const MessageBubble: React.FC<Props> = ({
   isOwn,
   onDelete,
   currentUser,
-//  onVisible
+  isPartnerOnline
+  //  onVisible
+
 }) => {
   // Format time like WhatsApp (HH:MM AM/PM)
   const formatTime = (date: Date | string) => {
@@ -24,39 +28,19 @@ export const MessageBubble: React.FC<Props> = ({
       minute: "2-digit",
     });
   };
-//console.log(message,'mssg')
+  //console.log(message,'mssg')
   // Sender details
   const sender = message.senderId || currentUser;
 
   const senderName = isOwn ? "You" : sender?.username || "Unknown";
-   const senderAvatar = isOwn
+  const senderAvatar = isOwn
     ? currentUser?.profileImage?.url
     : sender?.profileImage?.url;
 
-//     const ref = useRef<HTMLDivElement>(null);
-
-//  useEffect(() => {
-//   const observer = new IntersectionObserver(
-//     (entries) => {
-//       entries.forEach((entry) => {
-//         if (entry.isIntersecting) {
-//           onVisible?.(message._id);
-//           observer.disconnect();
-//         }
-//       });
-//     },
-//     { threshold: 0.6 } // 60% visible
-//   );
-
-//   if (ref.current) observer.observe(ref.current);
-//   return () => observer.disconnect();
-// }, []);
-
   return (
     <div
-      className={`flex items-end mb-3 ${
-        isOwn ? "justify-end" : "justify-start"
-      }`}
+      className={`flex items-end mb-3 ${isOwn ? "justify-end" : "justify-start"
+        }`}
     >
       {/* Left Avatar for other users */}
       {!isOwn && (
@@ -69,11 +53,10 @@ export const MessageBubble: React.FC<Props> = ({
 
       {/* Chat Bubble */}
       <div
-        className={`relative group max-w-[75%] sm:max-w-md md:max-w-lg px-3 py-2 rounded-2xl shadow-sm ${
-          isOwn
-            ? "bg-blue-500 text-white rounded-br-none"
-            : "bg-gray-200 text-gray-900 rounded-bl-none"
-        }`}
+        className={`relative group max-w-[75%] sm:max-w-md md:max-w-lg px-3 py-2 rounded-2xl shadow-sm ${isOwn
+          ? "bg-blue-500 text-white rounded-br-none"
+          : "bg-gray-200 text-gray-900 rounded-bl-none"
+          }`}
       >
         {/* Show sender name only for others */}
         {!isOwn && (
@@ -82,30 +65,29 @@ export const MessageBubble: React.FC<Props> = ({
           </p>
         )}
 
- {message.type === "image" && message.mediaUrl ? (
-  <div className="flex flex-col max-w-xs sm:max-w-sm">
-    {/* <img
+        {message.type === "image" && message.mediaUrl ? (
+          <div className="flex flex-col max-w-xs sm:max-w-sm">
+            {/* <img
       src={message.mediaUrl}
       alt="sent"
       className="rounded-lg object-cover"
     /> */}
-      <ImageViewer src={message.mediaUrl} className="max-w-xs sm:max-w-sm" />
+            <ImageViewer src={message.mediaUrl} className="max-w-xs sm:max-w-sm" />
 
-     {message.content?.trim() && (
-      <p className="mt-1 text-xs sm:text-sm text-black-200 break-words">
-        {message.content}
-      </p>
-    )}
-  </div>
-) : (
-  <p className="text-sm sm:text-base break-words">{message.content}</p>
-)}
+            {message.content?.trim() && (
+              <p className="mt-1 text-xs sm:text-sm text-black-200 break-words">
+                {message.content}
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm sm:text-base break-words">{message.content}</p>
+        )}
 
         {/* Timestamp + Read Status */}
         <div
-          className={`flex items-center justify-end gap-1 mt-1 text-[11px] ${
-            isOwn ? "text-blue-100" : "text-gray-500"
-          }`}
+          className={`flex items-center justify-end gap-1 mt-1 text-[11px] ${isOwn ? "text-blue-100" : "text-gray-500"
+            }`}
         >
           <span>{formatTime(message.createdAt)}</span>
           {isOwn &&

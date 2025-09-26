@@ -5,11 +5,23 @@ import { AdminSidebar } from '@/components/admin/AdminSideBar';
 import { useSelector } from 'react-redux';
 import type{ RootState } from '@/redux/store';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
+import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
+
+import { useChatSocket } from '@/hooks/useChatSocket';
+import { useGlobalSocket } from '@/hooks/useGlobalSocket';
 const AdminLayout = () => {
   const adminId = useSelector((state: RootState) => state.adminAuth.admin?._id);
+ 
+  if (!adminId) return null;
+   useGlobalSocket(adminId!);
+
+  //useChatRoomsSocket({ currentUserId:adminId! });
+useChatRoomsSocket({ currentUserId: adminId });
 
    useNotificationSocket(adminId!);
-   
+  // useChatSocket()
+    // useChatRoomsSocket(adminId!);
+
   const [sidebarOpen, setSidebarOpen] = useState(false); // for mobile
   const [collapsed, setCollapsed] = useState(false); // for desktop collapse
 

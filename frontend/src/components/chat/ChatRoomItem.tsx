@@ -85,6 +85,8 @@
 
 import type { IChatRoom } from "@/types/IMessage";
 import { MapPin } from "lucide-react";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
 
 interface ChatRoomItemProps {
   room: IChatRoom;
@@ -99,9 +101,14 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
   onSelect,
   isSelected = false,
 }) => {
+
+  const onlineUsers=useSelector((state:RootState)=>state.chatRoom.onlineUsers)
+
+
   // Get the other participant (not current user)
   const otherParticipant = room.participants.find(p => p._id !== currentUserId) || room.participants[0];
-
+console.log(otherParticipant,'other')
+      const isOnline = onlineUsers.includes(otherParticipant._id);
   // unread count for current user
   const unreadCount = room.unreadCounts?.[currentUserId] || 0;
 
@@ -133,7 +140,7 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
           alt={otherParticipant.username}
           className="w-12 h-12 rounded-full object-cover"
         />
-        {otherParticipant.isOnline && (
+        {isOnline && (
           <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
         )}
       </div>

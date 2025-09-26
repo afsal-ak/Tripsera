@@ -1,6 +1,11 @@
 export const SOCKET_EVENTS = {
   JOIN_ROOM: "joinroom",
   LEAVE_ROOM: "leaveroom",
+  USER_ONLINE: 'userOnline',
+  USER_OFFLINE: 'userOffline',
+  USER_CONNECTED:'connected',
+  USER_DISCONNECTED:'disconnected',
+  CURRENT_ONLINE_USERS: 'currentOnlineUsers',
   SEND_MESSAGE: "sendMessage",
   NEW_MESSAGE: "message:new",
   DELETE_MESSAGE: "message:delete",

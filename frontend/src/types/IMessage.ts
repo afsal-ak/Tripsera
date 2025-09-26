@@ -22,6 +22,7 @@ export interface IChatRoom {
   unreadCounts?: {
     [userId: string]: number;
   };
+  totalUnread?: number;
   createdAt: Date;
   updatedAt: Date;
 }

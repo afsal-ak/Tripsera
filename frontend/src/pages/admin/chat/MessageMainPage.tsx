@@ -7,7 +7,6 @@ const MessageMainPage = () => {
     const { roomId } = useParams<{ roomId: string }>();
 
     const user = useSelector((state: RootState) => state.adminAuth.admin);
-  //  console.log(user, 'admin')
     if (!user) {
         return <div>Loading...</div>;
     }

@@ -5,21 +5,22 @@ import type { IChatRoom } from "@/types/IMessage";
 
 interface Props {
     room: IChatRoom;
+    isPartnerOnline: boolean
     onBack?: () => void;
     isMobile?: boolean;
 }
 
-export const ChatHeader: React.FC<Props> = ({ room, onBack, isMobile }) => {
-   
+export const ChatHeader: React.FC<Props> = ({ room, onBack, isMobile,isPartnerOnline }) => {
+// console.log(room,'rooooom')
+// console.log(isPartnerOnline,'ispartn')
 
     const otherUser = !room.isGroup ? room?.otherUser : null;
- //console.log(otherUser,'header')
+    //console.log(otherUser,'header')
 
     const displayName = room.isGroup ? room.name : otherUser?.username;
     const displayAvatar = room.isGroup
         ? "/group-default.jpg"
         : otherUser?.profileImage?.url || otherUser?.avatar || "/profile-default.jpg";
-    const isOnline = otherUser?.isOnline;
     return (
         <div className="flex items-center justify-between px-4 py-2 bg-white border-b shadow-sm">
             <div className="flex items-center gap-3">
@@ -45,10 +46,10 @@ export const ChatHeader: React.FC<Props> = ({ room, onBack, isMobile }) => {
                     <h2 className="font-semibold text-gray-900">{displayName}</h2>
                     {!room.isGroup && (
                         <span
-                            className={`text-xs ${isOnline ? "text-green-500" : "text-gray-500"
+                            className={`text-xs ${isPartnerOnline ? "text-green-500" : "text-gray-500"
                                 }`}
                         >
-                            {isOnline ? "Online" : "Offline"}
+                            {isPartnerOnline ? "Online" : "Offline"}
                         </span>
                     )}
                 </div>
