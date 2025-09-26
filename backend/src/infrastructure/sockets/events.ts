@@ -1,17 +1,22 @@
 export const SOCKET_EVENTS = {
   JOIN_ROOM: "joinroom",
   LEAVE_ROOM: "leaveroom",
+  USER_ONLINE: 'userOnline',
+  USER_OFFLINE: 'userOffline',
+    USER_DISCONNECTED:'disconnected',
+USER_CONNECTED:'connected',
+  CURRENT_ONLINE_USERS:'currentOnlineUsers',
   SEND_MESSAGE: "sendMessage",
   NEW_MESSAGE: "message:new",
   DELETE_MESSAGE: "message:delete",
-MESSAGE_DELETED: "message:deleted",
+  MESSAGE_DELETED: "message:deleted",
   MARK_AS_READ: "message:markAsRead",
   MESSAGE_READ: "message:read",
   TYPING: "typing",
   STOP_TYPING: "stopTyping",
-MESSAGE_SEND:"message:send",
+  MESSAGE_SEND: "message:send",
 }
- 
+
 
 // export const SOCKET_NOTIFICATION_EVENTS = {
 //   JOIN: "notification:join",

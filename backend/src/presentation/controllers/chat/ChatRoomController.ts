@@ -31,7 +31,7 @@ export class ChatRoomController {
       };
       const room = await this._chatRoomUseCases.createChatRoom(data);
 
-      res.status(201).json({
+      res.status(HttpStatus.CREATED).json({
         success: true,
         message: "Chat room created successfully",
         data: toChatRoomResponseDTO(room!),
