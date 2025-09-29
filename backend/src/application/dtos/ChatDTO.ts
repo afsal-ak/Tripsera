@@ -1,6 +1,17 @@
 import { IChatRoom } from "@domain/entities/IChatRoom";
 import { IMessage } from "@domain/entities/IMessage";
 
+ 
+
+export type ChatRoomFilter = "all" | "read" | "unread";
+
+export interface IChatRoomFilter {
+  filter?: ChatRoomFilter;          
+  sort?: "asc" | "desc";           
+  sortBy?: "createdAt" | "updatedAt";  
+}
+
+
 export interface CreateChatRoomDTO {
   name?: string; // For group chats
   participants: string[]; // User/Admin IDs
@@ -13,6 +24,8 @@ export interface UpdateChatRoomDTO {
   participants?: string[];
   lastMessage?:string;
   lastMessageContent?:string;
+  unreadCounts?: Record<string, number>; // track unread for each user
+  //lastSeen?: Record<string, Date>;   
 }
 
 export interface ChatParticipantDTO {

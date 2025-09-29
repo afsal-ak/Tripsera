@@ -4,11 +4,12 @@ import {
   CreateChatRoomDTO,
   UpdateChatRoomDTO,
   toChatRoomResponseDTO,
-  toChatRoom1to1DTO
+  toChatRoom1to1DTO,
+  IChatRoomFilter
 } from "@application/dtos/ChatDTO";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-
+import { ChatRoomFilter } from "@application/dtos/ChatDTO";
 export class ChatRoomController {
   constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) { }
 
@@ -64,20 +65,40 @@ export class ChatRoomController {
   };
 
   // Get all chat rooms for a user
-  getUserRooms = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const userId = getUserIdFromRequest(req);
-      console.log(userId, 'id')
-      const rooms = await this._chatRoomUseCases.getUserChatRooms(userId);
-      console.log(rooms, 'rooms')
-      res.status(HttpStatus.OK).json({
-        success: true,
-        data: rooms.map(toChatRoomResponseDTO),
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+  // getUserRooms = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  //   try {
+  //     const userId = getUserIdFromRequest(req);
+  //     console.log(userId, 'id')
+  //     const rooms = await this._chatRoomUseCases.getUserChatRooms(userId);
+  //     console.log(rooms, 'rooms')
+  //     res.status(HttpStatus.OK).json({
+  //       success: true,
+  //       data: rooms.map(toChatRoomResponseDTO),
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
+
+getUserRooms = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = getUserIdFromRequest(req);
+
+  const filters: IChatRoomFilter = {
+  filter: (req.query.filter as ChatRoomFilter) || "all",
+  sort: (req.query.sort as "asc" | "desc") || "desc",
+  sortBy: (req.query.sortBy as "createdAt" | "updatedAt") || "updatedAt",
+};
+    const rooms = await this._chatRoomUseCases.getUserChatRooms(userId, filters);
+
+    res.status(HttpStatus.OK).json({
+      success: true,
+      data: rooms.map(toChatRoomResponseDTO),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
   //  Update chat room (rename group)
   updateRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
