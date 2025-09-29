@@ -117,9 +117,7 @@ export default function UserSearchForChat({ onUserSelected, onRoomCreated }: Pro
                 ) : searchQuery.trim() !== "" && !loading ? (
                     <p className="text-center text-gray-500">No users found</p>
                 ) : (
-                    <p className="text-center text-gray-400">
-                        Start typing to search users
-                    </p>
+ <p></p>
                 )}
             </div>
 

@@ -9,16 +9,14 @@ interface Props {
   currentUser?: IMessageUserInfo;
   isPartnerOnline: Boolean
 
-  // onVisible:(messageId:string)=>void 
-}
+ }
 
 export const MessageBubble: React.FC<Props> = ({
   message,
   isOwn,
   onDelete,
   currentUser,
-  isPartnerOnline
-  //  onVisible
+   
 
 }) => {
   // Format time like WhatsApp (HH:MM AM/PM)
@@ -67,11 +65,7 @@ export const MessageBubble: React.FC<Props> = ({
 
         {message.type === "image" && message.mediaUrl ? (
           <div className="flex flex-col max-w-xs sm:max-w-sm">
-            {/* <img
-      src={message.mediaUrl}
-      alt="sent"
-      className="rounded-lg object-cover"
-    /> */}
+           
             <ImageViewer src={message.mediaUrl} className="max-w-xs sm:max-w-sm" />
 
             {message.content?.trim() && (

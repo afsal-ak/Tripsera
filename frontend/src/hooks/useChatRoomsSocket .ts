@@ -1,10 +1,10 @@
+
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import socket from "@/sockets/socket";
 import { SOCKET_EVENTS } from "@/sockets/events";
-
 import {
-  addMessageToRoom,
+  updateRoomOnNewMessage,
   deleteMessageFromRoom,
   markMessageAsReadInRoom,
   setUserOnline,
@@ -24,49 +24,66 @@ export const useChatRoomsSocket = ({ currentUserId }: UseChatRoomsSocketProps) =
   useEffect(() => {
     if (!currentUserId) return;
 
-    // 🔹 Tell server this user is online globally
+   // console.log("Attaching socket listeners for user:", currentUserId);
+
     socket.emit(SOCKET_EVENTS.USER_CONNECTED, { userId: currentUserId });
 
-    // --- global message events ---
-    socket.on(SOCKET_EVENTS.NEW_MESSAGE, (message: IMessage) => {
-      dispatch(addMessageToRoom({ roomId: message.roomId, message, currentUserId }));
-    });
+    const handleNewMessage = (message: IMessage) => {
+     // console.log(" New message received:", message._id);
+      dispatch(updateRoomOnNewMessage({ roomId: message.roomId, message, currentUserId }));
+    };
 
-    socket.on(
-      SOCKET_EVENTS.MESSAGE_DELETED,
-      ({ roomId, messageId }: { roomId: string; messageId: string }) => {
-        dispatch(deleteMessageFromRoom({ roomId, messageId }));
-      }
-    );
+    const handleMessageDeleted = ({ roomId, messageId }: { roomId: string; messageId: string }) => {
+     // console.log("🗑 Message deleted:", messageId);
+      dispatch(deleteMessageFromRoom({ roomId, messageId }));
+    };
 
-    socket.on(SOCKET_EVENTS.MESSAGE_READ, ({ roomId, userId }: { roomId: string; userId: string }) => {
+    const handleMessageRead = ({ roomId, userId }: { roomId: string; userId: string }) => {
+   //   console.log(" Message read in room:", roomId, "by", userId);
       dispatch(markMessageAsReadInRoom({ roomId, userId }));
-    });
+    };
 
-    // --- presence events ---
-    socket.on(SOCKET_EVENTS.USER_ONLINE, ({ userId }: { userId: string }) => {
+    const handleUserOnline = ({ userId }: { userId: string }) => {
+    //  console.log(" User online:", userId);
       dispatch(setUserOnline(userId));
-    });
+    };
 
-    socket.on(SOCKET_EVENTS.USER_OFFLINE, ({ userId }: { userId: string }) => {
+    const handleUserOffline = ({ userId }: { userId: string }) => {
+     // console.log(" User offline:", userId);
       dispatch(setUserOffline(userId));
-    });
+    };
 
-    socket.on(SOCKET_EVENTS.CURRENT_ONLINE_USERS, ({ users }: { users: string[] }) => {
+    const handleCurrentOnlineUsers = ({ users }: { users: string[] }) => {
+     // console.log(" Current online users:", users);
       dispatch(setCurrentOnlineUsers(users));
-    });
+    };
+
+    //  remove any existing listeners first (prevents stacking)
+    socket.off(SOCKET_EVENTS.NEW_MESSAGE);
+    socket.off(SOCKET_EVENTS.MESSAGE_DELETED);
+    socket.off(SOCKET_EVENTS.MESSAGE_READ);
+    socket.off(SOCKET_EVENTS.USER_ONLINE);
+    socket.off(SOCKET_EVENTS.USER_OFFLINE);
+    socket.off(SOCKET_EVENTS.CURRENT_ONLINE_USERS);
+
+    //  attach fresh listeners
+    socket.on(SOCKET_EVENTS.NEW_MESSAGE, handleNewMessage);
+    socket.on(SOCKET_EVENTS.MESSAGE_DELETED, handleMessageDeleted);
+    socket.on(SOCKET_EVENTS.MESSAGE_READ, handleMessageRead);
+    socket.on(SOCKET_EVENTS.USER_ONLINE, handleUserOnline);
+    socket.on(SOCKET_EVENTS.USER_OFFLINE, handleUserOffline);
+    socket.on(SOCKET_EVENTS.CURRENT_ONLINE_USERS, handleCurrentOnlineUsers);
 
     return () => {
-      // 🔹 Tell server user is leaving
+    //  console.log("Cleaning up socket listeners for user:", currentUserId);
       socket.emit(SOCKET_EVENTS.USER_DISCONNECTED, { userId: currentUserId });
 
-      socket.off(SOCKET_EVENTS.NEW_MESSAGE);
-      socket.off(SOCKET_EVENTS.MESSAGE_DELETED);
-      socket.off(SOCKET_EVENTS.MESSAGE_READ);
-
-      socket.off(SOCKET_EVENTS.USER_ONLINE);
-      socket.off(SOCKET_EVENTS.USER_OFFLINE);
-      socket.off(SOCKET_EVENTS.CURRENT_ONLINE_USERS);
+      socket.off(SOCKET_EVENTS.NEW_MESSAGE, handleNewMessage);
+      socket.off(SOCKET_EVENTS.MESSAGE_DELETED, handleMessageDeleted);
+      socket.off(SOCKET_EVENTS.MESSAGE_READ, handleMessageRead);
+      socket.off(SOCKET_EVENTS.USER_ONLINE, handleUserOnline);
+      socket.off(SOCKET_EVENTS.USER_OFFLINE, handleUserOffline);
+      socket.off(SOCKET_EVENTS.CURRENT_ONLINE_USERS, handleCurrentOnlineUsers);
     };
   }, [dispatch, currentUserId]);
 };

@@ -45,8 +45,8 @@ export const AdminSidebar = ({
     { path: "packages", label: "Packages", icon: Briefcase },
     { path: "coupons", label: "Coupons", icon: BadgePercent },
     { path: "custom-packages", label: "Custom Packages", icon: Briefcase },
-    { path: "chat", label: "Chat", icon: MessageCircle },
-    { path: "notification", label: "Notification", icon: NotebookIcon },
+    // { path: "chat", label: "Chat", icon: MessageCircle },
+    // { path: "notification", label: "Notification", icon: NotebookIcon },
 
   ];
 

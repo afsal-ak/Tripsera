@@ -1,27 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import AdminNavbar from '@/components/admin/AdminNavbar';
 import { AdminSidebar } from '@/components/admin/AdminSideBar';
 import { useSelector } from 'react-redux';
-import type{ RootState } from '@/redux/store';
+import type { RootState } from '@/redux/store';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
-
-import { useChatSocket } from '@/hooks/useChatSocket';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '@/redux/store';
+ import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
 import { useGlobalSocket } from '@/hooks/useGlobalSocket';
+
+
 const AdminLayout = () => {
+  const dispatch = useDispatch<AppDispatch>()
   const adminId = useSelector((state: RootState) => state.adminAuth.admin?._id);
- 
+
   if (!adminId) return null;
-   useGlobalSocket(adminId!);
+  useGlobalSocket(adminId!);
 
-  //useChatRoomsSocket({ currentUserId:adminId! });
-useChatRoomsSocket({ currentUserId: adminId });
+  useChatRoomsSocket({ currentUserId: adminId });
 
-   useNotificationSocket(adminId!);
-  // useChatSocket()
-    // useChatRoomsSocket(adminId!);
-
+  useNotificationSocket(adminId!);
+  useEffect(() => {
+    dispatch(fetchUserRooms({ isAdmin: true }))
+  }, [])
   const [sidebarOpen, setSidebarOpen] = useState(false); // for mobile
   const [collapsed, setCollapsed] = useState(false); // for desktop collapse
 
@@ -40,9 +43,8 @@ useChatRoomsSocket({ currentUserId: adminId });
 
       {/* Main Content */}
       <div
-        className={`flex flex-col flex-1 transition-all duration-300 ${
-          collapsed ? 'lg:ml-20' : 'lg:ml-64'
-        }`}
+        className={`flex flex-col flex-1 transition-all duration-300 ${collapsed ? 'lg:ml-20' : 'lg:ml-64'
+          }`}
       >
         <AdminNavbar onSidebarToggle={toggleSidebar} title="Admin" />
 

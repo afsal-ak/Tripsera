@@ -82,5 +82,4 @@ const ProtectedRoutes = (
     </Route>
   </Route>
 );
-
-export default ProtectedRoutes;
+export default ProtectedRoutes

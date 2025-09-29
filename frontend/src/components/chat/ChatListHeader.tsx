@@ -1,14 +1,24 @@
 
 import { useState } from "react";
-import { X, Plus, Settings } from "lucide-react";
+import { X, Plus, Settings, FilterIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import UserSearchForChat from "@/components/chat/UserSearchForChat";
+import ChatFilter from "./ChatFilter";
 
-export const ChatListHeader: React.FC<{
+interface ChatListHeaderProps {
+  role:'user'|'admin',
+  totalUnread:number,
   onToggleSidebar?: () => void;
   showToggle?: boolean;
-}> = ({ onToggleSidebar, showToggle = false }) => {
-  const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
+}
+export const ChatListHeader = ({
+  role,
+  totalUnread,
+  onToggleSidebar,
+  showToggle = false,
+}: ChatListHeaderProps) => {
+    const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   return (
     <>
@@ -35,11 +45,13 @@ export const ChatListHeader: React.FC<{
           >
             <Plus className="w-5 h-5" />
           </button>
+          <div className="relative">
+            {/* FilterIcon Button */}
+            
+              <ChatFilter role={role} totalUnread={totalUnread} />
+ 
+          </div>
 
-          {/* Settings Button */}
-          <button className="p-2 hover:bg-blue-700 rounded-full transition-colors">
-            <Settings className="w-5 h-5" />
-          </button>
         </div>
       </div>
 
@@ -73,7 +85,7 @@ export const ChatListHeader: React.FC<{
               </button>
 
               {/* User Search Component */}
-          
+
             </motion.div>
           </motion.div>
         )}

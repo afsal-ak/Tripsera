@@ -116,15 +116,16 @@ const ChatListPage = () => {
 
   const currentUserId = useSelector((state: RootState) => state.adminAuth.admin?._id);
   const { loading, error } = useSelector((state: RootState) => state.chatRoom);
-
-  // 🔌 Hook up socket events
-  if (currentUserId) {
-    useChatRoomsSocket({ currentUserId });
+  if (!currentUserId) {
+    return
   }
+
+  useChatRoomsSocket({ currentUserId });
+
 
   useEffect(() => {
     if (currentUserId) {
-dispatch(fetchUserRooms({ isAdmin: true }));
+      dispatch(fetchUserRooms({ isAdmin: true }));
     }
   }, [dispatch, currentUserId]);
 

@@ -1,10 +1,14 @@
+
 import { Button } from "@/components/Button";
-import { Menu, LogOut } from "lucide-react";
+import { Menu, LogOut, Bell, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { handleAdminLogout } from "@/services/admin/adminService";
 import { logoutAdmin } from "@/redux/slices/adminAuthSlice";
+import { useState } from "react";
+import type { AppDispatch, RootState } from "@/redux/store";
+import { useTotalUnreadCount } from "@/hooks/useTotalUnreadCount";
 
 interface AdminNavbarProps {
   onSidebarToggle: () => void;
@@ -12,8 +16,19 @@ interface AdminNavbarProps {
 }
 
 const AdminNavbar = ({ onSidebarToggle, title }: AdminNavbarProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const adminId = useSelector(
+    (state: RootState) => state.adminAuth.admin?._id
+  );
+
+  // 🔔 chat unread count (global hook)
+  const totalUnread = useTotalUnreadCount(adminId!);
+
+  // 🔔 notifications unread (later from redux, right now hardcoded for demo)
+  const notificationUnread = 5;
 
   const handleLogout = async () => {
     try {
@@ -32,7 +47,6 @@ const AdminNavbar = ({ onSidebarToggle, title }: AdminNavbarProps) => {
       <div className="px-4 h-16 flex items-center justify-between">
         {/* Left Side - Toggle + Title */}
         <div className="flex items-center gap-3">
-          {/* Sidebar toggle (visible on mobile only) */}
           <Button
             variant="ghost"
             size="icon"
@@ -46,17 +60,51 @@ const AdminNavbar = ({ onSidebarToggle, title }: AdminNavbarProps) => {
           </h1>
         </div>
 
-        {/* Right Side - Info + Logout */}
-        <div className="flex items-center gap-3">
+        {/* Right Side - Notifications, Chat & Logout */}
+        <div className="flex items-center gap-3 relative">
           <span className="hidden sm:block text-sm text-gray-500">
             Welcome, <span className="font-medium text-gray-700">Admin</span>
           </span>
+
+          {/* 🔔 Notifications */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative rounded-full hover:bg-gray-100"
+              onClick={() => navigate("/admin/notification")}
+            >
+              <Bell className="h-5 w-5 text-gray-600" />
+              {notificationUnread > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {notificationUnread}
+                </span>
+              )}
+            </Button>
+          </div>
+
+          {/* 💬 Chat */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative rounded-full hover:bg-gray-100"
+              onClick={() => navigate("/admin/chat")}
+            >
+              <MessageCircle className="h-5 w-5 text-gray-600" />
+              {totalUnread > 0 && (
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {totalUnread}
+                </span>
+              )}
+            </Button>
+          </div>
 
           {/* Full button on sm+ screens */}
           <Button
             variant="outline"
             onClick={handleLogout}
-            className="hidden sm:flex border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-orange rounded-lg px-4 py-2 text-sm font-medium transition"
+            className="hidden sm:flex border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white rounded-lg px-4 py-2 text-sm font-medium transition"
           >
             Logout
           </Button>
