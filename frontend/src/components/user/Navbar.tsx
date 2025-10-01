@@ -232,6 +232,7 @@ import { logoutUser } from '@/redux/slices/userAuthSlice';
 import type { AppDispatch, RootState } from '@/redux/store';
 import { toast } from 'sonner';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
+import { fetchNotifications } from '@/redux/slices/notificationSlice';
  const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -239,7 +240,12 @@ import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
     (state: RootState) => state.userAuth
   );
 
-const totalUnread =useTotalUnreadCount(user?._id!)
+  dispatch(fetchNotifications({isAdmin:false}))
+
+ const notificationUnread = useSelector(
+    (state: RootState) => state.notifications.unreadCount
+  )
+const totalChatUnread =useTotalUnreadCount(user?._id!)
 
 useEffect(() => {
     if (!accessToken) {
@@ -279,12 +285,12 @@ useEffect(() => {
               <Link to="/chatbot" className="text-foreground hover:text-orange transition-colors">
                 Chat Bot
               </Link>
-              <Link to="/about" className="text-foreground hover:text-orange transition-colors">
+              {/* <Link to="/about" className="text-foreground hover:text-orange transition-colors">
                 About Us
               </Link>
               <Link to="/contact" className="text-foreground hover:text-orange transition-colors">
                 Contact
-              </Link>
+              </Link> */}
             </nav>
           </div>
 
@@ -293,9 +299,9 @@ useEffect(() => {
             {/* Chat Icon with Unread Badge */}
             <Link to="/chat" className="relative">
               <MessageCircle className="w-6 h-6 text-foreground hover:text-orange" />
-              {totalUnread > 0 && (
+              {totalChatUnread > 0 && (
                 <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                  {totalUnread}
+                  {totalChatUnread}
                 </span>
               )}
             </Link>
@@ -303,6 +309,11 @@ useEffect(() => {
             {/* Notification Bell */}
             <Link to="/notification" className="relative">
               <Bell className="w-6 h-6 text-foreground hover:text-orange" />
+               {notificationUnread > 0 && (
+                <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                  {notificationUnread}
+                </span>
+              )}
             </Link>
 
             {isAuthenticated ? (
@@ -402,14 +413,15 @@ useEffect(() => {
               className="block text-foreground hover:text-orange"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Chat {totalUnread > 0 && `(${totalUnread})`}
+              Chat {totalChatUnread > 0 && `(${totalChatUnread})`}
             </Link>
             <Link
               to="/notification"
               className="block text-foreground hover:text-orange"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Notification
+              Notification {notificationUnread > 0 && `(${notificationUnread})`}
+
             </Link>
             <Link
               to="/about"

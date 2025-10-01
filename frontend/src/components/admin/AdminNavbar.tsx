@@ -9,7 +9,8 @@ import { logoutAdmin } from "@/redux/slices/adminAuthSlice";
 import { useState } from "react";
 import type { AppDispatch, RootState } from "@/redux/store";
 import { useTotalUnreadCount } from "@/hooks/useTotalUnreadCount";
-
+import { useNotificationSocket } from "@/hooks/useNotificationSocket";
+import { fetchNotifications } from "@/redux/slices/notificationSlice";
 interface AdminNavbarProps {
   onSidebarToggle: () => void;
   title: string;
@@ -18,17 +19,16 @@ interface AdminNavbarProps {
 const AdminNavbar = ({ onSidebarToggle, title }: AdminNavbarProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [showNotifications, setShowNotifications] = useState(false);
 
   const adminId = useSelector(
     (state: RootState) => state.adminAuth.admin?._id
   );
-
-  // 🔔 chat unread count (global hook)
-  const totalUnread = useTotalUnreadCount(adminId!);
-
-  // 🔔 notifications unread (later from redux, right now hardcoded for demo)
-  const notificationUnread = 5;
+  dispatch(fetchNotifications({isAdmin:true}))
+ const notificationUnread = useSelector(
+    (state: RootState) => state.notifications.unreadCount
+  )
+   const totalUnread = useTotalUnreadCount(adminId!);
+console.log(notificationUnread,'notifica')
 
   const handleLogout = async () => {
     try {

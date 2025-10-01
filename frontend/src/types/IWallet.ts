@@ -6,6 +6,7 @@ export interface IWalletTransaction {
 }
 
 export interface IWallet {
+   _id:string;
   balance: number;
   transactions?: IWalletTransaction[];
   createdAt: Date;

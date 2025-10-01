@@ -6,7 +6,7 @@ export const fetchAdminNotification = async (params?: { page?: number; limit?: n
 };
 
 
-export const markNotificationAsRead = async (id:string) => {
+export const adminMarkNotificationAsRead = async (id:string) => {
   const response = await api.patch(`/admin/mark-read/${id}`);
   return response.data;
 };

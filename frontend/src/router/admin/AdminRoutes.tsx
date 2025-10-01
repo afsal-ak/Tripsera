@@ -34,7 +34,7 @@ import CustomPackagePage from '@/pages/admin/cutomPackage/CustomPackagePage';
 import CustomPackageDetails from '@/pages/admin/cutomPackage/CustomPackageDetailsPage';
 import MessageMainPage from '@/pages/admin/chat/MessageMainPage';
 import ChatAdminLayout from '@/layouts/ChatAdminLayout';
-import NotificationPage from '@/pages/admin/Notifications';
+import NotificationPage from '@/pages/admin/notification/Notifications';
 const AdminRoutes = () => {
   return (
     <Routes>

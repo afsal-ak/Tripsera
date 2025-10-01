@@ -12,7 +12,7 @@ export const fetchUserNotification = async (params?: { page?: number; limit?: nu
 };
 
 
-export const markNotificationAsRead = async (id:string) => {
+export const userMarkNotificationAsRead = async (id:string) => {
   const response = await api.patch(`/user/mark-read/${id}`);
   return response.data;
 };
