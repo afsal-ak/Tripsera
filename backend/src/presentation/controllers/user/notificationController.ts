@@ -1,69 +1,51 @@
 import { NextFunction, Request, Response } from "express";
 import { INotificationUseCases } from "@application/useCaseInterfaces/notification/INotificationUseCases";
-import { CreateNotificationDto ,mapToNotificationDTO} from "@application/dtos/NotificationDTO";
+import { mapToNotificationDTO } from "@application/dtos/NotificationDTO";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-import { IFilter } from "@domain/entities/IFilter";
+import { IEntityType, INotificationFilter, IType } from "@domain/entities/INotification";
 export class NotificationController {
     constructor(private _notificationUseCases: INotificationUseCases) { }
 
-    // getNotifications = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    //     try {
-    //         const userId = getUserIdFromRequest(req) // assuming auth middleware
-    //         const page = parseInt(req.query.page as string) || 1;
-    //         const limit = parseInt(req.query.limit as string) || 10;
 
-    //         const result = await this._notificationUseCases.getNotifications(
-    //             userId,
-    //             page,
-    //             limit,
-    //             {}
-    //         );
+    getNotifications = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const userId = getUserIdFromRequest(req)
 
-    //         res.status(HttpStatus.OK).json({result,message:'succes'});
-    //     } catch (error) {
-    //         next(error)
-    //     }
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
 
-    // }
-
-     getNotifications = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-            try {
-                 const userId = getUserIdFromRequest(req)
-
-                const page = parseInt(req.query.page as string) || 1;
-                const limit = parseInt(req.query.limit as string) || 10;
-    
-                const filters: IFilter = {
-                    status: (req.query.status as string) || "",
-                };
-                console.log(filters, 'filters in notification')
-                console.log(filters)
-                const { notification, pagination } = await this._notificationUseCases.getNotifications(
-                    userId,
-                    page,
-                    limit,
-                    filters
-                );
-                const data = notification.map(mapToNotificationDTO)
-    
-                res.status(HttpStatus.OK).json({
-                    data,
-                    pagination,
-                     message: 'succes'
-                });
-            } catch (error) {
-                next(error)
-            }
-    
+            const filters: INotificationFilter = {
+                status: (req.query.status as string) || "",
+                
+            };
+            console.log(filters, 'filters in notification')
+            console.log(filters)
+            const { notification, pagination } = await this._notificationUseCases.getNotifications(
+                userId,
+                page,
+                limit,
+                filters
+            );
+            const data = notification.map(mapToNotificationDTO)
+            console.log(data, 'notification')
+            res.status(HttpStatus.OK).json({
+                data,
+                pagination,
+                message: 'succes'
+            });
+        } catch (error) {
+            next(error)
         }
+
+    }
 
     markAsRead = async (req: Request, res: Response, next: NextFunction) => {
         try {
-              const { id } = req.params;
-           // const { notificationId } = req.body;
+            const { id } = req.params;
+            // const { notificationId } = req.body;
             const updated = await this._notificationUseCases.markAsRead(id);
-            res.status(HttpStatus.OK).json({updated,message:'updated'});
+            res.status(HttpStatus.OK).json({ updated, message: 'updated' });
         } catch (error) {
             next(error)
         }

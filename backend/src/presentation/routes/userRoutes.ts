@@ -150,7 +150,7 @@ const profileController = new ProfileController(profileUseCases);
 
 const bookingRepository = new BookingRepository();
 const razorpayService = new RazorpayService();
-const bookingUseCases = new BookingUseCases(bookingRepository, walletRepository, razorpayService,notificationUseCases);
+const bookingUseCases = new BookingUseCases(bookingRepository, walletRepository,userRepository,packageRepository,razorpayService,notificationUseCases);
 const bookingController = new BookingController(bookingUseCases);
 
 const blogRepository = new BlogRepository();
@@ -162,11 +162,11 @@ const reviewUseCases = new ReviewUseCases(reviewRepository, bookingRepository,us
 const reviewController = new ReviewController(reviewUseCases);
 
 const reportRepository = new ReportRepository();
-const reportUseCases = new ReportUseCases(reportRepository,notificationUseCases);
+const reportUseCases = new ReportUseCases(reportRepository,userRepository,reviewRepository,blogRepository,notificationUseCases);
 const reportController = new ReportController(reportUseCases);
 
 const customPkgRepository = new CustomPackageRepository();
-const customPkgUseCases = new CustomPackageUseCases(customPkgRepository);
+const customPkgUseCases = new CustomPackageUseCases(customPkgRepository,userRepository,notificationUseCases);
 const customPkgController = new CustomPackageController(customPkgUseCases);
 
 const blockRepository = new BlockRepository();

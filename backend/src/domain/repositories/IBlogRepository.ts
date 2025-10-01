@@ -3,7 +3,8 @@ import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
 import { IUser } from '@domain/entities/IUser';
-export interface IBlogRepository {
+import { IBaseRepository } from './IBaseRepository';
+export interface IBlogRepository extends IBaseRepository<IBlog>{
   createBlog(userId: string, blogData: IBlog): Promise<IBlog>;
   editBlog(
     id: string,

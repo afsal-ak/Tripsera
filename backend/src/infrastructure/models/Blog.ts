@@ -2,9 +2,8 @@ import mongoose, { Schema, model, Document } from 'mongoose';
 import { IBlog } from '@domain/entities/IBlog';
 import slugify from 'slugify';
 
-interface BlogDocument extends Omit<IBlog, '_id'>, Document {
-  _id: mongoose.Types.ObjectId;
-}
+
+type BlogDocument=IBlog&Document
 
 const BlogSchema = new Schema<BlogDocument>(
   {

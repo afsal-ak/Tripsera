@@ -1,107 +1,60 @@
 import { NotificationModel } from "@infrastructure/models/Notification";
 import { INotificationRepository } from "@domain/repositories/INotificationRepository";
-import { INotification } from "@domain/entities/INotification";
+import { INotification ,INotificationFilter} from "@domain/entities/INotification";
 import { CreateNotificationDto } from "@application/dtos/NotificationDTO";
-import { IFilter } from "@domain/entities/IFilter";
-import { PaginationInfo } from "@application/dtos/PaginationDto";
+ import { PaginationInfo } from "@application/dtos/PaginationDto";
 
 export class NotificationRepository implements INotificationRepository {
 
-    async create(notification: CreateNotificationDto): Promise<INotification> {
-        const create = await NotificationModel.create(notification)
-         // Populate userId, packageId, bookingId if they exist in schema
-  const populated = await NotificationModel.findById(create._id)
-    .populate("userId", "username email")        
-    .populate("packageId", "title price")   
-    .populate("bookingId", "title totalAmount") 
-    .lean();  
+  async create(notification: CreateNotificationDto): Promise<INotification> {
+    const create = await NotificationModel.create(notification)
+    // Populate userId, packageId, bookingId if they exist in schema
+    const populated = await NotificationModel.findById(create._id)
+      .populate("userId", "username email")
+      .populate("packageId", "title price")
+      .populate("bookingId", "title totalAmount")
+      .lean();
 
-  return populated as INotification;
-       // return create.toObject()
+    return populated as INotification;
 
-    }
+  }
 
-//     async findByUserId(
-//         userId: string,
-//         page: number,
-//         limit: number,
-//         filters?: IFilter
-//     ): Promise<{ notification: INotification[], pagination: PaginationInfo }> {
-//         const skip = (page - 1) * limit;
-//         const query: any = {};
-
-//         if (filters?.status == 'read') {
-//             query.isRead = true
-//         } else if(filters?.status=='unRead') {
-//             query.isRead = false
-//         }
-
-//         const [notification, total] = await Promise.all([
-//             NotificationModel.find({ userId, ...query })
-//                 .skip(skip)
-//                 .limit(limit)
-//                 .sort({ createdAt: -1 })
-//                 .lean(),
-//             NotificationModel.countDocuments({ userId,...query })
-//         ])
-
-//         const pagination: PaginationInfo = {
-//             totalItems: total,
-//             currentPage: page,
-//             pageSize: limit,
-//             totalPages: Math.ceil(total / limit),
-//         };
-
-//         return { notification, pagination };
-//     }
-
-//  async findAdminNotifications(
-//   page: number,
-//   limit: number,
-//   filters?: IFilter
-// ): Promise<{ notification: INotification[]; pagination: PaginationInfo }> {
-//   const skip = (page - 1) * limit;
-
-//   const query: any = { role: "admin" }; 
-//   if (filters?.status === "read") query.isRead = true;
-//   if (filters?.status === "unRead") query.isRead = false;
-
-//   const [notifications, total] = await Promise.all([
-//     NotificationModel.find(query)
-//       .skip(skip)
-//       .limit(limit)
-//       .sort({ createdAt: -1 })
-//       .lean(),
-//     NotificationModel.countDocuments(query),
-//   ]);
-
-//   const pagination: PaginationInfo = {
-//     totalItems: total,
-//     currentPage: page,
-//     pageSize: limit,
-//     totalPages: Math.ceil(total / limit),
-//   };
-
-//   return { notification: notifications, pagination };
-// }
 async findByUserId(
   userId: string,
   page: number,
   limit: number,
-  filters?: IFilter
+  filters?: INotificationFilter
 ): Promise<{ notification: INotification[]; pagination: PaginationInfo }> {
   const skip = (page - 1) * limit;
   const query: any = { userId };
 
+  // --- Status filter
   if (filters?.status === "read") query.isRead = true;
   else if (filters?.status === "unRead") query.isRead = false;
+
+  // --- Type filter
+  if (filters?.type) {
+    query.type = filters.type;
+  }
+
+  // --- EntityType filter
+  if (filters?.entityType) {
+    query.entityType = filters.entityType;
+  }
+
+  // // --- Date range filter (optional, if you add from/to in DTO)
+  // if (filters?.from || filters?.to) {
+  //   query.createdAt = {};
+  //   if (filters.from) query.createdAt.$gte = new Date(filters.from);
+  //   if (filters.to) query.createdAt.$lte = new Date(filters.to);
+  // }
 
   const [notifications, total] = await Promise.all([
     NotificationModel.find(query)
       .populate("userId", "username email")
       .populate("packageId", "title price")
       .populate("bookingId", "totalAmount status")
-      // optionally populate more refs if you add them
+      .populate("triggeredBy", "username")
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
@@ -122,13 +75,31 @@ async findByUserId(
 async findAdminNotifications(
   page: number,
   limit: number,
-  filters?: IFilter
+  filters?: INotificationFilter
 ): Promise<{ notification: INotification[]; pagination: PaginationInfo }> {
   const skip = (page - 1) * limit;
   const query: any = { role: "admin" };
 
+  // --- Status filter
   if (filters?.status === "read") query.isRead = true;
   else if (filters?.status === "unRead") query.isRead = false;
+
+  // --- Type filter
+  if (filters?.type) {
+    query.type = filters.type;
+  }
+
+  // --- EntityType filter
+  if (filters?.entityType) {
+    query.entityType = filters.entityType;
+  }
+
+  // --- Date range filter
+  // if (filters?.from || filters?.to) {
+  //   query.createdAt = {};
+  //   if (filters.from) query.createdAt.$gte = new Date(filters.from);
+  //   if (filters.to) query.createdAt.$lte = new Date(filters.to);
+  // }
 
   const [notifications, total] = await Promise.all([
     NotificationModel.find(query)
@@ -152,20 +123,19 @@ async findAdminNotifications(
   return { notification: notifications, pagination };
 }
 
+  async delete(notificationId: string): Promise<boolean> {
+    const result = await NotificationModel.findByIdAndDelete(notificationId)
+    return !!result
+  }
 
-    async delete(notificationId: string): Promise<boolean> {
-        const result= await NotificationModel.findByIdAndDelete(notificationId)
-        return !!result
-    }
-
-    async markAsRead(notificationId: string): Promise<INotification | null> {
-        return await NotificationModel.findByIdAndUpdate(notificationId,{isRead:true},{ new: true, lean: true })
-    }
-      async markAllAsRead(userId: string): Promise<number> {
+  async markAsRead(notificationId: string): Promise<INotification | null> {
+    return await NotificationModel.findByIdAndUpdate(notificationId, { isRead: true }, { new: true, lean: true })
+  }
+  async markAllAsRead(userId: string): Promise<number> {
     const result = await NotificationModel.updateMany(
       { userId, isRead: false },
       { isRead: true }
     );
-    return result.modifiedCount; 
+    return result.modifiedCount;
   }
 }

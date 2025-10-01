@@ -2,11 +2,11 @@
 import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
 import { IChatRoom } from "@domain/entities/IChatRoom";
 import { ChatRoomModel } from "@infrastructure/models/ChatRoom";
-import { CreateChatRoomDTO, UpdateChatRoomDTO,IChatRoomFilter } from "@application/dtos/ChatDTO";
+import { CreateChatRoomDTO, UpdateChatRoomDTO, IChatRoomFilter } from "@application/dtos/ChatDTO";
 import { BaseRepository } from "./BaseRepository";
 
 export class ChatRoomRepository extends BaseRepository<IChatRoom> implements IChatRoomRepository {
-  constructor(){
+  constructor() {
     super(ChatRoomModel)
   }
   async createChatRoom(data: CreateChatRoomDTO): Promise<IChatRoom> {
@@ -39,79 +39,51 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
   }
 
 
-async getUserChatRooms(
-  userId: string,
-  filters: IChatRoomFilter = {}
-): Promise<IChatRoom[]> {
-  const { filter = "all", sort = "desc", sortBy = "updatedAt" } = filters;
+  async getUserChatRooms(
+    userId: string,
+    filters: IChatRoomFilter = {}
+  ): Promise<IChatRoom[]> {
+    const { filter = "all", sort = "desc", sortBy = "updatedAt" } = filters;
 
-   let query: any = { participants: userId };
+    let query: any = { participants: userId };
 
-   if (filter === "unread") {
-    query[`unreadCounts.${userId}`] = { $gt: 0 };
-  } else if (filter === "read") {
-    query[`unreadCounts.${userId}`] = { $eq: 0 };
-  }
-
-  // Sorting
-  const sortOrder = sort === "asc" ? 1 : -1;
-
-  const chatRooms = await ChatRoomModel.find(query)
-    .populate("participants", "_id username profileImage")
-    .sort({ [sortBy]: sortOrder })
-    .lean();
-
-  // Format response
-  const formattedRooms = chatRooms.map((room) => {
-    if (room.isGroup) {
-      return {
-        ...room,
-        participants: room.participants,
-      };
+    if (filter === "unread") {
+      query[`unreadCounts.${userId}`] = { $gt: 0 };
+    } else if (filter === "read") {
+      query[`unreadCounts.${userId}`] = { $eq: 0 };
     }
 
-    const otherUser = (room.participants as any[]).find(
-      (p) => p._id.toString() !== userId
-    );
+    // Sorting
+    const sortOrder = sort === "asc" ? 1 : -1;
 
-    return {
-      ...room,
-      participants: [otherUser],
-    };
-  });
+    const chatRooms = await ChatRoomModel.find(query)
+      .populate("participants", "_id username profileImage")
+      .sort({ [sortBy]: sortOrder })
+      .lean();
 
-  return formattedRooms;
-}
+    // Format response
+    const formattedRooms = chatRooms.map((room) => {
+      if (room.isGroup) {
+        return {
+          ...room,
+          participants: room.participants,
+        };
+      }
+
+      const otherUser = (room.participants as any[]).find(
+        (p) => p._id.toString() !== userId
+      );
+
+      return {
+        ...room,
+        participants: [otherUser],
+      };
+    });
+
+    return formattedRooms;
+  }
 
 
-  // async getUserChatRooms(userId: string): Promise<IChatRoom[]> {
-  //   const chatRooms = await ChatRoomModel.find({ participants: userId })
-  //     .populate("participants", "_id username profileImage")
-  //     .sort({ updatedAt: -1 })
-  //     .lean();
-
-  //   const formattedRooms = chatRooms.map((room) => {
-  //     // If it's a group chat → keep all participants
-  //     if (room.isGroup) {
-  //       return {
-  //         ...room,
-  //         participants: room.participants,
-  //       };
-  //     }
-
-  //     // For one-to-one chats → return only the other user
-  //     const otherUser = (room.participants as any[]).find(
-  //       (p) => p._id.toString() !== userId
-  //     );
-
-  //     return {
-  //       ...room,
-  //       participants: [otherUser], // Always keep participants as an array
-  //     };
-  //   });
-
-  //   return formattedRooms;
-  // }
   async findRoomByParticipants(participants: string[], isGroup: boolean): Promise<IChatRoom | null> {
     if (isGroup) {
       // For group chat, match exact participants count and ids

@@ -15,7 +15,9 @@ export interface CreateNotificationDto {
   // optional metadata
   bookingId?: string;
   packageId?: string;
+  customPackageId?: string;
   reportedId?:string;
+  walletId?:string;
   triggeredBy?: string;
 }
 
@@ -36,7 +38,10 @@ export interface NotificationResponseDto {
 
   bookingId?: string;
   packageId?: string;
-    reportedId?:string;
+    customPackageId?: string;
+
+  reportedId?:string;
+  walletId?:string;
 
   metadata?: Record<string, any>;
 
@@ -45,34 +50,31 @@ export interface NotificationResponseDto {
   createdAt: string;
   updatedAt?: string;
 }
+
 export const mapToNotificationDTO = (
   notification: INotification
-): NotificationResponseDto => {
-  return {
-    _id: notification._id!.toString(),
-    userId: notification.userId?.toString(),
-    title: notification.title,
-    message: notification.message,
-    type: notification.type,
-      entityType:notification.entityType,
-
-    isRead: notification.isRead,
-
-    // pass metadata as-is (you can stringify ObjectIds inside if needed)
-    metadata: notification.metadata
-      ? Object.fromEntries(
+): NotificationResponseDto => ({
+  _id: notification._id!.toString(),
+  userId: notification.userId?.toString(),
+  title: notification.title,
+  message: notification.message,
+  type: notification.type,
+  entityType: notification.entityType,
+  isRead: notification.isRead,
+  bookingId: notification.bookingId as any,
+  packageId: notification.packageId as any,
+  reportedId: notification.reportedId as any,
+  customPackageId: notification.customPackageId as any,
+  walletId: notification.walletId as any,
+  triggeredBy: notification.triggeredBy as any,
+  metadata: notification.metadata
+    ? Object.fromEntries(
         Object.entries(notification.metadata).map(([key, value]) => [
           key,
           typeof value === "object" && value?.toString ? value.toString() : value,
         ])
       )
-      : undefined,
-    // metadata (convert ObjectIds to string if present)
-    bookingId: notification.bookingId?.toString(),
-  reportedId: notification.reportedId?.toString(),
-    triggeredBy: notification.triggeredBy?.toString(),
-
-    createdAt: notification.createdAt.toISOString(),
-    updatedAt: notification.updatedAt?.toISOString(),
-  };
-};
+    : undefined,
+  createdAt: notification.createdAt.toISOString(),
+  updatedAt: notification.updatedAt?.toISOString(),
+});

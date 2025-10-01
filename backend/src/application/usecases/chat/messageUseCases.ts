@@ -12,17 +12,7 @@ export class MessageUseCases implements IMessageUseCases {
         private readonly _chatRoomRepo: IChatRoomRepository
     ) { }
 
-    // async sendMessage(data: SendMessageDTO): Promise<IMessage> {
-    //     let chatRoom = await this._chatRoomRepo.findOneByParticipants(data.senderId, data.receiverId!)
-    //     if (!chatRoom) {
-    //         chatRoom = await this._chatRoomRepo.createChatRoom({
-    //             participants: [data.senderId, data.receiverId!],
-    //             isGroup: false,
-    //             createdBy:data.senderId
-    //         });
-    //     }
-    //     return await this._messageRepo.sendMessage(data)
-    // }
+ 
 
     async sendMessage(data: SendMessageDTO): Promise<IMessage> {
 
@@ -32,14 +22,11 @@ export class MessageUseCases implements IMessageUseCases {
         if (!room) {
             throw new AppError(HttpStatus.NOT_FOUND, 'Room not found')
         }
-        // Update last message in the chat room
-        // await this._chatRoomRepo.updateChatRoom(message.roomId.toString(), {
-        //     lastMessageContent:data.content,
-        // });
+       
         const recipientId = room.participants.filter((id) => id.toString() !== data.senderId);
         // console.log(room.participants,'part');
-        console.log(data.senderId, 'sender')
-        console.log(recipientId, 'id of recipet')
+    //    console.log(data.senderId, 'sender')
+     //   console.log(recipientId, 'id of recipet')
         const updatedRoom = await this._chatRoomRepo.updateChatRoom(message.roomId.toString(), {
             lastMessageContent: data.content,
             unreadCounts: {

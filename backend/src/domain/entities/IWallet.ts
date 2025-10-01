@@ -8,6 +8,7 @@ export interface IWalletTransaction {
 }
 
 export interface IWallet {
+  _id:string|Types.ObjectId ,
   userId: Types.ObjectId | string;
   balance: number;
   transactions: IWalletTransaction[];

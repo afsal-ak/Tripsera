@@ -139,7 +139,7 @@ const couponController = new CouponController(couponUseCase);
 const walletRepository=new WalletRepository()
 
 const bookingRepository = new BookingRepository();
-const bookingUseCase = new BookingUseCases(bookingRepository,walletRepository);
+const bookingUseCase = new BookingUseCases(bookingRepository,walletRepository,notificationUseCases);
 const bookingController = new BookingController(bookingUseCase);
 
 const blogRepository = new BlogRepository();

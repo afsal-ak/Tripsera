@@ -1,9 +1,13 @@
 import { Schema, model, Document } from 'mongoose';
 import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
 
-export interface IWalletDocument extends IWallet, Document {}
+  type IWalletDocument =IWallet& Document  
+  type IWalletTransactionDocument =IWalletTransaction& Document  
+//type ReviewDocument = IReview & Document;
 
-const WalletTransactionSchema = new Schema<IWalletTransaction>(
+//const ReviewSchema = new Schema<ReviewDocument>(
+
+const WalletTransactionSchema = new Schema<IWalletTransactionDocument>(
   {
     type: {
       type: String,

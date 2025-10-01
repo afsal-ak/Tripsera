@@ -9,7 +9,12 @@ import { FilterQuery } from 'mongoose';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { IUser } from '@domain/entities/IUser';
 import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
-export class BlogRepository implements IBlogRepository {
+import { BaseRepository } from './BaseRepository';
+
+export class BlogRepository  extends BaseRepository<IBlog> implements IBlogRepository {
+  constructor(){
+    super(BlogModel)
+  }
   async createBlog(userId: string, blogData: IBlog): Promise<IBlog> {
     const { author, ...restData } = blogData;
 

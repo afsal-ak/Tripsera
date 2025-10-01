@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { INotificationUseCases } from "@application/useCaseInterfaces/notification/INotificationUseCases";
-import { CreateNotificationDto } from "@application/dtos/NotificationDTO";
-import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { IFilter } from "@domain/entities/IFilter";
 import { mapToNotificationDTO } from "@application/dtos/NotificationDTO";
@@ -23,11 +21,13 @@ export class NotificationController {
                 limit,
                 filters
             );
-            const data = notification.map(mapToNotificationDTO)
+            console.log(notification,'notidifcaario control')
 
+            const data = notification.map(mapToNotificationDTO)
             res.status(HttpStatus.OK).json({
                 data,
-                pagination, message: 'succes'
+                pagination,
+                 message: 'succes'
             });
         } catch (error) {
             next(error)

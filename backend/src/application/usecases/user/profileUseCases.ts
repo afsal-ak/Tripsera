@@ -1,7 +1,6 @@
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IUser } from '@domain/entities/IUser';
-import { UserRepository } from '@infrastructure/repositories/UserRepository';
-import { AppError } from '@shared/utils/AppError';
+ import { AppError } from '@shared/utils/AppError';
 import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
@@ -54,14 +53,14 @@ export class ProfileUseCases implements IProfileUseCases {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot follow yourself');
     }
 
-    await this._userRepo.addFollowerAndFollowing(followerId, followingId);
+     this._userRepo.addFollowerAndFollowing(followerId, followingId);
+     const user=await this._userRepo.findById(followerId)
     const notification = await this._notificationUseCases.sendNotification({
       userId: followingId,
       role: 'user',
       title: "New Follower",
       entityType: 'follow',
-
-      //message: `User ${userId} booked package ${packageId}`,
+      message: `  ${user?.username} started following you`,
       type: "success",
       triggeredBy: followerId,
 

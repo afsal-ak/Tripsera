@@ -7,14 +7,17 @@ import { RazorpayService } from '@infrastructure/services/razorpay/razorpayServi
 import { AppError } from '@shared/utils/AppError';
 import { generateBookingCode } from '@shared/utils/generateBookingCode';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
-import { NotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
-// import { NotificationUseCases } from './notificationUseCases';
 import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
-import { INotification } from '@domain/entities/INotification';
+import { IPackageRepository } from '@domain/repositories/IPackageRepository';
+import { IUserRepository } from '@domain/repositories/IUserRepository';
+
+
 export class BookingUseCases implements IBookingUseCases {
   constructor(
     private _bookingRepo: IBookingRepository,
     private _walletRepo: IWalletRepository,
+    private _userRepo: IUserRepository,
+    private _packageRepo: IPackageRepository,
     private _razorpayService: RazorpayService,
     private _notificationUseCases: INotificationUseCases,
   ) { }
@@ -31,26 +34,70 @@ export class BookingUseCases implements IBookingUseCases {
     return await this._bookingRepo.getBookingById(userId, bookingId);
   }
 
+ 
+
   async cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null> {
-    const booking = await this._bookingRepo.getBookingById(userId, bookingId);
+    const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
-      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
+      throw new AppError(HttpStatus.NOT_FOUND, "Booking not found");
     }
 
-    if (booking.bookingStatus === 'cancelled') {
-      throw new AppError(HttpStatus.BAD_REQUEST, 'Booking already cancelled');
+    if (booking.bookingStatus === "cancelled") {
+      throw new AppError(HttpStatus.BAD_REQUEST, "This booking is already cancelled");
     }
 
-    if (booking.paymentStatus === 'paid' && booking.amountPaid > 0) {
-      await this._walletRepo.creditWallet(
+    //  Refund if already paid
+    if (booking.paymentStatus === "paid" && booking.amountPaid > 0) {
+      const wallet = await this._walletRepo.creditWallet(
         userId,
         booking.amountPaid,
         `Refund for cancelled booking ${booking.bookingCode}`
       );
+
+      if (!wallet) {
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to refund wallet");
+      }
+
+      const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
+
+      await this._notificationUseCases.sendNotification({
+        role: "user",
+        userId: booking.userId.toString(),
+        title: "Booking Refund",
+        entityType: "wallet",
+        walletId: wallet._id!.toString(),
+        message: walletMessage,
+        type: "success",
+      });
     }
 
-    return await this._bookingRepo.cancelBooking(userId, bookingId, reason);
+    // Get user + package details for admin notification
+    const user = await this._userRepo.findById(userId);
+    if (!user) {
+      throw new AppError(HttpStatus.NOT_FOUND, "User not found");
+    }
 
+    const pkg = await this._packageRepo.findById(booking.packageId.toString());
+    if (!pkg) {
+      throw new AppError(HttpStatus.NOT_FOUND, "Package not found for this booking");
+    }
+
+    //  Notify Admins about cancellation
+    const bookingMessage = `User ${user.username} cancelled booking for "${pkg.title}" (Reason: ${reason})`;
+
+    await this._notificationUseCases.sendNotification({
+      role: "admin",
+      title: "Booking Cancelled",
+      entityType: "booking",
+      bookingId: booking._id!.toString(),
+      packageId: booking.packageId.toString(),
+      message: bookingMessage,
+      type: "warning",
+      triggeredBy: userId,
+      metadata: { bookingId: booking._id, reason },
+    });
+
+    return await this._bookingRepo.cancelBooking(userId, bookingId, reason);
   }
 
   async createBookingWithOnlinePayment(
@@ -115,18 +162,7 @@ export class BookingUseCases implements IBookingUseCases {
     });
 
 
-    const notification = await this._notificationUseCases.sendNotification({
 
-      role: 'admin',
-      title: "New Booking",
-      entityType: 'booking',
-      bookingId: booking?._id?.toString(),
-      packageId: booking?.packageId.toString(),
-      //message: `User ${userId} booked package ${packageId}`,
-      type: "success",
-      triggeredBy: userId,
-      metadata: { bookingId: booking._id }, // optional for deep linking
-    });
     return {
       booking,
       razorpayOrder,
@@ -166,7 +202,30 @@ export class BookingUseCases implements IBookingUseCases {
       paymentId,
       signature,
     };
+    const userId=booking.userId.toString()
+    const user = await this._userRepo.findById(userId);
+    if (!user) {
+      throw new AppError(HttpStatus.NOT_FOUND, "User not found");
+    }
 
+    const pkg = await this._packageRepo.findById(booking.packageId.toString());
+    if (!pkg) {
+      throw new AppError(HttpStatus.NOT_FOUND, "Package not found for this booking");
+    }
+        let  message= `User ${user.username} initiated a booking for package ${pkg.title}.`
+
+    const notification = await this._notificationUseCases.sendNotification({
+
+      role: 'admin',
+      title: "New Booking",
+      entityType: 'booking',
+      bookingId: booking?._id?.toString(),
+      packageId: booking?.packageId.toString(),
+      message,
+      type: "success",
+      triggeredBy: userId,
+      metadata: { bookingId: booking._id },
+    });
     await this._bookingRepo.updateBooking(booking._id!.toString(), booking);
 
 
@@ -176,10 +235,10 @@ export class BookingUseCases implements IBookingUseCases {
   async cancelUnpaidBooking(userId: string, bookingId: string): Promise<void> {
     const booking = await this._bookingRepo.getBookingById(userId, bookingId);
     if (!booking) {
-      throw new AppError(404, 'Booking not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
     if (booking.paymentStatus === 'paid') {
-      throw new AppError(400, 'Cannot cancel a paid booking');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot cancel a paid booking');
     }
 
     booking.bookingStatus = 'pending';
@@ -289,19 +348,21 @@ export class BookingUseCases implements IBookingUseCases {
     };
 
     const booking = await this._bookingRepo.createBooking(userId, bookingData);
+    const user = await this._userRepo.findById(userId)
+    const pkg = await this._packageRepo.findById(booking.packageId.toString())
 
+    const message = `User ${user?.username} booked package ${pkg?.title})`;
     //  Save notification in DB
     const notification = await this._notificationUseCases.sendNotification({
-      //userId: "admin123",   // admin userId
-      role: 'admin',
+       role: 'admin',
       title: "New Booking",
       entityType: 'booking',
       bookingId: booking?._id?.toString(),
       packageId: booking?.packageId.toString(),
-      //message: `User ${userId} booked package ${packageId}`,
+      message,
       type: "success",
       triggeredBy: userId,
-      metadata: { bookingId: booking._id }, // optional for deep linking
+      metadata: { bookingId: booking._id },
     });
 
 

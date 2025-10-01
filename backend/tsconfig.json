@@ -26,6 +26,6 @@
       "@constants/*": ["constants/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/domain/entities/.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -7,19 +7,20 @@ type NotificationDocument = INotification & Document;
 const NotificationSchema = new Schema<NotificationDocument>(
   {
     userId: { type: Schema.Types.ObjectId },
-     title: { type: String, required: true },
+    title: { type: String, required: true },
     message: { type: String, required: true },
-    role:{type:String,default:'user'},
+    role: { type: String, default: 'user' },
     type: {
       type: String,
-      enum: ["info", "warning", "success", "error"],
+      enum: ["info", "warning", "success", "error", "request"],
       default: "info",
     },
     isRead: { type: Boolean, default: false },
-entityType:{type:String},
+    entityType: { type: String },
     // optional metadata
     bookingId: { type: Schema.Types.ObjectId, ref: "Booking" },
     packageId: { type: Schema.Types.ObjectId, ref: "Package" },
+    customPackageId: { type: Schema.Types.ObjectId, ref: "CustomPackage" },
     reportedId: { type: Schema.Types.ObjectId, ref: "Package" },
     metadata: {
       type: Map,
