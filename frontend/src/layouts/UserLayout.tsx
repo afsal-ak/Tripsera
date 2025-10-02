@@ -25,8 +25,7 @@ const UserLayout = () => {
     const isChatPage = location.pathname.startsWith("/chat");
     const isCheckOutPage = location.pathname.startsWith("/checkout");
 const adminPhone = import.meta.env.VITE_ADMIN_PHONE_NUMBER!;
-  // useChatSocket({currentUserId})
-useEffect(()=>{
+ useEffect(()=>{
 dispatch(fetchUserRooms({isAdmin:false}))
 },[])
   return (

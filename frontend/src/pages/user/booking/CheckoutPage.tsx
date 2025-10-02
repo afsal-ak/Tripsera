@@ -32,6 +32,7 @@ declare global {
 
 const CheckoutPage = () => {
   const { id } = useParams();
+  console.log(id,' prrrrrrrrrrrrrr')
   const navigate = useNavigate();
 
   const userData = useSelector((state: RootState) => state.userAuth.user)
@@ -94,7 +95,7 @@ const CheckoutPage = () => {
 
   const handleCouponApply = async () => {
     try {
-      const result = await applyCoupon(couponCode, packageData?.price!);
+      const result = await applyCoupon(couponCode, packageData?.finalPrice!);
       setCouponDiscount(result.discount);
 
       setIsCouponApplied(true);
@@ -121,6 +122,8 @@ const CheckoutPage = () => {
       }
       try {
         const data = await fetchPackgeById(id);
+                console.log(data,'cehchcaas')
+
         setPackageData(data);
       } catch (error) {
         console.error('Failed to fetch package details', error);
@@ -163,7 +166,7 @@ const CheckoutPage = () => {
   //const paymentMethod = watch('paymentMethod');
   const selectedPaymentMethod = watch('paymentMethod');
   useEffect(() => {
-    const basePrice = packageData?.price ?? 0;
+    const basePrice = packageData?.finalPrice ?? 0;
     const travelerCount = travelers.length;
     const sub = basePrice * travelerCount;
     const discount = isCouponApplied ? couponDiscount : 0;
@@ -199,7 +202,7 @@ const CheckoutPage = () => {
     setValue('couponCode', couponCode);
     setValue('discount', couponDiscount);
   }, [
-    packageData?.price,
+    packageData?.finalPrice,
     travelers.length,
     walletBalance,
     isUsingWallet,
@@ -625,7 +628,7 @@ const CheckoutPage = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>Package Price</span>
-                    <span>₹{packageData?.price?.toLocaleString() ?? '0'}</span>
+                    <span>₹{packageData?.finalPrice?.toLocaleString() ?? '0'}</span>
                   </div>
 
                   <div className="flex justify-between">

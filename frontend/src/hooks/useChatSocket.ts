@@ -406,6 +406,8 @@
 
 //   return { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping };
 // };
+
+
 import { useEffect, useCallback } from "react";
 import socket from "@/sockets/socket";
 import { SOCKET_EVENTS } from "@/sockets/events";
@@ -438,6 +440,7 @@ export const useChatSocket = ({
   );
 
   const handleMessageRead = useCallback(
+    
     ({ messageId, userId }: { messageId: string; userId: string }) =>
       onMessageRead(messageId, userId),
     [onMessageRead]
@@ -464,7 +467,7 @@ export const useChatSocket = ({
 
     // --- room listeners only ---
     socket.on(SOCKET_EVENTS.NEW_MESSAGE, onMessageReceived);
-    socket.on(SOCKET_EVENTS.MESSAGE_SEND, onMessageReceived);
+   socket.on(SOCKET_EVENTS.MESSAGE_SEND, onMessageReceived);
     socket.on(SOCKET_EVENTS.MESSAGE_DELETED, handleMessageDeleted);
     socket.on(SOCKET_EVENTS.MESSAGE_READ, handleMessageRead);
     socket.on(SOCKET_EVENTS.TYPING, handleTyping);
@@ -492,6 +495,7 @@ export const useChatSocket = ({
 
   // --- exposed functions ---
   const sendMessage = (messageData: ISendMessage) => {
+    console.log('gggggggggggg')
     socket.emit(SOCKET_EVENTS.SEND_MESSAGE, messageData);
   };
 

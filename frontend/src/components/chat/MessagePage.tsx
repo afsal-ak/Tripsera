@@ -25,8 +25,7 @@ interface Props {
 const MessagePage = ({ roomId, user }: Props) => {
   const dispatch = useDispatch();
   const onlineUsers = useSelector((state: RootState) => state.chatRoom.onlineUsers);
-  console.log(onlineUsers, 'online user')
-
+ 
   const [room, setRoom] = useState<IChatRoom | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [messageInput, setMessageInput] = useState("");
@@ -39,7 +38,7 @@ const MessagePage = ({ roomId, user }: Props) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const readMessagesRef = useRef<Set<string>>(new Set());
   const isPartnerOnline = room?.otherUser?._id ? onlineUsers.includes(room.otherUser._id) : false;
-  console.log({ isPartnerOnline })
+  // console.log({ isPartnerOnline })
   // --- Fetch room ---
   useEffect(() => {
     const fetchRoom = async () => {
@@ -77,6 +76,7 @@ const MessagePage = ({ roomId, user }: Props) => {
   const handleMessageReceived = useCallback(
     (newMessage: IMessage) => {
       setMessages((prev) => [...prev, newMessage]);
+      console.log('new messssage recied')
       scrollToBottom();
       dispatch(addMessageToRoom({ roomId: newMessage.roomId, message: newMessage, currentUserId: user._id! }));
     },
@@ -96,7 +96,7 @@ const MessagePage = ({ roomId, user }: Props) => {
       setMessages((prev) =>
         prev.map((msg) => (msg._id === messageId ? { ...msg, isRead: true } : msg))
       );
-      console.log('kkkkkkkkkkkkk')
+   //   console.log('kkkkkkkkkkkkk')
       dispatch(markMessageAsReadInRoom({ roomId, userId }));
     },
     [dispatch, roomId]
@@ -152,6 +152,8 @@ const MessagePage = ({ roomId, user }: Props) => {
       content: messageInput,
       type: MessageType.TEXT,
     };
+        console.log(newMessage,'new message from message page')
+
     sendMessage(newMessage);
     setMessageInput("");
   };

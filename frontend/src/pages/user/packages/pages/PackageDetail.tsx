@@ -20,7 +20,8 @@ import type { IRating } from '@/types/IReview';
 import { toast } from 'sonner';
 import { formatTimeAgo } from '@/lib/utils/formatTime';
 import ReadMore from '@/components/ReadMore';
- const PackageDetails = () => {
+import PackageDetailPickUp from './PackageDetailPickUp';
+const PackageDetails = () => {
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ import ReadMore from '@/components/ReadMore';
     const loadWishListCheck = async () => {
       try {
         const checkWishlist = await checkPackageInWishlist(id);
-        console.log(checkWishlist.result, 'check')
+        //  console.log(checkWishlist.result, 'check')
         setWishlisted(checkWishlist.result);
       } catch (error) {
         console.log(error);
@@ -52,6 +53,7 @@ import ReadMore from '@/components/ReadMore';
       }
       try {
         const data = await fetchPackgeById(id);
+        console.log(data, 'pkg data')
         setPkg(data);
       } catch (error) {
         console.error('Failed to fetch package details', error);
@@ -85,17 +87,17 @@ import ReadMore from '@/components/ReadMore';
       const res = await handlePackageReview(id!, 1, 3, {});
       console.log(res, 'review res ponse')
       const reviewRating = await handleReviewRating(id!);
-       setRatingSummary(reviewRating)
+      setRatingSummary(reviewRating)
       //console.log(reviewRating, 'review')
       setPreviewReviews(res.review);
-     };
+    };
     fetchReviews();
   }, []);
   console.log(ratingSummary, 'rating')
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/checkout/${pkg?._id}`);
+    navigate(`/checkout/${id}`);
   };
 
   const handleAddReview = () => {
@@ -112,14 +114,14 @@ import ReadMore from '@/components/ReadMore';
   );
   const currentImage = allImages[selectedImage] ?? '/fallback.jpg';
   const locationLabel = pkg.location?.map((l) => l.name).join(', ') ?? 'Unknown';
-   const renderStars = (rating: number) => {
-        return [...Array(5)].map((_, i) => (
-            <Star
-                key={i}
-                className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-            />
-        ));
-    };
+  const renderStars = (rating: number) => {
+    return [...Array(5)].map((_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+      />
+    ));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -241,6 +243,7 @@ import ReadMore from '@/components/ReadMore';
               <h2 className="text-2xl font-bold text-foreground mb-6">Overview</h2>
               <p className="text-muted-foreground text-lg leading-relaxed">{pkg.description}</p>
             </section>
+            <PackageDetailPickUp startPoint={pkg?.startPoint!} />
 
 
 
@@ -248,7 +251,7 @@ import ReadMore from '@/components/ReadMore';
             <section className="bg-white rounded-xl p-8 shadow-sm border">
               <h2 className="text-2xl font-bold text-foreground mb-6">Day by Day Itinerary</h2>
               <div className="space-y-4">
-                {pkg.itinerary?.map((day, index) => (
+                {pkg?.itinerary?.map((day, index) => (
                   <Card
                     key={index}
                     className="border-l-4 border-l-orange hover:shadow-md transition-shadow"
@@ -259,16 +262,33 @@ import ReadMore from '@/components/ReadMore';
                           {day.day}
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-foreground mb-3">
+                          <h3 className="text-xl font-semibold text-foreground mb-1">
                             {day.title}
                           </h3>
-                          <ul className="text-muted-foreground space-y-2">
-                            {day.activities.map((activity, actIndex) => (
-                              <li key={actIndex} className="flex items-center">
-                                <div className="w-2 h-2 bg-orange rounded-full mr-3 flex-shrink-0"></div>
-                                {activity}
-                              </li>
-                            ))}
+                          {day.description && (
+                            <p className="text-sm text-muted-foreground mb-3">{day.description}</p>
+                          )}
+                          <ul className="space-y-2">
+                            {day.activities
+                              .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                              .map((activity, actIndex) => {
+                                const formatTime = (time24: string) => {
+                                  const [hourStr, minute] = time24.split(":");
+                                  let hour = parseInt(hourStr, 10);
+                                  const ampm = hour >= 12 ? "PM" : "AM";
+                                  hour = hour % 12 || 12;
+                                  return `${hour}:${minute} ${ampm}`;
+                                };
+
+                                return (
+                                  <li key={actIndex} className="flex items-center space-x-2">
+                                    <span className="text-orange font-semibold">
+                                      {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
+                                    </span>
+                                    <span className="text-muted-foreground">{activity.activity}</span>
+                                  </li>
+                                );
+                              })}
                           </ul>
                         </div>
                       </div>
@@ -321,32 +341,56 @@ import ReadMore from '@/components/ReadMore';
             {/* Booking Card */}
             <Card className="sticky top-4 border-2 border-orange/20 shadow-lg">
               <CardContent className="p-8">
+
                 <div className="text-center mb-6">
-                  <div className="flex items-center justify-center mb-2">
-                    <span className="text-4xl font-bold text-orange">₹{pkg.price}</span>
+                  <div className="flex items-center justify-center mb-2 space-x-3 relative">
+                    {pkg.offer && pkg.offer.isActive && new Date(pkg.offer.validUntil) > new Date() ? (
+                      <>
+                        {/* Original Price (strike-through) */}
+                        {pkg.price !== pkg.finalPrice && (
+                          <span className="text-sm text-gray-400 line-through">
+                            ₹{pkg.price}
+                          </span>
+                        )}
+
+                        {/* Discounted Price */}
+                        <span className="text-4xl font-extrabold text-orange">
+                          ₹{pkg.finalPrice}
+                        </span>
+
+                        {/* Discount Badge */}
+                        <span className="absolute -top-2 -right-6 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded shadow-md">
+                          {pkg.offer.type === "percentage"
+                            ? `${pkg.offer.value}% OFF`
+                            : `₹${pkg.offer.value} OFF`}
+                          <br />
+                          <span className="block text-[9px] mt-0.5">{pkg.offer.name}</span>
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-4xl font-extrabold text-orange drop-shadow-sm">
+                        ₹{pkg.finalPrice}
+                      </span>
+                    )}
                   </div>
-                  <span className="text-muted-foreground">per person</span>
+                  <span className="text-gray-500 text-sm">per person</span>
                 </div>
 
-                <div className="space-y-4 mb-8">
-                  {/* <div className="flex items-center justify-between py-3 border-b">
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 text-orange mr-3" />
-                      <span className="text-sm font-medium">Duration</span>
-                    </div>
-                    <span className="text-sm font-semibold">{pkg.duration}</span>
 
-                  </div> */}
+
+
+                <div className="space-y-4 mb-8">
                   <div className="flex items-center justify-between py-3 border-b">
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 text-orange mr-3" />
                       <span className="text-sm font-medium">Duration</span>
                     </div>
                     <span className="text-sm font-semibold">
-                      {pkg.durationDays && pkg.durationNights
+                      {pkg?.durationDays !== null && pkg?.durationNights !== null
                         ? `${pkg.durationDays} Days ${pkg.durationNights} Nights`
-                        : pkg.duration}
+                        : pkg?.duration || "N/A"}
                     </span>
+
                   </div>
 
                   <div className="flex items-center justify-between py-3">
@@ -354,7 +398,11 @@ import ReadMore from '@/components/ReadMore';
                       <Calendar className="w-4 h-4 text-orange mr-3" />
                       <span className="text-sm font-medium">Ending Date</span>
                     </div>
-                    <span className="text-sm font-semibold">June 15, 2024</span>
+                    {pkg.endDate ? new Date(pkg.endDate).toLocaleDateString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric"
+                    }) : "-"}
                   </div>
                 </div>
 
@@ -400,75 +448,75 @@ import ReadMore from '@/components/ReadMore';
               </CardContent>
             </Card> */}
           </div>
-        
+
 
         </div>
-          <section className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
+        <section className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
 
-                <div>
-                    <RatingSummary summary={ratingSummary} />
-                </div>
+          <div>
+            <RatingSummary summary={ratingSummary} />
+          </div>
 
-            {/* Reviews List */}
-                <div className="space-y-6">
-                    {previewReviews.map((review) => (
-                        <div key={review._id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
-                            <div className="flex items-start gap-4">
-                                <img
-                                    src={review?.userId?.profileImage?.url || "/profile-default.jpg"}
-                                    alt={review.userId.username}
-                                    className="w-12 h-12 rounded-full object-cover"
-                                />
+          {/* Reviews List */}
+          <div className="space-y-6">
+            {previewReviews.map((review) => (
+              <div key={review._id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
+                <div className="flex items-start gap-4">
+                  <img
+                    src={review?.userId?.profileImage?.url || "/profile-default.jpg"}
+                    alt={review.userId.username}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
 
 
-                                <div className="flex-1">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-3">
-                                            <h3 className="font-semibold text-gray-900">{review.userId.username}</h3>
-                                            {/* {review.verified && (
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-semibold text-gray-900">{review.userId.username}</h3>
+                        {/* {review.verified && (
                         <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                           Verified Purchase
                         </span>
                       )} */}
-                                        </div>
-                                        <span className="text-sm text-gray-500"><span>{formatTimeAgo(review.createdAt)}</span></span>
-                                    </div>
+                      </div>
+                      <span className="text-sm text-gray-500"><span>{formatTimeAgo(review.createdAt)}</span></span>
+                    </div>
 
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className="flex gap-1">
-                                            {renderStars(review.rating)}
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-700">{review.rating}.0</span>
-                                    </div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="flex gap-1">
+                        {renderStars(review.rating)}
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">{review.rating}.0</span>
+                    </div>
 
-                                    <h4 className="font-semibold text-gray-900 mb-2">{review.title}</h4>
+                    <h4 className="font-semibold text-gray-900 mb-2">{review.title}</h4>
 
-                                    <ReadMore text={review.comment} wordLimit={10} />
-                                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <ReadMore text={review.comment} wordLimit={10} />
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
 
-                                    </div>
-                                    
-                                </div>
-                                
-                            </div>
-                        </div>
-                    ))}
+                    </div>
+
+                  </div>
+
                 </div>
-          
-             <button
-                  onClick={() => navigate(`/packages/${id}/review?page=1&limit=10`)}
-                  className="text-orange font-semibold mt-2 hover:underline"
-                >
-                  See all reviews →
-                </button>
-                  <br /><br />
-            <div className="flex items-center justify-between mb-6">
-              <button onClick={handleAddReview} className="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-dark transition">
-                Write a Review
-              </button>
-            </div>
-          </section>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={() => navigate(`/packages/${id}/review?page=1&limit=10`)}
+            className="text-orange font-semibold mt-2 hover:underline"
+          >
+            See all reviews →
+          </button>
+          <br /><br />
+          <div className="flex items-center justify-between mb-6">
+            <button onClick={handleAddReview} className="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-dark transition">
+              Write a Review
+            </button>
+          </div>
+        </section>
 
       </div>
     </div>

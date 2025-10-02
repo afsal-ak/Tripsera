@@ -1,780 +1,839 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from "react";
+import { useForm, Controller, useFieldArray, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Select from "react-select";
+import { addPackageSchema, editPackageSchema, type EditPackageFormSchema, } from "@/schemas/AddPackageSchema";
+import { getCategory, getPackageById, updatePackage } from "@/services/admin/packageService";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import ImageCropper from '@/components/ImageCropper';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/button";
 
-import Cropper from 'react-easy-crop';
-import { toast } from 'sonner';
-import { getCroppedImg } from '@/lib/utils/cropUtils';
-import {
-  getCategory,
-  getPackageById,
-  updatePackage,
-} from '@/services/admin/packageService';
-import Modal from '@/components/ui/Model';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/Button';
-import { Label } from '@/component/ui/label';
-import Select from 'react-select';
-import { useParams } from 'react-router-dom';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+type ExistingImage = {
+  url: string;
+  public_id: string;
+  _id: string;
+};
 
-const EditPackageForm = () => {
+export default function EditPackageForm() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
+  const MAX_IMAGES = 4;
 
-  const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [duration, setDuration] = useState('');
-  const [durationDays, setDurationDays] = useState<string>('');
-  const [durationNights, setDurationNights] = useState<string>('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [included, setIncluded] = useState<string[]>(['']);
-  const [notIncluded, setNotIncluded] = useState<string[]>(['']);
-  const [location, setLocation] = useState([{ name: '', lat: 0, lng: 0 }]);
-  const [itinerary, setItinerary] = useState([
-    { day: 1, title: '', description: '', activities: [''] },
-  ]);
-  const [category, setCategory] = useState<string[]>([]);
-  const [categoryOptions, setCategoryOptions] = useState<{ _id: string; name: string }[]>([]);
-  const [images, setImages] = useState<File[]>([]);
-  const [existingImageUrls, setExistingImageUrls] = useState<{ public_id: string; url: string }[]>(
-    []
-  );
-  console.log(existingImageUrls, 'exst');
-  const [showCropper, setShowCropper] = useState(false);
-  const [imagePreview, setImagePreview] = useState('');
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [imageToCrop, setImageToCrop] = useState<File | null>(null);
+  // image upload hook
+  const {
+    croppedImages,
+    setCroppedImages,
+    currentImage,
+    fileInputRef,
+    handleImageChange,
+    handleCropComplete,
+    handleCropCancel,
+    handleRemoveImage,
+  } = useImageUpload({ maxImages: 4, maxSizeMB: 2 });
 
+  // form setup
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<EditPackageFormSchema>({
+    resolver: zodResolver(editPackageSchema),
+    mode: "onChange",
+  });
+
+  // categories state
+  const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+
+  // fetch categories
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!id) {
-          return;
-        }
-        const data = await getPackageById(id);
-        console.log(data, 'pkd data')
-        setTitle(data.title);
-        setDescription(data.description);
-        setPrice(data.price.toString());
-        //  setDuration(data.duration.toString());
-
-        //  setDuration(data.duration.toString());
-        setStartDate(data.startDate?.split('T')[0] || '');
-        setEndDate(data.endDate?.split('T')[0] || '');
-        setCategory(data.category);
-        setLocation(
-          data.location.map((loc: any) => ({
-            name: loc.name,
-            lat: loc.geo.coordinates[1],
-            lng: loc.geo.coordinates[0],
-          }))
-        );
-        setIncluded(data.included);
-        setNotIncluded(data.notIncluded);
-        setItinerary(data.itinerary);
-        setExistingImageUrls(
-          data.imageUrls
-            .filter((img: any) => img?.public_id && img?.url)
-            .map((img: any) => ({ public_id: img.public_id, url: img.url }))
-        );
-        setDurationDays((data.durationDays ?? 1).toString());
-        setDurationNights((data.durationNights ?? 1).toString());
-
-      } catch {
-        toast.error('Failed to fetch package details');
-      }
-    };
-    fetchData();
-  }, [id]);
-  console.log(price, 'daat');
-
-  useEffect(() => {
+    let mounted = true;
     const fetchCategories = async () => {
       try {
+        setLoadingCategories(true);
         const categories = await getCategory();
-        setCategoryOptions(categories);
+        if (!mounted) return;
+        const options = categories.map((c: any) => ({ value: c._id, label: c.name }));
+        setCategoryOptions(options);
       } catch {
-        toast.error('Failed to fetch categories');
+        if (!mounted) return;
+        toast.error("Failed to fetch categories");
+      } finally {
+        setLoadingCategories(false);
       }
     };
     fetchCategories();
-  }, []);
-
-  const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (images.length + existingImageUrls.length >= 4) {
-      toast.error('Maximum 4 images allowed');
-      return;
-    }
-
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      toast.error('Only JPG, PNG, or WEBP images are allowed.');
-      return;
-    }
-    const MAX_SIZE_MB = 2;
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(`Image exceeds ${MAX_SIZE_MB}MB size limit`);
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-      setImageToCrop(file);
-      setShowCropper(true);
+    return () => {
+      mounted = false;
     };
-    reader.readAsDataURL(file);
+  }, []);
+  const handleDeleteExistingImage = (public_id: string) => {
+    setExistingImages((prev) => prev.filter((img) => img.public_id !== public_id));
   };
 
-  const handleCropConfirm = async () => {
-    if (!imagePreview || !croppedAreaPixels || !imageToCrop) return;
-    const result = await getCroppedImg(imagePreview, croppedAreaPixels);
-    if (result?.file) {
-      setImages((prev) => [...prev, result.file]);
-      setShowCropper(false);
-      setImageToCrop(null);
-    }
-  };
+  useEffect(() => {
+    if (!id) return;
+    const fetchData = async () => {
+      try {
+        const data = await getPackageById(id);
+        console.log(data, "edit pkg");
 
-  const removeNewImage = (index: number) => {
-    const updated = [...images];
-    updated.splice(index, 1);
-    setImages(updated);
-  };
+        // pre-fill form values
+        // reset({
+        //   ...data,
+        //   category: data.category?.map((c: any) => c._id ?? c),
+        //   images: [], // keep upload field empty
+        // });
+        reset({
+          ...data,
+          category: data.category?.map((c: any) => c._id ?? c),
+          startDate: data.startDate ? new Date(data.startDate).toISOString().split("T")[0] : "",
+          endDate: data.endDate ? new Date(data.endDate).toISOString().split("T")[0] : "",
+          location: data.location?.map((loc: any) => ({
+            name: loc.name,
+            lat: loc.geo.coordinates[1].toString(),  // lat is 2nd
+            lng: loc.geo.coordinates[0].toString(),  // lng is 1st
+          })),
+          offer: data.offer
+            ? {
+              ...data.offer,
+              validUntil: data.offer.validUntil
+                ? new Date(data.offer.validUntil).toISOString().split("T")[0]
+                : "",
+            }
+            : undefined,
+          images: [], // keep upload field empty
+        });
 
-  const removeExistingImage = (index: number) => {
-    const updated = [...existingImageUrls];
-    updated.splice(index, 1);
-    setExistingImageUrls(updated);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const trimmedTitle = title.trim();
-    const trimmedDescription = description.trim();
-    const priceValue = Number(price);
-    const durationValue = Number(duration);
-
-    if (!trimmedTitle) return toast.error('Title is required');
-    if (!trimmedDescription) return toast.error('Description is required');
-    if (!price || isNaN(priceValue) || priceValue <= 0)
-      return toast.error('Price must be a positive number');
-    // if (!duration || isNaN(durationValue) || durationValue <= 0)
-    //   return toast.error('Duration must be a positive number');
-    const parsedDays = parseInt(durationDays);
-    const parsedNights = parseInt(durationNights);
-
-    const dayNightDiff = Math.abs(parsedDays - parsedNights);
-    if (dayNightDiff > 1) {
-      toast.error('The difference between days and nights cannot be more than 1');
-      return;
-    }
-    if (!startDate || !endDate) return toast.error('Start and end dates are required');
-    if (category.length === 0) return toast.error('Select at least one category');
-    if (location.length === 0) {
-      return toast.error('Add at least one location');
-    }
-    for (let i = 0; i < location.length; i++) {
-      const { name, lat, lng } = location[i];
-
-      if (!name.trim()) {
-        return toast.error(`location name cant be empty`);
+        setExistingImages(data.imageUrls || []);
+        // load existing image URLs as preview
+        // if (data.imageUrls?.length) {
+        //   setCroppedImages(
+        //     data.imageUrls.map((img: any) => ({
+        //       url: img.url,
+        //       public_id: img.public_id,
+        //       existing: true, // flag for distinguishing old vs new
+        //     }))
+        //   );
+        // }
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to fetch package details");
       }
+    };
+    fetchData();
+  }, [id, reset, setCroppedImages]);
+  console.log(existingImages, 'exist')
+  const onImageChangeWithLimit = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files) return;
 
-      if (!lat || lat < 0) {
-        return toast.error(`location latitute cant be empty and must be positive`);
-      }
-      if (!lng || lng < 0) {
-        return toast.error(`location longitude cant be empty must be positive`);
-      }
-
-      // if (activities.some(a => !a.trim())) {
-      //   return toast.error(`Itinerary Day ${i + 1}: Activities cannot have empty values`);
-      // }
-    }
-
-    if (images.length + existingImageUrls.length === 0) {
-      return toast.error('Upload at least one image');
-    }
-
-    //  Included validation
-    const cleanedIncluded = included.map((i) => i.trim()).filter(Boolean);
-    if (cleanedIncluded.length === 0) return toast.error("Add at least one 'Included' item");
-    if (included.some((i) => !i.trim())) return toast.error('Included items cannot be empty');
-
-    //  Not Included validation
-    const cleanedNotIncluded = notIncluded.map((i) => i.trim()).filter(Boolean);
-    if (cleanedNotIncluded.length === 0) return toast.error("Add at least one 'Not Included' item");
-    if (notIncluded.some((i) => !i.trim()))
-      return toast.error('Not Included items cannot be empty');
-
-    //  Itinerary validation
-    if (itinerary.length === 0) return toast.error('Add at least one itinerary day');
-
-    for (let i = 0; i < itinerary.length; i++) {
-      const { day, title, activities } = itinerary[i];
-
-      if (!day || isNaN(Number(day))) {
-        return toast.error(`Itinerary Day ${i + 1}: Invalid or missing day`);
-      }
-      if (!title.trim()) return toast.error(`Itinerary Day ${i + 1}: Title is required`);
-
-      if (activities.some((a) => !a.trim())) {
-        return toast.error(`Itinerary Day ${i + 1}: Activities cannot have empty values`);
-      }
-    }
-
-    // Prepare FormData
-    const formData = new FormData();
-    formData.append('title', trimmedTitle);
-    formData.append('description', trimmedDescription);
-    formData.append('price', price);
-    //formData.append('duration', duration);
-    formData.append('durationDays', durationDays);
-    formData.append('durationNights', durationNights);
-    formData.append('startDate', startDate);
-    formData.append('endDate', endDate);
-    formData.append('category', JSON.stringify(category));
-    formData.append(
-      'location',
-      JSON.stringify(
-        location.map((loc) => ({
-          name: loc.name,
-          geo: {
-            type: 'Point',
-            coordinates: [loc.lng, loc.lat],
-          },
-        }))
-      )
-    );
-    formData.append('included', JSON.stringify(included));
-    formData.append('notIncluded', JSON.stringify(notIncluded));
-    formData.append('itinerary', JSON.stringify(itinerary));
-    formData.append('existingImageUrls', JSON.stringify(existingImageUrls));
-    images.forEach((file) => formData.append('images', file));
-
-    setLoading(true);
-
-    try {
-      if (!id) {
+      const remaining = MAX_IMAGES - (existingImages.length + croppedImages.length);
+      if (remaining <= 0) {
+        toast.error(`You can upload a maximum of ${MAX_IMAGES} images in total.`);
         return;
       }
-      await updatePackage(id, formData);
-      toast.success('Package updated successfully');
-      navigate('/admin/packages');
-    } catch (err) {
-      toast.error('Failed to update package');
-    } finally {
-      setLoading(true);
-    }
-  };
 
-  const addLocation = () => {
-    setLocation([...location, { name: '', lat: 0, lng: 0 }]);
-  };
-  const removeLocation = (index: number) => {
-    if (location.length > 1) {
-      setLocation(location.filter((_, i) => i !== index));
-    }
-  };
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <Label>Title</Label>
-        <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
-      </div>
+      const arr = Array.from(files).slice(0, remaining);
+      const dt = new DataTransfer();
+      arr.forEach((f) => dt.items.add(f));
 
-      <div>
-        <Label>Description</Label>
-        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-      </div>
+      const syntheticEvent = {
+        ...e,
+        target: { ...e.target, files: dt.files },
+      } as React.ChangeEvent<HTMLInputElement>;
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-          <Label>Price</Label>
-          <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
-        </div>
-        {/* <div>
-          <Label>Duration</Label>
-          <Input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} />
-        </div> */}
-        <div>
-          <Label>Day Duration</Label>
-          <Input type="number" min={1} value={durationDays} onChange={(e) => setDurationDays(e.target.value)} />
-        </div>
-        <div>
-          <Label>Night Duration</Label>
-          <Input type="number" min={1} value={durationNights} onChange={(e) => setDurationNights(e.target.value)} />
-        </div>
-        <br />
-        <div>
-          <Label>Start Date</Label>
-          <Input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            min={new Date().toISOString().split('T')[0]}
-          />
-        </div>
-        <div>
-          <Label>End Date</Label>
-          <Input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            min={startDate ? startDate : new Date().toISOString().split('T')[0]}
-            className="w-full border border-border rounded px-3 py-2 text-sm"
-          />
-        </div>
-      </div>
-
-      <div>
-        <Label>Categories</Label>
-        <Select
-          isMulti
-          options={categoryOptions.map((c) => ({ value: c._id, label: c.name }))}
-          value={categoryOptions
-            .filter((c) => category.includes(c._id))
-            .map((c) => ({ value: c._id, label: c.name }))}
-          onChange={(selected) => setCategory(selected.map((s) => s.value))}
-        />
-      </div>
-      {/* Included Items */}
-      <Label className="block mb-2 font-semibold">Included</Label>
-      {included.map((item, index) => (
-        <div key={index} className="flex gap-2 mb-2">
-          <Input
-            type="text"
-            value={item}
-            onChange={(e) => {
-              const updated = [...included];
-              updated[index] = e.target.value;
-              setIncluded(updated);
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => {
-              const updated = included.filter((_, i) => i !== index);
-              setIncluded(updated);
-            }}
-            className="bg-red-600 text-white px-3 py-1 rounded"
-          >
-            ✕
-          </button>
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={() => setIncluded([...included, ''])}
-        className="bg-orange text-white px-4 py-1 rounded mb-6"
-      >
-        + Add Included
-      </button>
-
-      {/* Not Included Items */}
-      <Label className="block mb-2 font-semibold">Not Included</Label>
-      {notIncluded.map((item, index) => (
-        <div key={index} className="flex gap-2 mb-2">
-          <Input
-            type="text"
-            value={item}
-            onChange={(e) => {
-              const updated = [...notIncluded];
-              updated[index] = e.target.value;
-              setNotIncluded(updated);
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => {
-              const updated = notIncluded.filter((_, i) => i !== index);
-              setNotIncluded(updated);
-            }}
-            className="bg-red-600 text-white px-3 py-1 rounded"
-          >
-            ✕
-          </button>
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={() => setNotIncluded([...notIncluded, ''])}
-        className="bg-orange text-white px-4 py-1 rounded mb-6"
-      >
-        + Add Not Included
-      </button>
-
-      {/* Itinerary */}
-      <Label className="block mb-2 font-semibold">Itinerary</Label>
-      {itinerary.map((item, index) => (
-        <div key={index} className="border p-4 rounded mb-4 bg-gray-50">
-          <div className="mb-2">
-            <Label>Day</Label>
-            <Input
-              type="number"
-              value={item.day}
-              onChange={(e) => {
-                const updated = [...itinerary];
-                updated[index].day = Number(e.target.value);
-                setItinerary(updated);
-              }}
-            />
-          </div>
-
-          <div className="mb-2">
-            <Label>Title</Label>
-            <Input
-              type="text"
-              value={item.title}
-              onChange={(e) => {
-                const updated = [...itinerary];
-                updated[index].title = e.target.value;
-                setItinerary(updated);
-              }}
-            />
-          </div>
-
-          {/* <div className="mb-2">
-      <Label>Description</Label>
-      <Textarea
-        className="w-full border rounded p-2"
-        value={item.description}
-        onChange={(e) => {
-          const updated = [...itinerary];
-          updated[index].description = e.target.value;
-          setItinerary(updated);
-        }}
-      />
-    </div> */}
-
-          <div className="mb-2">
-            <Label>Activities</Label>
-            {item.activities.map((activity, actIndex) => (
-              <div key={actIndex} className="flex gap-2 mb-1">
-                <Input
-                  type="text"
-                  placeholder='activity'
-                  value={activity}
-                  onChange={(e) => {
-                    const updated = [...itinerary];
-                    updated[index].activities[actIndex] = e.target.value;
-                    setItinerary(updated);
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const updated = [...itinerary];
-                    updated[index].activities.splice(actIndex, 1);
-                    setItinerary(updated);
-                  }}
-                  className="bg-red-600 text-white px-2 rounded"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => {
-                const updated = [...itinerary];
-                updated[index].activities.push('');
-                setItinerary(updated);
-              }}
-              className="bg-orange text-white px-3 py-1 rounded mt-2"
-            >
-              + Add Activity
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              const updated = itinerary.filter((_, i) => i !== index);
-              setItinerary(updated);
-            }}
-            className="mt-4 bg-red-700 text-white px-4 py-1 rounded"
-          >
-            ✕ Remove Itinerary Day
-          </button>
-        </div>
-      ))}
-
-      <button
-        type="button"
-        onClick={() =>
-          setItinerary([
-            ...itinerary,
-            { day: itinerary.length + 1, title: '', description: '', activities: [''] },
-          ])
-        }
-        className="bg-orange text-white px-5 py-2 rounded mb-8"
-      >
-        + Add Itinerary Day
-      </button>
-      {location.map((loc, index) => (
-        <div
-          key={index}
-          className="grid grid-cols-12 gap-4 items-center border border-border p-4 rounded-md"
-        >
-          {/* Location Name */}
-          <div className="col-span-4 flex flex-col">
-            <label htmlFor={`location-name-${index}`} className="text-sm font-medium mb-1">
-              Location Name
-            </label>
-            <input
-              id={`location-name-${index}`}
-              type="text"
-              placeholder="Enter location name"
-              value={loc.name}
-              onChange={(e) => {
-                const updated = [...location];
-                updated[index].name = e.target.value;
-                setLocation(updated);
-              }}
-              className="px-3 py-2 border rounded text-sm"
-            />
-          </div>
-
-          {/* Latitude */}
-          <div className="col-span-3 flex flex-col">
-            <label htmlFor={`latitude-${index}`} className="text-sm font-medium mb-1">
-              Latitude
-            </label>
-            <input
-              id={`latitude-${index}`}
-              type="number"
-              placeholder="Enter latitude"
-              value={loc.lat}
-              onChange={(e) => {
-                const updated = [...location];
-                updated[index].lat = Number(e.target.value);
-                setLocation(updated);
-              }}
-              className="px-3 py-2 border rounded text-sm"
-            />
-          </div>
-
-          {/* Longitude */}
-          <div className="col-span-3 flex flex-col">
-            <label htmlFor={`longitude-${index}`} className="text-sm font-medium mb-1">
-              Longitude
-            </label>
-            <input
-              id={`longitude-${index}`}
-              type="number"
-              placeholder="Enter longitude"
-              value={loc.lng}
-              onChange={(e) => {
-                const updated = [...location];
-                updated[index].lng = Number(e.target.value);
-                setLocation(updated);
-              }}
-              className="px-3 py-2 border rounded text-sm"
-            />
-          </div>
-
-          {/* Remove Button */}
-          {location.length > 0 && (
-            <div className="col-span-2 flex items-end">
-              <button
-                type="button"
-                onClick={() => removeLocation(index)}
-                className="text-red-500 hover:underline text-sm"
-              >
-                ✖ Remove
-              </button>
-            </div>
-          )}
-        </div>
-      ))}
-
-      {/* Add More Location Button */}
-      <button
-        type="button"
-        onClick={addLocation}
-        className="bg-orange text-white px-5 py-2 rounded mb-8 mt-3"
-      >
-        Add More Location
-      </button>
-
-      {/* 
-      {location.map((loc, index) => (
-        <div
-          key={index}
-          className="grid grid-cols-12 gap-2 items-center border border-border p-4 rounded-md"
-        >
-           <input
-            type="text"
-            placeholder="Location name"
-            value={loc.name}
-            onChange={(e) => {
-              const updated = [...location];
-              updated[index].name = e.target.value;
-              //updated[index].lng = e.target.value;
-              //updated[index].day = Number(e.target.value);
-              setLocation(updated);
-            }}
-            className="col-span-4 px-3 py-2 border rounded text-sm"
-          />
-          <input
-            type="number"
-            placeholder="Latitude"
-            value={loc.lat}
-            // onChange={(e) => handleChange(index, "latitude", e.target.value)}
-            // min={0}
-            onChange={(e) => {
-              const updated = [...location];
-              updated[index].lat = Number(e.target.value);
-              //updated[index].lng = e.target.value;
-              //updated[index].day = Number(e.target.value);
-              setLocation(updated);
-            }}
-            className="col-span-3 px-3 py-2 border rounded text-sm"
-          />
-          <input
-            type="number"
-            placeholder="Longitude"
-            value={loc.lng}
-            //  onChange={(e) => handleChange(index, "longitude", e.target.value)}
-
-            onChange={(e) => {
-              const updated = [...location];
-              updated[index].lng = Number(e.target.value);
-              //updated[index].lng = e.target.value;
-              //updated[index].day = Number(e.target.value);
-              setLocation(updated);
-            }}
-            className="col-span-3 px-3 py-2 border rounded text-sm"
-          />
-          {location.length > 0 && (
-            <button
-              type="button"
-              onClick={() => removeLocation(index)}
-              className="col-span-2 text-red-500 hover:underline text-sm"
-            >
-              ✖ Remove
-            </button>
-          )}
-        </div>
-      ))}
-
-      <button
-        type="button"
-        onClick={addLocation}
-        className="bg-orange text-white px-5 py-2 rounded mb-8"
-      >
-        Add More Location
-      </button> */}
-      <div></div>
-      <div>
-        <Label>Images</Label>
-        <div className="flex flex-wrap gap-4 mb-2">
-          {existingImageUrls.map((img, index) => (
-            <div key={index} className="relative w-32 h-32">
-              <img src={img.url} className="object-cover w-full h-full rounded" />
-
-              <div className="absolute top-0 right-0 m-1">
-                <ConfirmDialog
-                  title="Delete this image?"
-                  actionLabel="Delete"
-                  onConfirm={() => removeExistingImage(index)}
-                >
-                  <Button size="icon" variant="destructive" className="p-1 text-xs">
-                    ✕
-                  </Button>
-                </ConfirmDialog>
-              </div>
-            </div>
-          ))}
-
-          {images.map((file, index) => (
-            <div key={`new-${index}`} className="relative w-32 h-32">
-              <img src={URL.createObjectURL(file)} className="object-cover w-full h-full rounded" />
-
-              <div className="absolute top-0 right-0 m-1">
-                <ConfirmDialog
-                  title="Delete this image?"
-                  actionLabel="Delete"
-                  onConfirm={() => removeNewImage(index)}
-                >
-                  <Button size="icon" variant="destructive" className="p-1 text-xs">
-                    ✕
-                  </Button>
-                </ConfirmDialog>
-              </div>
-            </div>
-          ))}
-        </div>
-        {/* {(images.length + existingImageUrls.length) < 4 && (
-  <Input type="file" accept="image/*" onChange={handleImageChange} />
-)} */}
-        <div>
-          <input
-            type="file"
-            id="fileUpload"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-          />
-
-          <label
-            htmlFor="fileUpload"
-            className="inline-block cursor-pointer bg-orange text-white px-4 py-2 rounded shadow hover:bg-orange-dark transition text-sm"
-          >
-            Upload Image
-          </label>
-        </div>
-      </div>
-
-      {showCropper && (
-        <Modal onClose={() => setShowCropper(false)} title="Crop Image">
-          <div className="relative w-full h-96 bg-black">
-            <Cropper
-              image={imagePreview}
-              crop={crop}
-              zoom={zoom}
-              aspect={4 / 3}
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={onCropComplete}
-            />
-          </div>
-          <div className="flex justify-end mt-4">
-            <Button type="button" onClick={handleCropConfirm}>
-              Crop & Save
-            </Button>
-          </div>
-        </Modal>
-      )}
-
-      {/* <Button className='bg-orange' type="submit">Update Package</Button> */}
-      <button
-        type="submit"
-        className="w-full bg-orange text-white py-2 rounded hover:bg-orange-dark transition mb-4 flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-        disabled={loading}
-      >
-        {loading && (
-          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-        )}
-        {loading ? 'updating...' : 'Update'}
-      </button>
-    </form>
+      handleImageChange(syntheticEvent);
+    },
+    [existingImages.length, croppedImages.length, handleImageChange]
   );
+
+  // keep cropped images in sync with form
+  useEffect(() => {
+    setValue("images", croppedImages, { shouldValidate: true });
+  }, [croppedImages, setValue]);
+
+  // field arrays
+  const locArray = useFieldArray({ control, name: "location" });
+  const itineraryArray = useFieldArray({ control, name: "itinerary" });
+  const totalImages = existingImages.length + croppedImages.length;
+
+  // onSubmit
+  // const onSubmit: SubmitHandler<EditPackageFormSchema> = async (data) => {
+  //   try {
+  //     if (!id) return;
+
+  //     const form = new FormData();
+  //     form.append("id", id);
+
+  //     // append new images
+  //     // NEW images
+  //     croppedImages.forEach((file) => {
+  //       if (file instanceof File) {
+  //         form.append("images", file);
+  //       }
+  //     });
+  //     // append rest of the form
+  //     Object.entries(data).forEach(([key, value]) => {
+  //       if (key === "images") return;
+  //       if (Array.isArray(value) || typeof value === "object") {
+  //         form.append(key, JSON.stringify(value));
+  //       } else {
+  //         form.append(key, String(value ?? ""));
+  //       }
+  //     });
+  //     // EXISTING images (keep)
+  //     existingImages.forEach((img, index) => {
+  //       form.append(`existingImages[${index}][url]`, img.url);
+  //       form.append(`existingImages[${index}][public_id]`, img.public_id);
+  //       form.append(`existingImages[${index}][_id]`, img._id);
+  //     });
+
+  //     await updatePackage(id, form);
+  //     toast.success("Package updated successfully");
+  //     navigate("/admin/packages");
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Failed to update package");
+  //   }
+  // };
+  const onSubmit: SubmitHandler<EditPackageFormSchema> = async (data) => {
+  try {
+    if (!id) return;
+
+    const form = new FormData();
+
+    // NEW images
+    croppedImages.forEach((file) => {
+      if (file instanceof File) {
+        form.append("images", file);
+      }
+    });
+
+    // Rest of the form
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "images") return;
+      if (Array.isArray(value) || typeof value === "object") {
+        form.append(key, JSON.stringify(value));
+      } else {
+        form.append(key, String(value ?? ""));
+      }
+    });
+
+    // EXISTING images
+    if (existingImages.length) {
+      form.append("existingImages", JSON.stringify(existingImages));
+    }
+
+    await updatePackage(id, form);
+    toast.success("Package updated successfully");
+    navigate("/admin/packages");
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to update package");
+  }
 };
 
-export default EditPackageForm;
+  const addDay = () => {
+    itineraryArray.append({
+      day: itineraryArray.fields.length + 1,
+      title: "",
+      description: "",
+      activities: [{ startTime: "", endTime: "", activity: "" }],
+    });
+  };
+  useEffect(() => {
+    console.log("Form errors:", errors);
+  }, [errors]);
+
+  return (
+    <>
+      {currentImage && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-4">
+            <h2 className="text-lg font-semibold mb-4">Crop Image</h2>
+            <ImageCropper
+              image={currentImage}
+              onCropComplete={handleCropComplete}
+              onCancel={handleCropCancel}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-4xl mx-auto p-6">
+        <h2 className="text-2xl font-semibold mb-4">Edit Package</h2>
+        {!currentImage && (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Title */}
+            <div>
+              <label className="block font-medium">Title</label>
+              <input {...register("title")} className="border p-2 w-full rounded" />
+              {errors.title && <p className="text-red-500">{errors.title.message}</p>}
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block font-medium">Description</label>
+              <textarea {...register("description")} className="border p-2 w-full rounded" />
+              {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+            </div>
+
+            {/* Category */}
+            <div>
+              <label className="block font-medium">Category</label>
+              <Controller
+                control={control}
+                name="category"
+                render={({ field }) => (
+                  <Select
+                    options={categoryOptions}
+                    isLoading={loadingCategories}
+                    isMulti
+                    value={categoryOptions.filter(c => field.value?.includes(c.value))}
+                    onChange={(selected) =>
+                      field.onChange((selected as any).map((s: any) => s.value))
+                    }
+                    isClearable
+                  />
+                )}
+              />
+              {errors.category && (
+                <p className="text-red-500">{errors.category.message}</p>
+              )}
+            </div>
+
+            {/* Price / Days / Nights */}
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block">Price</label>
+                <input type="number" {...register("price", { valueAsNumber: true })} className="border p-2 rounded w-full" />
+              </div>
+              <div>
+                <label className="block">Days</label>
+                <input type="number" {...register("durationDays", { valueAsNumber: true })} className="border p-2 rounded w-full" />
+              </div>
+              <div>
+                <label className="block">Nights</label>
+                <input type="number" {...register("durationNights", { valueAsNumber: true })} className="border p-2 rounded w-full" />
+              </div>
+            </div>
+
+            {/* Dates */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label>Start Date</label>
+                <input type="date" {...register("startDate")} className="border p-2 rounded w-full" />
+              </div>
+              <div>
+                <label>End Date</label>
+                <input type="date" {...register("endDate")} className="border p-2 rounded w-full" />
+              </div>
+            </div>
+
+            {/* Start Point */}
+            <div>
+              <label>Start Point</label>
+              <input {...register("startPoint")} className="border p-2 w-full rounded" />
+            </div>
+
+            {/* Locations, Included, Not Included, Itinerary, Offer, Images */}
+            {/* --- SAME as AddPackageForm --- */}
+            {/* copy your existing blocks for locations, included, notIncluded, itinerary, offer, images */}
+            {/* Locations */}
+            <div>
+              <label className="block font-medium mb-1">Locations</label>
+              {locArray.fields.map((f, i) => (
+                <div key={f.id} className="border p-4 rounded mb-4">
+                  <div className="flex flex-col gap-2">
+
+                    {/* Name Field */}
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">Name</label>
+                      <input
+                        placeholder="Location Name"
+                        {...register(`location.${i}.name` as const)}
+                        className="border p-2 rounded"
+                      />
+                      {errors.location?.[i]?.name && (
+                        <p className="text-red-500 text-sm">{errors.location[i]?.name?.message}</p>
+                      )}
+                    </div>
+
+                    {/* Latitude Field */}
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">Latitude</label>
+                      <input
+                        placeholder="Lat"
+                        {...register(`location.${i}.lat` as const)}
+                        className="border p-2 rounded"
+                      />
+                      {errors.location?.[i]?.lat && (
+                        <p className="text-red-500 text-sm">{errors.location[i]?.lat?.message}</p>
+                      )}
+                    </div>
+
+                    {/* Longitude Field */}
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">Longitude</label>
+                      <input
+                        placeholder="Lng"
+                        {...register(`location.${i}.lng` as const)}
+                        className="border p-2 rounded"
+                      />
+                      {errors.location?.[i]?.lng && (
+                        <p className="text-red-500 text-sm">{errors.location[i]?.lng?.message}</p>
+                      )}
+                    </div>
+
+                    {/* Remove button */}
+                    <button
+                      type="button"
+                      onClick={() => locArray.remove(i)}
+                      disabled={locArray.fields.length === 1}
+                      className={`mt-2 text-red-600 ${locArray.fields.length === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={() => locArray.append({ name: "", lat: "", lng: "" })}
+                className="text-blue-600 mt-2"
+              >
+                + Add Location
+              </button>
+            </div>
+
+
+
+            {/* Included */}
+            <div>
+              <label className="block font-medium">Included</label>
+              {watch("included")?.map((_, i) => (
+                <div key={i} className="flex flex-col gap-1 mb-2">
+                  <div className="flex gap-2">
+                    <input
+                      {...register(`included.${i}` as const)}
+                      className="border p-2 w-full rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setValue(
+                          "included",
+                          watch("included").filter((_, idx) => idx !== i)
+                        )
+                      }
+                      disabled={watch("included")?.length === 1} // always keep at least 1
+                      className={`${watch("included")?.length === 1
+                        ? "opacity-50 cursor-not-allowed"
+                        : "text-red-600"
+                        }`}
+                    >
+                      ❌
+                    </button>
+                  </div>
+                  {errors.included?.[i] && (
+                    <p className="text-red-500 text-sm">{errors.included[i]?.message}</p>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setValue("included", [...(watch("included") ?? []), ""])
+                }
+                className="text-blue-600 mt-1"
+              >
+                + Add Included
+              </button>
+            </div>
+
+            {/* Not Included */}
+            <div className="mt-4">
+              <label className="block font-medium">Not Included</label>
+              {watch("notIncluded")?.map((_, i) => (
+                <div key={i} className="flex flex-col gap-1 mb-2">
+                  <div className="flex gap-2">
+                    <input
+                      {...register(`notIncluded.${i}` as const)}
+                      className="border p-2 w-full rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setValue(
+                          "notIncluded",
+                          watch("notIncluded").filter((_, idx) => idx !== i)
+                        )
+                      }
+                      disabled={watch("notIncluded")?.length === 1} // always keep at least 1
+                      className={`${watch("notIncluded")?.length === 1
+                        ? "opacity-50 cursor-not-allowed"
+                        : "text-red-600"
+                        }`}
+                    >
+                      ❌
+                    </button>
+                  </div>
+                  {errors.notIncluded?.[i] && (
+                    <p className="text-red-500 text-sm">{errors.notIncluded[i]?.message}</p>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setValue("notIncluded", [...(watch("notIncluded") ?? []), ""])
+                }
+                className="text-blue-600 mt-1"
+              >
+                + Add Not Included
+              </button>
+            </div>
+
+
+            {/* Itinerary */}
+
+            <div>
+              <label className="block font-medium">Itinerary</label>
+              {errors.itinerary?.root?.message && (
+                <p className="text-red-500 text-sm mb-2">
+                  {errors.itinerary.root.message}
+                </p>
+              )}
+
+
+              {itineraryArray.fields.map((day, i) => (
+                <div key={day.id} className="border p-4 rounded-md mb-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold">Day {i + 1}</h3>
+                    <button
+                      type="button"
+                      onClick={() => itineraryArray.remove(i)}
+                      disabled={itineraryArray.fields.length === 1}
+                      className={`${itineraryArray.fields.length === 1
+                        ? "opacity-50 cursor-not-allowed"
+                        : "text-red-600"
+                        }`}
+                    >
+                      Delete Day
+                    </button>
+                  </div>
+
+                  {/* Day Title */}
+                  <input
+                    {...register(`itinerary.${i}.title`)}
+                    placeholder="Day title"
+                    className="border p-2 w-full mb-2"
+                  />
+                  {errors.itinerary?.[i]?.title && (
+                    <p className="text-red-500 text-sm">{errors.itinerary[i]?.title?.message}</p>
+                  )}
+
+                  {/* Day Description */}
+                  <textarea
+                    {...register(`itinerary.${i}.description`)}
+                    placeholder="Day description"
+                    className="border p-2 w-full mb-2"
+                  />
+                  {errors.itinerary?.[i]?.description && (
+                    <p className="text-red-500 text-sm">{errors.itinerary[i]?.description?.message}</p>
+                  )}
+
+                  {/* Activities */}
+                  <Controller
+                    control={control}
+                    name={`itinerary.${i}.activities`}
+                    render={({ field }) => (
+                      <div className="space-y-2">
+                        {(field.value || []).map((act: any, j: number) => (
+                          <div key={j} className="flex gap-2 items-center">
+                            <div className="flex flex-col">
+                              <input
+                                type="time"
+                                value={act.startTime}
+                                onChange={(e) => {
+                                  const updated = [...field.value];
+                                  updated[j].startTime = e.target.value;
+                                  field.onChange(updated);
+                                }}
+                                className="border p-2 w-28"
+                              />
+                              {errors.itinerary?.[i]?.activities?.[j]?.startTime && (
+                                <p className="text-red-500 text-sm">
+                                  {errors.itinerary[i]?.activities?.[j]?.startTime?.message}
+                                </p>
+                              )}
+                            </div>
+
+                            <span>to</span>
+
+                            <div className="flex flex-col">
+                              <input
+                                type="time"
+                                value={act.endTime}
+                                onChange={(e) => {
+                                  const updated = [...field.value];
+                                  updated[j].endTime = e.target.value;
+                                  field.onChange(updated);
+                                }}
+                                className="border p-2 w-28"
+                              />
+                              {errors.itinerary?.[i]?.activities?.[j]?.endTime && (
+                                <p className="text-red-500 text-sm">
+                                  {errors.itinerary[i]?.activities?.[j]?.endTime?.message}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col flex-1">
+                              <input
+                                placeholder="Activity"
+                                value={act.activity}
+                                onChange={(e) => {
+                                  const updated = [...field.value];
+                                  updated[j].activity = e.target.value;
+                                  field.onChange(updated);
+                                }}
+                                className="border p-2 flex-1"
+                              />
+                              {errors.itinerary?.[i]?.activities?.[j]?.activity && (
+                                <p className="text-red-500 text-sm">
+                                  {errors.itinerary[i]?.activities?.[j]?.activity?.message}
+                                </p>
+                              )}
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                field.onChange(field.value.filter((_: any, idx: number) => idx !== j))
+                              }
+                              className="text-red-600"
+                              disabled={field.value.length === 1} // keep at least 1 activity
+                            >
+                              ❌
+                            </button>
+                          </div>
+                        ))}
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            field.onChange([
+                              ...(field.value ?? []),
+                              { startTime: "", endTime: "", activity: "" },
+                            ])
+                          }
+                          className="text-blue-600"
+                        >
+                          + Add Activity
+                        </button>
+                      </div>
+                    )}
+                  />
+                </div>
+              ))}
+
+              <div>
+                <button type="button" onClick={addDay} className="text-blue-600">
+                  + Add Day
+                </button>
+              </div>
+            </div>
+
+            <div className="border p-4 rounded-md bg-gray-50">
+              <h3 className="font-semibold mb-2">Offer Details</h3>
+
+              {/* Offer Name */}
+              <div className="flex flex-col mb-2">
+                <label className="text-sm font-medium mb-1">Offer Name</label>
+                <input
+                  type="text"
+                  placeholder="Offer name"
+                  {...register("offer.name" as const)}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.offer?.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.offer.name.message}</p>
+                )}
+              </div>
+
+              <div className="flex flex-col md:flex-row md:gap-3 items-start">
+                {/* Offer Type */}
+                <div className="flex flex-col mb-2 md:mb-0">
+                  <label className="text-sm font-medium mb-1">Type</label>
+                  <select
+                    {...register("offer.type" as const)}
+                    className="border p-2 rounded w-full"
+                  >
+                    <option value="percentage">Percentage</option>
+                    <option value="flat">Flat</option>
+                  </select>
+                  {errors.offer?.value?.message && (
+                    <p className="text-red-500 text-sm mt-1">{(errors.offer.value as any).message}</p>
+                  )}
+
+                </div>
+
+                {/* Offer Value */}
+                <div className="flex flex-col mb-2 md:mb-0">
+                  <label className="text-sm font-medium mb-1">Value</label>
+                  <input
+                    type="number"
+                    placeholder="Value"
+                    {...register("offer.value" as const, { valueAsNumber: true })}
+                    className="border p-2 rounded w-full md:w-32"
+                  />
+                  {errors.offer?.value && (
+                    <p className="text-red-500 text-sm mt-1">{errors.offer.value.message}</p>
+                  )}
+                </div>
+
+                {/* Valid Until */}
+                <div className="flex flex-col mb-2 md:mb-0">
+                  <label className="text-sm font-medium mb-1">Valid Until</label>
+                  <input
+                    type="date"
+                    {...register("offer.validUntil" as const)}
+                    className="border p-2 rounded w-full"
+                  />
+                  {errors.offer?.validUntil && (
+                    <p className="text-red-500 text-sm mt-1">{errors.offer.validUntil.message}</p>
+                  )}
+                </div>
+
+                {/* Active Checkbox */}
+                <div className="flex items-center mt-5 md:mt-0">
+                  <input
+                    type="checkbox"
+                    {...register("offer.isActive" as const)}
+                    id="offerActive"
+                    className="mr-2"
+                  />
+                  <label htmlFor="offerActive" className="text-sm font-medium">Active</label>
+                </div>
+              </div>
+            </div>
+            {/* <div>
+              <Label>Upload Images (Max 4)</Label><br />
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              <Button type="button" onClick={() => fileInputRef.current?.click()}>
+                Upload Images
+              </Button>
+
+              {errors.images && <p className="text-red-500 text-sm">{errors.images.message}</p>}
+
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                {croppedImages.map((file, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="preview"
+                      className="w-full h-24 object-cover rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div> */}
+            <div>
+              <Label>Upload Images (Total Max {MAX_IMAGES})</Label><br />
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                ref={fileInputRef}
+                onChange={onImageChangeWithLimit}
+                className="hidden"
+              />
+              <Button type="button" onClick={() => fileInputRef.current?.click()}>
+                Upload Images
+              </Button>
+
+              {/* Previews */}
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                {/* Existing images */}
+                {existingImages.map((img) => (
+                  <div key={img.public_id} className="relative group">
+                    <img src={img.url} alt="existing" className="w-full h-24 object-cover rounded" />
+                    <button
+                      type="button"
+                      //onClick={() => handleDeleteExistingImage(img.public_id)}
+                      //     disabled={totalImages <= 1} // disable if only 1 image
+                      onClick={() => {
+                        if (totalImages <= 1) {
+                          toast.error("At least one image must remain");
+                          return;
+                        }
+                        handleDeleteExistingImage(img.public_id);
+                      }}
+                      className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+
+                {/* Newly cropped images */}
+                {croppedImages.map((file, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="preview"
+                      className="w-full h-24 object-cover rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (totalImages <= 1) {
+                          toast.error("At least one image must remain");
+                          return;
+                        }
+                        handleRemoveImage(index);
+                      }} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+
+              </div>
+            </div>
+
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Updating..." : "Update Package"}
+            </Button>
+          </form>
+        )}
+      </div>
+    </>
+  );
+}
