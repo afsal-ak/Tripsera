@@ -193,28 +193,56 @@ const BookingDetails = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  {pkg?.itinerary?.map((day, index) => (
-                    <div key={index} className="flex gap-4 pb-6 border-b border-gray-100 last:border-b-0 last:pb-0">
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                   <section className="bg-white rounded-xl p-8 shadow-sm border">
+              <h2 className="text-2xl font-bold text-foreground mb-6">Day by Day Itinerary</h2>
+              <div className="space-y-4">
+                {pkg?.itinerary?.map((day, index) => (
+                  <Card
+                    key={index}
+                    className="border-l-4 border-l-orange hover:shadow-md transition-shadow"
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="bg-orange text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
                           {day.day}
                         </div>
+                        <div className="flex-1">
+                          <h3 className="text-xl font-semibold text-foreground mb-1">
+                            {day.title}
+                          </h3>
+                          {day.description && (
+                            <p className="text-sm text-muted-foreground mb-3">{day.description}</p>
+                          )}
+                          <ul className="space-y-2">
+                            {day.activities
+                              .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                              .map((activity, actIndex) => {
+                                const formatTime = (time24: string) => {
+                                  const [hourStr, minute] = time24.split(":");
+                                  let hour = parseInt(hourStr, 10);
+                                  const ampm = hour >= 12 ? "PM" : "AM";
+                                  hour = hour % 12 || 12;
+                                  return `${hour}:${minute} ${ampm}`;
+                                };
+
+                                return (
+                                  <li key={actIndex} className="flex items-center space-x-2">
+                                    <span className="text-orange font-semibold">
+                                      {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
+                                    </span>
+                                    <span className="text-muted-foreground">{activity.activity}</span>
+                                  </li>
+                                );
+                              })}
+                          </ul>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                          {day.title}
-                        </h3>
-                        <ul className="space-y-2 text-gray-700">
-                          {day.activities.map((activity, actIndex) => (
-                            <li key={actIndex} className="flex items-start gap-2">
-                              <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                              <span>{activity}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  ))}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
                 </div>
               </CardContent>
             </Card>

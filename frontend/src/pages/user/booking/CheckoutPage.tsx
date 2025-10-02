@@ -124,7 +124,7 @@ const CheckoutPage = () => {
         const data = await fetchPackgeById(id);
                 console.log(data,'cehchcaas')
 
-        setPackageData(data);
+        setPackageData(data as IPackage);
       } catch (error) {
         console.error('Failed to fetch package details', error);
       }

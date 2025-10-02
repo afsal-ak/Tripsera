@@ -61,7 +61,7 @@ const BookingDetailPage = () => {
       try {
         const data = await fetchPackgeById(pkgId);
         console.log(data, 'pkg data')
-        setPkg(data);
+        setPkg(data as IPackage);
       } catch (error) {
         console.error('Failed to fetch package details', error);
       }
