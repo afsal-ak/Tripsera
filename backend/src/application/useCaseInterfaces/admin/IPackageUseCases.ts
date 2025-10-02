@@ -1,3 +1,4 @@
+import { CreatePackageDTO,PackageResponseDTO,EditPackageDTO  } from '@application/dtos/PackageDTO';
 import { IPackage } from '@domain/entities/IPackage';
 
 export interface IPackageUseCases {
@@ -10,13 +11,13 @@ export interface IPackageUseCases {
     totalPages: number;
   }>;
 
-  getSinglePackage(id: string): Promise<IPackage | null>;
+  getSinglePackage(id: string): Promise<PackageResponseDTO | null>;
 
   createPackage(pkg: IPackage): Promise<IPackage>;
 
   editPackageData(
     id: string,
-    data: Partial<IPackage>,
+    data: EditPackageDTO,
     existingImages: { public_id: string }[],
     newImages: { url: string; public_id: string }[]
   ): Promise<void>;

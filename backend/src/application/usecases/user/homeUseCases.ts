@@ -4,6 +4,7 @@ import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IPackage } from '@domain/entities/IPackage';
 import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
+import { PackageResponseDTO,toPackageResponseDTO } from '@application/dtos/PackageDTO';
 
 export class HomeUseCases implements IHomeUseCases {
   constructor(
@@ -88,8 +89,8 @@ export class HomeUseCases implements IHomeUseCases {
     };
   }
 
-  async getPackageById(id: string): Promise<IPackage | null> {
+  async getPackageById(id: string): Promise<PackageResponseDTO | null> {
     const pkg = await this._packageRepo.findById(id);
-    return pkg;
+    return toPackageResponseDTO(pkg!);
   }
 }

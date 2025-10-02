@@ -1,12 +1,15 @@
+
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IPackage } from '@domain/entities/IPackage';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { generatePackageCode } from '@shared/utils/generatePackageCode';
 import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';
-
+import { EditPackageDTO, PackageResponseDTO, toPackageResponseDTO } from '@application/dtos/PackageDTO';
+import { AppError } from '@shared/utils/AppError';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 export class PackageUseCases implements IPackageUseCases {
 
-  constructor(private _packageRepo: IPackageRepository) {}
+  constructor(private _packageRepo: IPackageRepository) { }
 
   async getAllPackages(
     page: number,
@@ -30,50 +33,77 @@ export class PackageUseCases implements IPackageUseCases {
     };
   }
 
-  async getSinglePackage(id: string): Promise<IPackage | null> {
-    return this._packageRepo.findById(id);
+  async getSinglePackage(id: string): Promise<PackageResponseDTO | null> {
+    const pkg = await this._packageRepo.findById(id);
+    if (!pkg) return null;
+    console.log(pkg, 'pcakge in usedcase')
+    // Map to DTO before returning
+    return toPackageResponseDTO(pkg);
   }
-
   async createPackage(pkg: IPackage): Promise<IPackage> {
     try {
-      // const result = await this.packageRepo.create(pkg);
-      // return result;
       const packageCode = await generatePackageCode();
+
+      // Compute final price
+      let finalPrice = pkg.price;
+      const now = new Date();
+      if (pkg.offer?.isActive && new Date(pkg.offer.validUntil) > now) {
+        if (pkg.offer.type === "percentage") {
+          finalPrice = pkg.price - (pkg.price * pkg.offer.value) / 100;
+        } else if (pkg.offer.type === "flat") {
+          finalPrice = pkg.price - pkg.offer.value;
+        }
+        finalPrice = Math.max(finalPrice, 0);
+      }
+
       const packageData = {
         ...pkg,
         packageCode,
+        finalPrice,
       };
 
       const result = await this._packageRepo.create(packageData);
       return result;
     } catch (error) {
-      console.error(' UseCase Error:', error);
+      console.error('UseCase Error:', error);
       throw error;
     }
   }
 
   async editPackageData(
     id: string,
-    data: Partial<IPackage>,
+    data: Partial<EditPackageDTO>,
     existingImages: { public_id: string }[],
     newImages: { url: string; public_id: string }[]
   ): Promise<void> {
-    const packageData = await this._packageRepo.findById(id);
-    if (!packageData) throw new Error('Package not found');
+    console.log(data,'kd edit fata')
+     const packageData = await this._packageRepo.findById(id);
+    if (!packageData) throw new AppError(HttpStatus.NOT_FOUND, 'Package not found');
 
     const oldImages = packageData.imageUrls || [];
 
-    //  Find which images to delete (not included in existingImages)
+    // Delete images not in existingImages
     const deletedImages = oldImages.filter(
       (oldImg) => !existingImages.some((img) => img.public_id === oldImg.public_id)
     );
-
-    //  Delete them from Cloudinary
     for (const img of deletedImages) {
       await deleteImageFromCloudinary(img.public_id);
     }
 
-    await this._packageRepo.editPackage(id, data, deletedImages, newImages);
+    // Compute finalPrice if price or offer changed
+    let finalPrice = data.price ?? packageData.price;
+    const offer = data.offer ?? packageData.offer;
+    const now = new Date();
+    if (offer?.isActive && new Date(offer.validUntil) > now) {
+      if (offer.type === "percentage") {
+        finalPrice = finalPrice - (finalPrice * offer.value) / 100;
+      } else if (offer.type === "flat") {
+        finalPrice = finalPrice - offer.value;
+      }
+      finalPrice = Math.max(finalPrice, 0);
+    }
+
+    await this._packageRepo.editPackage(id, { ...data, finalPrice }, deletedImages, newImages);
   }
 
   async block(id: string): Promise<void> {

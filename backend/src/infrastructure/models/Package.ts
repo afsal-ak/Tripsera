@@ -1,8 +1,8 @@
+
 import mongoose, { Schema, Document } from 'mongoose';
 import { IPackage } from '@domain/entities/IPackage';
 
-// Offer Schema
-const offerSchema = new Schema(
+ const offerSchema = new Schema(
   {
     type: {
       type: String,
@@ -11,6 +11,10 @@ const offerSchema = new Schema(
     },
     value: {
       type: Number,
+      required: true,
+    },
+     name: {
+      type: String,
       required: true,
     },
     validUntil: {
@@ -25,7 +29,7 @@ const offerSchema = new Schema(
   { _id: false }
 );
 
-const locationSchema = new Schema(
+ const locationSchema = new Schema(
   {
     name: { type: String, required: true },
     geo: {
@@ -44,38 +48,51 @@ const locationSchema = new Schema(
   { _id: false }
 );
 
-// Itinerary Day Schema
-const itinerarySchema = new Schema(
+ const itinerarySchema = new Schema(
   {
     day: { type: Number, required: true },
     title: { type: String, required: true },
-    activities: [{ type: String, required: true }],
+    description: { type: String }, // optional but useful
+    activities: [
+      {
+        activity: { type: String, required: true },
+        startTime: { type: String, required: false },  
+        endTime: { type: String, required: false },   
+      },
+    ],
   },
   { _id: false }
 );
 
-// Main Package Schema
-const packageSchema = new Schema(
+ const packageSchema = new Schema(
   {
     title: { type: String, required: true },
+
     packageCode: {
       type: String,
       required: true,
       unique: true,
     },
+
     description: { type: String },
+    originalPrice: { type: Number, required: false },
+    finalPrice: { type: Number, required: false },
     price: { type: Number, required: true },
-    duration: { type: String, required: false },
+
+    // Duration
+    duration: { type: String },
     durationDays: { type: Number, required: true },
     durationNights: { type: Number, required: true },
 
+    // Images
     imageUrls: [
       {
-        url: { type: String },
-        public_id: { type: String },
+        url: { type: String, required: true },
+        public_id: { type: String, required: true },
       },
     ],
 
+    // Relations
     category: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -89,19 +106,23 @@ const packageSchema = new Schema(
       required: true,
     },
 
+    // Offer
     offer: { type: offerSchema },
 
-    isBlocked: {
+     isBlocked: {
       type: Boolean,
       default: false,
     },
 
-    startDate: { type: Date },
+    startPoint:{
+      type:String,
+    },
+     startDate: { type: Date },
     endDate: { type: Date },
 
-    itinerary: [itinerarySchema],
-    importantDetails: { type: String },
+     itinerary: [itinerarySchema],
 
+     importantDetails: { type: String },
     included: [{ type: String }],
     notIncluded: [{ type: String }],
   },
@@ -111,4 +132,7 @@ const packageSchema = new Schema(
 // Add 2dsphere index for geo queries
 packageSchema.index({ 'location.geo': '2dsphere' });
 
-export const PackageModel = mongoose.model<IPackage & Document>('Package', packageSchema);
+export const PackageModel = mongoose.model<IPackage & Document>(
+  'Package',
+  packageSchema
+);

@@ -4,8 +4,8 @@ import { IPackage } from '@domain/entities/IPackage';
 import { Types } from 'mongoose';
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {
-    const createPkg = await PackageModel.create(pkg);
-    return createPkg.toObject();
+     const createPkg = await PackageModel.create(pkg);
+     return createPkg.toObject();
   }
 
   async editPackage(
@@ -15,8 +15,10 @@ export class PackageRepository implements IPackageRepository {
     newImages: { url: string; public_id: string }[] = []
   ): Promise<IPackage | null> {
     if (!Types.ObjectId.isValid(id)) throw new Error('Invalid package ID');
-
-    const updateOps: any = { ...data };
+    const updateOps: any = {
+      $set: { ...data },
+    };
+    console.log(updateOps, 'mogogngaonga')
 
     if (deletedImages.length > 0) {
       await PackageModel.findByIdAndUpdate(id, {
@@ -41,7 +43,7 @@ export class PackageRepository implements IPackageRepository {
   }
 
   async findAll(skip: number, limit: number): Promise<IPackage[]> {
-    return PackageModel.find({}).skip(skip).sort({createdAt:-1}).populate('category').limit(limit).lean();
+    return PackageModel.find({}).skip(skip).sort({ createdAt: -1 }).populate('category').limit(limit).lean();
   }
 
   async countDocument(): Promise<number> {
@@ -59,7 +61,7 @@ export class PackageRepository implements IPackageRepository {
     })
       .limit(4)
       .lean();
-      console.log(pkg,'pkg home')
+    console.log(pkg, 'pkg home')
     return pkg;
   }
 

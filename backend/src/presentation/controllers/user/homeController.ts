@@ -1,21 +1,21 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
 
 export class HomeController {
-  constructor(private _homeUseCases: IHomeUseCases) {}
+  constructor(private _homeUseCases: IHomeUseCases) { }
 
-  getHome = async (req: Request, res: Response): Promise<void> => {
+  getHome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const result = await this._homeUseCases.getHome();
 
       res.status(HttpStatus.OK).json({ result });
-    } catch (error: any) {
-      res.status(400).json({ message: error.message });
+    } catch (error) {
+      next(error)
     }
   };
 
-  getActivePackage = async (req: Request, res: Response): Promise<void> => {
+  getActivePackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { page, limit, sort, search, ...restFilters } = req.query;
       console.log('Query received:', req.query);
@@ -40,23 +40,24 @@ export class HomeController {
         sort: sortBy,
         search: searchQuery,
       });
-       res.status(HttpStatus.OK).json({
+
+      res.status(HttpStatus.OK).json({
         message: 'Active packages fetched successfully',
         ...result,
       });
-    } catch (error: any) {
-      res.status(500).json({ message: error.message || 'Something went wrong' });
+    } catch (error) {
+      next(error)
     }
   };
 
-  getPackagesById = async (req: Request, res: Response): Promise<void> => {
+  getPackagesById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
       const packages = await this._homeUseCases.getPackageById(id);
- 
+   //   console.log(packages, 'by id packge')
       res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
-    } catch (error: any) {
-      res.status(500).json({ message: error.message || 'Something went wrong' });
+    } catch (error) {
+      next(error)
     }
   };
 }

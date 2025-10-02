@@ -19,8 +19,8 @@ export class NotificationController {
                 status: (req.query.status as string) || "",
                 
             };
-            console.log(filters, 'filters in notification')
-            console.log(filters)
+            // console.log(filters, 'filters in notification')
+            // console.log(filters)
             const { notification, pagination } = await this._notificationUseCases.getNotifications(
                 userId,
                 page,
@@ -28,7 +28,7 @@ export class NotificationController {
                 filters
             );
             const data = notification.map(mapToNotificationDTO)
-            console.log(data, 'notification')
+            //console.log(data, 'notification')
             res.status(HttpStatus.OK).json({
                 data,
                 pagination,

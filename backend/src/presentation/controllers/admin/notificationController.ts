@@ -14,15 +14,14 @@ export class NotificationController {
             const filters: IFilter = {
                 status: (req.query.status as string) || "",
             };
-            console.log(filters, 'filters in notification')
-            console.log(filters)
+            // console.log(filters, 'filters in notification')
+            // console.log(filters)
             const { notification, pagination } = await this._notificationUseCases.getAdminNotifications(
                 page,
                 limit,
                 filters
             );
-            console.log(notification,'notidifcaario control')
-
+ 
             const data = notification.map(mapToNotificationDTO)
             res.status(HttpStatus.OK).json({
                 data,
