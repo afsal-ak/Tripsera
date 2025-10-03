@@ -1,11 +1,19 @@
 import { Types } from 'mongoose';
 
+// export interface ITraveler {
+//   fullName: string;
+//   age: number;
+//   gender: 'male' | 'female' | 'other';
+//   id: string;
+// }
 export interface ITraveler {
   fullName: string;
   age: number;
-  gender: 'male' | 'female' | 'other';
-  id: string;
+  gender: "male" | "female" | "other";
+  idType: "aadhaar" | "pan" | "passport";
+  idNumber: string;
 }
+
 
 export interface IBooking {
   _id?: string | Types.ObjectId;

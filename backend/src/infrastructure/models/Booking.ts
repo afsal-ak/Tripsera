@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, Document } from 'mongoose';
-import { IBooking } from '@domain/entities/IBooking';
+import { IBooking,ITraveler } from '@domain/entities/IBooking';
 
 // interface IBookingDocument extends Omit<IBooking, '_id'>, Document {
 //   _id: mongoose.Types.ObjectId;
@@ -7,12 +7,31 @@ import { IBooking } from '@domain/entities/IBooking';
 
 type IBookingDocument =IBooking & Document
 
-const TravelerSchema = new Schema(
+// const TravelerSchema = new Schema(
+//   {
+//     fullName: { type: String, required: true },
+//     age: { type: Number, required: true },
+//     gender: { type: String, enum: ['male', 'female', 'other'], required: true },
+//     id: { type: String, required: true },
+//   },
+//   { _id: false }
+// );
+
+const TravelerSchema = new Schema<ITraveler>(
   {
     fullName: { type: String, required: true },
     age: { type: Number, required: true },
-    gender: { type: String, enum: ['male', 'female', 'other'], required: true },
-    id: { type: String, required: true },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      required: true,
+    },
+    idType: {
+      type: String,
+      enum: ["aadhaar", "pan", "passport"],
+      required: true,
+    },
+    idNumber: { type: String, required: true },
   },
   { _id: false }
 );
