@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/Button';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/Dialog';
-import { getBookingById, cancelBooking } from '@/services/admin/bookingService';
+import { getBookingById, cancelBooking, confirmBooking } from '@/services/admin/bookingService';
 import { getPackageById } from '@/services/admin/packageService';
 import type { IPackage } from '@/types/IPackage';
 import type { IBooking } from '@/types/IBooking';
@@ -30,6 +30,8 @@ const BookingDetails = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [note, setNote] = useState('');
+  const [noteOpen, setNoteOpen] = useState(false)
   const [pkg, setPkg] = useState<IPackage | null>(null);
 
   useEffect(() => {
@@ -90,7 +92,30 @@ const BookingDetails = () => {
       toast.error('Cancellation failed.');
     }
   };
+  const handleConfirm = async () => {
+    if (!note.trim()) {
+      toast.error('Please provide a cancellation reason.');
+      return;
+    }
 
+    try {
+      await confirmBooking(id!, note);
+      toast.success('Booking cancelled.');
+
+      setBooking((prev) =>
+        prev
+          ? {
+            ...prev,
+            bookingStatus: 'confirmed',
+            updatedAt: new Date(),
+          }
+          : prev
+      );
+      setNoteOpen(false);
+    } catch {
+      toast.error('Confirmation failed.');
+    }
+  };
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'confirmed': return 'bg-green-100 text-green-800 border-green-200';
@@ -459,6 +484,41 @@ const BookingDetails = () => {
 
             {/* Action Buttons */}
             <div className="space-y-3">
+              {/* Confirms Buttons */}
+
+              {booking?.bookingStatus !== "cancelled" &&
+                booking?.bookingStatus !== "confirmed" && new Date(booking?.travelDate!) > new Date() && (
+
+                  <Dialog open={noteOpen} onOpenChange={setNoteOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="destructive" className="w-full">
+                        Confirm Booking
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Confirm Booking</h3>
+                        <p className="text-gray-600">Additional Note:</p>
+                        <Textarea
+                          rows={4}
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                          placeholder="Please add additional note..."
+                          className="w-full"
+                        />
+                        <div className="flex gap-3">
+                          <Button variant="outline" onClick={() => setNoteOpen(false)} className="flex-1">
+                            Close
+                          </Button>
+                          <Button onClick={handleConfirm} variant="destructive" className="flex-1">
+                            Confirm Booking
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
+
 
               {/* Cancel Booking */}
               {booking?.bookingStatus !== "cancelled" && new Date(booking?.travelDate!) > new Date() && (

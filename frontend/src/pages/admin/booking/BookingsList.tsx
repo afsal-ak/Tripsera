@@ -69,7 +69,7 @@ const BookingList = () => {
 
     fetchBookings();
   }, [currentPage, debouncedSearch,searchParams]);
-  console.log(bookings, 'booki');
+ // console.log(bookings, 'booki');
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -160,6 +160,7 @@ const BookingList = () => {
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="booked">Booked</SelectItem>
                 <SelectItem value="confirmed">Confirmed</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
