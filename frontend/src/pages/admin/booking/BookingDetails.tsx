@@ -9,7 +9,7 @@ import { getBookingById, cancelBooking } from '@/services/admin/bookingService';
 import { getPackageById } from '@/services/admin/packageService';
 import type { IPackage } from '@/types/IPackage';
 import type { IBooking } from '@/types/IBooking';
- import {
+import {
   Check,
   Calendar,
   Users,
@@ -30,7 +30,7 @@ const BookingDetails = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
-   const [pkg, setPkg] = useState<IPackage | null>(null);
+  const [pkg, setPkg] = useState<IPackage | null>(null);
 
   useEffect(() => {
     const loadBooking = async () => {
@@ -193,55 +193,55 @@ const BookingDetails = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                   <section className="bg-white rounded-xl p-8 shadow-sm border">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Day by Day Itinerary</h2>
-              <div className="space-y-4">
-                {pkg?.itinerary?.map((day, index) => (
-                  <Card
-                    key={index}
-                    className="border-l-4 border-l-orange hover:shadow-md transition-shadow"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start space-x-4">
-                        <div className="bg-orange text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
-                          {day.day}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-foreground mb-1">
-                            {day.title}
-                          </h3>
-                          {day.description && (
-                            <p className="text-sm text-muted-foreground mb-3">{day.description}</p>
-                          )}
-                          <ul className="space-y-2">
-                            {day.activities
-                              .sort((a, b) => a.startTime.localeCompare(b.startTime))
-                              .map((activity, actIndex) => {
-                                const formatTime = (time24: string) => {
-                                  const [hourStr, minute] = time24.split(":");
-                                  let hour = parseInt(hourStr, 10);
-                                  const ampm = hour >= 12 ? "PM" : "AM";
-                                  hour = hour % 12 || 12;
-                                  return `${hour}:${minute} ${ampm}`;
-                                };
+                  <section className="bg-white rounded-xl p-8 shadow-sm border">
+                    <h2 className="text-2xl font-bold text-foreground mb-6">Day by Day Itinerary</h2>
+                    <div className="space-y-4">
+                      {pkg?.itinerary?.map((day, index) => (
+                        <Card
+                          key={index}
+                          className="border-l-4 border-l-orange hover:shadow-md transition-shadow"
+                        >
+                          <CardContent className="p-6">
+                            <div className="flex items-start space-x-4">
+                              <div className="bg-orange text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                                {day.day}
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="text-xl font-semibold text-foreground mb-1">
+                                  {day.title}
+                                </h3>
+                                {day.description && (
+                                  <p className="text-sm text-muted-foreground mb-3">{day.description}</p>
+                                )}
+                                <ul className="space-y-2">
+                                  {day.activities
+                                    .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                                    .map((activity, actIndex) => {
+                                      const formatTime = (time24: string) => {
+                                        const [hourStr, minute] = time24.split(":");
+                                        let hour = parseInt(hourStr, 10);
+                                        const ampm = hour >= 12 ? "PM" : "AM";
+                                        hour = hour % 12 || 12;
+                                        return `${hour}:${minute} ${ampm}`;
+                                      };
 
-                                return (
-                                  <li key={actIndex} className="flex items-center space-x-2">
-                                    <span className="text-orange font-semibold">
-                                      {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
-                                    </span>
-                                    <span className="text-muted-foreground">{activity.activity}</span>
-                                  </li>
-                                );
-                              })}
-                          </ul>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
+                                      return (
+                                        <li key={actIndex} className="flex items-center space-x-2">
+                                          <span className="text-orange font-semibold">
+                                            {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
+                                          </span>
+                                          <span className="text-muted-foreground">{activity.activity}</span>
+                                        </li>
+                                      );
+                                    })}
+                                </ul>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </section>
 
                 </div>
               </CardContent>
@@ -370,10 +370,14 @@ const BookingDetails = () => {
                       <div className="text-sm text-gray-600">
                         Age {traveler?.age} • {traveler?.gender}
                       </div>
+                      <div className="text-sm text-gray-600">
+                        {traveler?.idType?.toUpperCase()}: {traveler?.idNumber}
+                      </div>
                     </div>
                   ))}
                 </div>
               </CardContent>
+
             </Card>
 
             {/* Contact Information */}

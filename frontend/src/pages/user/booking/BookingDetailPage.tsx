@@ -226,7 +226,7 @@ const BookingDetailPage = () => {
             <PackageDetailPickUp startPoint={pkg?.startPoint!} />
 
             {/* Day by Day Itinerary */}
-           <section className="bg-white rounded-xl p-8 shadow-sm border">
+            <section className="bg-white rounded-xl p-8 shadow-sm border">
               <h2 className="text-2xl font-bold text-foreground mb-6">Day by Day Itinerary</h2>
               <div className="space-y-4">
                 {pkg?.itinerary?.map((day, index) => (
@@ -353,7 +353,7 @@ const BookingDetailPage = () => {
                 <div className="flex items-center justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Payment Status</span>
                   <span className={`font-medium ${booking?.paymentStatus === 'paid' ? 'text-green-600' :
-                      booking?.paymentStatus === 'pending' ? 'text-yellow-600' : 'text-red-600'
+                    booking?.paymentStatus === 'pending' ? 'text-yellow-600' : 'text-red-600'
                     }`}>
                     {booking?.paymentStatus}
                   </span>
@@ -399,10 +399,14 @@ const BookingDetailPage = () => {
                       <div className="text-sm text-gray-600">
                         Age {traveler?.age} • {traveler?.gender}
                       </div>
+                      <div className="text-sm text-gray-600">
+                        {traveler?.idType?.toUpperCase()}: {traveler?.idNumber}
+                      </div>
                     </div>
                   ))}
                 </div>
               </CardContent>
+
             </Card>
 
             {/* Contact Information */}

@@ -32,7 +32,7 @@ declare global {
 
 const CheckoutPage = () => {
   const { id } = useParams();
-  console.log(id,' prrrrrrrrrrrrrr')
+  console.log(id, ' prrrrrrrrrrrrrr')
   const navigate = useNavigate();
 
   const userData = useSelector((state: RootState) => state.userAuth.user)
@@ -122,8 +122,7 @@ const CheckoutPage = () => {
       }
       try {
         const data = await fetchPackgeById(id);
-                console.log(data,'cehchcaas')
-
+ 
         setPackageData(data as IPackage);
       } catch (error) {
         console.error('Failed to fetch package details', error);
@@ -144,8 +143,11 @@ const CheckoutPage = () => {
     defaultValues: {
       packageId: id ?? '',
       travelDate: '',
-      travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
-      contactDetails: {
+     // travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
+      travelers: [
+    { fullName: "", age: 0, gender: "male", idType: undefined, idNumber: "" },
+  ], 
+     contactDetails: {
         name: userData?.fullName || '',
         phone: userData?.phone ? String(userData.phone) : '',
         alternatePhone: '',
@@ -386,7 +388,7 @@ const CheckoutPage = () => {
 
 
             <Card>
-              <CardContent className="p-6">
+              {/* <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Traveler Details</h3>
                 {fields.map((field, index) => (
                   <div key={field.id} className="space-y-4 p-4 border rounded-lg mb-4">
@@ -463,7 +465,117 @@ const CheckoutPage = () => {
                 >
                   <Plus className="w-4 h-4 mr-2" /> Add Another Traveler
                 </Button>
-              </CardContent>
+              </CardContent> */}
+              <CardContent className="p-6">
+  <h3 className="text-xl font-semibold mb-4">Traveler Details</h3>
+
+  {fields.map((field, index) => (
+    <div key={field.id} className="space-y-4 p-4 border rounded-lg mb-4">
+      <div className="flex justify-between">
+        <h4 className="font-medium">Traveler {index + 1}</h4>
+        {fields.length > 1 && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="text-red-500"
+            onClick={() => remove(index)}
+          >
+            <Minus className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Full Name */}
+        <div>
+          <Input
+            placeholder="Full Name *"
+            {...register(`travelers.${index}.fullName`)}
+          />
+          {errors.travelers?.[index]?.fullName && (
+            <p className="text-red-500 text-xs">
+              {errors.travelers[index]?.fullName?.message}
+            </p>
+          )}
+        </div>
+
+        {/* Age */}
+        <div>
+          <Input
+            type="number"
+            placeholder="Age *"
+            {...register(`travelers.${index}.age`, { valueAsNumber: true })}
+          />
+          {errors.travelers?.[index]?.age && (
+            <p className="text-red-500 text-xs">
+              {errors.travelers[index]?.age?.message}
+            </p>
+          )}
+        </div>
+
+        {/* ID Type */}
+        <div>
+          <select
+            {...register(`travelers.${index}.idType`)}
+            className="border px-3 py-2 rounded text-sm w-full"
+          >
+            <option value="">Select ID Type *</option>
+            <option value="aadhaar">Aadhaar</option>
+            <option value="pan">PAN</option>
+            <option value="passport">Passport</option>
+          </select>
+          {errors.travelers?.[index]?.idType && (
+            <p className="text-red-500 text-xs">
+              {errors.travelers[index]?.idType?.message}
+            </p>
+          )}
+        </div>
+
+        {/* ID Number */}
+        <div>
+          <Input
+            placeholder="Enter ID Number *"
+            {...register(`travelers.${index}.idNumber`)}
+          />
+          {errors.travelers?.[index]?.idNumber && (
+            <p className="text-red-500 text-xs">
+              {errors.travelers[index]?.idNumber?.message}
+            </p>
+          )}
+        </div>
+
+        {/* Gender */}
+        <div>
+          <select
+            {...register(`travelers.${index}.gender`)}
+            className="border px-3 py-2 rounded text-sm w-full"
+          >
+            <option value="">Select Gender *</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+          {errors.travelers?.[index]?.gender && (
+            <p className="text-red-500 text-xs">
+              {errors.travelers[index]?.gender?.message}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  ))}
+
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() => append({ fullName: "", age: 0, gender: "male",    idType: undefined, idNumber: "" })}
+    className="w-full text-orange border-orange hover:bg-orange hover:text-white"
+  >
+    <Plus className="w-4 h-4 mr-2" /> Add Another Traveler
+  </Button>
+</CardContent>
+
             </Card>
             <Card>
               <CardContent className="p-6">
