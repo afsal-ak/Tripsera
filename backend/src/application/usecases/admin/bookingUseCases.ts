@@ -32,7 +32,7 @@ export class BookingUseCases implements IBookingUseCases {
   async getBookingByIdForAdmin(bookingId: string): Promise<IBooking | null> {
     return await this._bookingRepo.getBookingByIdForAdmin(bookingId);
   }
-  
+
   async cancelBookingByAdmin(bookingId: string, reason: string): Promise<IBooking | null> {
     const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
@@ -44,30 +44,30 @@ export class BookingUseCases implements IBookingUseCases {
     }
 
     const userId = booking.userId.toString()
-     //  Refund if already paid
-  if (booking.paymentStatus === "paid" && booking.amountPaid > 0) {
-    const wallet = await this._walletRepo.creditWallet(
-      userId,
-      booking.amountPaid,
-      `Admin : Refund for cancelled booking ${booking.bookingCode}`
-    );
+    //  Refund if already paid
+    if (booking.paymentStatus === "paid" && booking.amountPaid > 0) {
+      const wallet = await this._walletRepo.creditWallet(
+        userId,
+        booking.amountPaid,
+        `Admin : Refund for cancelled booking ${booking.bookingCode}`
+      );
 
-    if (!wallet) {
-      throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to refund wallet");
+      if (!wallet) {
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to refund wallet");
+      }
+
+      const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
+
+      await this._notificationUseCases.sendNotification({
+        role: "user",
+        userId,
+        title: "Booking Refund",
+        entityType: "wallet",
+        walletId: wallet._id!.toString(),
+        message: walletMessage,
+        type: "success",
+      });
     }
-
-    const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
-
-    await this._notificationUseCases.sendNotification({
-      role: "user",
-      userId,
-      title: "Booking Refund",
-      entityType: "wallet",
-      walletId: wallet._id!.toString(),
-      message: walletMessage,
-      type: "success",
-    });
-  }
 
 
     const bookingMessage = `Admin Cancelled your booking  ${booking?.bookingCode} (Reason: ${reason})`;
@@ -79,7 +79,7 @@ export class BookingUseCases implements IBookingUseCases {
       entityType: 'booking',
       bookingId: booking?._id!.toString(),
       packageId: booking.packageId.toString(),
-      message:bookingMessage,
+      message: bookingMessage,
       type: "warning",
       metadata: { bookingId: booking._id, reason },
     });
@@ -90,7 +90,29 @@ export class BookingUseCases implements IBookingUseCases {
   }
 
   async confirmBookingByAdmin(bookingId: string, note: string): Promise<IBooking | null> {
-  return  await this._bookingRepo.confirmBookingByAdmin(bookingId,note)
-    
+    const bkg = await this._bookingRepo.confirmBookingByAdmin(bookingId, note)
+    const booking = await this._bookingRepo.findById(bookingId);
+    if (!booking) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
+    }
+
+
+
+    const userId = booking.userId.toString()
+    const bookingMessage = `Admin Confirmed your Bokoking`;
+
+    await this._notificationUseCases.sendNotification({
+      role: 'user',
+      userId: userId.toString(),
+      title: "Booking Confirmed",
+      entityType: 'booking',
+      bookingId: booking?._id!.toString(),
+      packageId: booking.packageId.toString(),
+      message: bookingMessage,
+      type: "success",
+      metadata: { bookingId: booking._id },
+    });
+    return bkg
+
   }
 }

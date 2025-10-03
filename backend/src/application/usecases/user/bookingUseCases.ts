@@ -1,4 +1,4 @@
-import { IBooking } from '@domain/entities/IBooking';
+import { IBooking, IBookingHistory, ITravelDateHistory } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
@@ -34,7 +34,7 @@ export class BookingUseCases implements IBookingUseCases {
     return await this._bookingRepo.getBookingById(userId, bookingId);
   }
 
- 
+
 
   async cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null> {
     const booking = await this._bookingRepo.findById(bookingId);
@@ -202,7 +202,7 @@ export class BookingUseCases implements IBookingUseCases {
       paymentId,
       signature,
     };
-    const userId=booking.userId.toString()
+    const userId = booking.userId.toString()
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new AppError(HttpStatus.NOT_FOUND, "User not found");
@@ -212,7 +212,7 @@ export class BookingUseCases implements IBookingUseCases {
     if (!pkg) {
       throw new AppError(HttpStatus.NOT_FOUND, "Package not found for this booking");
     }
-        let  message= `User ${user.username} initiated a booking for package ${pkg.title}.`
+    let message = `User ${user.username} initiated a booking for package ${pkg.title}.`
 
     const notification = await this._notificationUseCases.sendNotification({
 
@@ -353,7 +353,7 @@ export class BookingUseCases implements IBookingUseCases {
     const message = `User ${user?.username} booked package ${pkg?.title})`;
     //  Save notification in DB
     const notification = await this._notificationUseCases.sendNotification({
-       role: 'admin',
+      role: 'admin',
       title: "New Booking",
       entityType: 'booking',
       bookingId: booking?._id?.toString(),
@@ -366,5 +366,184 @@ export class BookingUseCases implements IBookingUseCases {
 
 
     return { booking };
+  }
+
+
+  //   async removeTraveler(
+  //   bookingId: string,
+  //   travelerIndex: number,
+  //   userId: string,
+  //   note?: string
+  // ): Promise<IBooking | null> {
+  //   const bookingDoc = await this._bookingRepo.findById(bookingId);
+  //   if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
+
+  //   const removedTraveler = bookingDoc.travelers.splice(travelerIndex, 1)[0];
+
+  //   // Track general booking history
+  //   bookingDoc.history = bookingDoc.history || [];
+  //   bookingDoc.history.push({
+  //     action: 'traveler_removed',
+  //     oldValue: removedTraveler,
+  //     newValue: null,
+  //     changedBy: userId,
+  //     changedAt: new Date(),
+  //     note,
+  //   });
+
+  //   // Track traveler-specific history with reason
+  //   bookingDoc.travelerHistory = bookingDoc.travelerHistory || [];
+  //   bookingDoc.travelerHistory.push({
+  //     traveler: removedTraveler,
+  //     action: 'removed',
+  //     changedBy: userId,
+  //     changedAt: new Date(),
+  //     note, 
+  //   });
+
+  //   // Cancel booking if no travelers remain
+  //   if (bookingDoc.travelers.length === 0) {
+  //     bookingDoc.bookingStatus = 'cancelled';
+  //     bookingDoc.cancelReason = note || 'All travelers removed';
+  //     bookingDoc.cancelledBy = userId;
+  //     // bookingDoc.cancelledAt = new Date();
+  //   }
+
+  //   return await this._bookingRepo.updateBooking(bookingId, bookingDoc);
+  // }
+
+  async removeTraveler(
+    bookingId: string,
+    travelerIndex: number,
+    userId: string,
+    note?: string
+  ): Promise<IBooking | null> {
+    const bookingDoc = await this._bookingRepo.findById(bookingId);
+    if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, "Booking not found");
+
+    const removedTraveler = bookingDoc.travelers.splice(travelerIndex, 1)[0];
+
+    // Track general booking history
+    bookingDoc.history = bookingDoc.history || [];
+    bookingDoc.history.push({
+      action: "traveler_removed",
+      oldValue: removedTraveler,
+      newValue: null,
+      changedBy: 'user',
+      changedAt: new Date(),
+      note,
+    });
+
+    // Track traveler-specific history with reason
+    bookingDoc.travelerHistory = bookingDoc.travelerHistory || [];
+    bookingDoc.travelerHistory.push({
+      traveler: removedTraveler,
+      action: "removed",
+      changedBy: 'user',
+      changedAt: new Date(),
+      note,
+    });
+
+     if (bookingDoc.paymentStatus === "paid" && bookingDoc.amountPaid > 0) {
+      // Calculate refund for removed traveler
+      const perTravelerAmount = bookingDoc.amountPaid / (bookingDoc.travelers.length + 1); // +1 because we already removed one
+      const refundAmount = perTravelerAmount;
+
+      // Credit to user wallet
+      const wallet = await this._walletRepo.creditWallet(
+        bookingDoc.userId.toString(),
+        refundAmount,
+        `Refund for removed traveler ${removedTraveler.fullName} in booking ${bookingDoc.bookingCode}`
+      );
+
+      if (!wallet) {
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to refund wallet");
+      }
+
+      // Send notification to user
+      await this._notificationUseCases.sendNotification({
+        role: "user",
+        userId: bookingDoc.userId.toString(),
+        title: "Traveler Refund",
+        entityType: "wallet",
+        walletId: wallet._id!.toString(),
+        message: `₹${refundAmount} refunded to your wallet for removed traveler ${removedTraveler.fullName}.`,
+        type: "success",
+      });
+
+      // Track adjustment history
+      bookingDoc.adjustments = bookingDoc.adjustments || [];
+      bookingDoc.adjustments.push({
+        oldAmount: bookingDoc.amountPaid,
+        newAmount: bookingDoc.amountPaid - refundAmount,
+        refundAmount,
+        reason: note || "Traveler removed",
+        processedBy: userId,
+        processedAt: new Date(),
+      });
+
+      bookingDoc.amountPaid -= refundAmount;
+    }
+
+    // Cancel booking if no travelers remain
+    if (bookingDoc.travelers.length === 0) {
+      bookingDoc.bookingStatus = "cancelled";
+      bookingDoc.cancelReason = note || "All travelers removed";
+      bookingDoc.cancelledBy = 'user';
+    }
+
+    // Notify admin about traveler removal
+    const pkg = await this._packageRepo.findById(bookingDoc.packageId.toString());
+    await this._notificationUseCases.sendNotification({
+      role: "admin",
+      title: "Traveler Removed",
+      entityType: "booking",
+      bookingId: bookingDoc._id!.toString(),
+      packageId: bookingDoc.packageId.toString(),
+      message: `Traveler ${removedTraveler.fullName} removed from booking ${bookingDoc.bookingCode} (${pkg?.title || ""})`,
+      type: "warning",
+      triggeredBy: userId,
+      metadata: { removedTraveler, note },
+    });
+
+    return await this._bookingRepo.updateBooking(bookingId, bookingDoc);
+  }
+
+
+
+  async changeTravelDate(bookingId: string, newDate: Date, userId: string, note?: string): Promise<IBooking> {
+    const bookingDoc = await this._bookingRepo.findById(bookingId);
+    if (!bookingDoc) throw new Error('Booking not found');
+
+    const oldDate = bookingDoc.travelDate;
+
+    bookingDoc.travelDate = newDate;
+
+    // Update reschedule info
+    bookingDoc.previousDates = bookingDoc.previousDates || [];
+    bookingDoc.previousDates.push({
+      oldDate: oldDate,
+      newDate,
+      action: newDate > oldDate! ? 'postponed' : 'preponed',
+      changedBy: userId,
+      changedAt: new Date(),
+    });
+
+    bookingDoc.rescheduleCount = (bookingDoc.rescheduleCount || 0) + 1;
+
+    // Track history
+    const historyItem: IBookingHistory = {
+      action: 'date_changed',
+      oldValue: oldDate,
+      newValue: newDate,
+      changedBy: userId,
+      changedAt: new Date(),
+      note,
+    };
+
+    bookingDoc.history = bookingDoc.history || [];
+    bookingDoc.history.push(historyItem);
+
+    return await this._bookingRepo.save(bookingDoc);
   }
 }

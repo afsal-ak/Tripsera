@@ -5,13 +5,10 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUseCases ';
 import { generateBookingInvoice } from '@shared/utils/generateBookingInvoice';
 import { generateInvoiceCode } from '@shared/utils/generateInvoiceCode';
-import { NotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
-import { initNotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
-import { getNotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
 export class BookingController {
   constructor(
     private _bookingUseCases: IBookingUseCases,
-    ) { }
+  ) { }
 
   createBookingWithOnlinePayment = async (
     req: Request,
@@ -110,18 +107,18 @@ export class BookingController {
       const data = req.body;
       console.log(data, 'wallet payment');
 
-      const { booking  } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
+      const { booking } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
 
       if (!booking) {
         throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
       }
-        // Emit notification 
-             // console.log(notification,'notifica caontrol')
-  //  const socketService = getNotificationSocketService();
-  //   socketService.emitNotificationToUser(notification.userId.toString(), {
-  //     title: "Booking Confirmed",
-  //     message: "Your booking was successful 🎉",
-  //   });
+      // Emit notification 
+      // console.log(notification,'notifica caontrol')
+      //  const socketService = getNotificationSocketService();
+      //   socketService.emitNotificationToUser(notification.userId.toString(), {
+      //     title: "Booking Confirmed",
+      //     message: "Your booking was successful 🎉",
+      //   });
       res.status(HttpStatus.CREATED).json({
         message: 'Booking created successfully using wallet',
         booking,
@@ -169,47 +166,75 @@ export class BookingController {
     }
   };
 
-  downloadInvoice = async (req: Request, res: Response):Promise<void> =>{
-  try {
-          const userId = getUserIdFromRequest(req);
+  downloadInvoice = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
 
-    const bookingId = req.params.bookingId;
-console.log(bookingId,'from booking')
-    const booking = await this._bookingUseCases.getBookingById(userId,bookingId)
-     
+      const bookingId = req.params.bookingId;
+      console.log(bookingId, 'from booking')
+      const booking = await this._bookingUseCases.getBookingById(userId, bookingId)
 
-    if (!booking) {
-      throw new AppError(HttpStatus.NOT_FOUND,'Booking not found');
-    }
-     const invoiceCode = await generateInvoiceCode();
-    const pdfBuffer = await generateBookingInvoice(booking, invoiceCode);
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=${invoiceCode}.pdf`);
-   
+      if (!booking) {
+        throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
+      }
+      const invoiceCode = await generateInvoiceCode();
+      const pdfBuffer = await generateBookingInvoice(booking, invoiceCode);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=${invoiceCode}.pdf`);
+
       res.status(HttpStatus.OK).send(pdfBuffer)
-  } catch (error) {
+    } catch (error) {
 
+    }
+
+
+  };
+  // Cancel a booking
+  cancelBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
+      const bookingId = req.params.id;
+      console.log(req.body, 'cancel reason');
+      const { reason } = req.body;
+
+      const booking = await this._bookingUseCases.cancelBooking(userId, bookingId, reason);
+
+      res.status(HttpStatus.OK).json({
+        booking,
+        message: 'Booking cancelled successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  removeTraveler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+            const bookingId = req.params.id;
+
+      const {  travelerIndex, note } = req.body;
+      const userId = getUserIdFromRequest(req);
+
+      const updatedBooking = await this._bookingUseCases.removeTraveler(bookingId, travelerIndex, userId, note);
+      res.status(HttpStatus.OK).json(updatedBooking);
+    } catch (error) {
+      next(error)
+    }
   }
 
+    changeTravelDate=async(req: Request, res: Response, next: NextFunction):Promise<void>=> {
+    try {
+            const bookingId = req.params.id;
 
-};
-// Cancel a booking
-cancelBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const userId = getUserIdFromRequest(req);
-    const bookingId = req.params.id;
-    console.log(req.body, 'cancel reason');
-    const { reason } = req.body;
+      const {  newDate, note } = req.body;
+      const userId = getUserIdFromRequest(req);
 
-    const booking = await this._bookingUseCases.cancelBooking(userId, bookingId, reason);
-
-    res.status(HttpStatus.OK).json({
-      booking,
-      message: 'Booking cancelled successfully',
-    });
-  } catch (error) {
-    next(error);
+      const updatedBooking = await this._bookingUseCases.changeTravelDate(bookingId, new Date(newDate), userId, note);
+      res.status(HttpStatus.OK).json(updatedBooking);
+    } catch (error) {
+      next(error)
+    }
   }
-};
 }

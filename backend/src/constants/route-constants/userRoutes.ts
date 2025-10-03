@@ -65,6 +65,8 @@ export const BOOKING_ROUTES = {
   RETRY_PAYMENT: '/retry-payment/:id',
   WALLET_BOOKING: '/booking/wallet',
   INVOICE_DOWNLOAD: '/booking/invoice/:bookingId/download',
+  REMOVE_TRAVELER:'/booking/:id/remove-traveler',
+  CHANGE_TRAVEL_DATE:'/booking/:id/change-travel-date'
 };
 
 export const BLOG_ROUTES = {

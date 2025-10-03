@@ -53,4 +53,7 @@ export interface IBookingUseCases {
     userId: string,
     data: IBookingInput & { useWallet?: boolean }
   ): Promise<{ booking?: IBooking }>;
+
+  removeTraveler(bookingId: string, travelerIndex: number, userId: string, note?: string): Promise<IBooking|null>
+  changeTravelDate(bookingId: string, newDate: Date, userId: string, note?: string): Promise<IBooking>
 }

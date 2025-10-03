@@ -285,6 +285,16 @@ router.get(
   bookingController.downloadInvoice
 );
 
+router.put(
+  BOOKING_ROUTES.REMOVE_TRAVELER,
+  userAuthMiddleware,
+  bookingController.removeTraveler
+);
+router.put(
+  BOOKING_ROUTES.CHANGE_TRAVEL_DATE,
+  userAuthMiddleware,
+  bookingController.changeTravelDate
+);
 
 // BLOG ROUTES
 router.post(

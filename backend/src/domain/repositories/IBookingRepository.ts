@@ -31,4 +31,6 @@ export interface IBookingRepository extends IBaseRepository<IBooking>{
   updateBooking(id: string, updateData: Partial<IBooking>): Promise<IBooking | null>;
 
   findByRazorpayOrderId(orderId: string): Promise<IBooking | null>;
+     save(booking: any): Promise<IBooking>  
+  
 }
