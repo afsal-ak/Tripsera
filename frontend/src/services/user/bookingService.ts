@@ -80,4 +80,31 @@ export const downloadInvoice = async (bookingId: string) => {
     } catch (error) {
       console.error("Error downloading invoice", error);
      }
+
+
   };
+
+  
+ export const removeTraveler = async (
+  bookingId: string,
+  travelerIndex: number,
+  note?: string
+): Promise<any> => {
+  const response = await api.put(`/user/booking/${bookingId}/remove-traveler`, {
+    travelerIndex,
+    note,
+  });
+  return response.data;
+};
+
+ export const changeTravelDate = async (
+  bookingId: string,
+  newDate: string | Date,
+  note?: string
+): Promise<any> => {
+  const response = await api.put(`/user/booking/${bookingId}/change-travel-date`, {
+    newDate,
+    note,
+  });
+  return response.data;
+};

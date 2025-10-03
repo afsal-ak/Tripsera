@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/Button';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/Dialog';
-import { getBookingById, cancelBooking, downloadInvoice } from '@/services/user/bookingService';
+import { getBookingById, cancelBooking, downloadInvoice, changeTravelDate, removeTraveler } from '@/services/user/bookingService';
 import { fetchPackgeById } from '@/services/user/PackageService';
 import type { IPackage } from '@/types/IPackage';
 import type { IBooking } from '@/types/IBooking';
@@ -35,6 +35,9 @@ const BookingDetailPage = () => {
   const [cancelReason, setCancelReason] = useState('');
   const [showRetryModal, setShowRetryModal] = useState(false);
   const [pkg, setPkg] = useState<IPackage | null>(null);
+  const [selectedTravelerIndex, setSelectedTravelerIndex] = useState<number | null>(null);
+  const [travellerCancelReason, settravellerCancelReason] = useState('');
+  const [travellerOpen, setTravellerOpen] = useState(false);
 
   useEffect(() => {
     const loadBooking = async () => {
@@ -104,6 +107,42 @@ const BookingDetailPage = () => {
       toast.error("Failed to download invoice. Please try again.");
     } finally {
       setLoading(false)
+    }
+  };
+  // Remove traveler
+  const handleRemoveTraveler = async (travelerIndex: number, note?: string) => {
+    if (travelerIndex === undefined || travelerIndex < 0) {
+      toast.error('Invalid traveler selected.');
+      return;
+    }
+
+    try {
+      const updatedBooking = await removeTraveler(id!, travelerIndex, note);
+      toast.success('Traveler removed successfully.');
+
+      setBooking(updatedBooking);
+      setTravellerOpen(false);
+    } catch (error) {
+      toast.error('Failed to remove traveler.');
+      console.error(error);
+    }
+  };
+
+  // Change travel date (prepone/postpone)
+  const handleChangeTravelDate = async (newDate: string | Date, note?: string) => {
+    if (!newDate) {
+      toast.error('Please select a new travel date.');
+      return;
+    }
+
+    try {
+      const updatedBooking = await changeTravelDate(id!, newDate, note);
+      toast.success('Travel date updated successfully.');
+
+      setBooking(updatedBooking);
+    } catch (error) {
+      toast.error('Failed to update travel date.');
+      console.error(error);
     }
   };
 
@@ -384,7 +423,7 @@ const BookingDetailPage = () => {
             </Card>
 
             {/* Traveler Information */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
@@ -407,7 +446,143 @@ const BookingDetailPage = () => {
                 </div>
               </CardContent>
 
+            </Card> */}
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Travelers ({booking?.travelers?.length || 0})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {booking?.travelers?.map((traveler, index) => (
+                    <div key={index} className="p-3 bg-gray-50 rounded-lg relative">
+                      <div className="font-medium text-gray-900">{traveler?.fullName}</div>
+                      <div className="text-sm text-gray-600">
+                        Age {traveler?.age} • {traveler?.gender}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {traveler?.idType?.toUpperCase()}: {traveler?.idNumber}
+                      </div>
+
+                      {/* Cancel/Edit buttons only if booking is not confirmed/cancelled */}
+                      {booking?.bookingStatus !== 'confirmed' &&
+                        booking?.bookingStatus !== 'cancelled' && (
+                          <div className="mt-2 flex gap-2">
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                setTravellerOpen(true);
+                                setSelectedTravelerIndex(index);
+                              }}
+                            >
+                              Cancel Traveler
+                            </Button>
+                            {/* <Button
+                variant="outline"
+                size="sm"
+                onClick={() => editTraveler(index)}
+              >
+                Edit
+              </Button> */}
+                          </div>
+                        )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+
+              {/* Traveler cancellation modal */}
+              <Dialog open={travellerOpen} onOpenChange={setTravellerOpen}>
+                <DialogContent>
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Cancel Traveler</h3>
+                    <Textarea
+                      rows={4}
+                      value={travellerCancelReason}
+                      onChange={(e) => settravellerCancelReason(e.target.value)}
+                      placeholder="Enter cancellation reason..."
+                      className="w-full"
+                    />
+                    <div className="flex gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={() => setTravellerOpen(false)}
+                        className="flex-1"
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        className="flex-1"
+                        onClick={() =>
+                          handleRemoveTraveler(selectedTravelerIndex!, travellerCancelReason)
+                        }
+                      >
+                        Cancel Traveler
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </Card>
+
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Traveler History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {booking?.travelerHistory?.map((history, i) => (
+                    <div
+                      key={i}
+                      className="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm"
+                    >
+                      {/* Traveler Info */}
+                      <div className="mb-3">
+                        <div className="text-gray-900 font-semibold text-lg">
+                          {history.traveler.fullName}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {history.traveler.gender}, Age {history.traveler.age}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {history.traveler.idType?.toUpperCase()}: {history.traveler.idNumber}
+                        </div>
+                      </div>
+
+                      {/* Action Badge */}
+                      <div
+                        className={`inline-block mb-3 px-2 py-1 rounded text-xs font-semibold ${history.action === "removed"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-green-100 text-green-700"
+                          }`}
+                      >
+                        {history.action.toUpperCase()}
+                      </div>
+
+                      {/* Note */}
+                      {history.note && (
+                        <div className="text-sm text-gray-700 mb-2">
+                          <span className="font-medium">Reason:</span> {history.note}
+                        </div>
+                      )}
+
+                      {/* Changed by info */}
+                      <div className="text-xs text-gray-500">
+                        Changed by: {history.changedBy} <br />
+                        On: {new Date(history?.changedAt!).toLocaleString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
 
             {/* Contact Information */}
             <Card>

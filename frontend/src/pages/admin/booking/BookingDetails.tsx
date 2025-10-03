@@ -405,6 +405,61 @@ const BookingDetails = () => {
 
             </Card>
 
+
+<Card className="mt-6">
+  <CardHeader>
+    <CardTitle>Traveler History</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div className="space-y-4">
+      {booking?.travelerHistory?.map((history, i) => (
+        <div
+          key={i}
+          className="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm"
+        >
+          {/* Traveler Info */}
+          <div className="mb-3">
+            <div className="text-gray-900 font-semibold text-lg">
+              {history.traveler.fullName}
+            </div>
+            <div className="text-sm text-gray-600">
+              {history.traveler.gender}, Age {history.traveler.age}
+            </div>
+            <div className="text-sm text-gray-600">
+              {history.traveler.idType?.toUpperCase()}: {history.traveler.idNumber}
+            </div>
+          </div>
+
+          {/* Action Badge */}
+          <div
+            className={`inline-block mb-3 px-2 py-1 rounded text-xs font-semibold ${
+              history.action === "removed"
+                ? "bg-red-100 text-red-700"
+                : "bg-green-100 text-green-700"
+            }`}
+          >
+            {history.action.toUpperCase()}
+          </div>
+
+          {/* Note */}
+          {history.note && (
+            <div className="text-sm text-gray-700 mb-2">
+              <span className="font-medium">Reason:</span> {history.note}
+            </div>
+          )}
+
+          {/* Changed by info */}
+          <div className="text-xs text-gray-500">
+            Changed by: {history.changedBy} <br />
+            On: {new Date(history?.changedAt!).toLocaleString()}
+          </div>
+        </div>
+      ))}
+    </div>
+  </CardContent>
+</Card>
+
+
             {/* Contact Information */}
 
 
