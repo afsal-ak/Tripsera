@@ -157,6 +157,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
       { _id: bookingId, userId },
       {
         bookingStatus: 'cancelled',
+        cancelledBy:'user',
         cancelReason: reason,
         cancelledAt: new Date(),
       },
@@ -171,6 +172,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
       { _id: bookingId },
       {
         bookingStatus: 'cancelled',
+         cancelledBy:'admin',
         cancelReason: reason,
         cancelledAt: new Date(),
       },
@@ -179,6 +181,23 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
 
     return booking ? booking : null;
   }
+async confirmBookingByAdmin(
+  bookingId: string,
+  note?: string
+): Promise<IBooking | null> {
+  const booking = await BookingModel.findOneAndUpdate(
+    { _id: bookingId },
+    {
+      bookingStatus: 'confirmed',
+      confirmedBy: 'admin',
+      confirmedAt: new Date(),
+      adminNote: note || null,
+    },
+    { new: true, lean: true }
+  );
+
+  return booking ? booking : null;
+}
 
   async createBooking(userId: string, data: IBookingInput): Promise<IBooking> {
    

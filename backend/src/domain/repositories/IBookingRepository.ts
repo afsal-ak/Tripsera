@@ -24,7 +24,10 @@ export interface IBookingRepository extends IBaseRepository<IBooking>{
   cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null>;
   cancelBookingByAdmin(bookingId: string, reason: string): Promise<IBooking | null>;
   createBooking(userId: string, data: IBookingInput): Promise<IBooking>;
-
+  confirmBookingByAdmin(
+  bookingId: string,
+  note?: string
+): Promise<IBooking | null> 
   updateBooking(id: string, updateData: Partial<IBooking>): Promise<IBooking | null>;
 
   findByRazorpayOrderId(orderId: string): Promise<IBooking | null>;

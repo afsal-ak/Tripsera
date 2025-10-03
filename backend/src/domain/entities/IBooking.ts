@@ -1,11 +1,5 @@
 import { Types } from 'mongoose';
 
-// export interface ITraveler {
-//   fullName: string;
-//   age: number;
-//   gender: 'male' | 'female' | 'other';
-//   id: string;
-// }
 export interface ITraveler {
   fullName: string;
   age: number;
@@ -28,6 +22,8 @@ export interface IBooking {
   paymentMethod: 'razorpay' | 'wallet' | 'wallet+razorpay';
   paymentStatus: 'paid' | 'pending' | 'failed';
   bookingStatus: 'confirmed' | 'booked' | 'cancelled' | 'pending';
+  adminNote:string;
+  cancelledBy:string;
   cancelReason?: string;
   walletUsed?: number;
   walletAmountUsed?: number;

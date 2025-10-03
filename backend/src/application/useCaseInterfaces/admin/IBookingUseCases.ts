@@ -15,4 +15,6 @@ export interface IBookingUseCases {
   getBookingByIdForAdmin(bookingId: string): Promise<IBooking | null>;
 
   cancelBookingByAdmin(bookingId: string, reason: string): Promise<IBooking | null>;
+  confirmBookingByAdmin(bookingId: string, note: string): Promise<IBooking | null>;
 }
+ 

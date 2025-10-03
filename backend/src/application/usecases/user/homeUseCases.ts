@@ -49,7 +49,7 @@ export class HomeUseCases implements IHomeUseCases {
       const durationValue = filters.duration;
 
       if (!isNaN(Number(durationValue))) {
-        mongoFilter.duration = Number(durationValue);
+        mongoFilter.durationDays = Number(durationValue);
       }
     }
     if (filters.startDate || filters.endDate) {

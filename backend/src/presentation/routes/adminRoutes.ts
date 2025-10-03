@@ -241,6 +241,7 @@ router.delete(COUPON_ROUTES.DELETE, adminAuthMiddleware, couponController.delete
 // BOOKING ROUTES
 router.get(BOOKING_ROUTES.GET_ALL, adminAuthMiddleware, bookingController.getAllBooking);
 router.get(BOOKING_ROUTES.GET_BY_ID, adminAuthMiddleware, bookingController.getBookingByIdForAdmin);
+router.put(BOOKING_ROUTES.CONFIRM, adminAuthMiddleware, bookingController.confirmBookingByAdmin);
 router.patch(BOOKING_ROUTES.CANCEL, adminAuthMiddleware, bookingController.cancelBookingByAdmin);
 
 // BLOG ROUTES

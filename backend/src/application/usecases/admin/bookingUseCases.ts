@@ -88,4 +88,9 @@ export class BookingUseCases implements IBookingUseCases {
     return await this._bookingRepo.cancelBookingByAdmin(bookingId, reason);
 
   }
+
+  async confirmBookingByAdmin(bookingId: string, note: string): Promise<IBooking | null> {
+  return  await this._bookingRepo.confirmBookingByAdmin(bookingId,note)
+    
+  }
 }

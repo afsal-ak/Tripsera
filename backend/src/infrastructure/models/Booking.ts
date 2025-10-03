@@ -74,6 +74,11 @@ const BookingSchema = new Schema<IBookingDocument>(
       enum: ['confirmed', 'booked', 'cancelled', 'pending'],
       default: 'pending',
     },
+    adminNote: {
+      type: String,
+      default: null,
+    },
+    
     walletUsed: {
       type: Boolean,
       default: false,

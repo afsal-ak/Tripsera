@@ -35,7 +35,7 @@ const doc = new PDFDocument({ margin: 30, size: 'A3', layout: 'landscape' });
         'Payment Status',
       ],
       rows: bookings.map((b) => {
-        const walletUsed = b.walletUsed || b.walletAmountUsed || 0;
+        const walletUsed =  b.walletAmountUsed || 0;
 
         const onlinePaid =
           b.paymentMethod === 'razorpay' || b.paymentMethod === 'wallet+razorpay'

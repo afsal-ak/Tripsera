@@ -61,6 +61,7 @@ export const BOOKING_ROUTES = {
   GET_ALL: '/booking',
   GET_BY_ID: '/booking/:id',
   CANCEL: '/booking/cancel/:id',
+  CONFIRM: '/booking/confirm/:id',
 };
 
 // BLOG ROUTES

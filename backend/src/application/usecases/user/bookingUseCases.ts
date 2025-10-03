@@ -195,7 +195,7 @@ export class BookingUseCases implements IBookingUseCases {
       console.log('wallet debited from user');
     }
     booking.paymentStatus = 'paid';
-    booking.bookingStatus = 'confirmed';
+    booking.bookingStatus = 'booked';
     booking.updatedAt = new Date();
     booking.razorpay = {
       orderId,
@@ -244,7 +244,6 @@ export class BookingUseCases implements IBookingUseCases {
     booking.bookingStatus = 'pending';
     booking.paymentStatus = 'failed';
     booking.updatedAt = new Date();
-
     await this._bookingRepo.updateBooking(bookingId, booking);
   }
 
@@ -263,11 +262,11 @@ export class BookingUseCases implements IBookingUseCases {
     const booking = await this._bookingRepo.getBookingById(userId, bookingId);
 
     if (!booking) {
-      throw new AppError(404, 'Booking not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
 
     if (booking.paymentStatus === 'paid') {
-      throw new AppError(400, 'Booking already paid');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Booking already paid');
     }
     if (!booking._id) {
       throw new Error('Booking ID missing');
@@ -340,7 +339,7 @@ export class BookingUseCases implements IBookingUseCases {
       walletAmountUsed: totalAmount,
       amountPaid: 0,
       paymentMethod: 'wallet',
-      bookingStatus: 'confirmed',
+      bookingStatus: 'booked',
       paymentStatus: 'paid',
       bookingCode,
       createdAt: new Date(),

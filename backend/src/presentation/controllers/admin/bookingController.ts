@@ -71,4 +71,20 @@ export class BookingController {
       next(error);
     }
   };
+
+  confirmBookingByAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const bookingId = req.params.id;
+      const { notes } = req.body;
+
+      const booking = await this._bookingUseCases.confirmBookingByAdmin(bookingId, notes);
+
+      res.status(HttpStatus.OK).json({
+        booking,
+        message: 'Booking Confirmed successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
