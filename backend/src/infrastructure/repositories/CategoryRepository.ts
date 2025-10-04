@@ -3,6 +3,7 @@ import { ICategoryRepository } from '@domain/repositories/ICategoryRepository';
 import { IPaginatedResult } from '@domain/entities/IPagination';
 import { categoryModel } from '@infrastructure/models/Category';
 import mongoose from 'mongoose';
+import { IFilter } from '@domain/entities/IFilter';
 
 export class CategoryRepository implements ICategoryRepository {
   async createCategory(category: ICategory): Promise<ICategory> {
@@ -43,12 +44,25 @@ export class CategoryRepository implements ICategoryRepository {
   async getActiveCategory(): Promise<ICategory[]> {
     return await categoryModel.find({ isBlocked: false }).lean();
   }
-  async getAllCategories(page: number, limit: number): Promise<IPaginatedResult<ICategory>> {
+  async getAllCategories(page: number, limit: number, filters: IFilter): Promise<IPaginatedResult<ICategory>> {
     const skip = (page - 1) * limit;
 
+    const matchStage: any = {}
+     if (filters.search && filters.search.trim() !== "") {
+    matchStage.name = { $regex: filters.search.trim(), $options: "i" };
+  }
+
+    if (filters.status == 'active') {
+      matchStage.isBlocked = false
+    } else if(filters.status == 'blocked') {
+      matchStage.isBlocked = true
+
+    }
+
+
     const [categories, total] = await Promise.all([
-      categoryModel.find().skip(skip).limit(limit).lean(),
-      categoryModel.countDocuments(),
+      categoryModel.find(matchStage).sort({updatedAt:-1}).skip(skip).limit(limit).lean(),
+      categoryModel.countDocuments(matchStage),
     ]);
 
     return {

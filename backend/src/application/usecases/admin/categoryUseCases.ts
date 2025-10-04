@@ -1,13 +1,14 @@
 import { ICategory } from '@domain/entities/ICategory';
 import { ICategoryRepository } from '@domain/repositories/ICategoryRepository';
 import { ICategoryUseCases } from '@application/useCaseInterfaces/admin/ICategoryUseCases';
+import { IFilter } from '@domain/entities/IFilter';
 
 export class CategoryUseCases implements ICategoryUseCases {
 
   constructor(private _categoryRepo: ICategoryRepository) {}
 
-  async getAllCategory({ page, limit }: { page: number; limit: number }) {
-    return await this._categoryRepo.getAllCategories(page, limit);
+  async getAllCategory({ page, limit }: { page: number; limit: number },filters:IFilter) {
+    return await this._categoryRepo.getAllCategories(page, limit,filters);
   }
   async getActiveCategory(): Promise<ICategory[]> {
     return await this._categoryRepo.getActiveCategory();

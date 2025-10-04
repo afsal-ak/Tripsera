@@ -1,7 +1,8 @@
 import { ICategory } from '@domain/entities/ICategory';
 import { IPaginatedResult } from '@domain/entities/IPagination';
+import { IFilter } from '@domain/entities/IFilter';
 export interface ICategoryUseCases {
-  getAllCategory(params: { page: number; limit: number }): Promise<IPaginatedResult<ICategory>>;
+  getAllCategory(params: { page: number; limit: number },filter:IFilter): Promise<IPaginatedResult<ICategory>>;
 
   getActiveCategory(): Promise<ICategory[]>;
 
