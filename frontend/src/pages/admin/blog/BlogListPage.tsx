@@ -135,8 +135,7 @@ const AdminBlogList = () => {
     totalPages,
     onPageChange: handlePageChange,
   });
-  console.log(blogs, 'blog');
-  return (
+   return (
     <div className="p-4 space-y-6">
       <Card>
         <CardHeader>
@@ -214,7 +213,8 @@ const AdminBlogList = () => {
           </div>
           <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
             {paginationButtons}
-          </div>        </CardContent>
+          </div>    
+              </CardContent>
       </Card>
     </div>
   );

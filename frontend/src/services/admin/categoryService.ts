@@ -7,8 +7,11 @@ import api from "@/lib/axios/api";
 //     console.error("Failed to fetch categories", error);
 //     }
 // }
-export const fetchCategoriesData = async (page: number, limit: number) => {
-  const response = await api.get(`/admin/categories?page=${page}&limit=${limit}`);
+export const fetchCategoriesData = async (page: number, limit: number,search:string,status:string) => {
+  let params={
+    page,limit ,search,status
+  }
+  const response = await api.get(`/admin/categories`,{params});
   return response.data;
 };
 

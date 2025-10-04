@@ -11,6 +11,7 @@ const AddCategory = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [status, setStatus] = useState('active');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +31,16 @@ const AddCategory = () => {
       toast.error(message);
     }
   };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
 
+    if (value.length > 15) {
+      setError("Name cannot exceed 15 characters");
+    } else {
+      setError("");
+      setName(value);
+    }
+  };
   return (
     <Card className="max-w-lg mx-auto mt-10">
       <CardHeader>
@@ -40,8 +50,19 @@ const AddCategory = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="name">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-          </div>
+            <Input
+              id="name"
+              value={name}
+              onChange={handleChange}
+              placeholder="Enter name"
+              required
+            />
+            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+            <p className="text-xs text-gray-400 text-right">
+              {name.length}/15
+            </p>      
+            
+                </div>
           <div>
             <Label>Status</Label>
             <select
