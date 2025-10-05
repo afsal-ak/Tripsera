@@ -3,12 +3,19 @@ import { getSalesReportFilter, FilterQueryOptions } from '../helpers/getSalesRep
 import { exportSalesReportExcel } from '@shared/utils/excelUtils';
 import { exportSalesReportPDF } from '@shared/utils/pdfUtils';
 import { IBooking } from '@domain/entities/IBooking';
+import { ISalesReportUseCase } from '@application/useCaseInterfaces/admin/ISalesReportUseCses';
 
-export class SalesReportUseCase {
+export class SalesReportUseCase implements ISalesReportUseCase {
 
   constructor(private _salesRepo: ISalesReportRepository) {}
 
-  async getReportList(query: FilterQueryOptions, page: number, limit: number) {
+  async getReportList(query: FilterQueryOptions, page: number, limit: number):Promise<{
+    data: IBooking[];
+    total: number;
+    summary: any;
+    page: number;
+    totalPages: number;
+}> {
     const filter = getSalesReportFilter(query);
     const skip = (page - 1) * limit;
 

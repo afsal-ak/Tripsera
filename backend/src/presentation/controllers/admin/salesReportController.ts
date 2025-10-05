@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
+ import { ISalesReportUseCase } from '@application/useCaseInterfaces/admin/ISalesReportUseCses';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class SalesReportController {
 
-  constructor(private _salesReportUseCase: SalesReportUseCase) { }
+  constructor(private _salesReportUseCase: ISalesReportUseCase) { }
 
   getReportList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
