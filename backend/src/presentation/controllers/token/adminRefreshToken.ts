@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { verifyRefreshToken, generateAccessToken } from '@shared/utils/jwt';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
-export const adminRefreshToken = async (req: Request, res: Response): Promise<void> => {
+export const adminRefreshToken = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
   try {
     // Read refresh token from cookie
     const oldRefreshToken = req.cookies.adminRefreshToken;
@@ -9,19 +10,17 @@ export const adminRefreshToken = async (req: Request, res: Response): Promise<vo
 
     if (!oldRefreshToken) {
       console.log({ oldRefreshToken });
-      res.status(401).json({ message: 'No refresh token provided' });
+      res.status(HttpStatus.UNAUTHORIZED).json({ message: 'No refresh token provided' });
       return;
     }
 
     // Verify old refresh token
     const payload = verifyRefreshToken(oldRefreshToken);
-    console.log(payload, 'from refersh payload admin');
-    if (!payload) {
-      res.status(403).json({ message: 'Invalid refresh token' });
+     if (!payload) {
+      res.status(HttpStatus.FORBIDDEN).json({ message: 'Invalid refresh token' });
       return;
     }
-    console.log({ payload });
-
+ 
     // Create new tokens
     const newAccessToken = generateAccessToken({
       id: payload.id,
@@ -38,8 +37,8 @@ export const adminRefreshToken = async (req: Request, res: Response): Promise<vo
     // });
 
     // Send new access token in response
-    res.status(200).json({ accessToken: newAccessToken });
+    res.status(HttpStatus.OK).json({ accessToken: newAccessToken });
   } catch (error) {
-    res.status(403).json({ message: 'Could not refresh token' });
+    next(error)
   }
 };

@@ -1,11 +1,12 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { IUser } from '@domain/entities/IUser';
 import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class AdminAuthController {
-  constructor(private _adminAuthUseCases: IAdminAuthUseCases) {}
+  constructor(private _adminAuthUseCases: IAdminAuthUseCases) { }
 
-  adminLogin = async (req: Request, res: Response): Promise<void> => {
+  adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, password } = req.body;
       const { admin, accessToken, refreshToken } = await this._adminAuthUseCases.adminLogin(
@@ -20,41 +21,38 @@ export class AdminAuthController {
         path: '/',
       });
 
-      console.log(req.cookies, 'k');
-      console.log({ accessToken, refreshToken });
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         message: 'Login successful',
         admin,
         accessToken,
       });
     } catch (error: any) {
-      console.log(error);
-      res.status(401).json({ message: error.message });
+      next(error)
     }
   };
 
-  forgotPassword = async (req: Request, res: Response): Promise<void> => {
+  forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email } = req.body;
       await this._adminAuthUseCases.forgotPasswordOtp(email);
-      res.status(200).json({ message: 'OTP sent to your email' });
-    } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      res.status(HttpStatus.OK).json({ message: 'OTP sent to your email' });
+    } catch (error) {
+      next(error)
     }
   };
 
-  forgotPasswordChange = async (req: Request, res: Response): Promise<void> => {
+  forgotPasswordChange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, password, otp } = req.body;
       const adminData: IUser = { email, password };
       await this._adminAuthUseCases.forgotPasswordChange(adminData, otp);
-      res.status(200).json({ message: 'Password changed successfully' });
-    } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      res.status(HttpStatus.OK).json({ message: 'Password changed successfully' });
+    } catch (error) {
+      next(error)
     }
   };
 
-  adminLogout = async (req: Request, res: Response): Promise<void> => {
+  adminLogout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       res.clearCookie('refreshToken', {
         httpOnly: true,
@@ -62,9 +60,9 @@ export class AdminAuthController {
         sameSite: 'none',
       });
 
-      res.status(200).json({ message: 'Admin logout successful' });
-    } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      res.status(HttpStatus.OK).json({ message: 'Admin logout successful' });
+    } catch (error) {
+      next(error)
     }
   };
 }

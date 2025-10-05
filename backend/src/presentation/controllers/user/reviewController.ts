@@ -17,8 +17,7 @@ export class ReviewController {
         packageId,
         userId,
       };
-      console.log(data, 'data from review');
-      const review = await this._reviewUseCases.createReview(data);
+       const review = await this._reviewUseCases.createReview(data);
       res.status(HttpStatus.CREATED).json({
         review: toReviewResponseDTO(review),
         message: 'Review created successfully',

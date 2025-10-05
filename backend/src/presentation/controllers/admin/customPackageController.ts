@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ICustomPkgUseCases } from "@application/useCaseInterfaces/admin/ICustomPackageUseCases";
-import { ICustomPackage } from "@domain/entities/ICustomPackage";
-import { CreateCustomPkgDTO, UpdateCustomPkgDTO, UpdateCustomPkgStatusDTO, toCustomPkgResponseDTO } from "@application/dtos/CustomPkgDTO";
-import { PaginationInfo } from "@application/dtos/PaginationDto";
-import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
+import { UpdateCustomPkgStatusDTO, toCustomPkgResponseDTO } from "@application/dtos/CustomPkgDTO";
+
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { IFilter } from "@domain/entities/IFilter";
 
@@ -41,8 +39,8 @@ export class CustomPackageController {
                 startDate: (req.query.startDate as string) || "",
                 endDate: (req.query.endDate as string) || "",
             }
-             const { data, pagination } = await this._customPkgUseCases.getAllCustomPkg(page, limit, filters);
-             res.status(HttpStatus.OK).json({
+            const { data, pagination } = await this._customPkgUseCases.getAllCustomPkg(page, limit, filters);
+            res.status(HttpStatus.OK).json({
                 data: data.map(toCustomPkgResponseDTO),
                 pagination,
                 message: 'Package fetched successfully',
@@ -58,7 +56,7 @@ export class CustomPackageController {
             const pkgId = req.params.packageId;
 
             const data = await this._customPkgUseCases.getCustomPkgById(pkgId);
-             const pkg = toCustomPkgResponseDTO(data!)
+            const pkg = toCustomPkgResponseDTO(data!)
             res.status(HttpStatus.OK).json({
                 data: pkg,
                 message: 'Package fetched successfully',
@@ -70,7 +68,7 @@ export class CustomPackageController {
 
     deleteCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
- 
+
             const pkgId = req.params.packageId;
             const result = await this._customPkgUseCases.deleteCustomPkg(pkgId);
             res.status(HttpStatus.OK).json({

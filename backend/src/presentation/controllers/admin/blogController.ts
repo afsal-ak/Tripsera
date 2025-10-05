@@ -20,8 +20,7 @@ export class BlogController {
         endDate: (req.query.endDate as string) || "",
       }
       const { blogs, pagination } = await this._blogUseCases.getAllBlogs(page, limit, filters)
-      console.log(blogs.map(toBlogResponseDTO, 'res'))
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         data: blogs.map(toBlogResponseDTO),
         pagination,
         message: 'blog fetched successfully'
@@ -37,7 +36,7 @@ export class BlogController {
       const blogId = req.params.blogId;
       const blog = await this._blogUseCases.getBlogById(blogId);
 
-      res.status(200).json({ blog, message: 'blog fetched successfully' });
+      res.status(HttpStatus.OK).json({ blog, message: 'blog fetched successfully' });
     } catch (error) {
       next(error);
     }
@@ -47,7 +46,7 @@ export class BlogController {
     try {
       const blogId = req.params.blogId;
       await this._blogUseCases.deleteBlog(blogId);
-      res.status(200).json({ message: 'Blog deleted successfully' });
+      res.status(HttpStatus.OK).json({ message: 'Blog deleted successfully' });
     } catch (error) {
       next(error);
     }
@@ -58,7 +57,7 @@ export class BlogController {
       const blogId = req.params.blogId;
       const { isBlocked } = req.body;
       await this._blogUseCases.changeBlogStatus(blogId, isBlocked);
-      res.status(200).json({ message: 'Blog status updated' });
+      res.status(HttpStatus.OK).json({ message: 'Blog status updated' });
     } catch (error) {
       next(error);
     }
