@@ -1,8 +1,12 @@
 import api from '@/lib/axios/api';
+ import type { IFilter } from '@/types/IFilter';
 
-export const fetchUsersData = async (page = 1, limit = 5) => {
-  const response = await api.get(`/admin/users?page=${page}&limit=${limit}`);
-  return response.data;
+export const fetchUsersData = async (filters:IFilter) => {
+  let params={
+   ...filters
+  }
+  const response = await api.get(`/admin/users`,{params});
+  return response.data.data;
 };
 
 export const fetchUserDetails = async (id:string) => {
