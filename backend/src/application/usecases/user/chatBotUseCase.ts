@@ -2,7 +2,7 @@ import { IChatbotUseCase } from "@application/useCaseInterfaces/user/IChatbotUse
 import { IChatbotService } from "@domain/entities/IChatBotService";
 
 export class ChatbotUseCase implements IChatbotUseCase {
-  constructor(private readonly chatbotService: IChatbotService) { }
+  constructor(private readonly _chatbotService: IChatbotService) { }
 
   // async chatBotResponse(message: string): Promise<string> {
   //   return await this.chatbotService.generateResponse(message);
@@ -43,6 +43,6 @@ export class ChatbotUseCase implements IChatbotUseCase {
       return " Please ask a travel-related question.";
     }
 
-    return await this.chatbotService.generateResponse(message);
+    return await this._chatbotService.generateResponse(message);
   }
 }
