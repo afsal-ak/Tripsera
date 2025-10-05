@@ -2,6 +2,7 @@ import { Request, Response,NextFunction } from 'express';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
 import { mapToAdminUserListResponseDTO,mapToUserDetailsDTO } from "@application/dtos/UserDTO";
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { IFilter } from '@domain/entities/IFilter';
 
 export class UserManagementController {
 
@@ -12,18 +13,18 @@ export class UserManagementController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const { users, totalUsers, totalPages } = await this._userManagementUseCases.getUsers(
+      const filters: IFilter = {
+        search: (req.query.search as string) || "",
+        status: (req.query.status as string) || "",
+
+      };
+      const data = await this._userManagementUseCases.getUsers(
         page,
-        limit
+        limit,filters
       );
-      const user=users.map(mapToAdminUserListResponseDTO)
-      console.log(user, 'from admin')
-      res.status(HttpStatus.OK).json({
+        res.status(HttpStatus.OK).json({
         message: 'Users fetched successfully',
-        data: user,
-        totalUsers,
-        totalPages,
-        currentPage: page,
+        data 
       });
     } catch (error: any) {
       console.error('Error fetching users:', error);

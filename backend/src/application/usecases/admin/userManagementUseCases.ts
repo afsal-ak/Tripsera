@@ -1,35 +1,30 @@
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { IUser } from '@domain/entities/IUser';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
+import { IFilter } from '@domain/entities/IFilter';
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
+import { mapToAdminUserListResponseDTO,AdminUserListDTO } from '@application/dtos/UserDTO';
+      //const user=users.map(mapToAdminUserListResponseDTO)
 
 export class UserManagementUseCases implements IUserManagementUseCases {
 
-  constructor(private _userRepository: IUserRepository) {}
+  constructor(private _userRepository: IUserRepository) { }
 
   async getUsers(
     page: number,
-    limit: number
-  ): Promise<{
-    users: IUser[];
-    totalUsers: number;
-    totalPages: number;
-  }> {
-    const skip = (page - 1) * limit;
+    limit: number,
+    filters: IFilter
+  ): Promise<
+    IPaginatedResult<AdminUserListDTO>
+  > {
 
-    const [users, totalUsers] = await Promise.all([
-      this._userRepository.findAll(skip, limit),
-      this._userRepository.countAll(),
-    ]);
-
-    if (!users || users.length === 0) {
-      throw new Error('No users found');
+    const result= await this._userRepository.findAll(page, limit, filters)
+    return {
+      ...result,
+       data: result.data.map(mapToAdminUserListResponseDTO),
     }
 
-    return {
-      users,
-      totalUsers,
-      totalPages: Math.ceil(totalUsers / limit),
-    };
+
   }
   async getSingleUser(userId: string): Promise<IUser> {
     const user = await this._userRepository.findById(userId);
@@ -38,7 +33,7 @@ export class UserManagementUseCases implements IUserManagementUseCases {
     }
     return user;
   }
-async toggleUserBlockStatus(userId: string): Promise<boolean> {
+  async toggleUserBlockStatus(userId: string): Promise<boolean> {
     const user = await this._userRepository.findById(userId);
     if (!user) {
       throw new Error('User not found');
@@ -49,7 +44,7 @@ async toggleUserBlockStatus(userId: string): Promise<boolean> {
 
     return newStatus; // true if blocked, false if unblocked
   }
-  
+
   async blockUser(userId: string): Promise<void> {
     const user = await this._userRepository.findById(userId);
     if (!user) {
@@ -66,9 +61,9 @@ async toggleUserBlockStatus(userId: string): Promise<boolean> {
     await this._userRepository.updateUserStatus(userId, false);
   }
 
-async  searchAllUsersForAdmin(search: string): Promise<IUser[]> {
+  async searchAllUsersForAdmin(search: string): Promise<IUser[]> {
     return await this._userRepository.searchAllUsersForAdmin(search)
   }
 
-  
+
 }

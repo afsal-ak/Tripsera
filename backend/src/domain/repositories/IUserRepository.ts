@@ -1,12 +1,14 @@
 import { IUser,IRole } from '../entities/IUser';
+import { IFilter } from '@domain/entities/IFilter';
 
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 export interface IUserRepository {
   findByEmail(email: string): Promise<IUser | null>;
   findByUsername(username: string): Promise<IUser | null>;
   createUser(user: Partial<IUser>): Promise<IUser>;
   updateUserPassword(email: string, password: string): Promise<IUser | null>;
   findById(id: string): Promise<IUser | null>;
-  findAll(skip: number, limit: number): Promise<IUser[]>;
+  findAll(skip: number, limit: number,filtesr:IFilter): Promise<IPaginatedResult<IUser>>;
   countAll(): Promise<number>;
   updateUserStatus(id: string, isBlocked: boolean): Promise<void>;
   updateUserEmail(id: string, email: string): Promise<IUser | null>;
