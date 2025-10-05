@@ -27,8 +27,7 @@ export class ProfileController {
     try {
       const userId = getUserIdFromRequest(req);
       const { profileData }: { profileData: Partial<IUser> } = req.body;
-      console.log(profileData, 'profile data');
-      const updatedProfile = await this._profileUseCases.updateUserProfile(userId, profileData);
+       const updatedProfile = await this._profileUseCases.updateUserProfile(userId, profileData);
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'User profile updated successfully',
@@ -43,8 +42,7 @@ export class ProfileController {
     try {
       const userId = getUserIdFromRequest(req);
       const { address } = req.body;
-      // console.log(address, 'adress data')
-      const updatedAddress = await this._profileUseCases.updateUserAddress(userId, address);
+       const updatedAddress = await this._profileUseCases.updateUserAddress(userId, address);
 
       res.status(HttpStatus.OK).json({
         success: true,

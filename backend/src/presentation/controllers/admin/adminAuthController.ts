@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IUser } from '@domain/entities/IUser';
 import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
+
 export class AdminAuthController {
   constructor(private _adminAuthUseCases: IAdminAuthUseCases) {}
 

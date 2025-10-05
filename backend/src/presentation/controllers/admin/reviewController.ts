@@ -22,8 +22,7 @@ export class ReviewController {
         rating: req.query.rating ? parseInt(req.query.rating as string, 10) : undefined,
 
       };
-      console.log(filters)
-      const { review, pagination } = await this._reviewUsecases.getAllReviews(page, limit, filters);
+       const { review, pagination } = await this._reviewUsecases.getAllReviews(page, limit, filters);
 
       const reviews = review.map(toReviewResponseDTO);
 
@@ -43,8 +42,7 @@ export class ReviewController {
       console.log(reviewId, 'reviewId');
 
       const review = await this._reviewUsecases.getReviewById(reviewId);
-      console.log(review, 'review');
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         review: review,
         message: 'Review fetched successfully',
       });
@@ -70,8 +68,7 @@ export class ReviewController {
     try {
       const reviewId = req.params.reviewId;
       const { status } = req.body;
-      console.log({ status }, 'status');
-      const result = await this._reviewUsecases.changeReviewStatus(reviewId, status);
+       const result = await this._reviewUsecases.changeReviewStatus(reviewId, status);
       res.status(HttpStatus.OK).json({
         result,
         message: 'Review status successfully',

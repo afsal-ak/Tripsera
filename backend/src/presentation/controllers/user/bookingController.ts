@@ -112,13 +112,7 @@ export class BookingController {
       if (!booking) {
         throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
       }
-      // Emit notification 
-      // console.log(notification,'notifica caontrol')
-      //  const socketService = getNotificationSocketService();
-      //   socketService.emitNotificationToUser(notification.userId.toString(), {
-      //     title: "Booking Confirmed",
-      //     message: "Your booking was successful 🎉",
-      //   });
+      
       res.status(HttpStatus.CREATED).json({
         message: 'Booking created successfully using wallet',
         booking,
@@ -128,8 +122,7 @@ export class BookingController {
     }
   };
 
-  //   // Get all bookings of a user with pagination
-  getUserBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+   getUserBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
       const page = parseInt(req.query.page as string) || 1;

@@ -20,30 +20,7 @@ export class NotificationUseCases implements INotificationUseCases {
 
   async sendNotification(data: CreateNotificationDto): Promise<INotification> {
 
-    // let message = "";
-    // if (data.entityType === "booking") {
-    //   const user = data.triggeredBy ? await this._userRepo.findById(data.triggeredBy) : null;
-    //   const packageData = data.packageId ? await this._packageRepo.findById(data.packageId) : null;
-    //   message = `${user?.username} booked ${packageData?.title ?? "a package"}`;
-    // }
-
-
-    //  if (data.entityType === "follow") {
-    //   const user = data.triggeredBy ? await this._userRepo.findById(data.triggeredBy) : null;
-
-    //   message = `${user?.username} started following you`;
-    // }
-
-    // else {
-    //   message = data.message || "New notification";
-    // }
-
-    //  Save the notification in DB
-    // const notificationPayload = {
-    //   ...data,
-      
-    // };
-   // console.log(data, 'usecase')
+  
     const notification = await this._notificationRepo.create(data);
 
   // console.log(notification, 'payload notification')

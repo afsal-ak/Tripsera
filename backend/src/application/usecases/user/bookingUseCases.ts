@@ -368,50 +368,6 @@ export class BookingUseCases implements IBookingUseCases {
     return { booking };
   }
 
-
-  //   async removeTraveler(
-  //   bookingId: string,
-  //   travelerIndex: number,
-  //   userId: string,
-  //   note?: string
-  // ): Promise<IBooking | null> {
-  //   const bookingDoc = await this._bookingRepo.findById(bookingId);
-  //   if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
-
-  //   const removedTraveler = bookingDoc.travelers.splice(travelerIndex, 1)[0];
-
-  //   // Track general booking history
-  //   bookingDoc.history = bookingDoc.history || [];
-  //   bookingDoc.history.push({
-  //     action: 'traveler_removed',
-  //     oldValue: removedTraveler,
-  //     newValue: null,
-  //     changedBy: userId,
-  //     changedAt: new Date(),
-  //     note,
-  //   });
-
-  //   // Track traveler-specific history with reason
-  //   bookingDoc.travelerHistory = bookingDoc.travelerHistory || [];
-  //   bookingDoc.travelerHistory.push({
-  //     traveler: removedTraveler,
-  //     action: 'removed',
-  //     changedBy: userId,
-  //     changedAt: new Date(),
-  //     note, 
-  //   });
-
-  //   // Cancel booking if no travelers remain
-  //   if (bookingDoc.travelers.length === 0) {
-  //     bookingDoc.bookingStatus = 'cancelled';
-  //     bookingDoc.cancelReason = note || 'All travelers removed';
-  //     bookingDoc.cancelledBy = userId;
-  //     // bookingDoc.cancelledAt = new Date();
-  //   }
-
-  //   return await this._bookingRepo.updateBooking(bookingId, bookingDoc);
-  // }
-
   async removeTraveler(
     bookingId: string,
     travelerIndex: number,

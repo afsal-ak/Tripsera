@@ -104,11 +104,6 @@ export class UserAuthUsecases implements IUserAuthUseCases {
         'Referral Reward'
       );
     }
-
-    // if (referredBy) {
-    //   this.walletRepository.creditWallet(user._id.toString(), 100, 'Refferal Reward')
-    //   this.walletRepository.creditWallet(user?.referredBy!.toString(), 100, 'Refferal  Reward')
-    // }
   }
 
   async resendOtp(email: string): Promise<void> {

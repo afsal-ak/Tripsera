@@ -18,7 +18,7 @@ export class CustomPackageController {
 
             const pkg = await this._customPkgUseCases.changeCustomPkgStatus(pkgId, data)
             console.log(data, 'data from pkg');
-           
+
             res.status(HttpStatus.CREATED).json({
                 success: true,
                 data: toCustomPkgResponseDTO(pkg!),
@@ -31,7 +31,7 @@ export class CustomPackageController {
 
     getAllCustomPkgs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
- 
+
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 9;
             const filters: IFilter = {
@@ -41,10 +41,8 @@ export class CustomPackageController {
                 startDate: (req.query.startDate as string) || "",
                 endDate: (req.query.endDate as string) || "",
             }
-            console.log(filters,'filte')
-            const { data, pagination } = await this._customPkgUseCases.getAllCustomPkg(page, limit, filters);
-console.log(data,'data from controler')
-            res.status(HttpStatus.OK).json({
+             const { data, pagination } = await this._customPkgUseCases.getAllCustomPkg(page, limit, filters);
+             res.status(HttpStatus.OK).json({
                 data: data.map(toCustomPkgResponseDTO),
                 pagination,
                 message: 'Package fetched successfully',
@@ -60,8 +58,7 @@ console.log(data,'data from controler')
             const pkgId = req.params.packageId;
 
             const data = await this._customPkgUseCases.getCustomPkgById(pkgId);
-            console.log(data, 'data');
-            const pkg = toCustomPkgResponseDTO(data!)
+             const pkg = toCustomPkgResponseDTO(data!)
             res.status(HttpStatus.OK).json({
                 data: pkg,
                 message: 'Package fetched successfully',
@@ -73,8 +70,7 @@ console.log(data,'data from controler')
 
     deleteCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            console.log('from usecase')
-
+ 
             const pkgId = req.params.packageId;
             const result = await this._customPkgUseCases.deleteCustomPkg(pkgId);
             res.status(HttpStatus.OK).json({

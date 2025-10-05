@@ -5,6 +5,7 @@ import { ReviewModel } from '@infrastructure/models/Review';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import mongoose, { SortOrder } from 'mongoose';
 import { IFilter } from '@domain/entities/IFilter';
+
 export class ReviewRepository extends BaseRepository<IReview> implements IReviewRepository {
   constructor() {
     super(ReviewModel);
@@ -184,26 +185,6 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
   async toggleBlockStatus(id: string, isBlocked: boolean): Promise<IReview | null> {
     return await this.model.findByIdAndUpdate(id, { isBlocked }, { new: true }).lean();
   }
-
-  // async getPackageRatingSummary(packageId: string) {
-  //   const result = await ReviewModel.aggregate([
-  //     {
-  //       $match: {
-  //         packageId: new mongoose.Types.ObjectId(packageId),
-  //         isBlocked: false,
-  //       },
-  //     },
-  //     {
-  //       $group: {
-  //         _id: '$packageId',
-  //         averageRating: { $avg: '$rating' },
-  //         totalReviews: { $sum: 1 },
-  //       },
-  //     },
-  //   ]);
-
-  //   return result[0] || { averageRating: 0, totalReviews: 0 };
-  // }
 
   async getPackageRatingSummary(packageId: string) {
     const result = await ReviewModel.aggregate([

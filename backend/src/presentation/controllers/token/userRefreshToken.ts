@@ -26,16 +26,6 @@ export const userRefreshToken = async (req: Request, res: Response): Promise<voi
       id: payload.id,
       role: payload.role,
     });
-    // const newRefreshToken = generateRefreshToken({ id: payload.id, role: payload.role });
-    //console.log({newAccessToken,newRefreshToken})
-
-    // Send new refresh token as cookie
-    // res.cookie('refreshToken', newRefreshToken, {
-    //   httpOnly: true,
-    //   secure:false,
-    //   sameSite: 'strict',
-    //   maxAge: 7 * 24 * 60 * 60 * 1000,
-    // });
 
     // Send new access token in response
     res.status(200).json({ accessToken: newAccessToken });

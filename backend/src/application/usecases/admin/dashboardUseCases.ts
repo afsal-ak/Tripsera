@@ -56,19 +56,6 @@ export class DashboardUseCases implements IDashboardUseCases {
 
   }
 
-
-  //   async getBookingsChartData(
-  //   filter?: IDateFilter,
-  //  ): Promise<IBookingsChartData[]> {
-  //   const { startDate, endDate } = DateUtil.getDateRange(
-  //     filter?.filter,
-  //     filter?.startDate,
-  //     filter?.endDate
-  //   );
-
-  //   return await this._dashboardRepo.getBookingsChartData(startDate, endDate, groupBy);
-  // }
-
   
   async getBookingsChartData(dateFilter: IDateFilter):Promise<IBookingsChartData[]> {
     const { startDate, endDate, groupBy } = DateUtil.getDateRangeAndGroupBy(dateFilter);

@@ -1,7 +1,6 @@
 import { Schema, Document, model } from 'mongoose';
 import { ICoupon } from '@domain/entities/ICoupon';
 
-//  export interface IWishlistDocument extends IWishlist, Document {}
 export interface CouponDocument extends ICoupon, Document {}
 
 const couponSchema: Schema = new Schema<CouponDocument>(

@@ -3,6 +3,7 @@ import { IReportUseCases } from "@application/useCaseInterfaces/admin/IReportUse
 import { toReportResponseDTO, toReportSingleResponseDTO } from "@application/dtos/ReportDTO";
 import { IFilter } from "@domain/entities/IFilter";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
+
 export class ReportController {
     constructor(private readonly _reportUseCases: IReportUseCases) { }
 
@@ -19,7 +20,6 @@ export class ReportController {
                 endDate: (req.query.endDate as string) || "",
                 customFilter: (req.query.customFilter as string) || "",
             }
-            //   console.log(filters, 'filters report')
             const { report, pagination } = await this._reportUseCases.getAllReports(page, limit, filters)
             const reports = report.map(toReportResponseDTO)
             res.status(HttpStatus.OK).json({
@@ -37,8 +37,7 @@ export class ReportController {
             const id = req.params.id
             const data = await this._reportUseCases.getById(id)
             const report = toReportSingleResponseDTO(data!)
-            console.log(report,'from controller')
-            res.status(HttpStatus.OK).json({
+             res.status(HttpStatus.OK).json({
                 report,
                 message: 'Report fetched successfully'
             })
@@ -52,9 +51,9 @@ export class ReportController {
     updateReportStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const id = req.params.id;
-            const {status} = req.body
-            
-             const data = await this._reportUseCases.changeReportStatus(id, status);
+            const { status } = req.body
+
+            const data = await this._reportUseCases.changeReportStatus(id, status);
 
             res.status(HttpStatus.OK).json({
                 data,
@@ -65,6 +64,6 @@ export class ReportController {
         }
     }
 
-  
+
 
 }

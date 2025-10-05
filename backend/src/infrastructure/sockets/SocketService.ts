@@ -74,38 +74,6 @@ export class SocketService {
         socket.to(roomId).emit(SOCKET_EVENTS.STOP_TYPING, { userId });
       });
 
-
-      // socket.on(SOCKET_EVENTS.SEND_MESSAGE, async (data) => {
-      //   try {
-      //     const savedMessage = await this._messageUseCases.sendMessage(data);
-
-      //     // 1. Acknowledge sender
-      //     socket.emit(SOCKET_EVENTS.MESSAGE_SEND, savedMessage);
-
-      //     // 2. Broadcast to the room (active participants)
-      //     socket.to(data.roomId).emit(SOCKET_EVENTS.NEW_MESSAGE, savedMessage);
-
-      //     // 3. Fetch participants from ChatRoom collection
-      //     const chatRoom = await this._chatRoomUseCases.findById(data.roomId);
-      //     console.log(chatRoom, 'chat roooom')
-      //     //const participants: any[] = chatRoom?.participants || [];
-      //     const participants: string[] = (chatRoom?.participants || []).map((id: any) =>
-      //       id.toString()
-      //     );
-
-      //     // 4. Notify inactive participants globally
-      //     participants
-      //       .filter((id) => id !== data.senderId)
-      //       .forEach((userId) => {
-      //         const socketId = this.onlineUsers.get(userId);
-      //         if (socketId) {
-      //          this._io.to(socketId).emit(SOCKET_EVENTS.NEW_MESSAGE, savedMessage);
-      //         }
-      //       });
-      //   } catch (error: any) {
-      //     socket.emit("error:sendMessage", { message: error.message });
-      //   }
-      // });
       
       socket.on(SOCKET_EVENTS.SEND_MESSAGE, async (data) => {
         try {

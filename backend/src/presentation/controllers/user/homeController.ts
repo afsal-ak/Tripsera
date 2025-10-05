@@ -54,8 +54,7 @@ export class HomeController {
     try {
       const { id } = req.params;
       const packages = await this._homeUseCases.getPackageById(id);
-   //   console.log(packages, 'by id packge')
-      res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
+       res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
     } catch (error) {
       next(error)
     }

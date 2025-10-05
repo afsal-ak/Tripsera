@@ -1,12 +1,11 @@
-
- import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 import { IChatRoom } from "@domain/entities/IChatRoom";
 
 type ChatRoomDocument = IChatRoom & Document;
 
 const chatRoomSchema = new Schema<ChatRoomDocument>(
   {
-    name: { type: String },  
+    name: { type: String },
 
     participants: [
       {
@@ -32,7 +31,7 @@ const chatRoomSchema = new Schema<ChatRoomDocument>(
       ref: "Message",
     },
 
-     lastMessageContent: {
+    lastMessageContent: {
       type: String,
       default: "",
     },

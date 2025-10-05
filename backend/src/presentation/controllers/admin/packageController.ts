@@ -20,8 +20,7 @@ export class PackageController {
         page,
         limit
       );
-      //    console.log(packages, 'pack');
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         message: 'Package fetched successfully',
         data: packages,
         totalPackages,
@@ -37,8 +36,7 @@ export class PackageController {
     try {
       const { id } = req.params;
       const packages = await this._packageUseCase.getSinglePackage(id);
-     // console.log(packages, 'pcakge in usedcase')
-
+ 
       res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
     } catch (error: any) {
       next(error)
@@ -48,8 +46,7 @@ export class PackageController {
   createPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       let pkgData: CreatePackageDTO = req.body;
-      //console.log("Incoming package data:", pkgData);
-
+ 
       // Parse fields that are sent as JSON strings
       pkgData = parseJsonFields(pkgData, [
         "location",

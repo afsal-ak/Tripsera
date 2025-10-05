@@ -4,6 +4,7 @@ import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { AppError } from '@shared/utils/AppError';
 import { IFilter } from '@domain/entities/IFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
+
 export class UserRepository implements IUserRepository {
 
   async getAllAdmins(): Promise<IUser[]> {

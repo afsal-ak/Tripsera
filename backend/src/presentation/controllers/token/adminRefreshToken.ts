@@ -27,8 +27,7 @@ export const adminRefreshToken = async (req: Request, res: Response): Promise<vo
       id: payload.id,
       role: payload.role,
     });
-    // const newRefreshToken = generateRefreshToken({ id: payload.id, role: payload.role });
-    //console.log({newAccessToken,newRefreshToken})
+    
 
     // Send new refresh token as cookie
     // res.cookie('refreshToken', newRefreshToken, {

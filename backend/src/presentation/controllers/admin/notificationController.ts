@@ -3,6 +3,7 @@ import { INotificationUseCases } from "@application/useCaseInterfaces/notificati
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { IFilter } from "@domain/entities/IFilter";
 import { mapToNotificationDTO } from "@application/dtos/NotificationDTO";
+
 export class NotificationController {
     constructor(private _notificationUseCases: INotificationUseCases) { }
 
@@ -14,19 +15,18 @@ export class NotificationController {
             const filters: IFilter = {
                 status: (req.query.status as string) || "",
             };
-            // console.log(filters, 'filters in notification')
-            // console.log(filters)
+
             const { notification, pagination } = await this._notificationUseCases.getAdminNotifications(
                 page,
                 limit,
                 filters
             );
- 
+
             const data = notification.map(mapToNotificationDTO)
             res.status(HttpStatus.OK).json({
                 data,
                 pagination,
-                 message: 'succes'
+                message: 'succes'
             });
         } catch (error) {
             next(error)
@@ -36,10 +36,9 @@ export class NotificationController {
 
     markAsRead = async (req: Request, res: Response, next: NextFunction) => {
         try {
-              const { id } = req.params;
-           // const { notificationId } = req.body;
-            const updated = await this._notificationUseCases.markAsRead(id);
-            res.status(HttpStatus.OK).json({updated,message:'updated'});
+            const { id } = req.params;
+             const updated = await this._notificationUseCases.markAsRead(id);
+            res.status(HttpStatus.OK).json({ updated, message: 'updated' });
         } catch (error) {
             next(error)
         }

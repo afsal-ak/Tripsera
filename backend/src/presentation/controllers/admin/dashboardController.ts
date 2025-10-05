@@ -2,9 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { IDashboardUseCases } from "@application/useCaseInterfaces/admin/IDashboardUseCases";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { DateFilter, IDateFilter } from "@application/dtos/DashboardDTO";
-import { mapToTopPkgResponseDTO, mapToTopCategoryResponseDTO,mapToBookingChartResponseDTO } from "@application/dtos/DashboardDTO";
-
-
+import { mapToTopPkgResponseDTO, mapToTopCategoryResponseDTO, mapToBookingChartResponseDTO } from "@application/dtos/DashboardDTO";
 
 export class DashboardController {
     constructor(private readonly _dashboardUseCases: IDashboardUseCases) { }
@@ -79,7 +77,7 @@ export class DashboardController {
         }
     }
 
-    getBookingChart=async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getBookingChart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { filter, startDate, endDate } = req.query;
             console.log(req.query, 'qq')
@@ -91,7 +89,7 @@ export class DashboardController {
 
             }
             const chart = await this._dashboardUseCases.getBookingsChartData(dateRange)
-            console.log(chart,'chart')
+            console.log(chart, 'chart')
             const data = chart.map(mapToBookingChartResponseDTO)
 
             res.status(HttpStatus.OK).json({

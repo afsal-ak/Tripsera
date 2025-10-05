@@ -1,12 +1,12 @@
-import { Request, Response,NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
-import { mapToAdminUserListResponseDTO,mapToUserDetailsDTO } from "@application/dtos/UserDTO";
+import { mapToAdminUserListResponseDTO, mapToUserDetailsDTO } from "@application/dtos/UserDTO";
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IFilter } from '@domain/entities/IFilter';
 
 export class UserManagementController {
 
-  constructor(private _userManagementUseCases: IUserManagementUseCases) {}
+  constructor(private _userManagementUseCases: IUserManagementUseCases) { }
 
   getAllUser = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -20,11 +20,11 @@ export class UserManagementController {
       };
       const data = await this._userManagementUseCases.getUsers(
         page,
-        limit,filters
+        limit, filters
       );
-        res.status(HttpStatus.OK).json({
+      res.status(HttpStatus.OK).json({
         message: 'Users fetched successfully',
-        data 
+        data
       });
     } catch (error: any) {
       console.error('Error fetching users:', error);
@@ -36,15 +36,15 @@ export class UserManagementController {
     try {
       const { userId } = req.params;
       const data = await this._userManagementUseCases.getSingleUser(userId);
-      const user=mapToUserDetailsDTO(data)
+      const user = mapToUserDetailsDTO(data)
       res.status(HttpStatus.OK).json({ message: 'User fetched successfully', user });
     } catch (error: any) {
       console.error('Error fetching user:', error);
       res.status(500).json({ message: error.message || 'Something went wrong' });
     }
   };
-  
- toggleBlockUser = async (req: Request, res: Response): Promise<void> => {
+
+  toggleBlockUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { userId } = req.params;
       const newStatus = await this._userManagementUseCases.toggleUserBlockStatus(userId);
@@ -61,22 +61,21 @@ export class UserManagementController {
     }
   };
 
-  
-    searchAllUsersForAdmin = async (req: Request,res: Response,next:NextFunction):Promise<void> => {
-  try {
-    const search = (req.query.search as string) || "";
-console.error(search,'saechhhh')
-    const users = await this._userManagementUseCases.searchAllUsersForAdmin(search);
 
-     res.status(HttpStatus.OK).json({
-      success: true,
-      message: "Users fetched successfully",
-      data: users,
-    });
-  } catch (error) {
-  next(error)
-  }
-};
- 
- 
+  searchAllUsersForAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const search = (req.query.search as string) || "";
+       const users = await this._userManagementUseCases.searchAllUsersForAdmin(search);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Users fetched successfully",
+        data: users,
+      });
+    } catch (error) {
+      next(error)
+    }
+  };
+
+
 }
