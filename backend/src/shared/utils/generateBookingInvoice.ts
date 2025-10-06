@@ -9,8 +9,8 @@ export async function generateBookingInvoice(
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
-  const companyName = "Picnigo Travels";
-  const companyContact = "123 Main Street, Kochi, Kerala | +91-9876543210 | support@picnigo.com";
+  const companyName = "Tripsera Travels";
+  const companyContact = "123 Main Street, Kochi, Kerala | +91-9876543210 | support@Tripsera.com";
 
   const cancelledWatermark =
     booking.bookingStatus === 'cancelled'
