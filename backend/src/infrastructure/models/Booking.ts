@@ -1,6 +1,8 @@
 import mongoose, { Schema, model, Document } from 'mongoose';
 import { IBooking, ITraveler } from '@domain/entities/IBooking';
-
+import { EnumPaymentStatus, EnumPaymentMethod } from '@constants/enum/paymentEnum';
+import { EnumGender } from '@constants/enum/commonEnum';
+import { EnumBookingStatus, EnumDateChangeAction, EnumBookingHistoryAction, EnumIdType, EnumTravelerAction } from '@constants/enum/bookingEnum';
 type IBookingDocument = IBooking & Document;
 
 // Traveler schema
@@ -8,8 +10,17 @@ const TravelerSchema = new Schema<ITraveler>(
   {
     fullName: { type: String, required: true },
     age: { type: Number, required: true },
-    gender: { type: String, enum: ["male", "female", "other"], required: true },
-    idType: { type: String, enum: ["aadhaar", "pan", "passport"], required: true },
+    gender: {
+      type: String,
+      enum: Object.values(EnumGender),
+      required: true
+    },
+    idType: {
+      type: String,
+      enum: Object.values(EnumIdType)
+      ,
+      required: true
+    },
     idNumber: { type: String, required: true },
   },
   { _id: false }
@@ -19,10 +30,14 @@ const TravelerSchema = new Schema<ITraveler>(
 const TravelerHistorySchema = new Schema(
   {
     traveler: { type: TravelerSchema, required: true },
-    action: { type: String, enum: ["added", "removed", "updated"], required: true },
+    action: {
+      type: String,
+      enum: Object.values(EnumTravelerAction),
+      required: true
+    },
     changedBy: { type: String, required: false },
     changedAt: { type: Date, required: false },
-        note: { type: String },
+    note: { type: String },
 
   },
   { _id: false }
@@ -32,10 +47,17 @@ const TravelDateHistorySchema = new Schema(
   {
     oldDate: { type: Date, required: true },
     newDate: { type: Date, required: true },
-    action: { type: String, enum: ["preponed", "postponed"], required: true },
-    changedBy: { type: String, required: false },
+    action: {
+      type: String,
+      enum: Object.values(EnumDateChangeAction),
+      required: true
+    },
+    changedBy: {
+      type: String,
+      required: false
+    },
     changedAt: { type: Date, required: true },
-        note: { type: String },
+    note: { type: String },
 
   },
   { _id: false }
@@ -56,7 +78,11 @@ const AdjustmentHistorySchema = new Schema(
 
 const BookingHistorySchema = new Schema(
   {
-    action: { type: String, enum: ["traveler_removed", "traveler_added", "date_changed", "status_changed", "amount_changed"], required: true },
+    action: {
+      type: String,
+      enum: Object.values(EnumBookingHistoryAction),
+      required: true
+    },
     oldValue: { type: Schema.Types.Mixed },
     newValue: { type: Schema.Types.Mixed },
     changedBy: { type: String, required: true },
@@ -79,10 +105,22 @@ const BookingSchema = new Schema<IBookingDocument>(
     totalAmount: { type: Number, required: true },
     discount: { type: Number, default: 0 },
     couponCode: { type: String },
-    paymentMethod: { type: String, enum: ['razorpay', 'wallet', 'wallet+razorpay'], required: true },
-    paymentStatus: { type: String, enum: ['paid', 'pending', 'failed'], default: 'pending' },
+    paymentMethod: {
+      type: String,
+      enum: Object.values(EnumPaymentMethod),
+      required: true
+    },
+    paymentStatus: {
+      type: String,
+      enum: Object.values(EnumPaymentStatus),
+      default: EnumPaymentStatus.PENDING
+    },
 
-    bookingStatus: { type: String, enum: ['confirmed', 'booked', 'cancelled', 'pending'], default: 'pending' },
+    bookingStatus: {
+      type: String,
+      enum: Object.values(EnumBookingStatus),
+      default: EnumBookingStatus.PENDING
+    },
     adminNote: { type: String, default: null },
     cancelledBy: { type: String },
     cancelReason: { type: String },

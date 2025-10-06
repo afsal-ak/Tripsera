@@ -10,6 +10,8 @@ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
+import { EnumBookingHistoryAction, EnumBookingStatus, EnumDateChangeAction, EnumTravelerAction } from '@constants/enum/bookingEnum';
+import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
 
 
 export class BookingUseCases implements IBookingUseCases {
@@ -42,12 +44,12 @@ export class BookingUseCases implements IBookingUseCases {
       throw new AppError(HttpStatus.NOT_FOUND, "Booking not found");
     }
 
-    if (booking.bookingStatus === "cancelled") {
+    if (booking.bookingStatus === EnumBookingStatus.CANCELLED) {
       throw new AppError(HttpStatus.BAD_REQUEST, "This booking is already cancelled");
     }
 
     //  Refund if already paid
-    if (booking.paymentStatus === "paid" && booking.amountPaid > 0) {
+    if (booking.paymentStatus === EnumPaymentStatus.PAID && booking.amountPaid > 0) {
       const wallet = await this._walletRepo.creditWallet(
         userId,
         booking.amountPaid,
@@ -124,8 +126,7 @@ export class BookingUseCases implements IBookingUseCases {
       walletAmountUsed,
       discount,
     } = data;
-    console.log(data, 'booking data ');
-    const finalAmount = amountPaid;
+     const finalAmount = amountPaid;
     const bookingCode = await generateBookingCode();
 
     const bookingData: IBookingInput = {
@@ -192,10 +193,9 @@ export class BookingUseCases implements IBookingUseCases {
     }
     if (booking.walletAmountUsed && booking.walletAmountUsed > 0) {
       await this._walletRepo.debitWallet(booking.userId.toString(), booking.walletAmountUsed);
-      console.log('wallet debited from user');
-    }
-    booking.paymentStatus = 'paid';
-    booking.bookingStatus = 'booked';
+     }
+    booking.paymentStatus =EnumPaymentStatus.PAID;
+    booking.bookingStatus = EnumBookingStatus.BOOKED;
     booking.updatedAt = new Date();
     booking.razorpay = {
       orderId,
@@ -237,12 +237,12 @@ export class BookingUseCases implements IBookingUseCases {
     if (!booking) {
       throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
-    if (booking.paymentStatus === 'paid') {
+    if (booking.paymentStatus ===EnumPaymentStatus.PAID) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot cancel a paid booking');
     }
 
-    booking.bookingStatus = 'pending';
-    booking.paymentStatus = 'failed';
+    booking.bookingStatus = EnumBookingStatus.PENDING;
+    booking.paymentStatus = EnumPaymentStatus.FAILED;
     booking.updatedAt = new Date();
     await this._bookingRepo.updateBooking(bookingId, booking);
   }
@@ -265,7 +265,7 @@ export class BookingUseCases implements IBookingUseCases {
       throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
 
-    if (booking.paymentStatus === 'paid') {
+    if (booking.paymentStatus === EnumPaymentStatus.PAID) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Booking already paid');
     }
     if (!booking._id) {
@@ -382,7 +382,7 @@ export class BookingUseCases implements IBookingUseCases {
     // Track general booking history
     bookingDoc.history = bookingDoc.history || [];
     bookingDoc.history.push({
-      action: "traveler_removed",
+      action: EnumBookingHistoryAction.TRAVELER_REMOVED,
       oldValue: removedTraveler,
       newValue: null,
       changedBy: 'user',
@@ -394,13 +394,13 @@ export class BookingUseCases implements IBookingUseCases {
     bookingDoc.travelerHistory = bookingDoc.travelerHistory || [];
     bookingDoc.travelerHistory.push({
       traveler: removedTraveler,
-      action: "removed",
+      action: EnumTravelerAction.REMOVED,
       changedBy: 'user',
       changedAt: new Date(),
       note,
     });
 
-     if (bookingDoc.paymentStatus === "paid" && bookingDoc.amountPaid > 0) {
+     if (bookingDoc.paymentStatus ===EnumPaymentStatus.PAID && bookingDoc.amountPaid > 0) {
       // Calculate refund for removed traveler
       const perTravelerAmount = bookingDoc.amountPaid / (bookingDoc.travelers.length + 1); // +1 because we already removed one
       const refundAmount = perTravelerAmount;
@@ -443,7 +443,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     // Cancel booking if no travelers remain
     if (bookingDoc.travelers.length === 0) {
-      bookingDoc.bookingStatus = "cancelled";
+      bookingDoc.bookingStatus = EnumBookingStatus.CANCELLED;
       bookingDoc.cancelReason = note || "All travelers removed";
       bookingDoc.cancelledBy = 'user';
     }
@@ -480,7 +480,7 @@ export class BookingUseCases implements IBookingUseCases {
     bookingDoc.previousDates.push({
       oldDate: oldDate,
       newDate,
-      action: newDate > oldDate! ? 'postponed' : 'preponed',
+      action: newDate > oldDate! ? EnumDateChangeAction.POSTPONED : EnumDateChangeAction.PREPONED,
       changedBy: userId,
       changedAt: new Date(),
     });
@@ -489,7 +489,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     // Track history
     const historyItem: IBookingHistory = {
-      action: 'date_changed',
+      action: EnumBookingHistoryAction.DATE_CHANGED,
       oldValue: oldDate,
       newValue: newDate,
       changedBy: userId,

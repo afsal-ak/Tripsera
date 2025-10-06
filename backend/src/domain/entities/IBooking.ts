@@ -1,29 +1,39 @@
 import { Types } from 'mongoose';
 
+import {
+  EnumBookingStatus,
+  EnumTravelerAction,
+  EnumIdType,
+  EnumDateChangeAction,
+  EnumBookingHistoryAction
+} from '@constants/enum/bookingEnum';
+import { EnumGender } from '@constants/enum/commonEnum';
+import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
+
 export interface ITraveler {
   fullName: string;
   age: number;
-  gender: "male" | "female" | "other";
-  idType: "aadhaar" | "pan" | "passport";
+  gender: EnumGender
+  idType: EnumIdType
   idNumber: string;
 }
 
 export interface ITravelerHistory {
   traveler: ITraveler;
-  action: "added" | "removed" | "updated";
+  action: EnumTravelerAction
   changedBy?: string;
   changedAt: Date;
-    note?: string;
+  note?: string;
 
 }
 
 export interface ITravelDateHistory {
-  oldDate?: Date; 
-    newDate: Date;
-  action: "preponed" | "postponed";
+  oldDate?: Date;
+  newDate: Date;
+  action: EnumDateChangeAction
   changedBy?: string; // userId or "admin"
   changedAt: Date;
-    note?: string;
+  note?: string;
 
 }
 
@@ -38,7 +48,7 @@ export interface IAdjustmentHistory {
 }
 
 export interface IBookingHistory {
-  action: "traveler_removed" | "traveler_added" | "date_changed" | "status_changed" | "amount_changed";
+  action: EnumBookingHistoryAction
   oldValue?: any;
   newValue?: any;
   changedBy: string; // userId or "admin"
@@ -58,14 +68,14 @@ export interface IBooking {
   totalAmount: number;
   discount?: number;
   couponCode?: string;
-  paymentMethod: 'razorpay' | 'wallet' | 'wallet+razorpay';
-  paymentStatus: 'paid' | 'pending' | 'failed';
+  paymentMethod: EnumPaymentMethod
+  paymentStatus: EnumPaymentStatus
 
-  bookingStatus: 'confirmed' | 'booked' | 'cancelled' | 'pending';
+  bookingStatus: EnumBookingStatus
   adminNote?: string;
   cancelledBy?: string;
   cancelReason?: string;
-  
+
   walletUsed?: number;
   walletAmountUsed?: number;
   amountPaid: number;

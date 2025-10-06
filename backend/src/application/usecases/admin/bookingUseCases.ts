@@ -90,12 +90,15 @@ export class BookingUseCases implements IBookingUseCases {
   }
 
   async confirmBookingByAdmin(bookingId: string, note: string): Promise<IBooking | null> {
-    const bkg = await this._bookingRepo.confirmBookingByAdmin(bookingId, note)
     const booking = await this._bookingRepo.findById(bookingId);
+
     if (!booking) {
       throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
-
+    if (booking?.bookingStatus == 'cancelled') {
+      throw new AppError(HttpStatus.CONFLICT, 'booking alreaday cancelled')
+    }
+    const bkg = await this._bookingRepo.confirmBookingByAdmin(bookingId, note)
 
 
     const userId = booking.userId.toString()
