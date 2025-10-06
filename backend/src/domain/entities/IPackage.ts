@@ -1,14 +1,29 @@
 
 import { Types } from 'mongoose';
 
+// export interface GeoPoint {
+//   type: "Point";
+//   coordinates: [number, number]; // [lng, lat]
+// }
+
+// export interface ILocation {
+//   name: string;
+//   geo: GeoPoint;
+// }
 export interface GeoPoint {
   type: "Point";
-  coordinates: [number, number]; // [lng, lat]
+  coordinates: [number, number]; // [longitude, latitude]
 }
 
 export interface ILocation {
-  name: string;
-  geo: GeoPoint;
+  name: string;          // e.g., "Calangute Beach"
+  address?: string;      // optional
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+  mapZoomLevel?: number; // optional map zoom level
+  geo: GeoPoint;         // location coordinates
 }
 
 export type OfferType = "percentage" | "flat";

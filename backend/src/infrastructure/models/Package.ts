@@ -29,9 +29,32 @@ import { IPackage } from '@domain/entities/IPackage';
   { _id: false }
 );
 
- const locationSchema = new Schema(
+//  const locationSchema = new Schema(
+//   {
+//     name: { type: String, required: true },
+//     geo: {
+//       type: {
+//         type: String,
+//         enum: ['Point'],
+//         default: 'Point',
+//         required: true,
+//       },
+//       coordinates: {
+//         type: [Number], // [lng, lat]
+//         required: true,
+//       },
+//     },
+//   },
+//   { _id: false }
+// );
+const locationSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true }, // e.g., "Calangute Beach"
+    address: { type: String },              // full address or user-friendly name
+    city: { type: String },                 // "Goa"
+    state: { type: String },                // "Goa"
+    country: { type: String, default: 'India' },
+
     geo: {
       type: {
         type: String,
@@ -44,6 +67,8 @@ import { IPackage } from '@domain/entities/IPackage';
         required: true,
       },
     },
+    postalCode: { type: String },            // optional
+    mapZoomLevel: { type: Number, default: 12 }, // optional UI helper
   },
   { _id: false }
 );
