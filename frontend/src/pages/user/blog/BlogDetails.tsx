@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark,  Verified } from 'lucide-react';
+import { Heart, MessageCircle, Send, Bookmark, Verified,X } from 'lucide-react';
 import {
   fetchBlogBySlug,
   handleLikeBlog,
@@ -20,6 +20,9 @@ import type { IReportedType, ISelectedReport } from '@/types/IReport';
 import Modal from '@/components/ui/Model';
 import UserList from '@/components/UserList';
 import type { UserBasicInfo } from '@/types/UserBasicInfo';
+import CommentSection from '@/components/CommentSection';
+import { motion, AnimatePresence } from "framer-motion";
+import CommentModal from '@/components/CommentModal';
 const BlogDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate()
@@ -33,6 +36,7 @@ const BlogDetail = () => {
 
   const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null)
   const [showReportModal, setShowReportModal] = useState(true);
+const [showCommentModal, setShowCommentModal] = useState(false);
 
   useEffect(() => {
     const loadBlogDetail = async () => {
@@ -44,13 +48,13 @@ const BlogDetail = () => {
         setBlogData(response.blog);
         setLiked(response.blog?.isLiked || false);
         setLikesCount(response.blog?.likes?.length || 0);
-         if (response.blog?._id) {
-                  console.log(response.blog._id,'llllll')
+        if (response.blog?._id) {
+          console.log(response.blog._id, 'llllll')
 
-        const likesResponse = await fetchBlogLikeList(response.blog._id);
-        setLikedUsers(likesResponse)
-        console.log(likesResponse, 'blog likes');
-      }
+          const likesResponse = await fetchBlogLikeList(response.blog._id);
+          setLikedUsers(likesResponse)
+          console.log(likesResponse, 'blog likes');
+        }
       } catch (error: any) {
         console.error('Failed to fetch blog details', error);
       }
@@ -58,7 +62,7 @@ const BlogDetail = () => {
 
     loadBlogDetail();
   }, [slug]);
-  
+
 
   const toggleLike = async () => {
     if (!blogData?._id) return;
@@ -90,7 +94,7 @@ const BlogDetail = () => {
     navigate(`/profile/${username}`)
   }
   const options = [
-    { label: "Report", value: "report",className: "text-red-500" },
+    { label: "Report", value: "report", className: "text-red-500" },
     // { label: "Delete", value: "delete" },
     // { label: "Block User", value: "block" },
   ];
@@ -171,27 +175,55 @@ const BlogDetail = () => {
                   />
                 </button>
 
-                <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" />
+                {/* <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" /> */}
+<button onClick={() => setShowCommentModal(true)}>
+  <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" />
+</button>
+                
                 <Send className="w-6 h-6 text-darkText hover:text-muted-foreground" />
               </div>
               <Bookmark className="w-6 h-6 text-darkText hover:text-muted-foreground" />
             </div>
 
             {/* Likes */}
-<div
-        className="text-sm font-semibold text-darkText mb-2 cursor-pointer hover:underline"
-        onClick={() => setIsLikesModalOpen(true)}
-      >
-        {formatNumber(likesCount)} likes
+            <div
+              className="text-sm font-semibold text-darkText mb-2 cursor-pointer hover:underline"
+              onClick={() => setIsLikesModalOpen(true)}
+            >
+              {formatNumber(likesCount)} likes
+            </div>
+
+            <UserList
+              title="Liked by"
+              users={likedUsers}
+              isOpen={isLikesModalOpen}
+              onClose={() => setIsLikesModalOpen(false)}
+            />
+            {showCommentModal && (
+  <Modal onClose={() => setShowCommentModal(false)}>
+    <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="flex justify-between items-center p-3 border-b">
+        <h2 className="text-lg font-semibold">Comments</h2>
+        <button
+          onClick={() => setShowCommentModal(false)}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
       </div>
-              
-  <UserList
-        title="Liked by"
-        users={likedUsers}
-        isOpen={isLikesModalOpen}
-        onClose={() => setIsLikesModalOpen(false)}
-      />
-             {/* Content */}
+      {/* <div className="max-h-[70vh] overflow-y-auto">
+        <CommentSection
+          parentId={blogData._id!}
+          parentType="blog"
+          // pass logged-in user if available
+        />
+      </div> */}
+
+    </div>
+  </Modal>
+)}
+
+            {/* Content */}
             <div className="mb-3">
               <span className="font-semibold text-sm text-darkText mr-2">
                 {blogData.author?.username}
@@ -220,7 +252,15 @@ const BlogDetail = () => {
               {new Date(blogData?.createdAt!).toLocaleDateString()}
             </div>
           </div>
-
+           <CommentModal
+        isOpen={showCommentModal}
+        onClose={() => setShowCommentModal(false)}
+        imageUrl={blogData.images!?.[0]?.url}
+        parentId={blogData._id!}
+        parentType="blog"
+      />
+  {/* Comments Modal */}
+       
         </article>
       )}
       {showReportModal && selectedReport && (

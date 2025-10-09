@@ -37,8 +37,7 @@ const AddCustomPkgForm = () => {
   const onSubmit = async (data: CustomPkgFormSchema) => {
     try {
       await createCustomPkg(data);
-      toast.success("Package submitted successfully ✅");
-      reset();
+       reset();
       navigate(-1);
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Failed to submit package ❌");
