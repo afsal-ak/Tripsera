@@ -4,7 +4,7 @@ import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { AppError } from '@shared/utils/AppError';
 import { IFilter } from '@domain/entities/IFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
-
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 export class UserRepository implements IUserRepository {
 
   async getAllAdmins(): Promise<IUser[]> {
@@ -91,41 +91,52 @@ export class UserRepository implements IUserRepository {
     const referredBy = await UserModel.findOne({ referralCode: referredReferralCode });
     return referredBy;
   }
-async findAll(page: number, limit: number, filters: IFilter): Promise<IPaginatedResult<IUser>> {
-  const skip = (page - 1) * limit;
-  const matchStage: any = {};
+  async findAll(
+    skip: number,
+    limit: number,
+    filters: IFilter
+  ): Promise<{ data: IUser[]; pagination: PaginationInfo }> {
+    const matchStage: any = {};
 
-   if (filters.search && filters.search.trim() !== "") {
-    const searchRegex = { $regex: filters.search.trim(), $options: "i" };
-    matchStage.$or = [
-      { username: searchRegex },
-      { email: searchRegex },
-      { fullName: searchRegex },
-    ];
+    //  Search filter
+    if (filters.search && filters.search.trim() !== "") {
+      const searchRegex = { $regex: filters.search.trim(), $options: "i" };
+      matchStage.$or = [
+        { username: searchRegex },
+        { email: searchRegex },
+        { fullName: searchRegex },
+      ];
+    }
+
+    if (filters.status === "active") {
+      matchStage.isBlocked = false;
+    } else if (filters.status === "blocked") {
+      matchStage.isBlocked = true;
+    }
+
+    //  Fetch data + count in parallel
+    const [users, total] = await Promise.all([
+      UserModel.find(matchStage)
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      UserModel.countDocuments(matchStage),
+    ]);
+
+    //  Pagination info
+    const pagination: PaginationInfo = {
+      totalItems: total,
+      currentPage: Math.floor(skip / limit) + 1,
+      pageSize: limit,
+      totalPages: Math.ceil(total / limit),
+    };
+
+    return {
+      data: users,
+      pagination,
+    };
   }
-
-   if (filters.status === "active") {
-    matchStage.isBlocked = false;
-  } else if (filters.status === "blocked") {
-    matchStage.isBlocked = true;
-  }
-
-   const [users, total] = await Promise.all([
-    UserModel.find(matchStage)
-      .sort({ updatedAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean(),
-    UserModel.countDocuments(matchStage),
-  ]);
-
-  return {
-    data: users,
-    currentPage: page,
-    totalPages: Math.ceil(total / limit),
-    totalItems: total,
-  };
-}
 
   async findAllUnblockedUser(skip: number, limit: number): Promise<IUser[]> {
     return UserModel.find({ isBlocked: false }).skip(skip).limit(limit).select('-password').lean();

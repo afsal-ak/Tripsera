@@ -1,9 +1,11 @@
 import { ICategory } from '@domain/entities/ICategory';
 import { ICategoryRepository } from '@domain/repositories/ICategoryRepository';
-import { IPaginatedResult } from '@domain/entities/IPagination';
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 import { categoryModel } from '@infrastructure/models/Category';
 import mongoose from 'mongoose';
 import { IFilter } from '@domain/entities/IFilter';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
+
 
 export class CategoryRepository implements ICategoryRepository {
   async createCategory(category: ICategory): Promise<ICategory> {
@@ -44,32 +46,48 @@ export class CategoryRepository implements ICategoryRepository {
   async getActiveCategory(): Promise<ICategory[]> {
     return await categoryModel.find({ isBlocked: false }).lean();
   }
-  async getAllCategories(page: number, limit: number, filters: IFilter): Promise<IPaginatedResult<ICategory>> {
-    const skip = (page - 1) * limit;
 
-    const matchStage: any = {}
-     if (filters.search && filters.search.trim() !== "") {
-    matchStage.name = { $regex: filters.search.trim(), $options: "i" };
-  }
+  async getAllCategories(
+    skip: number,
+    limit: number,
+    filters: IFilter
+  ): Promise<{ data: ICategory[]; pagination: PaginationInfo }> {
+    const matchStage: any = {};
 
-    if (filters.status == 'active') {
-      matchStage.isBlocked = false
-    } else if(filters.status == 'blocked') {
-      matchStage.isBlocked = true
-
+    //  Search filter
+    if (filters.search && filters.search.trim() !== "") {
+      matchStage.name = { $regex: filters.search.trim(), $options: "i" };
     }
 
+    // 🚦 Status filter
+    if (filters.status === "active") {
+      matchStage.isBlocked = false;
+    } else if (filters.status === "blocked") {
+      matchStage.isBlocked = true;
+    }
 
+    // 📦 Fetch data + count in parallel
     const [categories, total] = await Promise.all([
-      categoryModel.find(matchStage).sort({updatedAt:-1}).skip(skip).limit(limit).lean(),
+      categoryModel
+        .find(matchStage)
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
       categoryModel.countDocuments(matchStage),
     ]);
 
+    // 📄 Pagination info
+    const pagination: PaginationInfo = {
+      totalItems: total,
+      currentPage: Math.floor(skip / limit) + 1,
+      pageSize: limit,
+      totalPages: Math.ceil(total / limit),
+    };
+
     return {
       data: categories,
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      totalItems: total,
+      pagination,
     };
   }
 

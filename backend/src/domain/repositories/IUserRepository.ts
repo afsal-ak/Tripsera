@@ -8,7 +8,7 @@ export interface IUserRepository {
   createUser(user: Partial<IUser>): Promise<IUser>;
   updateUserPassword(email: string, password: string): Promise<IUser | null>;
   findById(id: string): Promise<IUser | null>;
-  findAll(skip: number, limit: number,filtesr:IFilter): Promise<IPaginatedResult<IUser>>;
+  findAll(page: number, limit: number,filter:IFilter): Promise<IPaginatedResult<IUser>>;
   countAll(): Promise<number>;
   updateUserStatus(id: string, isBlocked: boolean): Promise<void>;
   updateUserEmail(id: string, email: string): Promise<IUser | null>;

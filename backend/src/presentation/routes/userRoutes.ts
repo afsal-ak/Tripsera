@@ -20,6 +20,7 @@ import {
   MESSAGE_ROUTE,
   NOTIFICATION_ROUTE,
   BLOCK_ROUTE,
+  COMMENT_ROUTE
 } from 'constants/route-constants/userRoutes';
 
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
@@ -92,6 +93,10 @@ import { io } from 'app';
 import { BlockController } from '@presentation/controllers/user/blockController';
 import { BlockUseCase } from '@application/usecases/user/blockUseCases';
 import { BlockRepository } from '@infrastructure/repositories/BlockRepository';
+
+import { CommentRepository } from '@infrastructure/repositories/CommentRepository';
+import { CommentUseCases } from '@application/usecases/user/commentUseCases';
+import { CommentController } from '@presentation/controllers/user/commentController';
 
 const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
 const chatbotUseCase = new ChatbotUseCase(chatbotService);
@@ -172,6 +177,11 @@ const customPkgController = new CustomPackageController(customPkgUseCases);
 const blockRepository = new BlockRepository();
 const blockUseCases = new BlockUseCase(blockRepository);
 const blockController = new BlockController(blockUseCases);
+
+
+const commentRepository = new CommentRepository();
+const commentUseCases = new CommentUseCases(commentRepository);
+const commentController = new CommentController(commentUseCases);
 
 
 const router = Router();
@@ -351,12 +361,8 @@ router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, userAuthMiddleware, chatRoomControlle
 router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware,chatRoomController.deleteRoom);
 
 //MESSAGE ROUTES
- //router.post(MESSAGE_ROUTE.SEND, userAuthMiddleware, messageController.sendMessage);
- router.get(MESSAGE_ROUTE.GET_BY_ROOM, userAuthMiddleware, messageController.getMessages);
-//router.patch(MESSAGE_ROUTE.MARK_AS_READ, userAuthMiddleware, messageController.markMessageRead);
-// router.delete(MESSAGE_ROUTE.DELETE, userAuthMiddleware,messageController.deleteMessage);
+  router.get(MESSAGE_ROUTE.GET_BY_ROOM, userAuthMiddleware, messageController.getMessages);
  router.post(MESSAGE_ROUTE.UPLOAD_MEDIA, userAuthMiddleware,chatUpload.single('file'), messageController.uploadMediaToChat);
-
 router.get(NOTIFICATION_ROUTE.FETCH_NOTIFICATION,userAuthMiddleware,notificationController.getNotifications)
  router.patch(NOTIFICATION_ROUTE.MARK_AS_READ,userAuthMiddleware,notificationController.markAsRead)
 
@@ -366,6 +372,14 @@ router.get(BLOCK_ROUTE.GELL_ALL,userAuthMiddleware,blockController.listBlockedUs
 router.post(BLOCK_ROUTE.BLOCK,userAuthMiddleware,blockController.block)
 router.put(BLOCK_ROUTE.UNBLOCK,userAuthMiddleware,blockController.unblock)
 router.get(BLOCK_ROUTE.IS_BLOCKED,userAuthMiddleware,blockController.isBlocked)
+
+//comment
+router.post(COMMENT_ROUTE.CREATE,userAuthMiddleware,commentController.createComment)
+router.post(COMMENT_ROUTE.REPLY,userAuthMiddleware,commentController.replyComment)
+router.get(COMMENT_ROUTE.GET_ALL,userAuthMiddleware,commentController.getComments)
+router.get(COMMENT_ROUTE.GET_REPLIES,userAuthMiddleware,commentController.getReplies)
+router.post(COMMENT_ROUTE.LIKE,userAuthMiddleware,commentController.toggleLike)
+router.delete(COMMENT_ROUTE.DELETE,userAuthMiddleware,commentController.deleteComment)
 
 
 export default router;

@@ -137,3 +137,14 @@ export const BLOCK_ROUTE={
   IS_BLOCKED:'/blocked/:blockedId',
   GELL_ALL:'blocked'
 }
+
+
+export const COMMENT_ROUTE = {
+  CREATE: '/comment',                      // POST → create comment or reply
+  REPLY: '/comment/reply',                     
+   GET_ALL: '/comment/:parentId',           // GET → get all comments for a blog/review
+  GET_REPLIES: '/comment/:commentId/replies', // GET → get replies for a specific comment
+  UPDATE: '/comment/:commentId',           // PUT → edit a comment
+  DELETE: '/comment/delete/:commentId',           
+  LIKE: '/comment/:commentId/like',        // PATCH → like/unlike a comment
+};

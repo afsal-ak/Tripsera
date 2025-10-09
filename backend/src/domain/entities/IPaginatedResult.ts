@@ -1,6 +1,6 @@
-export interface IPaginatedResult<T> {
+import { PaginationInfo } from "@application/dtos/PaginationDto";
+
+ export interface IPaginatedResult<T> {
   data: T[];
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
+  pagination: PaginationInfo;
 }
