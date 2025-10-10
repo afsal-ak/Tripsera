@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
 import { IFilter } from '@domain/entities/IFilter';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
-import { toBlogResponseDTO } from '@application/dtos/BlogDTO';
-
+ 
 export class BlogController {
   constructor(private _blogUseCases: IBlogUseCases) { }
 
@@ -19,10 +18,9 @@ export class BlogController {
         startDate: (req.query.startDate as string) || "",
         endDate: (req.query.endDate as string) || "",
       }
-      const { blogs, pagination } = await this._blogUseCases.getAllBlogs(page, limit, filters)
-       res.status(HttpStatus.OK).json({
-        data: blogs.map(toBlogResponseDTO),
-        pagination,
+      const data = await this._blogUseCases.getAllBlogs(page, limit, filters)
+      res.status(HttpStatus.OK).json({
+        data,
         message: 'blog fetched successfully'
       });
 

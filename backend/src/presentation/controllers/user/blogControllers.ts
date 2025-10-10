@@ -4,6 +4,7 @@ import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinary
 import { IBlog } from '@domain/entities/IBlog';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
+import { CreateBlogDTO,UpdateBlogDTO } from '@application/dtos/BlogDTO';
 
 export class BlogController {
   constructor(private readonly _blogUseCases: IBlogUseCases) {}
@@ -12,7 +13,7 @@ export class BlogController {
     try {
       const userId = getUserIdFromRequest(req);
 
-      const blogData: IBlog = req.body;
+      const blogData: CreateBlogDTO = req.body;
       console.log(blogData, 'blog data');
 
       const files = req.files as Express.Multer.File[];
@@ -23,8 +24,7 @@ export class BlogController {
       files.forEach((file) => {
         console.log(`File: ${file.originalname} | Size: ${(file.size / 1024).toFixed(2)} KB`);
       });
-      //    console.log(req.files,'blog images')
-
+ 
       const imageUrls = await Promise.all(
         files.map((file) => uploadCloudinary(file.path, 'blogs'))
       );
@@ -39,7 +39,7 @@ export class BlogController {
   editBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { blogId } = req.params;
-      const blogData: Partial<IBlog> = req.body;
+      const blogData: UpdateBlogDTO = req.body;
       console.log(blogData, 'from blog edit');
       const files = req.files as Express.Multer.File[];
       console.log(files, 'from blog images');

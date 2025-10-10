@@ -1,19 +1,20 @@
 import { IBlog } from '@domain/entities/IBlog';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { PaginatedResult } from '@domain/entities/IPaginatedResult';
+import { BlogResponseDTO } from '@application/dtos/BlogDTO';
+
 export interface IBlogUseCases {
   getAllBlogs(
     page: number,
     limit: number,
     filters?:IFilter
-  ): Promise<{
-    blogs: IBlog[];
-    pagination: PaginationInfo;
-  }>;
+   ): Promise<PaginatedResult<BlogResponseDTO>>  
+
 
   deleteBlog(blogId: string): Promise<void>;
 
   changeBlogStatus(blogId: string, isBlocked: boolean): Promise<void>;
 
-  getBlogById(blogId: string): Promise<IBlog | null>;
+  getBlogById(blogId: string): Promise<BlogResponseDTO | null>;
 }

@@ -2,16 +2,23 @@ import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
 import { IBlog } from '@domain/entities/IBlog';
 import { IFilter } from '@domain/entities/IFilter';
-import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { PaginatedResult } from '@domain/entities/IPaginatedResult';
+import { BlogMapper } from '@application/mappers/blogMapper';
+import { BlogResponseDTO } from '@application/dtos/BlogDTO';
+
 export class BlogUseCases implements IBlogUseCases {
-  constructor(private _blogRepository: IBlogRepository) {}
+  constructor(private _blogRepository: IBlogRepository) { }
 
   async getAllBlogs(
     page: number,
     limit: number,
-    filters?:IFilter
-  ):Promise<{blogs:IBlog[],pagination: PaginationInfo;}> {
-    return await this._blogRepository.getAllBlog(page, limit, filters);
+    filters?: IFilter
+  ): Promise<PaginatedResult<BlogResponseDTO>> {
+    const result = await this._blogRepository.getAllBlog(page, limit, filters);
+    return {
+      pagination: result.pagination,
+      data: result.blogs.map(BlogMapper.toResponseDTO)
+    }
   }
 
   async deleteBlog(blogId: string): Promise<void> {
@@ -22,8 +29,10 @@ export class BlogUseCases implements IBlogUseCases {
     await this._blogRepository.changeBlogStatus(blogId, isBlocked);
   }
 
-  async getBlogById(blogId: string): Promise<IBlog | null> {
-    return await this._blogRepository.getBlogById(blogId);
+  async getBlogById(blogId: string): Promise<BlogResponseDTO | null> {
+    const result = await this._blogRepository.getBlogById(blogId);
+    return BlogMapper.toResponseDTO(result!)
+
   }
- 
+
 }

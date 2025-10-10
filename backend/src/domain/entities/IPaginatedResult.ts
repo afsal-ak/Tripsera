@@ -4,3 +4,7 @@ import { PaginationInfo } from "@application/dtos/PaginationDto";
   data: T[];
   pagination: PaginationInfo;
 }
+export interface PaginatedResult<T> {
+  data: T[];
+  pagination: PaginationInfo;
+}
