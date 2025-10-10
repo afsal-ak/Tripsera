@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, Verified,X } from 'lucide-react';
+import { Heart, MessageCircle, Send, Bookmark, Verified, } from 'lucide-react';
 import {
   fetchBlogBySlug,
   handleLikeBlog,
@@ -20,9 +20,7 @@ import type { IReportedType, ISelectedReport } from '@/types/IReport';
 import Modal from '@/components/ui/Model';
 import UserList from '@/components/UserList';
 import type { UserBasicInfo } from '@/types/UserBasicInfo';
-import CommentSection from '@/components/CommentSection';
-import { motion, AnimatePresence } from "framer-motion";
-import CommentModal from '@/components/CommentModal';
+ import CommentModal from '@/components/CommentModal';
 const BlogDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate()
@@ -36,7 +34,7 @@ const BlogDetail = () => {
 
   const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null)
   const [showReportModal, setShowReportModal] = useState(true);
-const [showCommentModal, setShowCommentModal] = useState(false);
+  const [showCommentModal, setShowCommentModal] = useState(false);
 
   useEffect(() => {
     const loadBlogDetail = async () => {
@@ -176,10 +174,10 @@ const [showCommentModal, setShowCommentModal] = useState(false);
                 </button>
 
                 {/* <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" /> */}
-<button onClick={() => setShowCommentModal(true)}>
-  <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" />
-</button>
-                
+                <button onClick={() => setShowCommentModal(true)}>
+                  <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" />
+                </button>
+
                 <Send className="w-6 h-6 text-darkText hover:text-muted-foreground" />
               </div>
               <Bookmark className="w-6 h-6 text-darkText hover:text-muted-foreground" />
@@ -200,18 +198,18 @@ const [showCommentModal, setShowCommentModal] = useState(false);
               onClose={() => setIsLikesModalOpen(false)}
             />
             {showCommentModal && (
-  <Modal onClose={() => setShowCommentModal(false)}>
-    <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
-      <div className="flex justify-between items-center p-3 border-b">
-        <h2 className="text-lg font-semibold">Comments</h2>
-        <button
-          onClick={() => setShowCommentModal(false)}
-          className="text-gray-500 hover:text-gray-700"
-        >
-          ✕
-        </button>
-      </div>
-      {/* <div className="max-h-[70vh] overflow-y-auto">
+              <Modal onClose={() => setShowCommentModal(false)}>
+                <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
+                  <div className="flex justify-between items-center p-3 border-b">
+                    <h2 className="text-lg font-semibold">Comments</h2>
+                    <button
+                      onClick={() => setShowCommentModal(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  {/* <div className="max-h-[70vh] overflow-y-auto">
         <CommentSection
           parentId={blogData._id!}
           parentType="blog"
@@ -219,9 +217,9 @@ const [showCommentModal, setShowCommentModal] = useState(false);
         />
       </div> */}
 
-    </div>
-  </Modal>
-)}
+                </div>
+              </Modal>
+            )}
 
             {/* Content */}
             <div className="mb-3">
@@ -229,7 +227,7 @@ const [showCommentModal, setShowCommentModal] = useState(false);
                 {blogData.author?.username}
               </span>
               <span className="text-lg text-darkText">{blogData.title}</span>
-              <br />
+<br />
 
               <span className="text-sm text-darkText">{blogData.content}</span>
             </div>
@@ -252,15 +250,15 @@ const [showCommentModal, setShowCommentModal] = useState(false);
               {new Date(blogData?.createdAt!).toLocaleDateString()}
             </div>
           </div>
-           <CommentModal
-        isOpen={showCommentModal}
-        onClose={() => setShowCommentModal(false)}
-        imageUrl={blogData.images!?.[0]?.url}
-        parentId={blogData._id!}
-        parentType="blog"
-      />
-  {/* Comments Modal */}
-       
+          <CommentModal
+            isOpen={showCommentModal}
+            onClose={() => setShowCommentModal(false)}
+            imageUrl={blogData.images!?.[0]?.url}
+            parentId={blogData._id!}
+            parentType="blog"
+          />
+          {/* Comments Modal */}
+
         </article>
       )}
       {showReportModal && selectedReport && (

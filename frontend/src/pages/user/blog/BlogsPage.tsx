@@ -42,7 +42,7 @@ const BlogsPage = () => {
       setLoading(true);
       try {
         const response = await fetchAllPublishedBlog(currentPage, limit, search);
-        setBlogs(response.blogs);
+        setBlogs(response.data);
         console.log(response);
         setTotalPages(Math.ceil(response.totalBlogs / limit));
       } catch (error) {

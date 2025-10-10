@@ -3,6 +3,7 @@ import type { IBlog } from '@/types/IBlog';
 
 export const fetchAllPublishedBlog = async (page: number, limit: number, searchBlog: string) => {
   const response = await api.get(`/user/blogs?page=${page}&limit=${limit}&search=${searchBlog}`);
+  console.log(response.data,'from blog 1')
   return response.data;
 };
 
@@ -59,12 +60,16 @@ export const fetchBlogLikeList = async (blogId: string) => {
 // //
 export const handleAllUserBlogs = async (page: number, limit: number) => {
   const response = await api.get(`/user/blogs/user?page=${page}&limit=${limit}`);
+    console.log(response,'from blog 2')
+
   return response.data;
 };
 
 
 export const handlePublicUserBlogs = async (userId:string,page: number, limit: number) => {
   const response = await api.get(`/user/blogs/public/${userId}?page=${page}&limit=${limit}`);
+    console.log(response.data,'from blog 3')
+
   return response.data;
 };
 

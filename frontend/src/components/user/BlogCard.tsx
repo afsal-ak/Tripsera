@@ -38,7 +38,7 @@ const BlogCard = ({ blog, linkPrefix }: Props) => {
             <div className="flex items-center space-x-3">
               {blog.author.profileImage?.url ? (
                 <img
-                  src={blog.author.profileImage?.url}
+                  src={blog.author.profileImage?.url||'profile-default.jpg'}
                   alt={blog.author.username}
                   className="w-8 h-8 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-blue-200 transition-colors flex-shrink-0"
                 />
