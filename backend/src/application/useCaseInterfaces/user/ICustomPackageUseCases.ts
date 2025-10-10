@@ -1,10 +1,10 @@
-import { ICustomPackage } from "@domain/entities/ICustomPackage";
-import { PaginationInfo } from "@application/dtos/PaginationDto";
 import { IFilter } from "@domain/entities/IFilter";
-import { CreateCustomPkgDTO,UpdateCustomPkgDTO,CustomPkgResponseDTO } from "@application/dtos/CustomPkgDTO";
+import { CreateCustomPkgDTO,UpdateCustomPkgDTO,CustomPkgResponseDTO,CustomPkgUserListDTO } from "@application/dtos/CustomPkgDTO";
+import { IPaginatedResult } from "@domain/entities/IPaginatedResult";
+
 export interface ICustomPkgUseCases{
-    createCutomPkg(data:CreateCustomPkgDTO):Promise<ICustomPackage>
-    updateCutomPkg(customPkgId:string,userId:string,data:UpdateCustomPkgDTO):Promise<ICustomPackage|null>
+    createCutomPkg(data:CreateCustomPkgDTO):Promise<CustomPkgResponseDTO>
+    updateCutomPkg(customPkgId:string,userId:string,data:UpdateCustomPkgDTO):Promise<CustomPkgResponseDTO|null>
     deleteCustomPkg(customPkgId:string,userId:string):Promise<boolean>
     getAllCustomPkg(
         userId: string,
@@ -12,7 +12,8 @@ export interface ICustomPkgUseCases{
         limit: number,
         filters?:IFilter
       
-      ): Promise<{ data: ICustomPackage[]; pagination: PaginationInfo }>;
-      getCustomPkgById(customPkgId: string): Promise<ICustomPackage | null>;
+      ): Promise<IPaginatedResult<CustomPkgUserListDTO>>  
+    
+      getCustomPkgById(customPkgId: string): Promise<CustomPkgResponseDTO | null>;
     
 }

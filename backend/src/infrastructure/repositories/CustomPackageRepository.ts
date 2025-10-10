@@ -72,9 +72,11 @@ export class CustomPackageRepository extends BaseRepository<ICustomPackage> impl
 
     async changeStatusAndResponse(
         pkgId: string,
-        data: UpdateCustomPkgStatusDTO
+        data: Partial<ICustomPackage>
     ): Promise<ICustomPackage | null> {
-        return await CustomPackage.findByIdAndUpdate(pkgId, { $set: data }, { new: true });
-    }
+        {
+            return await CustomPackage.findByIdAndUpdate(pkgId, { $set: data }, { new: true });
+        }
 
+    }
 }
