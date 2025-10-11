@@ -68,7 +68,7 @@ export default function ReviewPage() {
                 // console.log(reviewRating, 'review')
                 setRatingSummary(reviewRating)
                 // console.log(response)
-                setreviews(response.review)
+                setreviews(response.zz)
                 setTotalPages(response.pagination.totalPages);
 
             } catch (error) {

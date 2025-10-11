@@ -23,7 +23,10 @@ const UserReviewPage = () => {
     const fetchReviews = async () => {
       try {
         const response = await handleUserReview(currentPage, limit);
-        setReviews(response.review);
+
+        setReviews(response.data);
+        console.log(response.data, 'sgs');
+
         setTotalPages(response.pagination.totalPages);
       } catch {
         console.log('Failed to fetch reviews');
@@ -51,9 +54,8 @@ const UserReviewPage = () => {
     return [...Array(5)].map((_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${
-          i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-        }`}
+        className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+          }`}
       />
     ));
   };
@@ -73,13 +75,13 @@ const UserReviewPage = () => {
             <div className="flex items-start gap-4">
               <img
                 src={profileImage}
-                alt={review.userId.username}
+                alt={review.username}
                 className="w-12 h-12 rounded-full object-cover border border-gray-200"
               />
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-gray-900">
-                    {review.userId.username}
+                    {user?.username}
                   </h3>
                   <span className="text-xs text-gray-500">
                     {formatTimeAgo(review.createdAt)}
@@ -101,7 +103,7 @@ const UserReviewPage = () => {
               <h4 className="text-lg font-semibold text-gray-900 mb-2">
                 {review.title}
               </h4>
-                                    <ReadMore text={review.comment} wordLimit={10} />
+              <ReadMore text={review.comment} wordLimit={10} />
             </div>
           </div>
         ))}

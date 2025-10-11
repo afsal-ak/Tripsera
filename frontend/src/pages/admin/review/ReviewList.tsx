@@ -63,7 +63,10 @@ const ReviewList = () => {
         const filters = cleanFilter(rawFilters);
 
         const response = await handleFetchReview(currentPage, limit, filters);
-        setreviews(response.reviews);
+        console.log(response.data,'review response in list');
+                console.log(response.pagination,'review response in list');
+
+        setreviews(response.data);
         setTotalPages(response.pagination.totalPages);
         //    console.log(response.pagination,'pagination')
       } catch (error) {
@@ -174,7 +177,7 @@ const ReviewList = () => {
               <TableHead>Username</TableHead>
               <TableHead>Package</TableHead>
               <TableHead>Rating</TableHead>
-              <TableHead>Comment</TableHead>
+              <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -183,13 +186,14 @@ const ReviewList = () => {
             {reviews.map((review, index) => (
               <TableRow key={review._id}>
                 <TableCell>{(currentPage - 1) * 5 + index + 1}</TableCell>
-                <TableCell>{review.userId?.username}</TableCell>
-                <TableCell>{review.packageId?.title}</TableCell>
+                <TableCell>{review.username}</TableCell>
+                <TableCell>{review?.packageTitle}</TableCell>
                 <TableCell>{review.rating}</TableCell>
                 <TableCell>
-                  {review.comment.split(/\s+/).length > 10
+                  {/* {review.comment.split(/\s+/).length > 10
                     ? review.comment.split(/\s+/).slice(0, 10).join(" ") + "..."
-                    : review.comment}
+                    : review.comment} */}
+                    {review.title}
                 </TableCell>
                 <TableCell>
                   {review.isBlocked ? (
