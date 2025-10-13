@@ -18,6 +18,7 @@ import { ChatRoomRepository } from "@infrastructure/repositories/ChatRoomReposit
 import { MessageRepository } from "@infrastructure/repositories/MessageRepository";
 import { SocketService } from "@infrastructure/sockets/SocketService";
 
+import { CallUseCases } from "@application/usecases/call/callUseCases";
 
 // Notifications
 import { NotificationRepository } from "@infrastructure/repositories/NotificationRepository";
@@ -28,6 +29,7 @@ import { PackageRepository } from "@infrastructure/repositories/PackageRepositor
 
 import { initNotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
 import { ChatRoomUseCase } from "@application/usecases/chat/chatRoomUseCases";
+import { CallRepository } from "@infrastructure/repositories/CallRepository";
 
 const app = express();
 const server = http.createServer(app);
@@ -49,21 +51,24 @@ export const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+const userRepository = new UserRepository();
 
 const chatRoomRepository = new ChatRoomRepository();
 const messageRepository = new MessageRepository();
 const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
 const chatRoomUseCases = new ChatRoomUseCase(chatRoomRepository);
 
-const socketService = new SocketService(io, messageUseCases,chatRoomUseCases);
+const callRepository = new CallRepository()
+const callUseCases = new CallUseCases(callRepository)
+
+const socketService = new SocketService(io, messageUseCases, chatRoomUseCases,userRepository, callUseCases);
 socketService.initialize();
 
 
 // create repo + useCases
 const notificationRepository = new NotificationRepository();
-const userRepository = new UserRepository();
-const packageRepository=new PackageRepository()
-const notificationUseCases = new NotificationUseCases(notificationRepository,userRepository,packageRepository);
+const packageRepository = new PackageRepository()
+const notificationUseCases = new NotificationUseCases(notificationRepository, userRepository, packageRepository);
 
 // initialize singleton
 initNotificationSocketService(io, notificationUseCases);
