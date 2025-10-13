@@ -17,6 +17,12 @@ export const SOCKET_EVENTS = {
   MESSAGE_SEND: "message:send",
 }
 
+export const SOCKET_WEBRTC_EVENTS={
+   OFFER: "webrtc-offer",
+  ANSWER: "webrtc-answer",
+  CANDIDATE: "webrtc-candidate",
+    END: "webrtc-end",
+}
 
 export const SOCKET_NOTIFICATION_EVENTS = {
   JOIN: "notification:join",             // User joins their personal room

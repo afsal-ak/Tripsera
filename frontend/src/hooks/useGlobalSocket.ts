@@ -1,17 +1,42 @@
 import { useEffect } from "react";
 import socket from "@/sockets/socket";
-import { SOCKET_EVENTS } from "@/sockets/events";
+import { SOCKET_EVENTS, SOCKET_WEBRTC_EVENTS } from "@/sockets/events";
 
-export function useGlobalSocket(userId: string) {
+interface UseGlobalSocketProps {
+  userId: string;
+  onIncomingCall?: (
+    offer: RTCSessionDescriptionInit,
+    fromUserId: string,
+    roomId: string,
+    fromUserName?: string,
+    fromUserAvatar?: string
+  ) => void;
+}
+
+export function useGlobalSocket({ userId, onIncomingCall }: UseGlobalSocketProps) {
   useEffect(() => {
     if (!userId) return;
 
-    socket.connect();
+    if (!socket.connected) socket.connect();
 
     socket.emit(SOCKET_EVENTS.USER_CONNECTED, { userId });
 
-    return () => {
-      socket.disconnect();
+    const handleOffer = ({
+      from,
+      offer,
+      roomId,
+      fromUserName,
+      fromUserAvatar,
+    }: any) => {
+      console.log("Incoming call OFFER:", { from, offer, roomId, fromUserName, fromUserAvatar });
+      onIncomingCall?.(offer, from, roomId, fromUserName, fromUserAvatar);
     };
-  }, [userId]);
+
+    socket.on(SOCKET_WEBRTC_EVENTS.OFFER, handleOffer);
+
+    return () => {
+      socket.emit(SOCKET_EVENTS.USER_DISCONNECTED, { userId });
+      socket.off(SOCKET_WEBRTC_EVENTS.OFFER, handleOffer);
+    };
+  }, [userId, onIncomingCall]);
 }
