@@ -13,15 +13,19 @@ export const createChatRoom = async (payload: CreateChatRoomPayload) => {
     return response.data;
 
 };
-// export const createUserRoom=async()=>{
-//     const response=await api.post(`/user/chatrooms`)
-//     return response.data
-// }
 
 export const updateUserRoom=async(roomId:string)=>{
     const response=await api.post(`/user/chatrooms/${roomId}`)
     return response.data
 }
+
+export const fetchHistory = async (roomId:string) => {
+  const res = await api.get(`/user/chat/${roomId}/history`);
+  console.log(res,'callhistory')
+  return res.data.data;
+
+  
+};
 
 
 export const deleteUserRoom=async(roomId:string)=>{

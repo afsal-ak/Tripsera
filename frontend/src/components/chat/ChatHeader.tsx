@@ -16,7 +16,7 @@ interface Props {
 export const ChatHeader: React.FC<Props> = ({ room, onBack, isMobile, isPartnerOnline }) => {
 
     // const currentUserId = useSelector((state: RootState) => state.userAuth.user?._id)
-    const { id: currentUserId } = useCurrentUser();
+    const { id: currentUserId,profilePic,username } = useCurrentUser();
 
     console.log(currentUserId, 'current user id in heada')
     const otherUser = !room.isGroup ? room?.otherUser : null;
@@ -85,6 +85,8 @@ export const ChatHeader: React.FC<Props> = ({ room, onBack, isMobile, isPartnerO
                     remoteUserId={otherUser?._id!}
                     roomId={room._id}
                     onClose={() => setShowVideoCall(false)}
+                    remoteUserAvatar={otherUser?.profileImage?.url}
+                    remoteUserName={otherUser?.username}
                 />
             )}
         </>

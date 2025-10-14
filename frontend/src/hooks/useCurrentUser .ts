@@ -11,7 +11,8 @@ export const useCurrentUser = () => {
   return {
     id: current?._id || null,
     role: user ? "user" : admin ? "admin" : null,
-    name: current?.username,
+    username: current?.username,
+    profilePic:current?.profileImage?.url,
     data: current,
   };
 };

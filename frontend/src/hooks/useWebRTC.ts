@@ -6,6 +6,7 @@ interface UseWebRTCProps {
   currentUserId: string;
   remoteUserId?: string;
   roomId: string;
+  callId?: string;
   onCallStarted?: () => void;
   onCallEnded?: () => void;
 }
@@ -14,6 +15,7 @@ export const useWebRTC = ({
   currentUserId,
   remoteUserId,
   roomId,
+  callId,
   onCallStarted,
   onCallEnded,
 }: UseWebRTCProps) => {
@@ -79,8 +81,13 @@ export const useWebRTC = ({
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
-    socket.emit(SOCKET_WEBRTC_EVENTS.ANSWER, { to: fromUserId, fromUserId: currentUserId, answer });
-
+    // socket.emit(SOCKET_WEBRTC_EVENTS.ANSWER, { to: fromUserId, fromUserId: currentUserId, answer });
+    socket.emit(SOCKET_WEBRTC_EVENTS.ANSWER, {
+      to: remoteUserId,
+      answer,
+      roomId,
+      callId, //  send callId back
+    });
     setIsCalling(true);
     onCallStarted?.();
   }, [createPeerConnection, currentUserId, onCallStarted]);
@@ -94,7 +101,13 @@ export const useWebRTC = ({
     onCallEnded?.();
 
     if (remoteUserId) {
-      socket.emit(SOCKET_WEBRTC_EVENTS.END, { to: remoteUserId, fromUserId: currentUserId, roomId });
+      // socket.emit(SOCKET_WEBRTC_EVENTS.END, { to: remoteUserId, fromUserId: currentUserId, roomId });
+      socket.emit(SOCKET_WEBRTC_EVENTS.END, {
+        to: remoteUserId,
+        fromUserId: currentUserId,
+        roomId,
+        callId,
+      });
     }
   }, [remoteUserId, currentUserId, roomId, onCallEnded]);
 

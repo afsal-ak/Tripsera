@@ -1,3 +1,4 @@
+import type { ICall } from "./ICall";
 
 export interface IChatParticipant {
   _id: string;
@@ -26,12 +27,44 @@ export interface IChatRoom {
   createdAt: Date;
   updatedAt: Date;
 }
+ 
+export type ChatHistoryType = "message" | "call";
+export type IChatHistoryItem = IMessage & { itemType: "message" } | ICall & { itemType: "call" };
+
+// export interface IChatHistoryItem {
+//   _id: string;
+//   roomId: string;
+//   itemType: ChatHistoryType; // "message" | "call"
+
+//   // ✅ Common fields
+//   createdAt: Date;
+//   updatedAt?: Date;
+
+//   // ✅ Message-specific fields
+//   senderId?: IMessage["senderId"];
+//   content?: string;
+//   type?: IMessage["type"];
+//   mediaUrl?: string;
+//   isRead?: boolean;
+//   readBy?: string[];
+
+//   // ✅ Call-specific fields
+//   callerId?: ICall["callerId"];
+//   receiverId?: ICall["receiverId"];
+//   callType?: ICall["callType"];
+//   status?: ICall["status"];
+//   startedAt?: ICall["startedAt"];
+//   endedAt?: ICall["endedAt"];
+//   duration?: ICall["duration"];
+// }
 
 export const MessageType = {
   TEXT: 'text',
   IMAGE: 'image',
   FILE: 'file',
   AUDIO: 'audio',
+    CALL: "call", // ✅ new type for call logs
+
 } as const;
 
 export type IMessageType = (typeof MessageType)[keyof typeof MessageType];

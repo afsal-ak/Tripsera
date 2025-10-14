@@ -73,35 +73,36 @@ const AdminLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const adminId = useSelector((state: RootState) => state.adminAuth.admin?._id);
 
-  // const [incomingCallData, setIncomingCallData] = useState<{
-  //   fromUserId: string;
-  //   roomId: string;
-  //   offer: RTCSessionDescriptionInit;
-  // } | null>(null);
-const [incomingCallData, setIncomingCallData] = useState<{
-  fromUserId: string;
-  roomId: string;
-  offer: RTCSessionDescriptionInit;
-  fromUserName?: string;
-  fromUserAvatar?: string;
-} | null>(null);
+
+  const [incomingCallData, setIncomingCallData] = useState<{
+    fromUserId: string;
+    roomId: string;
+    offer: RTCSessionDescriptionInit;
+    fromUserName?: string;
+    fromUserAvatar?: string;
+    callId?: string;
+    callType?: string;
+  } | null>(null);
 
 
   if (!adminId) return null;
 
-  // Global socket to receive incoming calls
-  // useGlobalSocket({
-  //   userId: adminId,
-  //   onIncomingCall: (offer, fromUserId, roomId) => {
-  //     setIncomingCallData({ offer, fromUserId, roomId });
-  //   },
-  // });
-useGlobalSocket({
-  userId: adminId!,
-  onIncomingCall: (offer, fromUserId, roomId, fromUserName, fromUserAvatar) => {
-    setIncomingCallData({ offer, fromUserId, roomId, fromUserName, fromUserAvatar });
-  },
-});
+
+  useGlobalSocket({
+    userId: adminId!,
+    onIncomingCall: (offer, fromUserId, roomId, fromUserName, fromUserAvatar, callId, callType) => {
+      setIncomingCallData({
+        offer,
+        fromUserId,
+        roomId,
+        fromUserName,
+        fromUserAvatar,
+        callId,
+        callType,
+      });
+    },
+  });
+
   useChatRoomsSocket({ currentUserId: adminId });
   useNotificationSocket(adminId);
 
@@ -127,9 +128,8 @@ useGlobalSocket({
 
       {/* Main Content */}
       <div
-        className={`flex flex-col flex-1 transition-all duration-300 ${
-          collapsed ? 'lg:ml-20' : 'lg:ml-64'
-        }`}
+        className={`flex flex-col flex-1 transition-all duration-300 ${collapsed ? 'lg:ml-20' : 'lg:ml-64'
+          }`}
       >
         <AdminNavbar onSidebarToggle={toggleSidebar} title="Admin" />
 
