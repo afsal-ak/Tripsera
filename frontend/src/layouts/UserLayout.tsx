@@ -208,8 +208,8 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
 import { useGlobalSocket } from '@/hooks/useGlobalSocket';
 import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
-import { VideoCallUI } from '@/components/chat/VideoCallUI';
 
+import { VideoCallUI } from '@/components/chat/VideoCallUI';
 const UserLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);

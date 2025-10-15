@@ -6,13 +6,13 @@ import { adminGetMessagesByRoom, adminGetChatRoomById } from "@/services/admin/m
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import TypingIndicator from "@/components/chat/TypingIndicator";
 import { useChatSocket } from "@/hooks/useChatSocket";
-import { MessageType } from "@/types/IMessage";
+import { IMessageType } from "@/types/IMessage";
 
 import { formatMessageDate } from "@/lib/utils/dateUtils";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import AttachmentMenu from "@/components/chat/AttachmentMenu";
 import ImageUpload from "@/components/chat/ImageUpload";
-
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessageToRoom, deleteMessageFromRoom, markMessageAsReadInRoom } from "@/redux/slices/chatRoomSlice";
 import type { RootState } from "@/redux/store";
@@ -149,8 +149,8 @@ const MessagePage = ({ roomId, user }: Props) => {
     const newMessage: ISendMessage = {
       roomId: room?._id,
       senderId: user._id!,
-      content: messageInput,
-      type: MessageType.TEXT,
+      content: messageInput??'Image',
+      type: IMessageType.TEXT,
     };
         console.log(newMessage,'new message from message page')
 
@@ -164,7 +164,7 @@ const MessagePage = ({ roomId, user }: Props) => {
       senderId: user._id!,
       content: caption || "",
       mediaUrl: url,
-      type: MessageType.IMAGE,
+      type: IMessageType.IMAGE,
     };
     sendMessage(newMessage);
   };

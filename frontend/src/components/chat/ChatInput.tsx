@@ -4,7 +4,7 @@ import { Button } from "@/components/Button";
 import ImageUpload from "@/components/chat/ImageUpload";
 import AttachmentMenu from "@/components/chat/AttachmentMenu";
 import { uploadFile } from "@/services/user/messageService";
-import { MessageType } from "@/types/IMessage";
+import { IMessageType } from "@/types/IMessage";
 
 interface ChatInputProps {
   messageInput: string;
