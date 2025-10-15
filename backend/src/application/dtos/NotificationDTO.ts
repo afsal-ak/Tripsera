@@ -1,12 +1,11 @@
 
 import { INotification ,IEntityType,IType} from "@domain/entities/INotification";
-import { IRole } from "@domain/entities/IUser";
-
+ import { EnumUserRole } from "@constants/enum/userEnum";
 // Create Notification DTO
 export interface CreateNotificationDto {
   userId?: string;
   title: string;
-  role: IRole
+  role: EnumUserRole
   message?: string;
   type?:IType;
   entityType:IEntityType

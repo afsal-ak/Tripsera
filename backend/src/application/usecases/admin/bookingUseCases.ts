@@ -5,6 +5,7 @@ import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
+import { EnumUserRole } from '@constants/enum/userEnum';
 
 export class BookingUseCases implements IBookingUseCases {
 
@@ -59,7 +60,7 @@ export class BookingUseCases implements IBookingUseCases {
       const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
 
       await this._notificationUseCases.sendNotification({
-        role: "user",
+        role: EnumUserRole.USER,
         userId,
         title: "Booking Refund",
         entityType: "wallet",
@@ -73,7 +74,7 @@ export class BookingUseCases implements IBookingUseCases {
     const bookingMessage = `Admin Cancelled your booking  ${booking?.bookingCode} (Reason: ${reason})`;
 
     await this._notificationUseCases.sendNotification({
-      role: 'user',
+      role:  EnumUserRole.USER,
       userId: userId.toString(),
       title: "Booking Cancelled",
       entityType: 'booking',
@@ -105,7 +106,7 @@ export class BookingUseCases implements IBookingUseCases {
     const bookingMessage = `Admin Confirmed your Bokoking`;
 
     await this._notificationUseCases.sendNotification({
-      role: 'user',
+      role:  EnumUserRole.USER,
       userId: userId.toString(),
       title: "Booking Confirmed",
       entityType: 'booking',

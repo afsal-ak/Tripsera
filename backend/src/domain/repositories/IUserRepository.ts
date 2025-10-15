@@ -1,4 +1,5 @@
-import { IUser,IRole } from '../entities/IUser';
+import { EnumUserRole } from '@constants/enum/userEnum';
+import { IUser} from '../entities/IUser';
 import { IFilter } from '@domain/entities/IFilter';
 
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
@@ -31,7 +32,7 @@ export interface IUserRepository {
    searchUsersForChat(
     userId: string,
     search: string,
-    role:IRole
+    role:EnumUserRole
   ): Promise<IUser[]>   
      searchAllUsersForAdmin(search: string): Promise<IUser[]> 
 

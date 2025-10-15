@@ -12,6 +12,7 @@ import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { EnumBookingHistoryAction, EnumBookingStatus, EnumDateChangeAction, EnumTravelerAction } from '@constants/enum/bookingEnum';
 import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
+import { EnumUserRole } from '@constants/enum/userEnum';
 
 
 export class BookingUseCases implements IBookingUseCases {
@@ -61,9 +62,8 @@ export class BookingUseCases implements IBookingUseCases {
       }
 
       const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
-
-      await this._notificationUseCases.sendNotification({
-        role: "user",
+       await this._notificationUseCases.sendNotification({
+        role:  EnumUserRole.USER,
         userId: booking.userId.toString(),
         title: "Booking Refund",
         entityType: "wallet",
@@ -88,7 +88,7 @@ export class BookingUseCases implements IBookingUseCases {
     const bookingMessage = `User ${user.username} cancelled booking for "${pkg.title}" (Reason: ${reason})`;
 
     await this._notificationUseCases.sendNotification({
-      role: "admin",
+      role: EnumUserRole.ADMIN,
       title: "Booking Cancelled",
       entityType: "booking",
       bookingId: booking._id!.toString(),
@@ -216,7 +216,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     const notification = await this._notificationUseCases.sendNotification({
 
-      role: 'admin',
+      role: EnumUserRole.ADMIN,
       title: "New Booking",
       entityType: 'booking',
       bookingId: booking?._id?.toString(),
@@ -353,7 +353,7 @@ export class BookingUseCases implements IBookingUseCases {
     const message = `User ${user?.username} booked package ${pkg?.title})`;
     //  Save notification in DB
     const notification = await this._notificationUseCases.sendNotification({
-      role: 'admin',
+      role: EnumUserRole.ADMIN,
       title: "New Booking",
       entityType: 'booking',
       bookingId: booking?._id?.toString(),
@@ -418,7 +418,7 @@ export class BookingUseCases implements IBookingUseCases {
 
       // Send notification to user
       await this._notificationUseCases.sendNotification({
-        role: "user",
+        role:  EnumUserRole.USER,
         userId: bookingDoc.userId.toString(),
         title: "Traveler Refund",
         entityType: "wallet",
@@ -451,7 +451,7 @@ export class BookingUseCases implements IBookingUseCases {
     // Notify admin about traveler removal
     const pkg = await this._packageRepo.findById(bookingDoc.packageId.toString());
     await this._notificationUseCases.sendNotification({
-      role: "admin",
+      role:  EnumUserRole.ADMIN,
       title: "Traveler Removed",
       entityType: "booking",
       bookingId: bookingDoc._id!.toString(),

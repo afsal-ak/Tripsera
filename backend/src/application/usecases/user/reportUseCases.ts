@@ -8,6 +8,7 @@ import { INotificationUseCases } from "@application/useCaseInterfaces/notificati
 import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { IReviewRepository } from "@domain/repositories/IReviewRepository";
 import { IBlogRepository } from "@domain/repositories/IBlogRepository";
+import { EnumUserRole } from "@constants/enum/userEnum";
 export class ReportUseCases implements IReportUseCases {
     constructor(
         private readonly _reportRepo: IReportRepository,
@@ -43,7 +44,7 @@ export class ReportUseCases implements IReportUseCases {
             message = `Blog :${reportedBlog?.title} Blog has been reported by ${reporter?.username}.`
         }
         const notification = await this._notificationUseCases.sendNotification({
-            role: 'admin',
+            role:EnumUserRole.ADMIN,
             title: "New Report",
             entityType: 'report',
             reportedId: report?._id!?.toString(),

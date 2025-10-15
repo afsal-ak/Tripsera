@@ -3,7 +3,7 @@ import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCase
 import { IBlog } from '@domain/entities/IBlog';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginatedResult } from '@domain/entities/IPaginatedResult';
-import { BlogMapper } from '@application/mappers/blogMapper';
+import { BlogMapper } from '@application/mappers/BlogMapper';
 import { BlogResponseDTO } from '@application/dtos/BlogDTO';
 
 export class BlogUseCases implements IBlogUseCases {

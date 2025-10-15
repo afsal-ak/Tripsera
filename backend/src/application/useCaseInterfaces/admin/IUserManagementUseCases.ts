@@ -1,14 +1,15 @@
 import { IFilter } from '@domain/entities/IFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
-import { AdminUserListDTO } from '@application/dtos/UserDTO';
+import { AdminUserListResponseDTO, UserDetailsResponseDTO } from '@application/dtos/UserDTO';
 import { IUser } from '@domain/entities/IUser';
+
 export interface IUserManagementUseCases {
   getUsers(
     page: number,
     limit: number,filters:IFilter
-  ): Promise<IPaginatedResult<AdminUserListDTO>>;
+  ): Promise<IPaginatedResult<AdminUserListResponseDTO>>;
 
-  getSingleUser(userId: string): Promise<IUser>;
+  getSingleUser(userId: string): Promise<UserDetailsResponseDTO>;
   toggleUserBlockStatus(userId: string): Promise<boolean>  
  searchAllUsersForAdmin(
   search: string

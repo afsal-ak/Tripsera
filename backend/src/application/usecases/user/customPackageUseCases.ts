@@ -6,6 +6,7 @@ import { ICustomPkgUseCases } from "@application/useCaseInterfaces/user/ICustomP
 import { ICustomPackageRepository } from "@domain/repositories/ICustomPackageRepository";
 import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { CustomPkgMapper } from "@application/mappers/CustomPkgMapper";
+import { EnumUserRole } from "@constants/enum/userEnum";
 
 export class CustomPackageUseCases implements ICustomPkgUseCases {
     constructor(
@@ -24,7 +25,7 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
         let message = `User ${user?.username} requested for custom package .`
 
         const notification = await this._notificationUseCases.sendNotification({
-            role: 'admin',
+            role: EnumUserRole.ADMIN,
             title: "Custom Package",
             entityType: 'customPacakage',
             customPackageId: customPkg._id?.toString(),

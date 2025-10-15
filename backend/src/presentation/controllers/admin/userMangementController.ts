@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
-import {  mapToUserDetailsDTO } from "@application/dtos/UserDTO";
+import { UserMapper } from '@application/mappers/UserMapper';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IFilter } from '@domain/entities/IFilter';
 
@@ -35,8 +35,7 @@ export class UserManagementController {
     try {
       const { userId } = req.params;
       const data = await this._userManagementUseCases.getSingleUser(userId);
-      const user = mapToUserDetailsDTO(data)
-      res.status(HttpStatus.OK).json({ message: 'User fetched successfully', user });
+       res.status(HttpStatus.OK).json({ message: 'User fetched successfully', user:data });
     } catch (error) {
       next(error)
     }

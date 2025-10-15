@@ -100,7 +100,7 @@ import { deleteImageFromCloudinary } from "@infrastructure/services/cloudinary/c
 import { IBlogUseCases } from "@application/useCaseInterfaces/user/IBlogUseCases";
 import { UserBasicInfoDto } from "@application/dtos/UserBasicInfoDTO";
 import { BlogResponseDTO } from "@application/dtos/BlogDTO";
-import { BlogMapper } from "@application/mappers/blogMapper";
+import { BlogMapper } from "@application/mappers/BlogMapper";
 import { PaginatedResult } from "@domain/entities/IPaginatedResult";
 export class BlogUseCases implements IBlogUseCases {
   constructor(private readonly blogRepo: IBlogRepository) { }
