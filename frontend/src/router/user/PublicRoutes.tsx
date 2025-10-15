@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { Route } from 'react-router-dom';
-import RedirectIfAuth from './RedirectIfAuth ';
+import RedirectIfAuth from './RedirectIfAuth';
 import Signup from '@/pages/user/auth/Signup';
 import Login from '@/pages/user/auth/Login';
 import VerifyOtp from '@/pages/user/auth/OtpPage';

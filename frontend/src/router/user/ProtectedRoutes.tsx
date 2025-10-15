@@ -21,8 +21,7 @@ import ReviewForm from '@/pages/user/reviews/ReviewForm';
 import UserReviewPage from '@/pages/user/reviews/UserReview';
 import ReviewDetail from '@/pages/user/reviews/ReviewDetail';
 import PublicProfile from '@/pages/user/profile/PublicProfile';
-import StandardBookingDetail from '@/pages/user/booking/SBoking';
-import ReviewEditForm from '@/pages/user/reviews/ReviewEditForm';
+ import ReviewEditForm from '@/pages/user/reviews/ReviewEditForm';
 import AddCustomPkgForm from '@/pages/user/customPkg/AddCustomPackageForm';
 import EditCustomPkgForm from '@/pages/user/customPkg/EditCustomPkgForm';
 import CustomPackagePage from '@/pages/user/customPkg/CustomPackagePage';
@@ -78,8 +77,7 @@ const ProtectedRoutes = (
       <Route path="my-custom-package/:pkgId" element={<CustomPackageDetails />} />
       <Route path="my-custom-package/edit/:id" element={<EditCustomPkgForm />} />
 
-      <Route path="s/:id" element={<StandardBookingDetail />} />
-    </Route>
+     </Route>
   </Route>
 );
 export default ProtectedRoutes
