@@ -25,7 +25,7 @@ import { useDashboardParams } from "@/hooks/useDashboardParams";
 import type {
   ITopPackage,
   ITopCategory,
-   IDashboardSummary,
+  IDashboardSummary,
   IBookingsChartPoint,
 } from "@/types/IDashboard";
 
@@ -55,7 +55,7 @@ export default function TravelAdminDashboard() {
       setSummary(summaryRes.data);
       setTopPackages(packagesRes.data);
       setTopCategories(categoriesRes.data);
-      console.log(chartRes,'res')
+      console.log(chartRes, 'res')
       setChartData(chartRes.data);
     } catch (err: any) {
       console.error(err);
@@ -65,12 +65,12 @@ export default function TravelAdminDashboard() {
       setLoading(false);
     }
   }, [params]);
-console.log(summary,'sum')
+  console.log(summary, 'sum')
   //  Fetch only when params change
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
-console.log(chartData,'chart')
+  console.log(chartData, 'chart')
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       {/* ---------- Header ---------- */}
@@ -126,32 +126,32 @@ console.log(chartData,'chart')
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ---------- Booking Chart ---------- */}
         <div className="lg:col-span-2">
-             <BookingsChart data={chartData || []} type="line" />
-         </div>
+          <BookingsChart data={chartData || []} type="line" />
+        </div>
 
         {/* ---------- Top Packages & Categories ---------- */}
         <div className="space-y-6">
-             <DataTable<ITopPackage>
-              title="Top Booked Packages"
-              columns={[
-                { key: "packageName", label: "Package" },
-                { key: "totalBookings", label: "Bookings", width: "w-24" },
-                { key: "totalRevenue", label: "Revenue", width: "w-24" },
-              ]}
-              rows={topPackages}
-              emptyText="No packages in this range"
-            />
- 
-             <DataTable<ITopCategory>
-              title="Top Categories"
-              columns={[
-                { key: "name", label: "Category" },
-                { key: "totalBookings", label: "Bookings", width: "w-24" },
-              ]}
-              rows={topCategories}
-              emptyText="No categories in this range"
-            />
-         </div>
+          <DataTable<ITopPackage>
+            title="Top Booked Packages"
+            columns={[
+              { key: "packageName", label: "Package" },
+              { key: "totalBookings", label: "Bookings", width: "w-24" },
+              { key: "totalRevenue", label: "Revenue", width: "w-24" },
+            ]}
+            rows={topPackages}
+            emptyText="No packages in this range"
+          />
+
+          <DataTable<ITopCategory>
+            title="Top Categories"
+            columns={[
+              { key: "name", label: "Category" },
+              { key: "totalBookings", label: "Bookings", width: "w-24" },
+            ]}
+            rows={topCategories}
+            emptyText="No categories in this range"
+          />
+        </div>
       </div>
     </div>
   );

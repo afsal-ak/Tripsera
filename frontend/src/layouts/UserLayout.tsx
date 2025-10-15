@@ -225,12 +225,7 @@ const UserLayout = () => {
   } | null>(null);
 
 
-  // useGlobalSocket({
-  //   userId: userId!,
-  //   onIncomingCall: (offer, fromUserId, roomId, fromUserName, fromUserAvatar) => {
-  //     setIncomingCallData({ offer, fromUserId, roomId, fromUserName, fromUserAvatar });
-  //   },
-  // });
+   
   useGlobalSocket({
     userId: userId!,
     onIncomingCall: (offer, fromUserId, roomId, fromUserName, fromUserAvatar, callId, callType) => {
