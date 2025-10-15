@@ -23,6 +23,6 @@ export class CallRepository implements ICallRepository {
   }
 
   async getUserCallByRoom(roomId: string): Promise<ICall[]> {
-    return await CallModel.find({roomId})
+    return await CallModel.find({roomId}).lean()
   }
 }

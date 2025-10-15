@@ -55,13 +55,13 @@ const userRepository = new UserRepository();
 
 const chatRoomRepository = new ChatRoomRepository();
 const messageRepository = new MessageRepository();
-const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
+const callRepository = new CallRepository()
+const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository,callRepository);
 const chatRoomUseCases = new ChatRoomUseCase(chatRoomRepository);
 
-const callRepository = new CallRepository()
 const callUseCases = new CallUseCases(callRepository)
 
-const socketService = new SocketService(io, messageUseCases, chatRoomUseCases,userRepository, callUseCases);
+const socketService = new SocketService(io, messageUseCases, chatRoomUseCases,userRepository);
 socketService.initialize();
 
 
@@ -90,6 +90,14 @@ app.use(
 );
 app.use(morganLogger);
 app.use(bodyParser.json());
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error(" Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error(" Uncaught Exception:", error);
+});
 
 // Routes
 app.use("/api/user", userRoutes);

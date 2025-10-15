@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IMessageUseCases } from "@application/useCaseInterfaces/chat/IMessageUseCases";
-import {  toMessageResponseDTO } from "@application/dtos/MessageDTO";
+import { toMessageResponseDTO } from "@application/dtos/MessageDTO";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { uploadChatToCloudinary } from "@infrastructure/services/cloudinary/uploadChatToCloudinary ";
 
@@ -54,4 +54,20 @@ export class MessageController {
       next(error)
     }
   }
+
+  getCombinedChatAndCallHistory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const roomId = req.params.roomId;
+      const combined = await this._messageUseCases.getCombinedChatAndCallHistory(roomId);
+      console.log(combined, 'call history');
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        data: combined,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 }

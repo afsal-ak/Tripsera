@@ -120,8 +120,8 @@ export const MESSAGE_ROUTE = {
   GET_BY_ROOM: "/chatrooms/:roomId/messages",
   MARK_AS_READ: "/messages/:messageId/read",
   DELETE: "/messages/:messageId",
-  UPLOAD_MEDIA: '/messages/upload'
-
+  UPLOAD_MEDIA: '/messages/upload',
+  HISTORY:"/chat/:roomId/history"
 };
 
 

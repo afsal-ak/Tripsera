@@ -3,8 +3,13 @@ import { IMessageRepository } from "@domain/repositories/IMessageRepository";
 import { MessageModel } from "@infrastructure/models/Message";
 import { IMessage } from "@domain/entities/IMessage";
 import { SendMessageDTO } from "@application/dtos/MessageDTO";
+import { BaseRepository } from "./BaseRepository";
 
-export class MessageRepository implements IMessageRepository {
+export class MessageRepository extends BaseRepository<IMessage>  implements IMessageRepository {
+constructor() {
+    super(MessageModel)
+  } 
+  
   async sendMessage(data: SendMessageDTO): Promise<IMessage> {
     const message= await MessageModel.create(data);
     
@@ -13,6 +18,7 @@ export class MessageRepository implements IMessageRepository {
   return populatedMessage.toObject();
     
   }
+
 
   async getMessagesByRoom(roomId: string, limit: number, skip: number): Promise<IMessage[]> {
     return await MessageModel.find({ roomId })
@@ -28,15 +34,36 @@ export class MessageRepository implements IMessageRepository {
      return await MessageModel.findByIdAndUpdate(messageId,
       {isRead:true}
     ).lean();
-    // return await MessageModel.findByIdAndUpdate(
-    //   messageId,
-    //   { $addToSet: { readBy: userId } }, //  Don't blindly set isRead for groups
-    //   { new: true }
-    // ).lean();
+    
   }
 
   async deleteMessage(messageId: string): Promise<boolean> {
     const result = await MessageModel.findByIdAndDelete(messageId);
     return !!result;
   }
+
+  
+  // async updateMessage(
+  //   messageId: string,
+  //   updates: Partial<IMessage>
+  // ): Promise<IMessage | null> {
+  //   const updatedMessage = await MessageModel.findByIdAndUpdate(
+  //     messageId,
+  //     { $set: updates },
+  //     { new: true }
+  //   );
+  //   return updatedMessage;
+  // }
+  async updateMessage(
+  messageId: string,
+  updates: Partial<IMessage>
+): Promise<IMessage | null> {
+  const updatedMessage = await MessageModel.findByIdAndUpdate(
+    messageId,
+    { $set: updates },
+    { new: true }
+  ).populate("senderId", "_id username profileImage");  
+  return updatedMessage ? updatedMessage.toObject() : null;
+}
+
 }

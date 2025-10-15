@@ -20,6 +20,7 @@ export const SOCKET_WEBRTC_EVENTS = {
   OFFER: "webrtc-offer",
   ANSWER: "webrtc-answer",
   CANDIDATE: "webrtc-candidate",
+  MISSED:"missed",
     END: "webrtc-end",
 
 }
