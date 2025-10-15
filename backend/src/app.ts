@@ -18,8 +18,7 @@ import { ChatRoomRepository } from "@infrastructure/repositories/ChatRoomReposit
 import { MessageRepository } from "@infrastructure/repositories/MessageRepository";
 import { SocketService } from "@infrastructure/sockets/SocketService";
 
-import { CallUseCases } from "@application/usecases/call/callUseCases";
-
+ 
 // Notifications
 import { NotificationRepository } from "@infrastructure/repositories/NotificationRepository";
 import { NotificationUseCases } from "@application/usecases/notification/notificationUseCases";
@@ -29,8 +28,7 @@ import { PackageRepository } from "@infrastructure/repositories/PackageRepositor
 
 import { initNotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
 import { ChatRoomUseCase } from "@application/usecases/chat/chatRoomUseCases";
-import { CallRepository } from "@infrastructure/repositories/CallRepository";
-
+ 
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 4001;
@@ -55,12 +53,10 @@ const userRepository = new UserRepository();
 
 const chatRoomRepository = new ChatRoomRepository();
 const messageRepository = new MessageRepository();
-const callRepository = new CallRepository()
-const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository,callRepository);
+ const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
 const chatRoomUseCases = new ChatRoomUseCase(chatRoomRepository);
 
-const callUseCases = new CallUseCases(callRepository)
-
+ 
 const socketService = new SocketService(io, messageUseCases, chatRoomUseCases,userRepository);
 socketService.initialize();
 
@@ -72,14 +68,7 @@ const notificationUseCases = new NotificationUseCases(notificationRepository, us
 
 // initialize singleton
 initNotificationSocketService(io, notificationUseCases);
-
-// const notificationRepository = new NotificationRepository();
-// const notificationUseCases = new NotificationUseCases(notificationRepository);
-//  const notificationSocketService = new NotificationSocketService(io, notificationUseCases);
-
-// notificationSocketService.initialize();
-//       //console.log("NotificationSocketService app, io:", io);
-
+ 
 // Middlewares
 app.use(cookieParser());
 app.use(

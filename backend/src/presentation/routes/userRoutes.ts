@@ -98,8 +98,7 @@ import { CommentRepository } from '@infrastructure/repositories/CommentRepositor
 import { CommentUseCases } from '@application/usecases/user/commentUseCases';
 import { CommentController } from '@presentation/controllers/user/commentController';
 
-import { CallRepository } from '@infrastructure/repositories/CallRepository';
-
+ 
 const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
 const chatbotUseCase = new ChatbotUseCase(chatbotService);
 const chatController = new ChatController(chatbotUseCase);
@@ -108,10 +107,9 @@ const chatRoomRepository = new ChatRoomRepository();
 const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
 const chatRoomController = new ChatRoomController(chatRoomUseCase);
 
-const callRepository=new CallRepository()
-
+ 
 const messageRepository=new MessageRepository()
-const messageUseCases=new MessageUseCases(messageRepository,chatRoomRepository,callRepository)
+const messageUseCases=new MessageUseCases(messageRepository,chatRoomRepository)
 const messageController=new MessageController(messageUseCases)
 
 
@@ -370,8 +368,7 @@ router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware,chatRoomController.dele
 router.get(NOTIFICATION_ROUTE.FETCH_NOTIFICATION,userAuthMiddleware,notificationController.getNotifications)
  router.patch(NOTIFICATION_ROUTE.MARK_AS_READ,userAuthMiddleware,notificationController.markAsRead)
 
-router.get(MESSAGE_ROUTE.HISTORY, userAuthMiddleware, messageController.getCombinedChatAndCallHistory);
-
+ 
 
 router.get(BLOCK_ROUTE.GELL_ALL,userAuthMiddleware,blockController.listBlockedUsers)
 router.post(BLOCK_ROUTE.BLOCK,userAuthMiddleware,blockController.block)

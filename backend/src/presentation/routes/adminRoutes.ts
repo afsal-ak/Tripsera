@@ -94,17 +94,15 @@ import { MessageController } from '@presentation/controllers/chat/MessageControl
 import { NotificationUseCases } from '@application/usecases/notification/notificationUseCases';
 import { NotificationRepository } from '@infrastructure/repositories/NotificationRepository';
 import { NotificationController } from '@presentation/controllers/admin/notificationController';
-import { CallRepository } from '@infrastructure/repositories/CallRepository';
-
+ 
 
 const chatRoomRepository = new ChatRoomRepository();
 const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
 const chatRoomController = new ChatRoomController(chatRoomUseCase);
 
-const callRepository=new CallRepository()
-
+ 
 const messageRepository=new MessageRepository()
-const messageUseCases=new MessageUseCases(messageRepository,chatRoomRepository,callRepository)
+const messageUseCases=new MessageUseCases(messageRepository,chatRoomRepository)
 const messageController=new MessageController(messageUseCases)
 
 

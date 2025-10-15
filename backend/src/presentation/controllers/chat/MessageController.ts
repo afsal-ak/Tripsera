@@ -55,19 +55,5 @@ export class MessageController {
     }
   }
 
-  getCombinedChatAndCallHistory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const roomId = req.params.roomId;
-      const combined = await this._messageUseCases.getCombinedChatAndCallHistory(roomId);
-      console.log(combined, 'call history');
-
-      res.status(HttpStatus.OK).json({
-        success: true,
-        data: combined,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
-
+  
 }

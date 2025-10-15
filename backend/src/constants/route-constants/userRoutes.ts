@@ -121,8 +121,7 @@ export const MESSAGE_ROUTE = {
   MARK_AS_READ: "/messages/:messageId/read",
   DELETE: "/messages/:messageId",
   UPLOAD_MEDIA: '/messages/upload',
-  HISTORY:"/chat/:roomId/history"
-};
+ };
 
 
 export const NOTIFICATION_ROUTE={

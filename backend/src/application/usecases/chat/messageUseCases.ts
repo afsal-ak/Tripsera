@@ -5,42 +5,16 @@ import { SendMessageDTO, UpdateMessageDTO } from "@application/dtos/MessageDTO";
 import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
 import { AppError } from "@shared/utils/AppError";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-import { ICallRepository } from "@domain/repositories/ICallRepository";
-import { ICall } from "@domain/entities/ICall";
-
+  
 
 export type ChatItemType = "message" | "call";
 
-
-export interface IChatHistoryItem {
-  _id: string;
-  roomId: string;
-  itemType: ChatItemType; // "message" | "call"
-
-  // For messages
-  senderId?: IMessage["senderId"];
-  content?: string;
-  type?: IMessage["type"];
-  mediaUrl?: string;
-
-  // For calls
-  callerId?: ICall["callerId"];
-  receiverId?: ICall["receiverId"];
-  callType?: ICall["callType"];
-  status?: ICall["status"];
-  startedAt?: ICall["startedAt"];
-  endedAt?: ICall["endedAt"];
-  duration?: ICall["duration"];
-
-  createdAt: Date;
-  updatedAt?: Date;
-}
+ 
 export class MessageUseCases implements IMessageUseCases {
   constructor(
     private readonly _messageRepo: IMessageRepository,
     private readonly _chatRoomRepo: IChatRoomRepository,
-    private readonly _callRepo: ICallRepository
-  ) { }
+   ) { }
 
 
 
@@ -203,45 +177,6 @@ export class MessageUseCases implements IMessageUseCases {
     const msg = await this._messageRepo.findById(id)
     return msg ? msg : null
   }
-  async getCombinedChatAndCallHistory(roomId: string): Promise<IChatHistoryItem[]> {
-    const [messages, calls] = await Promise.all([
-      this._messageRepo.getMessagesByRoom(roomId, 0, 0),
-      this._callRepo.getUserCallByRoom(roomId),
-    ]);
-
-    const messageData: IChatHistoryItem[] = messages.map((msg) => ({
-      _id: msg._id!.toString(),
-      roomId: msg.roomId.toString(),
-      itemType: "message",
-      senderId: msg.senderId,
-      content: msg.content,
-      type: msg.type,
-      mediaUrl: msg.mediaUrl,
-      createdAt: new Date(msg.createdAt ?? Date.now()),
-      updatedAt: msg.updatedAt ? new Date(msg.updatedAt) : undefined,
-    }));
-
-    const callData: IChatHistoryItem[] = calls.map((call) => ({
-      _id: call._id!.toString(),
-      roomId: call.roomId.toString(),
-      itemType: "call",
-      callerId: call.callerId,
-      receiverId: call.receiverId,
-      callType: call.callType,
-      status: call.status,
-      startedAt: call.startedAt,
-      endedAt: call.endedAt,
-      duration: call.duration,
-      createdAt: new Date(call.createdAt ?? Date.now()),
-      updatedAt: call.updatedAt ? new Date(call.updatedAt) : undefined,
-    }));
-
-    const combined = [...messageData, ...callData].sort(
-      (a, b) => a.createdAt.getTime() - b.createdAt.getTime() // ascending (old → new)
-    );
-
-    return combined;
-  }
-
+  
 
 }
