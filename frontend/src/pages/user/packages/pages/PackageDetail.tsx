@@ -85,11 +85,11 @@ const PackageDetails = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       const res = await handlePackageReview(id!, 1, 3, {});
-      console.log(res, 'review res ponse')
+      console.log(res.review, 'review res ponse')
       const reviewRating = await handleReviewRating(id!);
-      setRatingSummary(reviewRating)
+      setRatingSummary(reviewRating.summary)
       //console.log(reviewRating, 'review')
-      setPreviewReviews(res.review);
+      setPreviewReviews(res.review.data);
     };
     fetchReviews();
   }, []);

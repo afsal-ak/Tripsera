@@ -16,7 +16,7 @@ export const handlePackageReview = async (
   };
 
   const response = await api.get(`/user/packages/${packageId}/reviews`, { params });
-  return response.data;
+  return response.data.review;
 };
 
 

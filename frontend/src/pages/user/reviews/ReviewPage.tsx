@@ -22,7 +22,7 @@ export default function ReviewPage() {
 
     const { packageId } = useParams()
     const navigate = useNavigate()
-    const [reviews, setreviews] = useState<IReview[]>([]);
+    const [reviews, setReviews] = useState<IReview[]>([]);
     const [ratingSummary, setRatingSummary] = useState<IRating>()
     const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null);
 
@@ -67,8 +67,8 @@ export default function ReviewPage() {
                 const reviewRating = await handleReviewRating(packageId);
                 // console.log(reviewRating, 'review')
                 setRatingSummary(reviewRating)
-                // console.log(response)
-                setreviews(response.zz)
+                 console.log(response,'ll')
+                setReviews(response.data)
                 setTotalPages(response.pagination.totalPages);
 
             } catch (error) {
@@ -216,7 +216,7 @@ export default function ReviewPage() {
                                                 {review.userId.username}
                                             </h3>
 
-                                            
+
                                             <button
                                                 onClick={() =>
                                                     setSelectedReport({ _id: review._id, reportedType: 'review' })
