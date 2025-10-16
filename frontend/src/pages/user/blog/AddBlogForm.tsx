@@ -133,6 +133,7 @@ const AddBlogForm = () => {
 
           <div>
             <Label>Upload Images (Max 4)</Label>
+            <br />
             <input
               type="file"
               accept="image/*"

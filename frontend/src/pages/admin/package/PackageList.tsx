@@ -88,7 +88,7 @@ const PackageList = () => {
                 <TableCell>{pkg.title}</TableCell>
                 <TableCell>
                   {pkg.category?.map((cat) => (
-                    <div key={cat._id} className="text-sm text-gray-700">
+                    <div key={cat?._id!} className="text-sm text-gray-700">
                       {cat.name}
                     </div>
                   ))}
@@ -114,7 +114,7 @@ const PackageList = () => {
                     <ConfirmDialog
                       title="Unblock this package?"
                       actionLabel="Unblock"
-                      onConfirm={() => handleToggleBlock(pkg._id, false)}
+                      onConfirm={() => handleToggleBlock(pkg?._id!, false)}
                     >
                       <Button
                         size="sm"
@@ -128,7 +128,7 @@ const PackageList = () => {
                     <ConfirmDialog
                       title="Block this package?"
                       actionLabel="Block"
-                      onConfirm={() => handleToggleBlock(pkg._id, true)}
+                      onConfirm={() => handleToggleBlock(pkg._id!, true)}
                     >
                       <Button size="sm" variant="destructive">
                         Block
