@@ -3,6 +3,9 @@ import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { BookingModel } from '@infrastructure/models/Booking';
 import { BaseRepository } from './BaseRepository';
+import { IBookingTable } from '@domain/entities/IBookingTable';
+import { IBookingPopulatedForUser } from '@infrastructure/db/types.ts/IBookingPopulated';
+
 
 export class BookingRepository extends BaseRepository<IBooking> implements IBookingRepository {
 
@@ -24,7 +27,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
     status?: string;
     startDate?: string;
     endDate?: string;
-  }): Promise<{ bookings: IBooking[]; total: number }> {
+  }): Promise<{ bookings: IBookingTable[]; total: number }> {
     const skip = (page - 1) * limit;
     const match: any = {};
 
@@ -103,7 +106,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
     page: number,
     limit: number
   ): Promise<{
-    bookings: IBooking[];
+    bookings: IBookingPopulatedForUser[];
     total: number;
   }> {
     const skip = (page - 1) * limit;
@@ -114,7 +117,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
-        .lean(),
+       .lean<IBookingPopulatedForUser[]>(),
 
       BookingModel.countDocuments({ userId }),
     ]);

@@ -1,23 +1,28 @@
 import { IBooking } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { INotification } from '@domain/entities/INotification';
+import { CreateBookingDTO,
+  BookingDetailResponseDTO,
+  BookingTableResponseDTO ,
+  BookingUserResponseDTO
+} from '@application/dtos/BookingDTO';
 
 export interface IBookingUseCases {
   getAllUserBooking(
     userId: string,
     page: number,
     limit: number
-  ): Promise<{ bookings: IBooking[]; total: number }>;
+  ): Promise<{ bookings: BookingUserResponseDTO[]; total: number }>;
 
-  getBookingById(userId: string, bookingId: string): Promise<IBooking | null>;
+  getBookingById(userId: string, bookingId: string): Promise<BookingDetailResponseDTO | null>;
 
-  cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null>;
+  cancelBooking(userId: string, bookingId: string, reason: string): Promise<BookingDetailResponseDTO | null>;
 
   createBookingWithOnlinePayment(
     userId: string,
-    data: IBookingInput & { useWallet?: boolean }
+    data: CreateBookingDTO & { useWallet?: boolean }
   ): Promise<{
-    booking: IBooking;
+    booking: BookingDetailResponseDTO;
     razorpayOrder?: {
       id: string;
       amount: number;
@@ -40,7 +45,7 @@ export interface IBookingUseCases {
     userId: string,
     bookingId: string
   ): Promise<{
-    booking: IBooking;
+    booking: BookingDetailResponseDTO;
     razorpayOrder: {
       id: string;
       amount: number;
@@ -51,9 +56,9 @@ export interface IBookingUseCases {
 
   createBookingWithWalletPayment(
     userId: string,
-    data: IBookingInput & { useWallet?: boolean }
-  ): Promise<{ booking?: IBooking }>;
+    data: CreateBookingDTO & { useWallet?: boolean }
+  ): Promise<{ booking?: BookingDetailResponseDTO }>;
 
-  removeTraveler(bookingId: string, travelerIndex: number, userId: string, note?: string): Promise<IBooking|null>
-  changeTravelDate(bookingId: string, newDate: Date, userId: string, note?: string): Promise<IBooking>
+  removeTraveler(bookingId: string, travelerIndex: number, userId: string, note?: string): Promise<BookingDetailResponseDTO|null>
+  changeTravelDate(bookingId: string, newDate: Date, userId: string, note?: string): Promise<BookingDetailResponseDTO>
 }

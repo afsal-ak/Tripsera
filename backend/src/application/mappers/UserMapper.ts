@@ -4,6 +4,7 @@ import { UserDetailsResponseDTO, AdminUserListResponseDTO,
  } from '@application/dtos/UserDTO';
 import { EnumUserRole ,EnumGender} from '@constants/enum/userEnum';
 import { LoginResponseDTO } from '@application/dtos/UserAuthDTO';
+
 export abstract class UserMapper {
 
   static toUserDetailsDTO(user: IUser): UserDetailsResponseDTO {

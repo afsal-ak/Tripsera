@@ -1,7 +1,8 @@
 import { IBooking } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBaseRepository } from './IBaseRepository';
-
+import { IBookingTable } from '@domain/entities/IBookingTable';
+import { IBookingPopulatedForUser } from '@infrastructure/db/types.ts/IBookingPopulated';
 export interface IBookingRepository extends IBaseRepository<IBooking>{
   getAllBooking(filters: {
     page: number;
@@ -10,12 +11,12 @@ export interface IBookingRepository extends IBaseRepository<IBooking>{
     status?: string;
     startDate?: string;
     endDate?: string;
-  }): Promise<{ bookings: IBooking[]; total: number }>;
+  }): Promise<{ bookings: IBookingTable[]; total: number }>;
   getAllBookingOfUser(
     userId: string,
     page: number,
     limit: number
-  ): Promise<{ bookings: IBooking[]; total: number }>;
+  ): Promise<{ bookings: IBookingPopulatedForUser[]; total: number }>;
   getBookingById(userId: string, bookingId: string): Promise<IBooking | null>;
   findOneByUserAndPackage(userId: string, packageId: string): Promise<IBooking | null>;
 

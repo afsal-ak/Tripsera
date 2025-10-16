@@ -13,6 +13,9 @@ import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { EnumBookingHistoryAction, EnumBookingStatus, EnumDateChangeAction, EnumTravelerAction } from '@constants/enum/bookingEnum';
 import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
 import { EnumUserRole } from '@constants/enum/userEnum';
+import { BookingDetailResponseDTO, BookingTableResponseDTO, BookingUserResponseDTO, CreateBookingDTO } from '@application/dtos/BookingDTO';
+import { BookingMapper } from '@application/mappers/BookingMapper';
+import { IBookingTable } from "@domain/entities/IBookingTable";
 
 
 export class BookingUseCases implements IBookingUseCases {
@@ -29,17 +32,22 @@ export class BookingUseCases implements IBookingUseCases {
     userId: string,
     page: number,
     limit: number
-  ): Promise<{ bookings: IBooking[]; total: number }> {
-    return await this._bookingRepo.getAllBookingOfUser(userId, page, limit);
+  ): Promise<{ bookings: BookingUserResponseDTO[]; total: number }> {
+    const result = await this._bookingRepo.getAllBookingOfUser(userId, page, limit);
+    return {
+      bookings: result.bookings.map(BookingMapper.toUserResponseDTO),
+      total: result.total
+    }
   }
 
-  async getBookingById(userId: string, bookingId: string): Promise<IBooking | null> {
-    return await this._bookingRepo.getBookingById(userId, bookingId);
+  async getBookingById(userId: string, bookingId: string): Promise<BookingDetailResponseDTO | null> {
+    const booking = await this._bookingRepo.getBookingById(userId, bookingId);
+    return booking ? BookingMapper.toDetailResponseDTO(booking) : null
   }
 
 
 
-  async cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null> {
+  async cancelBooking(userId: string, bookingId: string, reason: string): Promise<BookingDetailResponseDTO | null> {
     const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
       throw new AppError(HttpStatus.NOT_FOUND, "Booking not found");
@@ -62,8 +70,8 @@ export class BookingUseCases implements IBookingUseCases {
       }
 
       const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
-       await this._notificationUseCases.sendNotification({
-        role:  EnumUserRole.USER,
+      await this._notificationUseCases.sendNotification({
+        role: EnumUserRole.USER,
         userId: booking.userId.toString(),
         title: "Booking Refund",
         entityType: "wallet",
@@ -99,14 +107,16 @@ export class BookingUseCases implements IBookingUseCases {
       metadata: { bookingId: booking._id, reason },
     });
 
-    return await this._bookingRepo.cancelBooking(userId, bookingId, reason);
+    const res = await this._bookingRepo.cancelBooking(userId, bookingId, reason);
+    return res ? BookingMapper.toDetailResponseDTO(res) : null
+
   }
 
   async createBookingWithOnlinePayment(
     userId: string,
-    data: IBookingInput & { useWallet?: boolean }
+    data: CreateBookingDTO & { useWallet?: boolean }
   ): Promise<{
-    booking: IBooking;
+    booking: BookingDetailResponseDTO;
     razorpayOrder?: {
       id: string;
       amount: number;
@@ -126,7 +136,7 @@ export class BookingUseCases implements IBookingUseCases {
       walletAmountUsed,
       discount,
     } = data;
-     const finalAmount = amountPaid;
+    const finalAmount = amountPaid;
     const bookingCode = await generateBookingCode();
 
     const bookingData: IBookingInput = {
@@ -162,10 +172,9 @@ export class BookingUseCases implements IBookingUseCases {
       },
     });
 
-
-
+ 
     return {
-      booking,
+      booking:BookingMapper.toDetailResponseDTO(booking),
       razorpayOrder,
     };
   }
@@ -193,8 +202,8 @@ export class BookingUseCases implements IBookingUseCases {
     }
     if (booking.walletAmountUsed && booking.walletAmountUsed > 0) {
       await this._walletRepo.debitWallet(booking.userId.toString(), booking.walletAmountUsed);
-     }
-    booking.paymentStatus =EnumPaymentStatus.PAID;
+    }
+    booking.paymentStatus = EnumPaymentStatus.PAID;
     booking.bookingStatus = EnumBookingStatus.BOOKED;
     booking.updatedAt = new Date();
     booking.razorpay = {
@@ -237,7 +246,7 @@ export class BookingUseCases implements IBookingUseCases {
     if (!booking) {
       throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
-    if (booking.paymentStatus ===EnumPaymentStatus.PAID) {
+    if (booking.paymentStatus === EnumPaymentStatus.PAID) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot cancel a paid booking');
     }
 
@@ -251,7 +260,7 @@ export class BookingUseCases implements IBookingUseCases {
     userId: string,
     bookingId: string
   ): Promise<{
-    booking: IBooking;
+    booking: BookingDetailResponseDTO;
     razorpayOrder: {
       id: string;
       amount: number;
@@ -285,15 +294,15 @@ export class BookingUseCases implements IBookingUseCases {
     });
 
     return {
-      booking,
+      booking:BookingMapper.toDetailResponseDTO(booking),
       razorpayOrder,
     };
   }
 
   async createBookingWithWalletPayment(
     userId: string,
-    data: IBookingInput & { useWallet?: boolean }
-  ): Promise<{ booking?: IBooking }> {
+    data: CreateBookingDTO & { useWallet?: boolean }
+  ): Promise<{ booking?: BookingDetailResponseDTO }> {
     const {
       packageId,
       travelers,
@@ -365,7 +374,7 @@ export class BookingUseCases implements IBookingUseCases {
     });
 
 
-    return { booking };
+    return { booking:BookingMapper.toDetailResponseDTO(booking) };
   }
 
   async removeTraveler(
@@ -373,7 +382,7 @@ export class BookingUseCases implements IBookingUseCases {
     travelerIndex: number,
     userId: string,
     note?: string
-  ): Promise<IBooking | null> {
+  ): Promise<BookingDetailResponseDTO | null> {
     const bookingDoc = await this._bookingRepo.findById(bookingId);
     if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, "Booking not found");
 
@@ -400,7 +409,7 @@ export class BookingUseCases implements IBookingUseCases {
       note,
     });
 
-     if (bookingDoc.paymentStatus ===EnumPaymentStatus.PAID && bookingDoc.amountPaid > 0) {
+    if (bookingDoc.paymentStatus === EnumPaymentStatus.PAID && bookingDoc.amountPaid > 0) {
       // Calculate refund for removed traveler
       const perTravelerAmount = bookingDoc.amountPaid / (bookingDoc.travelers.length + 1); // +1 because we already removed one
       const refundAmount = perTravelerAmount;
@@ -418,7 +427,7 @@ export class BookingUseCases implements IBookingUseCases {
 
       // Send notification to user
       await this._notificationUseCases.sendNotification({
-        role:  EnumUserRole.USER,
+        role: EnumUserRole.USER,
         userId: bookingDoc.userId.toString(),
         title: "Traveler Refund",
         entityType: "wallet",
@@ -451,7 +460,7 @@ export class BookingUseCases implements IBookingUseCases {
     // Notify admin about traveler removal
     const pkg = await this._packageRepo.findById(bookingDoc.packageId.toString());
     await this._notificationUseCases.sendNotification({
-      role:  EnumUserRole.ADMIN,
+      role: EnumUserRole.ADMIN,
       title: "Traveler Removed",
       entityType: "booking",
       bookingId: bookingDoc._id!.toString(),
@@ -462,12 +471,14 @@ export class BookingUseCases implements IBookingUseCases {
       metadata: { removedTraveler, note },
     });
 
-    return await this._bookingRepo.updateBooking(bookingId, bookingDoc);
+    const booking= await this._bookingRepo.updateBooking(bookingId, bookingDoc);
+        return booking ? BookingMapper.toDetailResponseDTO(booking) : null
+
   }
 
 
 
-  async changeTravelDate(bookingId: string, newDate: Date, userId: string, note?: string): Promise<IBooking> {
+  async changeTravelDate(bookingId: string, newDate: Date, userId: string, note?: string): Promise<BookingDetailResponseDTO> {
     const bookingDoc = await this._bookingRepo.findById(bookingId);
     if (!bookingDoc) throw new Error('Booking not found');
 
@@ -500,6 +511,8 @@ export class BookingUseCases implements IBookingUseCases {
     bookingDoc.history = bookingDoc.history || [];
     bookingDoc.history.push(historyItem);
 
-    return await this._bookingRepo.save(bookingDoc);
+    const booking= await this._bookingRepo.save(bookingDoc);
+        return BookingMapper.toDetailResponseDTO(booking)  
+
   }
 }
