@@ -2,6 +2,7 @@ import { ICategory } from '@domain/entities/ICategory';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 
 import { IFilter } from '@domain/entities/IFilter';
+
 export interface ICategoryUseCases {
   getAllCategory(params: { page: number; limit: number },filter:IFilter): Promise<IPaginatedResult<ICategory>>;
 

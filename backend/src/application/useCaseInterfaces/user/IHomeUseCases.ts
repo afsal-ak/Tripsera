@@ -3,14 +3,15 @@ import { IBanner } from '@domain/entities/IBanner';
 import { IPackage } from '@domain/entities/IPackage';
 import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 
-export interface IHomeUseCases {
+
+ export interface IHomeUseCases {
   getHome(): Promise<{
     banners: IBanner[];
-    packages: IPackage[];
+    packages: PackageResponseDTO[];
   }>;
 
   getActivePackage(options: IPackageQueryOptions): Promise<{
-    data: IPackage[];
+    data: PackageResponseDTO[];
     total: number;
     totalPages: number;
     currentPage: number;

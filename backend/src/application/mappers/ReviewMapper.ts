@@ -37,8 +37,8 @@ export abstract class ReviewMapper {
   static toResponseDTO(review: IReview): ReviewResponseDTO {
     return {
       _id: review._id?.toString() ?? "",
-      userId: review.userId.toString(),
-      packageId: review.packageId.toString(),
+      userId: review.userId as string,
+      packageId: review.packageId as string,
       username: review.username,
       packageTitle: review.packageTitle,
       rating: review.rating,

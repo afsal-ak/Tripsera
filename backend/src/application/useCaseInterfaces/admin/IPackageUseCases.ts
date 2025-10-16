@@ -1,4 +1,4 @@
-import { CreatePackageDTO,PackageResponseDTO,EditPackageDTO  } from '@application/dtos/PackageDTO';
+import { CreatePackageDTO,PackageResponseDTO,EditPackageDTO, PackageTableResponseDTO  } from '@application/dtos/PackageDTO';
 import { IPackage } from '@domain/entities/IPackage';
 
 export interface IPackageUseCases {
@@ -6,14 +6,14 @@ export interface IPackageUseCases {
     page: number,
     limit: number
   ): Promise<{
-    packages: IPackage[];
+    packages: PackageTableResponseDTO[];
     totalPackages: number;
     totalPages: number;
   }>;
 
   getSinglePackage(id: string): Promise<PackageResponseDTO | null>;
 
-  createPackage(pkg: IPackage): Promise<IPackage>;
+  createPackage(pkg: CreatePackageDTO): Promise<PackageResponseDTO>;
 
   editPackageData(
     id: string,

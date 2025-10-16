@@ -4,9 +4,11 @@ import { IPackage } from '@domain/entities/IPackage';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { generatePackageCode } from '@shared/utils/generatePackageCode';
 import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';
-import { EditPackageDTO, PackageResponseDTO, toPackageResponseDTO } from '@application/dtos/PackageDTO';
+import { CreatePackageDTO, EditPackageDTO, PackageResponseDTO, PackageTableResponseDTO, } from '@application/dtos/PackageDTO';
+import { PackageMapper } from '@application/mappers/PackageMapper';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+
 export class PackageUseCases implements IPackageUseCases {
 
   constructor(private _packageRepo: IPackageRepository) { }
@@ -15,7 +17,7 @@ export class PackageUseCases implements IPackageUseCases {
     page: number,
     limit: number
   ): Promise<{
-    packages: IPackage[];
+    packages: PackageTableResponseDTO[];
     totalPackages: number;
     totalPages: number;
   }> {
@@ -27,7 +29,7 @@ export class PackageUseCases implements IPackageUseCases {
     ]);
 
     return {
-      packages,
+      packages:packages.map(PackageMapper.toTableResponseDTO),
       totalPackages,
       totalPages: Math.ceil(totalPackages / limit),
     };
@@ -38,9 +40,10 @@ export class PackageUseCases implements IPackageUseCases {
     if (!pkg) return null;
     console.log(pkg, 'pcakge in usedcase')
     // Map to DTO before returning
-    return toPackageResponseDTO(pkg);
+    return PackageMapper.toResponseDTO(pkg);
   }
-  async createPackage(pkg: IPackage): Promise<IPackage> {
+
+  async createPackage(pkg: CreatePackageDTO): Promise<PackageResponseDTO> {
     try {
       const packageCode = await generatePackageCode();
 
@@ -63,7 +66,7 @@ export class PackageUseCases implements IPackageUseCases {
       };
 
       const result = await this._packageRepo.create(packageData);
-      return result;
+      return PackageMapper.toResponseDTO(result);
     } catch (error) {
       console.error('UseCase Error:', error);
       throw error;
