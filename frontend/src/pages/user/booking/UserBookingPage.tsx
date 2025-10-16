@@ -69,7 +69,6 @@ const UserBookingPage = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Package</TableHead>
-                  <TableHead>Travelers</TableHead>
                   <TableHead>Amount Paid</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Travel Date</TableHead>
@@ -89,7 +88,7 @@ const UserBookingPage = () => {
                         <div className="flex items-center gap-3">
                           <img
                             src={
-                              booking.packageId.imageUrls?.[0]?.url.replace(
+                              booking.packageImage?.url?.replace(
                                 '/upload/',
                                 '/upload/f_auto,q_auto/'
                               ) || '/placeholder.jpg'
@@ -106,17 +105,15 @@ const UserBookingPage = () => {
                         </div>
                       </TableCell>
 
-                      <TableCell>{booking.travelers.length}</TableCell>
                       <TableCell>₹{booking.amountPaid}</TableCell>
                       <TableCell>
                         <span
-                          className={`font-medium ${
-                            booking.bookingStatus === 'confirmed'
+                          className={`font-medium ${booking.bookingStatus === 'confirmed'
                               ? 'text-green-600'
                               : booking.bookingStatus === 'pending'
                                 ? 'text-yellow-600'
                                 : 'text-red-600'
-                          }`}
+                            }`}
                         >
                           {booking.bookingStatus}
                         </span>
@@ -143,17 +140,17 @@ const UserBookingPage = () => {
                       </TableCell>
 
                     </TableRow>
-                    
+
                   ))
                 )}
-                                       <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
-            {paginationButtons}
-          </div>
+                <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
+                  {paginationButtons}
+                </div>
               </TableBody>
             </Table>
           </div>
 
-         
+
         </CardContent>
       </Card>
     </div>

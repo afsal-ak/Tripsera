@@ -62,7 +62,7 @@ export interface IBooking {
     email: string;
     username: string;
   };
-
+ 
   travelers: ITraveler[];
   travelerHistory?: ITravelerHistory[];
 
