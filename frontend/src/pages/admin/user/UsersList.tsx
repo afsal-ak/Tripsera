@@ -58,8 +58,10 @@ const UserList = () => {
           status
         }
         const res = await fetchUsersData(filters);
+        console.log(res,'ress');
+        
         setUsers(res.data);
-        setTotalPages(res.totalPages);
+        setTotalPages(res.pagination.totalPages);
        } catch (error) {
         toast.error('Failed to load user data');
       }

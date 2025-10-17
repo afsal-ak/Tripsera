@@ -63,9 +63,7 @@ const ReviewList = () => {
         const filters = cleanFilter(rawFilters);
 
         const response = await handleFetchReview(currentPage, limit, filters);
-        console.log(response.data,'review response in list');
-                console.log(response.pagination,'review response in list');
-
+       
         setreviews(response.data);
         setTotalPages(response.pagination.totalPages);
         //    console.log(response.pagination,'pagination')
@@ -202,33 +200,7 @@ const ReviewList = () => {
                     <span className="text-green-500">Active</span>
                   )}
                 </TableCell>
-                {/* <TableCell className="flex gap-2">
-                  {review.isBlocked ? (
-                    <ConfirmDialog
-                      title="Unblock this user?"
-                      actionLabel="Unblock"
-                      onConfirm={() => handleToggleBlock(review._id!, false)}
-                    >
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-green-600 border-green-600"
-                      >
-                        Unblock
-                      </Button>
-                    </ConfirmDialog>
-                  ) : (
-                    <ConfirmDialog
-                      title="Block this user?"
-                      actionLabel="Block"
-                      onConfirm={() => handleToggleBlock(review._id!, true)}
-                    >
-                      <Button size="sm" variant="destructive">
-                        Block
-                      </Button>
-                    </ConfirmDialog>
-                  )}
-                </TableCell> */}
+               
                 <Button
                   className="mt-5 text-center"
 
