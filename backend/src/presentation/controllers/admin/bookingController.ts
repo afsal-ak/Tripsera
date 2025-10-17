@@ -87,4 +87,17 @@ export class BookingController {
       next(error);
     }
   };
+
+    changeTravelDate=async(req: Request, res: Response, next: NextFunction):Promise<void>=> {
+      try {
+              const bookingId = req.params.id;
+  
+        const {  newDate, note } = req.body;
+   
+        const updatedBooking = await this._bookingUseCases.changeTravelDate(bookingId, new Date(newDate), note);
+        res.status(HttpStatus.OK).json(updatedBooking);
+      } catch (error) {
+        next(error)
+      }
+    }
 }

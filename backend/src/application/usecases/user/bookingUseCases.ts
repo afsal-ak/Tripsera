@@ -172,9 +172,9 @@ export class BookingUseCases implements IBookingUseCases {
       },
     });
 
- 
+
     return {
-      booking:BookingMapper.toDetailResponseDTO(booking),
+      booking: BookingMapper.toDetailResponseDTO(booking),
       razorpayOrder,
     };
   }
@@ -294,7 +294,7 @@ export class BookingUseCases implements IBookingUseCases {
     });
 
     return {
-      booking:BookingMapper.toDetailResponseDTO(booking),
+      booking: BookingMapper.toDetailResponseDTO(booking),
       razorpayOrder,
     };
   }
@@ -374,7 +374,7 @@ export class BookingUseCases implements IBookingUseCases {
     });
 
 
-    return { booking:BookingMapper.toDetailResponseDTO(booking) };
+    return { booking: BookingMapper.toDetailResponseDTO(booking) };
   }
 
   async removeTraveler(
@@ -389,15 +389,15 @@ export class BookingUseCases implements IBookingUseCases {
     const removedTraveler = bookingDoc.travelers.splice(travelerIndex, 1)[0];
 
     // Track general booking history
-    bookingDoc.history = bookingDoc.history || [];
-    bookingDoc.history.push({
-      action: EnumBookingHistoryAction.TRAVELER_REMOVED,
-      oldValue: removedTraveler,
-      newValue: null,
-      changedBy: 'user',
-      changedAt: new Date(),
-      note,
-    });
+    // bookingDoc.history = bookingDoc.history || [];
+    // bookingDoc.history.push({
+    //   action: EnumBookingHistoryAction.TRAVELER_REMOVED,
+    //   oldValue: removedTraveler,
+    //   newValue: null,
+    //   changedBy: 'user',
+    //   changedAt: new Date(),
+    //   note,
+    // });
 
     // Track traveler-specific history with reason
     bookingDoc.travelerHistory = bookingDoc.travelerHistory || [];
@@ -471,48 +471,60 @@ export class BookingUseCases implements IBookingUseCases {
       metadata: { removedTraveler, note },
     });
 
-    const booking= await this._bookingRepo.updateBooking(bookingId, bookingDoc);
-        return booking ? BookingMapper.toDetailResponseDTO(booking) : null
+    const booking = await this._bookingRepo.updateBooking(bookingId, bookingDoc);
+    return booking ? BookingMapper.toDetailResponseDTO(booking) : null
 
   }
 
+  async changeTravelDate(
+  bookingId: string,
+  newDate: Date,
+  userId: string,
+  note?: string
+): Promise<BookingDetailResponseDTO> {
+  const bookingDoc = await this._bookingRepo.findById(bookingId);
+  if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
+
+  const oldDate = bookingDoc.travelDate;
+  const today = new Date();
+  const newTravelDate = new Date(newDate);
+
+  if (oldDate && newTravelDate.getTime() === oldDate.getTime())
+    throw new AppError(HttpStatus.BAD_REQUEST, 'New travel date cannot be the same');
+  if (newTravelDate < today)
+    throw new AppError(HttpStatus.BAD_REQUEST, 'New travel date cannot be in the past');
+  if (bookingDoc.bookingStatus === 'confirmed')
+    throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot change travel date for confirmed bookings');
+
+  const updated = await this._bookingRepo.updateById(bookingId, {
+    $set: {
+      travelDate: newTravelDate,
+    },
+    $push: {
+      previousDates: {
+        oldDate,
+        newDate: newTravelDate,
+        action:
+          oldDate && newTravelDate > oldDate
+            ? EnumDateChangeAction.POSTPONED
+            : EnumDateChangeAction.PREPONED,
+        changedBy: 'user',
+        changedAt: new Date(),
+      },
+      history: {
+        action: EnumBookingHistoryAction.DATE_CHANGED,
+        oldValue: oldDate,
+        newValue: newTravelDate,
+        changedBy: 'user',
+        changedAt: new Date(),
+        note,
+      },
+    },
+    $inc: { rescheduleCount: 1 },
+  });
+
+  return BookingMapper.toDetailResponseDTO(updated!);
+}
 
 
-  async changeTravelDate(bookingId: string, newDate: Date, userId: string, note?: string): Promise<BookingDetailResponseDTO> {
-    const bookingDoc = await this._bookingRepo.findById(bookingId);
-    if (!bookingDoc) throw new Error('Booking not found');
-
-    const oldDate = bookingDoc.travelDate;
-
-    bookingDoc.travelDate = newDate;
-
-    // Update reschedule info
-    bookingDoc.previousDates = bookingDoc.previousDates || [];
-    bookingDoc.previousDates.push({
-      oldDate: oldDate,
-      newDate,
-      action: newDate > oldDate! ? EnumDateChangeAction.POSTPONED : EnumDateChangeAction.PREPONED,
-      changedBy: userId,
-      changedAt: new Date(),
-    });
-
-    bookingDoc.rescheduleCount = (bookingDoc.rescheduleCount || 0) + 1;
-
-    // Track history
-    const historyItem: IBookingHistory = {
-      action: EnumBookingHistoryAction.DATE_CHANGED,
-      oldValue: oldDate,
-      newValue: newDate,
-      changedBy: userId,
-      changedAt: new Date(),
-      note,
-    };
-
-    bookingDoc.history = bookingDoc.history || [];
-    bookingDoc.history.push(historyItem);
-
-    const booking= await this._bookingRepo.save(bookingDoc);
-        return BookingMapper.toDetailResponseDTO(booking)  
-
-  }
 }

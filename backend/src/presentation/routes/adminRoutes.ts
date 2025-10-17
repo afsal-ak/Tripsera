@@ -64,9 +64,8 @@ import { ReviewController } from '@presentation/controllers/admin/reviewControll
 import { ReferralRepository } from '@infrastructure/repositories/ReferralRepository';
 import { ReferralUseCase } from '@application/usecases/admin/referralUseCases.ts';
 import { ReferralController } from '@presentation/controllers/admin/referralController';
-
-import { SalesReportRepository } from '@infrastructure/repositories/SalesReportRepository';
-import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
+import { SalesReportRepository } from '@infrastructure/repositories/salesReportRepository';
+ import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
 import { SalesReportController } from '@presentation/controllers/admin/salesReportController';
 
 import { ReportRepository } from '@infrastructure/repositories/ReportRepository';
@@ -238,6 +237,11 @@ router.get(COUPON_ROUTES.GET_BY_ID, adminAuthMiddleware, couponController.getCou
 router.put(COUPON_ROUTES.EDIT, adminAuthMiddleware, couponController.editCoupon);
 router.patch(COUPON_ROUTES.STATUS, adminAuthMiddleware, couponController.updateCouponStatus);
 router.delete(COUPON_ROUTES.DELETE, adminAuthMiddleware, couponController.deleteCoupon);
+router.put(
+  BOOKING_ROUTES.CHANGE_TRAVEL_DATE,
+  adminAuthMiddleware,
+  bookingController.changeTravelDate
+);
 
 // BOOKING ROUTES
 router.get(BOOKING_ROUTES.GET_ALL, adminAuthMiddleware, bookingController.getAllBooking);

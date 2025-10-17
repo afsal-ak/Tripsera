@@ -213,7 +213,13 @@ async confirmBookingByAdmin(
     return BookingModel.findOne({ 'razorpay.orderId': orderId });
   } 
   async save(booking: any): Promise<IBooking> {
+    console.log(booking,'booking');
+    
     return booking.save();
   }
+async updateById(id: string, update: any): Promise<IBooking|null> {
+    return await BookingModel.findByIdAndUpdate(id, update, { new: true });
+
+}
 
 }
