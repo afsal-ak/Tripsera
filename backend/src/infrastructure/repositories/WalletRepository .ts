@@ -1,9 +1,12 @@
+import { EnumWalletTransactionType } from '@constants/enum/walletEnum';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { WalletModel } from '@infrastructure/models/Wallet';
 import { AppError } from '@shared/utils/AppError';
 
 export class WalletRepository implements IWalletRepository {
+  
   async walletBalance(userId: string): Promise<{ balance: number }> {
     const wallet = await WalletModel.findOne({ userId }).lean();
     return { balance: wallet?.balance || 0 };
@@ -63,11 +66,11 @@ export class WalletRepository implements IWalletRepository {
   async creditWallet(userId: string, amount: number, description?: string): Promise<IWallet> {
     const wallet = await WalletModel.findOne({ userId });
     if (!wallet) {
-      throw new AppError(400, 'Wallet not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
     }
     wallet.balance += amount;
     wallet.transactions.push({
-      type: 'credit',
+      type: EnumWalletTransactionType.CREDIT,
       amount,
       description,
       createdAt: new Date(),
@@ -80,16 +83,16 @@ export class WalletRepository implements IWalletRepository {
   async debitWallet(userId: string, amount: number, description?: string): Promise<IWallet> {
     const wallet = await WalletModel.findOne({ userId });
     if (!wallet) {
-      throw new AppError(400, 'Wallet not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
     }
 
     if (wallet.balance < amount) {
-      throw new AppError(400, 'Insufficient wallet balance');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
     }
     wallet.balance -= amount;
 
     wallet.transactions.push({
-      type: 'debit',
+      type:EnumWalletTransactionType.DEBIT,
       amount,
       description,
       createdAt: new Date(),

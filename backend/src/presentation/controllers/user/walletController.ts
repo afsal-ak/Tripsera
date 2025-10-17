@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IWalletUseCases } from '@application/useCaseInterfaces/user/IWalletUseCases';
+import { EnumSort } from '@constants/enum/sortEnum';
 
 export class WalletController {
   constructor(private _walletUseCases: IWalletUseCases) {}
@@ -26,7 +27,7 @@ export class WalletController {
       const userId = getUserIdFromRequest(req);
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
-      const sort = req.query.sort === 'oldest' ? 'oldest' : 'newest';
+      const sort = req.query.sort === 'oldest' ? 'oldest' : 'newest'   
 
       //     console.log(req.query,'from wallet')
 

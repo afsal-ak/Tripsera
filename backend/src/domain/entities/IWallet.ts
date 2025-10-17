@@ -1,7 +1,8 @@
 import { Types } from 'mongoose';
+import { EnumWalletTransactionType } from '@constants/enum/walletEnum';
 
 export interface IWalletTransaction {
-  type: 'credit' | 'debit';
+  type: EnumWalletTransactionType;
   amount: number;
   description?: string;
   createdAt: Date;
