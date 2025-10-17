@@ -4,12 +4,11 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getAllWishlist, deleteFromWishlist } from '@/services/user/wishlistService';
 import { Trash2, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
-import type { WishlistItem } from '@/types/IWishlist';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
-
+import type { IWishlist } from '@/types/IWishlist';
 const Wishlist = () => {
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [wishlist, setWishlist] = useState<IWishlist[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -39,7 +38,7 @@ const Wishlist = () => {
     try {
       await deleteFromWishlist(packageId);
       toast.success('Removed from wishlist');
-      setWishlist((prev) => prev.filter((item) => item.packageId._id !== packageId));
+      setWishlist((prev) => prev.filter((item) => item.package._id!== packageId));
     } catch (err) {
       toast.error('Failed to remove item');
     }
@@ -71,12 +70,12 @@ const Wishlist = () => {
       <h1 className="text-2xl font-bold mb-4">My Wishlist</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {wishlist.map((item) => {
-          const pkg = item.packageId;
+          const pkg = item.package;
           return (
             <div key={pkg._id} className="bg-white rounded-lg shadow p-4 relative">
               <Link to={`/packages/${pkg._id}`} className="block hover:opacity-90 transition">
                 <img
-                  src={pkg.imageUrls[0]?.url.replace('/upload/', '/upload/f_auto,q_auto/') || ''}
+                  src={pkg.imageUrls.url.replace('/upload/', '/upload/f_auto,q_auto/') || ''}
                   alt={pkg.title}
                   className="h-40 w-full object-cover rounded-md mb-3"
                 />
@@ -84,7 +83,7 @@ const Wishlist = () => {
 
                 <p className="text-sm text-gray-600 ">
                   <MapPin className="w-3 h-3 mr-3" />
-                  {pkg.location.map((loc) => loc.name).join(', ')}
+                  {pkg.location?.map((loc) => loc.name).join(', ')}
                 </p>
                 <p className="text-sm text-gray-800 font-medium mt-1">
                   ₹ {pkg.price.toLocaleString()}
