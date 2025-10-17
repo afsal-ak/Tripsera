@@ -23,6 +23,7 @@ export class SalesReportController {
       };
 
       const result = await this._salesReportUseCase.getReportList(filters, page, limit);
+console.log(result,'salesreport');
 
       res.status(HttpStatus.OK).json({
         success: true,

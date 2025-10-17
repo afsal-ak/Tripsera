@@ -4,13 +4,15 @@ import { exportSalesReportExcel } from '@shared/utils/excelUtils';
 import { exportSalesReportPDF } from '@shared/utils/pdfUtils';
 import { IBooking } from '@domain/entities/IBooking';
 import { ISalesReportUseCase } from '@application/useCaseInterfaces/admin/ISalesReportUseCses';
+import { SalesReportResponseDTO } from '@application/dtos/salesReportDTO';
+import { SalesReportMapper } from '@application/mappers/SalesReportMapper';
 
 export class SalesReportUseCase implements ISalesReportUseCase {
 
   constructor(private _salesRepo: ISalesReportRepository) {}
 
   async getReportList(query: FilterQueryOptions, page: number, limit: number):Promise<{
-    data: IBooking[];
+    data: SalesReportResponseDTO[];
     total: number;
     summary: any;
     page: number;
@@ -28,7 +30,7 @@ export class SalesReportUseCase implements ISalesReportUseCase {
     const summary = await this._salesRepo.calculateSummary(filter);
 
     return {
-      data,
+      data:data.map(SalesReportMapper.toResponseDTO),
       total,
       summary,
       page,
@@ -39,7 +41,7 @@ export class SalesReportUseCase implements ISalesReportUseCase {
   // Download report as Excel
   async downloadExcel(query: FilterQueryOptions): Promise<Buffer> {
     const filter = getSalesReportFilter(query);
-    const bookings: IBooking[] = await this._salesRepo.find(filter, {
+    const bookings: IBooking[] = await this._salesRepo.findForReport(filter, {
       sort: { createdAt: -1 },
     });
 
@@ -50,7 +52,7 @@ export class SalesReportUseCase implements ISalesReportUseCase {
 
     async downloadPDF(query: FilterQueryOptions): Promise<Buffer> {
     const filter = getSalesReportFilter(query);
-    const bookings: IBooking[] = await this._salesRepo.find(filter, {
+    const bookings: IBooking[] = await this._salesRepo.findForReport(filter, {
       sort: { createdAt: -1 },
     });
 
