@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
-import { IBanner } from '@domain/entities/IBanner';
 import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/IBannerManagementUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { CreateBannerDTO } from '@application/dtos/BannerDTO';
 
 export class BannerMangementController {
   constructor(private _bannerMangementUseCases: IBannerManagementUseCases) { }
@@ -18,13 +18,16 @@ export class BannerMangementController {
       }
 
       const { url, public_id } = await uploadCloudinary(imagePath, 'banners');
-      const banner: IBanner = {
+      const banner: CreateBannerDTO = {
         title,
         description,
         image: { url, public_id },
       };
       const createdBanner = await this._bannerMangementUseCases.createNewBanner(banner);
-      res.status(HttpStatus.CREATED).json({ message: 'Banner Created Successfully', banner: createdBanner });
+      res.status(HttpStatus.CREATED).json({
+        message: 'Banner Created Successfully',
+        banner: createdBanner
+      });
     } catch (error) {
       next(error)
     }

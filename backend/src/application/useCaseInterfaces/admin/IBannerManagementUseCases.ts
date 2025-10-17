@@ -1,18 +1,20 @@
 import { IBanner } from '@domain/entities/IBanner';
+import { CreateBannerDTO ,BannerResponseDTO} from '@application/dtos/BannerDTO';
+
 
 export interface IBannerManagementUseCases {
-  createNewBanner(banner: IBanner): Promise<IBanner>;
+  createNewBanner(banner: CreateBannerDTO): Promise<BannerResponseDTO>;
 
   getBanners(
     page: number,
     limit: number
   ): Promise<{
-    banners: IBanner[];
+    banners: BannerResponseDTO[];
     totalBanner: number;
     totalPages: number;
   }>;
 
-  getActiveBanners(): Promise<IBanner[]>;
+  getActiveBanners(): Promise<BannerResponseDTO[]>;
 
   blockBanner(bannerId: string): Promise<void>;
 
