@@ -3,15 +3,7 @@ import { IFilter } from '@domain/entities/IFilter';
  import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
  
 export interface IPackageUseCases {
-  // getAllPackages(
-  //   page: number,
-  //   limit: number,
-  //   filters?:IFilter
-  // ): Promise<{
-  //   packages: PackageTableResponseDTO[];
-  //   totalPackages: number;
-  //   totalPages: number;
-  // }>;
+  
  getAllPackages(
     page: number,
     limit: number,

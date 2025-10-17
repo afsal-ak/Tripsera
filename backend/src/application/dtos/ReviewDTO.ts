@@ -15,19 +15,4 @@ export interface UpdateReviewDTO {
   isBlocked?: boolean;
 }
 
-
-// export const toReviewResponseDTO = (review: IReview): ReviewResponseDTO => {
-//   return {
-//     _id: review._id!.toString(),
-//     userId: review.userId as string,
-//     packageId: review.packageId as string,
-//     username: review.username,
-//     packageTitle: review.packageTitle,
-//     rating: review.rating,
-//     title: review.title,
-//     comment: review.comment,
-//     isBlocked: review.isBlocked ?? false,
-//     createdAt: review.createdAt!,
-//     updatedAt: review.updatedAt!,
-//   };
-// };
+ 

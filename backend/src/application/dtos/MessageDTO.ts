@@ -1,15 +1,7 @@
 
 import { IMessage,IMessageType,ICallInfo } from "@domain/entities/IMessage";
 
-
-// export interface SendMessageDTO {
-//   roomId?: string;              
-//   senderId: string;            
-//   receiverId?: string;         
-//   content: string;            
-//   type?: IMessageType;         
-//   attachments?: string[];       
-// }
+ 
 
 export interface SendMessageDTO {
   roomId?: string;

@@ -1,17 +1,8 @@
 import { IComment, ICommentWithReplyCount } from '@domain/entities/IComment';
 import { CommentResponseDTO } from '@application/dtos/CommentDTO';
-
-/**
- * CommentMapper
- * --------------
- * Responsible for transforming comment entities into DTOs.
- * Ensures a single responsibility and clear data transformation boundaries.
- */
+ 
 export class CommentMapper {
-  /**
-   * Convert a comment entity to CommentResponseDTO.
-   * Used for basic comment responses without populated user.
-   */
+   
   static toResponseDTO(comment: IComment): CommentResponseDTO {
     return {
       _id: comment._id?.toString() ?? '',
