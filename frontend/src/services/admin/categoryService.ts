@@ -1,12 +1,5 @@
 import api from "@/lib/axios/api";
-//  export const fetchCategoriesData=async()=>{
-//     try {
-//         const response=await adminApi.get('/categories');
-//         return response.data
-//     } catch (error:any) {
-//     console.error("Failed to fetch categories", error);
-//     }
-// }
+
 export const fetchCategoriesData = async (page: number, limit: number,search:string,status:string) => {
   let params={
     page,limit ,search,status

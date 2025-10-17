@@ -13,10 +13,7 @@ const ChatBot = () => {
   const [conversation, setConversation] = useState<{ role: string; text: string }[]>([]);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
-  // // Scroll to bottom whenever conversation updates
-  // useEffect(() => {
-  //   chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  // }, [conversation, loading]);
+
 
   const onSubmit = async (data: IFormInput) => {
     const userMsg = data.message.trim();

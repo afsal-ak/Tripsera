@@ -1,8 +1,5 @@
 import axios, { type AxiosRequestConfig, AxiosError } from "axios";
-// import { store } from "@/redux/store";
-//import { logout as userLogout } from "@/redux/slices/userAuthSlice";
-// import { logout as userLogout } from "@/redux/slices/userAuthSlice";
-//import { logoutAdmin } from "@/redux/slices/adminAuthSlice";
+ import { HttpStatus } from "@/Constants/HttpStatus/HttpStatus";
 import { toast } from "sonner";
 
 // Extend Axios config to include _retry
@@ -63,7 +60,7 @@ api.interceptors.response.use(
     const url = originalRequest.url ?? "";
 
     //   blocked user
-    if (url.startsWith("/user") && status === 403 && message.toLowerCase().includes("blocked")) {
+    if (url.startsWith("/user") && status === HttpStatus.FORBIDDEN && message.toLowerCase().includes("blocked")) {
       localStorage.removeItem('accessToken');
       toast.error("You have been blocked by the admin");
       setTimeout(() => (window.location.href = "/login"), 1000);
@@ -72,7 +69,7 @@ api.interceptors.response.use(
 
     // Handle refresh token for both
     if (
-      status === 401 &&
+      status ===  HttpStatus.UNAUTHORIZED &&
       !originalRequest._retry &&
       !url.includes("/login") &&
       !url.includes("/refresh-token")

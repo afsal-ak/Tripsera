@@ -1,5 +1,4 @@
-// ReviewDetails.tsx
-import { Button } from "@/components/ui/button";
+ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatTimeAgo } from "@/lib/utils/formatTime";import { Star } from "lucide-react";
  import type { IReview } from "@/types/IReview";

@@ -1,5 +1,4 @@
-// useAdminNotifications.ts
-import { useEffect, useState } from "react";
+ import { useEffect, useState } from "react";
 import socket from "@/sockets/socket";
 import { SOCKET_NOTIFICATION_EVENTS } from "@/sockets/events";
 import { toast } from "sonner";
