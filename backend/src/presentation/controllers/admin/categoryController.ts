@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ICategoryUseCases } from '@application/useCaseInterfaces/admin/ICategoryUseCases';
 import { IFilter } from '@domain/entities/IFilter';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { CreateCategoryDTO, UpdateCategoryDTO } from '@application/dtos/CategoryDTO';
 
 export class CategoryController {
 
@@ -26,7 +27,7 @@ export class CategoryController {
 
   createCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const category = req.body;
+      const category:CreateCategoryDTO = req.body;
       const created = await this._categoryUseCase.createCategory(category);
       res.status(HttpStatus.CREATED).json(created);
     } catch (error) {
@@ -38,7 +39,7 @@ export class CategoryController {
   editCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
-      const categoryData = req.body;
+      const categoryData:UpdateCategoryDTO = req.body;
       const updated = await this._categoryUseCase.editCategory(id, categoryData);
       res.status(HttpStatus.OK).json(updated);
     } catch (error) {

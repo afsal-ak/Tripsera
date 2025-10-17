@@ -1,14 +1,16 @@
-// import { ICategory } from "@domain/entities/ICategory";
+export interface CreateCategoryDTO {
+  name: string;
+    isBlocked: boolean;
 
-// export interface CreateCategoryDTO {
-//     name: string;
-//     isBlocked: boolean;
-// }
+}
 
+export interface UpdateCategoryDTO {
+  name?: string;
+  isBlocked?: boolean;
+}
 
-
-// export interface ICategory {
-//     _id?: Types.ObjectId | string;
-//     name: string;
-//     isBlocked: boolean;
-// }
+export interface CategoryResponseDTO {
+  _id: string;
+  name: string;
+  isBlocked: boolean;
+}

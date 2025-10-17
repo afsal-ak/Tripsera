@@ -2,10 +2,10 @@ import { IBannerRepository } from '@domain/repositories/IBannerRepository';
 import { IBanner } from '@domain/entities/IBanner';
 import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
-import { IPackage } from '@domain/entities/IPackage';
-import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
+ import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
 import { PackageResponseDTO } from '@application/dtos/PackageDTO';
 import { PackageMapper } from '@application/mappers/PackageMapper';
+
 export class HomeUseCases implements IHomeUseCases {
   constructor(
     private _packageRepo: IPackageRepository,
