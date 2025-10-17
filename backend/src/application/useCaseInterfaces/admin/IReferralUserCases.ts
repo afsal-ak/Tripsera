@@ -1,11 +1,11 @@
 import { IReferral } from '@domain/entities/IReferral';
-import { UpdateReferralDTO } from '@application/dtos/ReferralDto';
+import { UpdateReferralDTO,ReferralResponseDTO } from '@application/dtos/ReferralDTO';
 
 export interface IReferralUseCases {
   upsertReferral(data: UpdateReferralDTO): Promise<IReferral>;
 
-  getReferral(): Promise<IReferral | null>;
-  changeReferralStatus(IReferral: string, isBlocked: boolean): Promise<IReferral | null>;
-  deleteReferral(IReferral: string): Promise<boolean>;
-  getReferralById(IReferral: string): Promise<IReferral | null>;
+  getReferral(): Promise<ReferralResponseDTO | null>;
+  changeReferralStatus(id: string, isBlocked: boolean): Promise<ReferralResponseDTO | null>;
+  deleteReferral(id: string): Promise<boolean>;
+  getReferralById(id: string): Promise<ReferralResponseDTO | null>;
 }

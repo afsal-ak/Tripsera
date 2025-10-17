@@ -1,5 +1,5 @@
-import { IReferral } from '@domain/entities/IReferral';
+ import { ReferralResponseDTO } from '@application/dtos/ReferralDTO';
 
 export interface IReferralUseCases {
-  getReferral(): Promise<IReferral | null>;
+  getReferral(): Promise<ReferralResponseDTO | null>;
 }

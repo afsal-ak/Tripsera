@@ -2,7 +2,7 @@ import { IReferral } from '@domain/entities/IReferral';
 import { BaseRepository } from './BaseRepository';
 import { IReferralRepository } from '@domain/repositories/IReferralRepository';
 import { referralModel } from '@infrastructure/models/Referral';
-import { UpdateReferralDTO } from '@application/dtos/ReferralDto';
+import { UpdateReferralDTO } from '@application/dtos/ReferralDTO';
 
 export class ReferralRepository extends BaseRepository<IReferral> implements IReferralRepository {
   constructor() {

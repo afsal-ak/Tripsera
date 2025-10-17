@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { IReferralUseCases } from '@application/useCaseInterfaces/admin/IReferralUserCases';
-import { toReferralResponseDTO, UpdateReferralDTO } from '@application/dtos/ReferralDto';
+import {  UpdateReferralDTO } from '@application/dtos/ReferralDTO';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class ReferralController {
@@ -12,7 +12,7 @@ export class ReferralController {
       const data: UpdateReferralDTO = req.body;
       const referral = await this._referralUseCase.upsertReferral(data);
       res.status(HttpStatus.CREATED).json({
-        referral: toReferralResponseDTO(referral),
+        referral,
         message: 'Referral settings saved successfully',
       });
     } catch (error) {
@@ -24,10 +24,9 @@ export class ReferralController {
     try {
       const data = await this._referralUseCase.getReferral();
 
-      const referral = toReferralResponseDTO(data!);
-
+ 
       res.status(HttpStatus.OK).json({
-        referral,
+        referral:data,
         message: 'Referral fetched successfully',
       });
     } catch (error) {

@@ -1,6 +1,6 @@
 import { IBaseRepository } from './IBaseRepository';
 import { IReferral } from '@domain/entities/IReferral';
-import { UpdateReferralDTO } from '@application/dtos/ReferralDto';
+import { UpdateReferralDTO } from '@application/dtos/ReferralDTO';
 
 export interface IReferralRepository extends IBaseRepository<IReferral> {
   getReferral(): Promise<IReferral | null>;
