@@ -4,6 +4,7 @@ import { ICommentRepository } from '@domain/repositories/ICommentRepository';
 import { BaseRepository } from './BaseRepository';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { Types } from 'mongoose';
+
 export class CommentRepository extends BaseRepository<IComment> implements ICommentRepository {
   constructor() {
     super(CommentModel);

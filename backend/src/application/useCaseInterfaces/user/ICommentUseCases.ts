@@ -1,19 +1,17 @@
-import { ICommentRepository } from '@domain/repositories/ICommentRepository';
-import { CreateCommentDto, UpdateCommentDto, CommentResponseDTO, ReplyCommentDto } from '@application/dtos/CommentDTO';
-import { IComment } from '@domain/entities/IComment';
-import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
+ import { CreateCommentDto, UpdateCommentDto, CommentResponseDTO, ReplyCommentDto } from '@application/dtos/CommentDTO';
+ import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 
 export interface ICommentUseCases {
 
     createComment(data: CreateCommentDto): Promise<CommentResponseDTO>
     replyComment(data: ReplyCommentDto): Promise<CommentResponseDTO>
 
-    updateComment(id: string, dto: UpdateCommentDto): Promise<IComment | null>
+    updateComment(id: string, dto: UpdateCommentDto): Promise<CommentResponseDTO | null>
 
     deleteComment(id: string): Promise<boolean>
 
 
-    toggleLike(commentId: string, userId: string): Promise<IComment | null>
+    toggleLike(commentId: string, userId: string): Promise<CommentResponseDTO | null>
 
   
     getReplies(
