@@ -1,12 +1,16 @@
 import { Schema, model, Document } from "mongoose";
 import { IReport } from "@domain/entities/IReport";
+import {
+  EnumReportStatus,
+  EnumAdminAction,
+  EnumReportedType,
+} from "@constants/enum/reportEnum";
 
-type ReviewDocument = IReport & Document;
+type ReportDocument = IReport & Document;
 
-
-const ReportSchema = new Schema<ReviewDocument>(
+const ReportSchema = new Schema<ReportDocument>(
   {
-      reportedId: {
+    reportedId: {
       type: Schema.Types.ObjectId,
       required: true,
     },
@@ -17,31 +21,79 @@ const ReportSchema = new Schema<ReviewDocument>(
     },
     reportedType: {
       type: String,
-      enum: ["blog", "review", "user"],
+      enum: Object.values(EnumReportedType),
       required: true,
     },
-  
     reason: {
       type: String,
       required: true,
     },
     description: {
       type: String,
+      default: "",
     },
     status: {
       type: String,
-      enum: ["pending", "resolved", "dismissed"],
-      default: "pending",
+      enum: Object.values(EnumReportStatus),
+      default: EnumReportStatus.PENDING,
     },
     adminAction: {
       type: String,
-      enum: ["warn", "block", "delete", "none"],
-      default: "none",
+      enum: Object.values(EnumAdminAction),
+      default: EnumAdminAction.NONE,
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
-export const ReportModel = model<ReviewDocument>("Report", ReportSchema);
+export const ReportModel = model<ReportDocument>("Report", ReportSchema);
+
+// import { Schema, model, Document } from "mongoose";
+// import { IReport } from "@domain/entities/IReport";
+// import { EnumReportStatus,EnumAdminAction,EnumReportedType } from "@constants/enum/reportEnum";
+// type ReviewDocument = IReport & Document;
+
+
+// const ReportSchema = new Schema<ReviewDocument>(
+//   {
+//       reportedId: {
+//       type: Schema.Types.ObjectId,
+//       required: true,
+//     },
+//     reporterId: {
+//       type: Schema.Types.ObjectId,
+//       required: true,
+//       ref: "Users",
+//     },
+//     reportedType: {
+//       type: String,
+//       enum: ["blog", "review", "user"],
+//       required: true,
+//     },
+  
+//     reason: {
+//       type: String,
+//       required: true,
+//     },
+//     description: {
+//       type: String,
+//     },
+//     status: {
+//       type: String,
+//       enum: ["pending", "resolved", "dismissed"],
+//       default: "pending",
+//     },
+//     adminAction: {
+//       type: String,
+//       enum: ["warn", "block", "delete", "none"],
+//       default: "none",
+//     },
+//   },
+//   {
+//     timestamps: true, 
+//   }
+// );
+
+// export const ReportModel = model<ReviewDocument>("Report", ReportSchema);

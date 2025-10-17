@@ -1,12 +1,16 @@
-import { IReport, IReportStatus } from "@domain/entities/IReport";
+import { IReport } from "@domain/entities/IReport";
+import { EnumReportStatus } from "@constants/enum/reportEnum";
 import { IReportRepository } from "@domain/repositories/IReportRepository";
 import { IFilter } from "@domain/entities/IFilter";
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import  { SortOrder } from 'mongoose';
 import { BaseRepository } from "./BaseRepository";
 import { ReportModel } from "@infrastructure/models/Report";
- 
-export class ReportRepository extends BaseRepository<IReport> implements IReportRepository {
+ import { IReportTableAggregate } from "@infrastructure/db/types.ts/IReportTableAggregate";
+
+
+
+ export class ReportRepository extends BaseRepository<IReport> implements IReportRepository {
   constructor() {
     super(ReportModel)
   }
@@ -19,7 +23,7 @@ export class ReportRepository extends BaseRepository<IReport> implements IReport
     page: number,
     limit: number,
     filters: IFilter
-  ): Promise<{ report: IReport[]; pagination: PaginationInfo; }> {
+  ): Promise<{ report: IReportTableAggregate[]; pagination: PaginationInfo; }> {
 
     const skip = (page - 1) * limit
 
@@ -172,7 +176,7 @@ export class ReportRepository extends BaseRepository<IReport> implements IReport
 
   }
 
-  async updateReportStatus(id: string, status: IReportStatus): Promise<boolean> {
+  async updateReportStatus(id: string, status: EnumReportStatus): Promise<boolean> {
     const report =await ReportModel.findById(id,status)
     return !!report
   }

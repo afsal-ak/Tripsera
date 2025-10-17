@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IReportUseCases } from "@application/useCaseInterfaces/admin/IReportUseCases";
-import { toReportResponseDTO, toReportSingleResponseDTO } from "@application/dtos/ReportDTO";
-import { IFilter } from "@domain/entities/IFilter";
+ import { IFilter } from "@domain/entities/IFilter";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 
 export class ReportController {
@@ -21,9 +20,9 @@ export class ReportController {
                 customFilter: (req.query.customFilter as string) || "",
             }
             const { report, pagination } = await this._reportUseCases.getAllReports(page, limit, filters)
-            const reports = report.map(toReportResponseDTO)
+       //     const reports = report.map(toReportResponseDTO)
             res.status(HttpStatus.OK).json({
-                reports,
+                reports:report,
                 pagination,
                 message: 'Report fetched successfully'
             })
@@ -36,9 +35,8 @@ export class ReportController {
         try {
             const id = req.params.id
             const data = await this._reportUseCases.getById(id)
-            const report = toReportSingleResponseDTO(data!)
-             res.status(HttpStatus.OK).json({
-                report,
+              res.status(HttpStatus.OK).json({
+                report:data,
                 message: 'Report fetched successfully'
             })
         } catch (error) {

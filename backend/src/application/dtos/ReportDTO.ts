@@ -1,9 +1,14 @@
-import { IReport, IReportedType, IReportStatus, IAdminAction } from "@domain/entities/IReport";
+import { 
+  EnumAdminAction,
+  EnumReportStatus,
+  EnumReportedType ,
+  EnumReportBlockStatus
+} from "@constants/enum/reportEnum";
 
 export interface CreateReportDTO {
   reportedId: string;
   reporterId: string;
-  reportedType: IReportedType;
+  reportedType: EnumReportedType;
   reason: string;
   description?: string;
 }
@@ -12,10 +17,10 @@ export interface CreateReportDTO {
 export interface UpdateReportDTO {
   reportId: string;
   reportedId: string;
-  reportedType: IReportedType;
-  adminAction: IAdminAction;
-  status: IReportStatus;
-  isBlocked: "active" | "block"
+  reportedType: EnumReportedType;
+  adminAction: EnumAdminAction;
+  status: EnumReportStatus;
+  isBlocked: EnumReportBlockStatus
 }
 
 
@@ -27,57 +32,31 @@ export interface ReportSingleResponseDTO {
   description?: string;
   reportedType: string;
 
-  status: IReportStatus;
-  adminAction: IAdminAction;
+  status: EnumReportStatus;
+  adminAction: EnumAdminAction;
   createdAt: Date;
   updatedAt: Date;
 }
-
-export const toReportSingleResponseDTO = (report: IReport): ReportSingleResponseDTO => {
-  return {
-    _id: report._id!.toString(),
-    reportedId: report.reportedId as string,
-    reporterId: report.reporterId as string,
-    reason: report.reason,
-    description: report.description,
-    reportedType: report.reportedType,
-    status: report.status,
-    adminAction: report.adminAction,
-    createdAt: report.createdAt!,
-    updatedAt: report.updatedAt!,
-  };
-};
-
-export interface ReportResponseDTO {
+export interface ReportTableResponseDTO {
   _id: string;
   reportedType: string;
   reason: string;
   description?: string;
-  status: IReportStatus;
-  adminAction: IAdminAction;
+  status: string;
+  adminAction: string;
   createdAt: Date;
+
+  // Reporter
   reporterUserName?: string;
+
+  // If reportedType = user
   reportedUserName?: string;
+
+  // If reportedType = blog
   blogTitle?: string;
   blogOwner?: string;
+
+  // If reportedType = review
   reviewTitle?: string;
   reviewOwner?: string;
 }
-
-export const toReportResponseDTO = (report: any): ReportResponseDTO => {
-  return {
-    _id: report._id?.toString(),
-    reportedType: report.reportedType,
-    reason: report.reason,
-    description: report.description,
-    status: report.status,
-    adminAction: report.adminAction,
-    createdAt: report.createdAt,
-    reporterUserName: report.reporterUserName,
-    reportedUserName: report.reportedUserName,
-    blogTitle: report.blogTitle,
-    blogOwner: report.blogOwner,
-    reviewTitle: report.reviewTitle,
-    reviewOwner: report.reviewOwner,
-  };
-};

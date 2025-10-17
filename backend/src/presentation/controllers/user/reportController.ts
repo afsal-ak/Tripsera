@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IReportUseCases } from "@application/useCaseInterfaces/user/IReportUseCases";
-import { CreateReportDTO, toReportResponseDTO } from "@application/dtos/ReportDTO";
+import { CreateReportDTO } from "@application/dtos/ReportDTO";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 
@@ -21,7 +21,7 @@ export class ReportController {
 
             res.status(HttpStatus.CREATED).json({
                 succes: true,
-                report:toReportResponseDTO(report),
+                report,
                 message: 'Report created succesffully'
             })
 

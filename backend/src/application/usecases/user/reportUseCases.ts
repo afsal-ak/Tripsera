@@ -9,6 +9,8 @@ import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { IReviewRepository } from "@domain/repositories/IReviewRepository";
 import { IBlogRepository } from "@domain/repositories/IBlogRepository";
 import { EnumUserRole } from "@constants/enum/userEnum";
+import { ReportSingleResponseDTO } from "@application/dtos/ReportDTO";
+import { ReportMapper } from "@application/mappers/ReportMapper";
 
 export class ReportUseCases implements IReportUseCases {
     constructor(
@@ -20,7 +22,7 @@ export class ReportUseCases implements IReportUseCases {
 
     ) { }
 
-    async createReport(data: CreateReportDTO): Promise<IReport> {
+    async createReport(data: CreateReportDTO): Promise<ReportSingleResponseDTO> {
         const { reportedId, reporterId } = data
         const existingReport = await this._reportRepo.existingReport(reportedId, reporterId)
         if (existingReport) {
@@ -54,7 +56,8 @@ export class ReportUseCases implements IReportUseCases {
             triggeredBy: report.reporterId.toString(),
         });
 
-        return report
+        return ReportMapper.toSingleResponseDTO(report)
+        
     }
 
 
