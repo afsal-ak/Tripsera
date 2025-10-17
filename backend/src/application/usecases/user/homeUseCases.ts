@@ -3,8 +3,10 @@ import { IBanner } from '@domain/entities/IBanner';
 import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
  import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
-import { PackageResponseDTO } from '@application/dtos/PackageDTO';
+import { PackageResponseDTO} from '@application/dtos/PackageDTO';
 import { PackageMapper } from '@application/mappers/PackageMapper';
+import { BannerResponseDTO } from '@application/dtos/BannerDTO';
+import { BannerMapper } from '@application/mappers/BannerMapper';
 
 export class HomeUseCases implements IHomeUseCases {
   constructor(
@@ -12,11 +14,11 @@ export class HomeUseCases implements IHomeUseCases {
     private _bannerRepo: IBannerRepository
   ) {}
 
-  async getHome(): Promise<{ banners: IBanner[]; packages: PackageResponseDTO[] }> {
+  async getHome(): Promise<{ banners: BannerResponseDTO[]; packages: PackageResponseDTO[] }> {
     const banners = await this._bannerRepo.getAllActiveBanners();
     const packages = await this._packageRepo.getHomeData();
     return {
-       banners, 
+       banners:banners.map(BannerMapper.toResponseDTO), 
       packages:packages.map(PackageMapper.toResponseDTO)};
   }
 

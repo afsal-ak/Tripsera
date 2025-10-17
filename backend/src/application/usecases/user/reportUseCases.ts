@@ -9,6 +9,7 @@ import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { IReviewRepository } from "@domain/repositories/IReviewRepository";
 import { IBlogRepository } from "@domain/repositories/IBlogRepository";
 import { EnumUserRole } from "@constants/enum/userEnum";
+
 export class ReportUseCases implements IReportUseCases {
     constructor(
         private readonly _reportRepo: IReportRepository,
