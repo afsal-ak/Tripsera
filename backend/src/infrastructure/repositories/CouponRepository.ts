@@ -25,16 +25,32 @@ export class CouponRepository implements ICouponRepository {
 
     return { coupons, total };
   }
-
   async getActiveCoupons(
     page: number,
     limit: number
   ): Promise<{ coupons: ICoupon[]; total: number }> {
     const skip = (page - 1) * limit;
+    const now = new Date();
 
     const [coupons, total] = await Promise.all([
-      CouponModel.find({ isActive: true }).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
-      CouponModel.countDocuments(),
+      CouponModel.find({
+        isActive: true,
+        $or: [
+          { expiryDate: { $gte: now } },
+          { expiryDate: { $exists: false } },
+        ],
+      })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .lean(),
+      CouponModel.countDocuments({
+        isActive: true,
+        $or: [
+          { expiryDate: { $gte: now } },
+          { expiryDate: { $exists: false } },
+        ],
+      }),
     ]);
 
     return { coupons, total };

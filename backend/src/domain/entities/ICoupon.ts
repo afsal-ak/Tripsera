@@ -1,8 +1,11 @@
-export type CouponType = 'percentage' | 'flat';
+import { Types } from 'mongoose';
+
+import { EnumCouponType } from "@constants/enum/couponEnum";
 
 export interface ICoupon {
+   _id?: Types.ObjectId | string;
   code: string;
-  type: CouponType;
+  type: EnumCouponType;
   discountValue: number;
   expiryDate: Date;
   minAmount?: number;

@@ -1,21 +1,23 @@
 import { ICoupon } from '@domain/entities/ICoupon';
+import { CreateCouponDTO,UpdateCouponDTO,CouponResponseDTO } from '@application/dtos/CouponDTO';
+
 
 export interface ICouponUseCases {
-  createCoupon(coupon: ICoupon): Promise<ICoupon>;
+  createCoupon(coupon: CreateCouponDTO): Promise<ICoupon>;
 
-  editCoupon(id: string, couponData: Partial<ICoupon>): Promise<ICoupon | null>;
+  editCoupon(id: string, couponData:UpdateCouponDTO): Promise<CouponResponseDTO | null>;
 
   getAllCoupon(
     page: number,
     limit: number
   ): Promise<{
-    coupons: ICoupon[];
+    coupons: CouponResponseDTO[];
     total: number;
   }>;
 
-  getCouponById(id: string): Promise<ICoupon | null>;
+  getCouponById(id: string): Promise<CouponResponseDTO | null>;
 
-  getCouponByCode(code: string): Promise<ICoupon | null>;
+  getCouponByCode(code: string): Promise<CouponResponseDTO | null>;
 
   updateCouponStatus(id: string, isActive: boolean): Promise<void>;
 
