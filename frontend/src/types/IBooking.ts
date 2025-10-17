@@ -14,7 +14,8 @@ export interface ITravelerHistory {
   changedAt?: Date;
     note?: string;
 
-}
+} 
+
 
 export interface ITravelDateHistory {
   oldDate?: Date; 

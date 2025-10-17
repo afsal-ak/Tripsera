@@ -101,7 +101,7 @@ export const downloadInvoice = async (bookingId: string) => {
   bookingId: string,
   newDate: string | Date,
   note?: string
-): Promise<any> => {
+)=> {
   const response = await api.put(`/user/booking/${bookingId}/change-travel-date`, {
     newDate,
     note,

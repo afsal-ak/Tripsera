@@ -36,3 +36,16 @@ export const confirmBooking = async (id: string, note: string) => {
   const response = await api.put(`/admin/booking/confirm/${id}`, { note });
   return response.data;
 };
+
+
+ export const changeTravelDate = async (
+  bookingId: string,
+  newDate: string | Date,
+  note?: string
+)=> {
+  const response = await api.put(`/admin/booking/${bookingId}/change-travel-date`, {
+    newDate,
+    note,
+  });
+  return response.data;
+};

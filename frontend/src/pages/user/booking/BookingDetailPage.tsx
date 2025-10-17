@@ -25,7 +25,9 @@ import {
   XCircle,
   Star
 } from 'lucide-react';
+import { ChangeTravelDate } from './ChangeTravelDate';
 import PackageDetailPickUp from '../packages/pages/PackageDetailPickUp';
+import { BookingHistoryCard } from '@/components/booking/BookingHistoryCard';
 const BookingDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -109,6 +111,7 @@ const BookingDetailPage = () => {
       setLoading(false)
     }
   };
+
   // Remove traveler
   const handleRemoveTraveler = async (travelerIndex: number, note?: string) => {
     if (travelerIndex === undefined || travelerIndex < 0) {
@@ -137,10 +140,12 @@ const BookingDetailPage = () => {
 
     try {
       const updatedBooking = await changeTravelDate(id!, newDate, note);
+      setBooking(updatedBooking)
+      console.log(updatedBooking, 'travel booking date cahge')
       toast.success('Travel date updated successfully.');
 
       setBooking(updatedBooking);
-    } catch (error) {
+    } catch (error: any) {
       toast.error('Failed to update travel date.');
       console.error(error);
     }
@@ -421,32 +426,16 @@ const BookingDetailPage = () => {
 
               </CardContent>
             </Card>
+            {booking &&
+              booking.bookingStatus !== 'cancelled' &&
+              booking.bookingStatus !== 'confirmed' &&
+              new Date(booking.travelDate!) > new Date() && (
+                <ChangeTravelDate
+                  booking={booking}
+                  handleChangeTravelDate={handleChangeTravelDate}
+                />
+              )}
 
-            {/* Traveler Information */}
-            {/* <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Travelers ({booking?.travelers?.length || 0})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {booking?.travelers?.map((traveler, index) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                      <div className="font-medium text-gray-900">{traveler?.fullName}</div>
-                      <div className="text-sm text-gray-600">
-                        Age {traveler?.age} • {traveler?.gender}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {traveler?.idType?.toUpperCase()}: {traveler?.idNumber}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-
-            </Card> */}
 
             <Card>
               <CardHeader>
@@ -531,58 +520,7 @@ const BookingDetailPage = () => {
             </Card>
 
 
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Traveler History</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {booking?.travelerHistory?.map((history, i) => (
-                    <div
-                      key={i}
-                      className="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm"
-                    >
-                      {/* Traveler Info */}
-                      <div className="mb-3">
-                        <div className="text-gray-900 font-semibold text-lg">
-                          {history.traveler.fullName}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {history.traveler.gender}, Age {history.traveler.age}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {history.traveler.idType?.toUpperCase()}: {history.traveler.idNumber}
-                        </div>
-                      </div>
-
-                      {/* Action Badge */}
-                      <div
-                        className={`inline-block mb-3 px-2 py-1 rounded text-xs font-semibold ${history.action === "removed"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-green-100 text-green-700"
-                          }`}
-                      >
-                        {history.action.toUpperCase()}
-                      </div>
-
-                      {/* Note */}
-                      {history.note && (
-                        <div className="text-sm text-gray-700 mb-2">
-                          <span className="font-medium">Reason:</span> {history.note}
-                        </div>
-                      )}
-
-                      {/* Changed by info */}
-                      <div className="text-xs text-gray-500">
-                        Changed by: {history.changedBy} <br />
-                        On: {new Date(history?.changedAt!).toLocaleString()}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
+            {/* 
 
             {/* Contact Information */}
             <Card>
@@ -678,6 +616,17 @@ const BookingDetailPage = () => {
           </div>
         </div>
       </div>
+      <BookingHistoryCard
+        title="Traveler History"
+        type="traveler"
+        history={booking?.travelerHistory || []}
+      />
+      <BookingHistoryCard
+        title="Travel Date Change History"
+        type="date"
+        history={booking?.history || []}
+      />
+
 
       {/* Retry Payment Modal */}
       <RetryPaymentModal
