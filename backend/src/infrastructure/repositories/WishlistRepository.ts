@@ -1,9 +1,12 @@
 import { WishlistModel } from '@infrastructure/models/Wishlist';
 import { IWishlist } from '@domain/entities/IWishlist';
 import { IWishlistRepository } from '@domain/repositories/IWishlistRepository';
+import { IWishlistPopulated } from '@infrastructure/db/types.ts/IWishlistPopulated ';
 
 export class WishlistRepository implements IWishlistRepository {
+
   async addToWishlist(userId: string, packageId: string): Promise<void> {
+
     const existing = await WishlistModel.findOne({ userId, packageId });
     if (existing) {
       throw new Error('Product is already in your wishlist');
@@ -20,13 +23,13 @@ export class WishlistRepository implements IWishlistRepository {
     return !!existing;
   }
 
-  async getUserWishlist(userId: string, page: number, limit: number): Promise<IWishlist[]> {
+  async getUserWishlist(userId: string, page: number, limit: number): Promise<IWishlistPopulated[]> {
     const skip = (page - 1) * limit;
     return await WishlistModel.find({ userId })
       .populate('packageId', 'title price duration location imageUrls')
       .skip(skip)
       .limit(limit)
-      .lean();
+      .lean<IWishlistPopulated[]>();
   }
   async countUserWishlist(userId: string): Promise<number> {
     return await WishlistModel.countDocuments({ userId });

@@ -7,7 +7,7 @@ const wishlistSchema = new Schema<IWishlistDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Users',
       required: true,
     },
     packageId: {

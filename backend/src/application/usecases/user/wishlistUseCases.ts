@@ -1,6 +1,8 @@
 import { IWishlist } from '@domain/entities/IWishlist';
 import { IWishlistRepository } from '@domain/repositories/IWishlistRepository';
 import { IWishlistUseCases } from '@application/useCaseInterfaces/user/IWishlistUseCases';
+import { WishlistMapper } from '@application/mappers/WishlistMapper';
+import { WishlistPackageDTO, WishlistResponseDTO } from '@application/dtos/WishlistDTO';
 
 export class WishlistUseCases implements IWishlistUseCases {
   constructor(private _wishlistRepo: IWishlistRepository) {}
@@ -22,7 +24,7 @@ export class WishlistUseCases implements IWishlistUseCases {
     page: number,
     limit: number
   ): Promise<{
-    data: IWishlist[];
+    data: WishlistResponseDTO[];
     currentPage: number;
     totalPage: number;
     totalItems: number;
@@ -34,7 +36,7 @@ export class WishlistUseCases implements IWishlistUseCases {
 
     const totalPage = Math.ceil(totalItems / limit);
     return {
-      data,
+      data:data.map(WishlistMapper.toResponseDTO),
       currentPage: page,
       totalPage,
       totalItems,

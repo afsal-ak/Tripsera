@@ -1,4 +1,6 @@
-import { IWishlist } from '@domain/entities/IWishlist';
+ import {
+  WishlistResponseDTO,
+ } from "@application/dtos/WishlistDTO";
 
 export interface IWishlistUseCases {
   addToWishlist(userId: string, packageId: string): Promise<void>;
@@ -12,9 +14,11 @@ export interface IWishlistUseCases {
     page: number,
     limit: number
   ): Promise<{
-    data: IWishlist[];
+    data: WishlistResponseDTO[];
     currentPage: number;
     totalPage: number;
     totalItems: number;
   }>;
+
+
 }
