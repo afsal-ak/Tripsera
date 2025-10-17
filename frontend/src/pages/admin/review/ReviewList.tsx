@@ -63,7 +63,8 @@ const ReviewList = () => {
         const filters = cleanFilter(rawFilters);
 
         const response = await handleFetchReview(currentPage, limit, filters);
-        setreviews(response.reviews);
+       
+        setreviews(response.data);
         setTotalPages(response.pagination.totalPages);
         //    console.log(response.pagination,'pagination')
       } catch (error) {
@@ -174,7 +175,7 @@ const ReviewList = () => {
               <TableHead>Username</TableHead>
               <TableHead>Package</TableHead>
               <TableHead>Rating</TableHead>
-              <TableHead>Comment</TableHead>
+              <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -183,13 +184,14 @@ const ReviewList = () => {
             {reviews.map((review, index) => (
               <TableRow key={review._id}>
                 <TableCell>{(currentPage - 1) * 5 + index + 1}</TableCell>
-                <TableCell>{review.userId?.username}</TableCell>
-                <TableCell>{review.packageId?.title}</TableCell>
+                <TableCell>{review.username}</TableCell>
+                <TableCell>{review?.packageTitle}</TableCell>
                 <TableCell>{review.rating}</TableCell>
                 <TableCell>
-                  {review.comment.split(/\s+/).length > 10
+                  {/* {review.comment.split(/\s+/).length > 10
                     ? review.comment.split(/\s+/).slice(0, 10).join(" ") + "..."
-                    : review.comment}
+                    : review.comment} */}
+                    {review.title}
                 </TableCell>
                 <TableCell>
                   {review.isBlocked ? (
@@ -198,33 +200,7 @@ const ReviewList = () => {
                     <span className="text-green-500">Active</span>
                   )}
                 </TableCell>
-                {/* <TableCell className="flex gap-2">
-                  {review.isBlocked ? (
-                    <ConfirmDialog
-                      title="Unblock this user?"
-                      actionLabel="Unblock"
-                      onConfirm={() => handleToggleBlock(review._id!, false)}
-                    >
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-green-600 border-green-600"
-                      >
-                        Unblock
-                      </Button>
-                    </ConfirmDialog>
-                  ) : (
-                    <ConfirmDialog
-                      title="Block this user?"
-                      actionLabel="Block"
-                      onConfirm={() => handleToggleBlock(review._id!, true)}
-                    >
-                      <Button size="sm" variant="destructive">
-                        Block
-                      </Button>
-                    </ConfirmDialog>
-                  )}
-                </TableCell> */}
+               
                 <Button
                   className="mt-5 text-center"
 

@@ -69,7 +69,7 @@ const PublicProfile = () => {
             try {
                 if (!profile?._id) return;
                 const response = await handlePublicUserBlogs(profile._id, currentPage, limit);
-                setBlogs(response.blogs);
+                setBlogs(response.data);
                 setTotalBlogs(response.totalBlogs);
             } catch (error) {
                 toast.error("Failed to fetch posts");

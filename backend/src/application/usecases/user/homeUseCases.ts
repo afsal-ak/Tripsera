@@ -4,22 +4,24 @@ import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IPackage } from '@domain/entities/IPackage';
 import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
-import { PackageResponseDTO,toPackageResponseDTO } from '@application/dtos/PackageDTO';
-
+import { PackageResponseDTO } from '@application/dtos/PackageDTO';
+import { PackageMapper } from '@application/mappers/PackageMapper';
 export class HomeUseCases implements IHomeUseCases {
   constructor(
     private _packageRepo: IPackageRepository,
     private _bannerRepo: IBannerRepository
   ) {}
 
-  async getHome(): Promise<{ banners: IBanner[]; packages: IPackage[] }> {
+  async getHome(): Promise<{ banners: IBanner[]; packages: PackageResponseDTO[] }> {
     const banners = await this._bannerRepo.getAllActiveBanners();
     const packages = await this._packageRepo.getHomeData();
-    return { banners, packages };
+    return {
+       banners, 
+      packages:packages.map(PackageMapper.toResponseDTO)};
   }
 
   async getActivePackage(options: IPackageQueryOptions): Promise<{
-    data: IPackage[];
+    data: PackageResponseDTO[];
     total: number;
     totalPages: number;
     currentPage: number;
@@ -82,7 +84,7 @@ export class HomeUseCases implements IHomeUseCases {
     ]);
 
     return {
-      data: packages,
+      data: packages.map(PackageMapper.toResponseDTO),
       total,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
@@ -91,6 +93,6 @@ export class HomeUseCases implements IHomeUseCases {
 
   async getPackageById(id: string): Promise<PackageResponseDTO | null> {
     const pkg = await this._packageRepo.findById(id);
-    return toPackageResponseDTO(pkg!);
+    return PackageMapper.toResponseDTO(pkg!);
   }
 }

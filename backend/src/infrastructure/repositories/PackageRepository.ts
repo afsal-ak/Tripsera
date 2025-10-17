@@ -2,12 +2,13 @@ import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { PackageModel } from '@infrastructure/models/Package';
 import { IPackage } from '@domain/entities/IPackage';
 import { Types } from 'mongoose';
-
-
+import { IFilter } from '@domain/entities/IFilter';
+import { SortOrder } from 'mongoose';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {
-     const createPkg = await PackageModel.create(pkg);
-     return createPkg.toObject();
+    const createPkg = await PackageModel.create(pkg);
+    return createPkg.toObject();
   }
 
   async editPackage(
@@ -44,9 +45,146 @@ export class PackageRepository implements IPackageRepository {
     return await PackageModel.findByIdAndUpdate(id, updateOps, { new: true });
   }
 
-  async findAll(skip: number, limit: number): Promise<IPackage[]> {
-    return PackageModel.find({}).skip(skip).sort({ createdAt: -1 }).populate('category').limit(limit).lean();
+  // async findAll(page: number, limit: number, filters: IFilter):
+  //   Promise<{ packages: IPackage[]; pagination: PaginationInfo }> {
+  //   const skip = (page - 1) * limit;
+  //   const query: any = {};
+
+  //   if (filters.search) {
+  //     query.title= { $regex: filters.search, $options: "i" } 
+      
+  //   }
+
+  //   if (filters.status === "active") {
+  //     query.isBlocked = false;
+  //   } else if (filters.status === "blocked") {
+  //     query.isBlocked = true;
+  //   }
+  //   if (filters.startDate && filters.endDate) {
+  //     query.createdAt = {
+  //       $gte: new Date(filters.startDate),
+  //       $lte: new Date(filters.endDate)
+  //     };
+  //   }
+  //   const sortOption: Record<string, SortOrder> = {};
+
+  //   // Handle createdAt sorting
+  //   if (filters.sort === 'desc') {
+  //     sortOption.createdAt = -1;
+  //   } else if (filters.sort === 'asc') {
+  //     sortOption.createdAt = 1;
+  //   }
+
+
+  //   const [packages, total] = await Promise.all([
+  //     PackageModel.find(query)
+
+  //       .sort(sortOption)
+  //       .skip(skip)
+  //       .limit(limit)
+  //       .lean(),
+  //     PackageModel.countDocuments(query),
+  //   ]);
+
+
+  //   const pagination: PaginationInfo = {
+  //     totalItems: total,
+  //     currentPage: page,
+  //     pageSize: limit,
+  //     totalPages: Math.ceil(total / limit),
+  //   };
+
+  //   return { packages, pagination };
+  // }
+  async findAll(
+  page: number,
+  limit: number,
+  filters: IFilter
+): Promise<{ packages: IPackage[]; pagination: PaginationInfo }> {
+  const skip = (page - 1) * limit;
+
+  const matchStage: any = {};
+
+   if (filters.status === "active") matchStage.isBlocked = false;
+  else if (filters.status === "blocked") matchStage.isBlocked = true;
+
+   if (filters.startDate && filters.endDate) {
+    matchStage.createdAt = {
+      $gte: new Date(filters.startDate),
+      $lte: new Date(filters.endDate),
+    };
   }
+
+   const sortOption: Record<string, 1 | -1> = {};
+  if (filters.sort === "asc") sortOption.createdAt = 1;
+  else sortOption.createdAt = -1;
+
+   const pipeline: any[] = [
+     { $match: matchStage },
+
+     {
+      $lookup: {
+        from: "categories", 
+        localField: "category",
+        foreignField: "_id",
+        as: "categoryDetails",
+      },
+    },
+
+    // 3️ Search filter (title, description, category name)
+    filters.search
+      ? {
+          $match: {
+            $or: [
+              { title: { $regex: filters.search, $options: "i" } },
+              { description: { $regex: filters.search, $options: "i" } },
+              { "categoryDetails.name": { $regex: filters.search, $options: "i" } },
+            ],
+          },
+        }
+      : undefined,
+
+     { $sort: sortOption },
+    { $skip: skip },
+    { $limit: limit },
+
+     {
+      $project: {
+        title: 1,
+        description: 1,
+        price: 1,
+         offer: 1,
+        durationDays: 1,
+        durationNights: 1,
+        "categoryDetails.name": 1,
+        isBlocked: 1,
+        createdAt: 1,
+      },
+    },
+  ].filter(Boolean); 
+
+   const [packages, totalResult] = await Promise.all([
+    PackageModel.aggregate(pipeline),
+    PackageModel.aggregate([
+      ...pipeline.filter(
+        (stage) => !("$skip" in stage) && !("$limit" in stage)
+      ),
+      { $count: "total" },
+    ]),
+  ]);
+
+  const total = totalResult[0]?.total || 0;
+
+  const pagination: PaginationInfo = {
+    totalItems: total,
+    currentPage: page,
+    pageSize: limit,
+    totalPages: Math.ceil(total / limit),
+  };
+
+  return { packages, pagination };
+}
+
 
   async countDocument(): Promise<number> {
     return PackageModel.countDocuments();
@@ -67,25 +205,73 @@ export class PackageRepository implements IPackageRepository {
     return pkg;
   }
 
-  async getActivePackages(
-    filters: any = {},
-    skip: number,
-    limit: number,
-    sortBy: string
-  ): Promise<IPackage[]> {
-    const query = { ...filters, isBlocked: false };
+  // async getActivePackages(
+  //   filters: any = {},
+  //   skip: number,
+  //   limit: number,
+  //   sortBy: string
+  // ): Promise<IPackage[]> {
+  //   const query = { ...filters, isBlocked: false };
 
-    // const sortOption: any = { createdAt: -1 };
-    // if (sort === "price_asc") sortOption.price = 1;
-    // else if (sort === "price_desc") sortOption.price = -1;
+  //   // const sortOption: any = { createdAt: -1 };
+  //   // if (sort === "price_asc") sortOption.price = 1;
+  //   // else if (sort === "price_desc") sortOption.price = -1;
 
-    return await PackageModel.find(query)
-      .populate('category')
-      .sort(sortBy)
-      .skip(skip)
-      .limit(limit)
-      .lean();
-  }
+  //   return await PackageModel.find(query)
+  //     .populate('category')
+  //     .sort(sortBy)
+  //     .skip(skip)
+  //     .limit(limit)
+  //     .lean();
+  // }
+async getActivePackages(
+  filters: any = {},
+  skip: number,
+  limit: number,
+  sortBy: string
+): Promise<IPackage[]> {
+ 
+   
+
+  const pipeline: any[] = [
+     { $match: { ...filters, isBlocked: false } },
+
+     {
+      $lookup: {
+        from: "categories", // must match the actual MongoDB collection name
+        localField: "category",
+        foreignField: "_id",
+        as: "categoryDetails",
+      },
+    },
+
+     {
+      $match: {
+        "categoryDetails.isBlocked": { $ne: true },
+      },
+    },
+
+     { $sort: sortBy },
+    { $skip: skip },
+    { $limit: limit },
+
+     {
+      $project: {
+        title: 1,
+        price: 1,
+        finalPrice: 1,
+        categoryDetails: { name: 1, isBlocked: 1 },
+        createdAt: 1,
+        durationDays: 1,
+        durationNights: 1,
+        imageUrls: 1,
+      },
+    },
+  ];
+
+  const packages = await PackageModel.aggregate(pipeline);
+  return packages;
+}
 
   async countActivePackages(filters: any): Promise<number> {
     const query = { ...filters, isBlocked: false };

@@ -12,7 +12,9 @@ export const getAllCustomPkg = async (
         ...filter
     }
     const response = await api.get(`/admin/custom-package`, { params })
-    return response.data
+    console.log(response.data,'jjj');
+    
+    return response.data.data
 }
 export const getCustomPkgById = async (packageId: string) => {
     const response = await api.get(`/admin/custom-package/${packageId}`)

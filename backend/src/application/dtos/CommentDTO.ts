@@ -35,10 +35,6 @@ export interface CommentResponseDTO {
    replyUser?:string;
   replyCount?:number;
    text: string;
-  mentions?: {
-    _id: string;
-    username: string;
-  }[];
   likes?: string[];
   parentCommentId?: string | null;
   createdAt: Date;

@@ -4,32 +4,28 @@ import { IPackage } from '@domain/entities/IPackage';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { generatePackageCode } from '@shared/utils/generatePackageCode';
 import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';
-import { EditPackageDTO, PackageResponseDTO, toPackageResponseDTO } from '@application/dtos/PackageDTO';
+import { CreatePackageDTO, EditPackageDTO, PackageResponseDTO, PackageTableResponseDTO, } from '@application/dtos/PackageDTO';
+import { PackageMapper } from '@application/mappers/PackageMapper';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { IFilter } from '@domain/entities/IFilter';
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 export class PackageUseCases implements IPackageUseCases {
 
   constructor(private _packageRepo: IPackageRepository) { }
 
   async getAllPackages(
     page: number,
-    limit: number
-  ): Promise<{
-    packages: IPackage[];
-    totalPackages: number;
-    totalPages: number;
-  }> {
-    const skip = (page - 1) * limit;
+    limit: number,
+    filters?:IFilter
+  ): Promise<IPaginatedResult<PackageTableResponseDTO>> {
 
-    const [packages, totalPackages] = await Promise.all([
-      this._packageRepo.findAll(skip, limit),
-      this._packageRepo.countDocument(),
-    ]);
+    const result=await this._packageRepo.findAll(page,limit,filters)
+         console.log(result,'in usecase');
 
     return {
-      packages,
-      totalPackages,
-      totalPages: Math.ceil(totalPackages / limit),
+      data:result.packages.map(PackageMapper.toTableResponseDTO),
+      pagination:result.pagination
     };
   }
 
@@ -38,9 +34,10 @@ export class PackageUseCases implements IPackageUseCases {
     if (!pkg) return null;
     console.log(pkg, 'pcakge in usedcase')
     // Map to DTO before returning
-    return toPackageResponseDTO(pkg);
+    return PackageMapper.toResponseDTO(pkg);
   }
-  async createPackage(pkg: IPackage): Promise<IPackage> {
+
+  async createPackage(pkg: CreatePackageDTO): Promise<PackageResponseDTO> {
     try {
       const packageCode = await generatePackageCode();
 
@@ -63,7 +60,7 @@ export class PackageUseCases implements IPackageUseCases {
       };
 
       const result = await this._packageRepo.create(packageData);
-      return result;
+      return PackageMapper.toResponseDTO(result);
     } catch (error) {
       console.error('UseCase Error:', error);
       throw error;

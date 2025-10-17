@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { IReviewUseCases } from '@application/useCaseInterfaces/user/IReviewUseCases';
-import { toReviewResponseDTO, CreateReviewDTO, UpdateReviewDTO } from '@application/dtos/ReviewDTO';
+import { CreateReviewDTO, UpdateReviewDTO } from '@application/dtos/ReviewDTO';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { IFilter } from '@domain/entities/IFilter';
+
 export class ReviewController {
   constructor(private _reviewUseCases: IReviewUseCases) { }
 
@@ -17,9 +18,9 @@ export class ReviewController {
         packageId,
         userId,
       };
-       const review = await this._reviewUseCases.createReview(data);
+      const review = await this._reviewUseCases.createReview(data);
       res.status(HttpStatus.CREATED).json({
-        review: toReviewResponseDTO(review),
+        review,
         message: 'Review created successfully',
       });
     } catch (error) {
@@ -35,9 +36,8 @@ export class ReviewController {
       console.log(reviewId, 'reviewId')
       const data: UpdateReviewDTO = req.body
 
-      const result = await this._reviewUseCases.editReview(reviewId, userId, data)
+      const review = await this._reviewUseCases.editReview(reviewId, userId, data)
 
-      const review = toReviewResponseDTO(result);
 
       res.status(HttpStatus.OK).json({
         review,
@@ -55,10 +55,11 @@ export class ReviewController {
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
-      const { data, pagination } = await this._reviewUseCases.getUserReview(userId, page, limit);
+      const data = await this._reviewUseCases.getUserReview(userId, page, limit);
+      console.log(data,'use review');
+      
       res.status(HttpStatus.OK).json({
-        review: data.map(toReviewResponseDTO),
-        pagination,
+        data,
         message: 'Review fetched successfully',
       });
     } catch (error) {
@@ -74,24 +75,22 @@ export class ReviewController {
 
       const filters: IFilter = {
         search: (req.query.search as string) || "",
-         sort: (req.query.sort as string) || "",
+        sort: (req.query.sort as string) || "",
         startDate: (req.query.startDate as string) || "",
         endDate: (req.query.endDate as string) || "",
         rating: req.query.rating ? parseInt(req.query.rating as string, 10) : undefined,
 
       };
 
-      const { review, pagination } = await this._reviewUseCases.getPackageReviews(
+      const review = await this._reviewUseCases.getPackageReviews(
         packageId,
         page,
         limit,
         filters
       );
-      const reviewsWithUser = review.map(toReviewResponseDTO);
 
       res.status(HttpStatus.OK).json({
-        review: reviewsWithUser,
-        pagination,
+        review,
         message: 'Review fetched successfully',
       });
     } catch (error) {
@@ -102,10 +101,8 @@ export class ReviewController {
   getReviewById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const reviewId = req.params.reviewId;
-      //  console.log(reviewId, 'reviewId');
 
       const review = await this._reviewUseCases.getReviewById(reviewId);
-      console.log(review, 'review');
       res.status(HttpStatus.OK).json({
         review: review,
         message: 'Review fetched successfully',
@@ -114,12 +111,19 @@ export class ReviewController {
       next(error);
     }
   };
-  getRatingSummary = async (req: Request, res: Response) => {
-    const { packageId } = req.params;
-    //  console.log(packageId, 'id ');
-    const summary = await this._reviewUseCases.getRatingSummary(packageId);
-    console.log(summary, 'review');
-    res.status(200).json(summary);
+  getRatingSummary = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { packageId } = req.params;
+      const summary = await this._reviewUseCases.getRatingSummary(packageId);
+      console.log(summary, 'review');
+      res.status(HttpStatus.OK).json({
+        summary,
+        message:'Summary fetched successfully'
+      });
+    } catch (error) {
+      next(error);
+    }
+
   };
   deleteReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

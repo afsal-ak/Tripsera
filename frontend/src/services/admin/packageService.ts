@@ -1,4 +1,7 @@
 import api from "@/lib/axios/api";
+import type{ IFilter } from "@/types/IFilter";
+
+
 export const addPackage = async (formData: FormData) => {
   const response = await api.post('/admin/addPackage', formData, {
     headers: {
@@ -8,9 +11,21 @@ export const addPackage = async (formData: FormData) => {
   return response.data;
 };
 
-export const fetchPackagesData = async (page: number, limit: number) => {
-  const response = await api.get(`/admin/packages?page=${page}&limit=${limit}`);
-  return response.data;
+export const fetchPackagesData = async (
+  page: number,
+  limit: number,
+  filter: IFilter
+) => {
+  const params = {
+    page,
+    limit,
+    ...filter,
+  };
+
+  const response = await api.get(`/admin/packages`,{ params });
+  console.log(response.data.data,'i service ');
+  
+  return response.data.data;
 };
 
 export const blockPackage = async (id: string) => {

@@ -1,3 +1,7 @@
+import { EnumGender } from "@constants/enum/userEnum";
+import { IBooking } from "./IBooking";
+import { EnumIdType } from "@constants/enum/bookingEnum";
+
 export interface IBookingInput {
   bookingCode: string;
   packageId: string;
@@ -37,3 +41,11 @@ export interface IBookingInput {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface IBookingData extends IBooking{
+  bookingCode: string;
+  packageId: string;
+  travelDate: Date;
+       packageTitle: string;
+      packageImage:{url:string}
+ }

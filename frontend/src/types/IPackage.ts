@@ -27,6 +27,13 @@ export interface IOffer {
 
 }
 
+ export interface ICategory {
+  _id:string;
+  name: string;
+    
+
+}
+
  export interface Activity {
   startTime: string;  
   endTime: string;    
@@ -53,7 +60,7 @@ finalPrice:number;
   startDate?: string;
   endDate?: string;
 
-  category: string[];
+  category: ICategory[];
   location: ILocation[];
   startPoint: string;
 

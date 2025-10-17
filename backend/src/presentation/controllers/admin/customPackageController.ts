@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ICustomPkgUseCases } from "@application/useCaseInterfaces/admin/ICustomPackageUseCases";
-import { UpdateCustomPkgStatusDTO, toCustomPkgResponseDTO } from "@application/dtos/CustomPkgDTO";
+import { UpdateCustomPkgStatusDTO } from "@application/dtos/CustomPkgDTO";
 
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { IFilter } from "@domain/entities/IFilter";
@@ -19,7 +19,7 @@ export class CustomPackageController {
 
             res.status(HttpStatus.CREATED).json({
                 success: true,
-                data: toCustomPkgResponseDTO(pkg!),
+                data: pkg,
                 message: 'Package updated successfully',
             });
         } catch (error) {
@@ -39,10 +39,9 @@ export class CustomPackageController {
                 startDate: (req.query.startDate as string) || "",
                 endDate: (req.query.endDate as string) || "",
             }
-            const { data, pagination } = await this._customPkgUseCases.getAllCustomPkg(page, limit, filters);
+            const data = await this._customPkgUseCases.getAllCustomPkg(page, limit, filters);
             res.status(HttpStatus.OK).json({
-                data: data.map(toCustomPkgResponseDTO),
-                pagination,
+                data,
                 message: 'Package fetched successfully',
             });
         } catch (error) {
@@ -55,8 +54,7 @@ export class CustomPackageController {
         try {
             const pkgId = req.params.packageId;
 
-            const data = await this._customPkgUseCases.getCustomPkgById(pkgId);
-            const pkg = toCustomPkgResponseDTO(data!)
+            const pkg = await this._customPkgUseCases.getCustomPkgById(pkgId);
             res.status(HttpStatus.OK).json({
                 data: pkg,
                 message: 'Package fetched successfully',

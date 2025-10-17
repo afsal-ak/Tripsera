@@ -10,13 +10,20 @@ const lngRegex = /^-?(180(\.0+)?|((1[0-7]\d)|([0-9]?\d))(\.\d+)?)$/;  // -180 to
 // Offer schema
 export const offerSchema = z.object({
   name: z.string().trim().min(1, "Offer name is required"), // added offer name
-type: z.enum(["percentage", "flat"]).refine((val) => !!val, {
-  message: "Offer type is required",
-}),
-  value: z
-    .number()
-    .min(1, { message: "Offer value must be at least 1" })
-    .max(10000, { message: "Offer value too high" }),
+  type: z.enum(["percentage", "flat"]).refine((val) => !!val, {
+    message: "Offer type is required",
+  }),
+  // value: z
+  //   .number()
+  //   .min(1, { message: "Offer value must be at least 1" })
+  //   .max(10000, { message: "Offer value too high" }),
+  value: z.coerce.number({
+  required_error: "Offer value is required",
+  invalid_type_error: "Offer value must be a valid number",
+})
+.min(1, { message: "Offer value must be at least 1" })
+.max(10000, { message: "Offer value too high" }),
+
   validUntil: z.string().nonempty({ message: "Offer expiry date is required" }),
   isActive: z.boolean(),
 }).refine((data) => !(data.type === "percentage" && data.value > 100), {
@@ -49,10 +56,10 @@ export const activitySchema = z
 
 // Itinerary day schema
 export const itineraryDaySchema = z.object({
-   day: z.number({
-  required_error: "Day number is required",
-  invalid_type_error: "Day must be a number",
-}).min(1, "Day number must be at least 1"),
+  day: z.number({
+    required_error: "Day number is required",
+    invalid_type_error: "Day must be a number",
+  }).min(1, "Day number must be at least 1"),
 
   title: z.string().trim().min(1, "Day title is required"),
   description: z.string().trim().min(3, "Description must be at least 3 characters").optional(),
@@ -66,9 +73,23 @@ export const itineraryDaySchema = z.object({
 const packageBaseSchema = z.object({
   title: z.string().trim().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().trim().min(10, { message: "Description must be at least 10 characters" }),
-  price: z.number().positive({ message: "Price must be greater than 0" }),
-  durationDays: z.number().min(1, { message: "Days must be at least 1" }),
-  durationNights: z.number().min(0, { message: "Nights must be at least 0" }),
+  // price: z.number().positive({ message: "Price must be greater than 0" }),
+  // durationDays: z.number().min(1, { message: "Days must be at least 1" }),
+  // durationNights: z.number().min(0, { message: "Nights must be at least 0" }),
+  price: z.coerce.number({
+    required_error: "Price is required",
+    invalid_type_error: "Price must be a number",
+  }).positive({ message: "Price must be greater than 0" }),
+
+  durationDays: z.coerce.number({
+    required_error: "Duration (days) is required",
+    invalid_type_error: "Please enter a valid number of days",
+  }).min(1, { message: "Days must be at least 1" }),
+
+  durationNights: z.coerce.number({
+    required_error: "Duration (nights) is required",
+    invalid_type_error: "Please enter a valid number of nights",
+  }).min(0, { message: "Nights must be at least 0" }),
 
   startDate: z.string().nonempty({ message: "Start date is required" }),
   endDate: z.string().nonempty({ message: "End date is required" }),
@@ -93,9 +114,10 @@ const packageBaseSchema = z.object({
   itinerary: z.array(itineraryDaySchema),
   images: z.array(z.instanceof(File)).min(1, { message: "At least 1 image is required" }),
   offer: offerSchema.optional(),
+  
 });
 
- export const addPackageSchema = packageBaseSchema.superRefine((data, ctx) => {
+export const addPackageSchema = packageBaseSchema.superRefine((data, ctx) => {
   // Itinerary length validation
   if (data.itinerary.length !== data.durationDays) {
     ctx.addIssue({
@@ -165,7 +187,7 @@ export type AddPackageFormSchema = z.infer<typeof addPackageSchema>;
 
 // Edit package schema (reuse base, more flexible)
 export const editPackageSchema = packageBaseSchema.extend({
- images: z.array(z.instanceof(File)).optional(),
+  images: z.array(z.instanceof(File)).optional(),
 }).superRefine((data, ctx) => {
   // Same rules as add
   if (data.itinerary.length !== data.durationDays) {

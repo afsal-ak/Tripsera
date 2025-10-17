@@ -1,16 +1,18 @@
 import { IReview } from '@domain/entities/IReview';
 import { CreateReviewDTO,UpdateReviewDTO } from '@application/dtos/ReviewDTO';
+import { ReviewResponseDTO,UserReviewListDTO } from '@application/mappers/ReviewMapper';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { IFilter } from '@domain/entities/IFilter';
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 export interface IReviewUseCases {
 
-  createReview(data: CreateReviewDTO): Promise<IReview>;
+  createReview(data: CreateReviewDTO): Promise<ReviewResponseDTO>;
   getUserReview(
     userId: string,
     page: number,
     limit: number
-  ): Promise<{ data: IReview[]; pagination: PaginationInfo }>;
-    editReview(reviewId: string, userId: string, data: UpdateReviewDTO): Promise<IReview >;
+  ): Promise<IPaginatedResult<UserReviewListDTO>>;
+    editReview(reviewId: string, userId: string, data: UpdateReviewDTO): Promise<ReviewResponseDTO >;
   deleteReview(reviewId: string, userId: string): Promise<boolean>;
   getPackageReviews(
     packageId: string,
@@ -18,7 +20,7 @@ export interface IReviewUseCases {
     limit: number,
     filters?:IFilter
   
-  ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
-  getReviewById(reviewId: string): Promise<IReview | null>;
+  ): Promise<IPaginatedResult<ReviewResponseDTO>>;
+  getReviewById(reviewId: string): Promise<ReviewResponseDTO | null>;
   getRatingSummary(packageId: string): Promise<{ averageRating: number; totalReviews: number }>;
 }

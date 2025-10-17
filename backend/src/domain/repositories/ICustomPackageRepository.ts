@@ -5,13 +5,17 @@ import { IFilter } from "@domain/entities/IFilter";
 import { PaginationInfo } from "@application/dtos/PaginationDto";
 
 export interface ICustomPackageRepository extends IBaseRepository<ICustomPackage> {
-  getAllCustomPkgs(
+    getAllCustomPkgs(
         page: number,
         limit: number,
         filters?: IFilter
-    ): Promise<{ data: ICustomPackage[]; pagination: PaginationInfo }>  
+    ): Promise<{ data: ICustomPackage[]; pagination: PaginationInfo }>
+    // changeStatusAndResponse(
+    //     pkgId: string,
+    //     data: UpdateCustomPkgStatusDTO
+    // ): Promise<ICustomPackage | null>
     changeStatusAndResponse(
         pkgId: string,
-        data: UpdateCustomPkgStatusDTO
+        data: Partial<ICustomPackage>
     ): Promise<ICustomPackage | null>
 }

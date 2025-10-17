@@ -1,26 +1,27 @@
 import { IBlog } from '@domain/entities/IBlog';
 import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
+import { BlogResponseDTO,CreateBlogDTO, UpdateBlogDTO } from '@application/dtos/BlogDTO';
+import { PaginatedResult } from '@domain/entities/IPaginatedResult';
+
 export interface IBlogUseCases {
-  createBlog(userId: string, blogData: IBlog): Promise<IBlog>;
+  createBlog(userId: string, blogData: CreateBlogDTO): Promise<BlogResponseDTO>;
 
   editBlog(
     blogId: string,
-    blogData: Partial<IBlog>,
+    blogData: UpdateBlogDTO,
     existingImages: { public_id: string }[],
     newImages: { url: string; public_id: string }[]
-  ): Promise<IBlog | null>;
+  ): Promise<BlogResponseDTO | null>;
 
-  getBlogById(blogId: string): Promise<IBlog | null>;
+  getBlogById(blogId: string): Promise<BlogResponseDTO | null>;
 
   getBlogByUser(
     userId: string,
     page: number,
     limit: number
-  ): Promise<{
-    blogs: IBlog[];
-    totalBlogs: number;
-  }>;
+  ): Promise<PaginatedResult<BlogResponseDTO>>  
 
+ 
   getAllPublishedBlogs(
     page: number,
     limit: number,
@@ -30,16 +31,14 @@ export interface IBlogUseCases {
       startDate?: string;
       endDate?: string;
     }
-  ): Promise<{
-    blogs: IBlog[];
-    totalBlogs: number;
-  }>;
+  ): Promise<PaginatedResult<BlogResponseDTO>>  
 
-  getBySlug(slug: string): Promise<IBlog | null>;
 
-  likeBlog(blogId: string, userId: string): Promise<IBlog | null>;
+  getBySlug(slug: string): Promise<BlogResponseDTO | null>;
 
-  unLikeBlog(blogId: string, userId: string): Promise<IBlog | null>;
+  likeBlog(blogId: string, userId: string): Promise<BlogResponseDTO | null>;
+
+  unLikeBlog(blogId: string, userId: string): Promise<BlogResponseDTO | null>;
 
    getBlogLikeList(blogId:string):Promise<UserBasicInfoDto[]|null>
   
@@ -53,8 +52,6 @@ export interface IBlogUseCases {
     userId: string,
     page: number,
     limit: number
-  ): Promise<{
-    blogs: IBlog[];
-    totalBlogs: number;
-  }>;
+   ): Promise<PaginatedResult<BlogResponseDTO>>  
+
 }

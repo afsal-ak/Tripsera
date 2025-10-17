@@ -95,6 +95,7 @@ const ReviewDetail = () => {
                 </div>
                 <span className="text-sm font-medium text-gray-700">{review?.rating!}.0</span>
               </div>
+              <h4 className="font-semibold text-gray-900 mb-2">{review?.packageTitle}</h4>
 
               <h4 className="font-semibold text-gray-900 mb-2">{review?.title}</h4>
               <p className="text-gray-700 leading-relaxed mb-4">{review?.comment}</p>

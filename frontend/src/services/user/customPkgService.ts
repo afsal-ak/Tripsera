@@ -3,7 +3,9 @@ import type { CustomPkgFormSchema,EditCustomPkgFormSchema } from "@/schemas/cust
 
 export const getAllCustomPkg=async(page:number,limit:number)=>{
     const response=await api.get(`/user/custom-package?page=${page}&limit=${limit}`)
-     return response.data
+    console.log(response.data,'cutm pkg 1');
+    
+     return response.data.data
 }
 export const getCustomPkgById=async(packageId:string)=>{
     const response=await api.get(`/user/custom-package/${packageId}`)

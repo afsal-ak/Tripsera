@@ -2,27 +2,19 @@ import { ICommentRepository } from '@domain/repositories/ICommentRepository';
 import { CommentResponseDTO, CreateCommentDto, ReplyCommentDto, UpdateCommentDto } from '@application/dtos/CommentDTO';
 import { IComment } from '@domain/entities/IComment';
 import { ICommentUseCases } from '@application/useCaseInterfaces/user/ICommentUseCases';
-import { toCommentResponseDTO ,toCommentResponseWithReplyCountDTO} from '@application/mappers/commentMapper';
+import { CommentMapper } from '@application/mappers/commentMapper';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 export class CommentUseCases implements ICommentUseCases {
     constructor(private _commentRepo: ICommentRepository) { }
 
     async createComment(data: CreateCommentDto): Promise<CommentResponseDTO> {
         const comment = await this._commentRepo.create(data);
-        return toCommentResponseDTO(comment)
+        return CommentMapper.toResponseDTO(comment)
     }
     async replyComment(data: ReplyCommentDto): Promise<CommentResponseDTO> {
         const comment = await this._commentRepo.create(data);
-        return toCommentResponseDTO(comment)
+        return CommentMapper.toResponseDTO(comment)
     }
-
-
-
-
-
-    //   async replyToComment(dto: CreateCommentDto): Promise<IComment> {
-    //     return await this._commentRepo.replyToComment(dto);
-    //   }
 
     async getComments(
         parentId: string,
@@ -30,11 +22,10 @@ export class CommentUseCases implements ICommentUseCases {
         limit: number,
     ): Promise<IPaginatedResult<CommentResponseDTO>> {
         const result = await this._commentRepo.getCommentsByParentId(parentId, page, limit);
-        console.log(result,'result in usecase');
-        
+         
         return {
             ...result,
-            data: result.data.map(toCommentResponseWithReplyCountDTO)
+            data: result.data.map(CommentMapper.toResponseWithReplyCountDTO)
         }
     }
     
@@ -46,7 +37,7 @@ export class CommentUseCases implements ICommentUseCases {
         const result = await this._commentRepo.getRepliesByCommentId(commentId, page, limit);
         return {
             ...result,
-            data: result.data.map(toCommentResponseDTO)
+            data: result.data.map(CommentMapper.toResponseDTO)
         }
 
     }

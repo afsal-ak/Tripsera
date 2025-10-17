@@ -72,7 +72,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
     author: string,
     page: number,
     limit: number
-  ): Promise<{ blogs: IBlog[]; totalBlogs: number }> {
+  ): Promise<{ blogs: IBlog[]; pagination: PaginationInfo }> {
     const skip = (page - 1) * limit;
 
     const [blogs, totalBlogs] = await Promise.all([
@@ -80,9 +80,19 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
       BlogModel.countDocuments({ author }),
     ]);
 
-    return { blogs, totalBlogs };
-  }
+    const pagination: PaginationInfo = {
+      totalItems: totalBlogs,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(totalBlogs / limit),
+    };
 
+    return {
+      blogs,
+      pagination,
+    };
+
+  }
 
   async getAllBlog(
     page: number,
@@ -181,7 +191,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
       startDate?: string;
       endDate?: string;
     }
-  ): Promise<{ blogs: IBlog[]; totalBlogs: number }> {
+  ): Promise<{ blogs: IBlog[]; pagination: PaginationInfo }> {
     const skip = (page - 1) * limit;
     const query: FilterQuery<IBlog> = {
       status: 'published',
@@ -213,7 +223,13 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
         .lean(),
       BlogModel.countDocuments(query),
     ]);
-    return { blogs, totalBlogs };
+    const pagination: PaginationInfo = {
+      totalItems: totalBlogs,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(totalBlogs / limit),
+    };
+    return { blogs, pagination };
   }
 
   async getBySlug(slug: string): Promise<IBlog | null> {
@@ -276,7 +292,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
     author: string,
     page: number,
     limit: number
-  ): Promise<{ blogs: IBlog[]; totalBlogs: number }> {
+  ): Promise<{ blogs: IBlog[]; pagination: PaginationInfo }> {
     const skip = (page - 1) * limit;
 
     const query = {
@@ -289,7 +305,12 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
       BlogModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
       BlogModel.countDocuments(query),
     ]);
-
-    return { blogs, totalBlogs };
-  }
+ const pagination: PaginationInfo = {
+      totalItems: totalBlogs,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(totalBlogs / limit),
+    };
+    return { blogs, pagination };
+   }
 }

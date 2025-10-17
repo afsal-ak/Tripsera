@@ -3,8 +3,11 @@ import { IUser } from '@domain/entities/IUser';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
 import { IFilter } from '@domain/entities/IFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
-import { mapToAdminUserListResponseDTO,AdminUserListDTO } from '@application/dtos/UserDTO';
-      //const user=users.map(mapToAdminUserListResponseDTO)
+import { AdminUserListResponseDTO,UserDetailsResponseDTO } from '@application/dtos/UserDTO';
+ import { UserMapper } from '@application/mappers/UserMapper';
+import { AppError } from '@shared/utils/AppError';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+
 
 export class UserManagementUseCases implements IUserManagementUseCases {
 
@@ -15,28 +18,28 @@ export class UserManagementUseCases implements IUserManagementUseCases {
     limit: number,
     filters: IFilter
   ): Promise<
-    IPaginatedResult<AdminUserListDTO>
+    IPaginatedResult<AdminUserListResponseDTO>
   > {
 
     const result= await this._userRepository.findAll(page, limit, filters)
     return {
       ...result,
-       data: result.data.map(mapToAdminUserListResponseDTO),
+       data: result.data.map(UserMapper.toAdminUserListDTO),
     }
 
 
   }
-  async getSingleUser(userId: string): Promise<IUser> {
+  async getSingleUser(userId: string): Promise<UserDetailsResponseDTO> {
     const user = await this._userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new AppError(HttpStatus.NOT_FOUND,'User not found');
     }
-    return user;
+    return UserMapper.toUserDetailsDTO(user);
   }
   async toggleUserBlockStatus(userId: string): Promise<boolean> {
     const user = await this._userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new AppError(HttpStatus.NOT_FOUND,'User not found');
     }
 
     const newStatus = !user.isBlocked;
@@ -48,7 +51,7 @@ export class UserManagementUseCases implements IUserManagementUseCases {
   async blockUser(userId: string): Promise<void> {
     const user = await this._userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new AppError(HttpStatus.NOT_FOUND,'User not found');
     }
     await this._userRepository.updateUserStatus(userId, true);
   }
@@ -56,7 +59,7 @@ export class UserManagementUseCases implements IUserManagementUseCases {
   async unblockUser(userId: string): Promise<void> {
     const user = await this._userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new AppError(HttpStatus.NOT_FOUND,'User not found');
     }
     await this._userRepository.updateUserStatus(userId, false);
   }

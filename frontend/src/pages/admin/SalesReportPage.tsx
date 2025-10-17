@@ -22,11 +22,10 @@ import {
   downloadSalesReportPDF,
 } from '@/services/admin/salesReportService';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
-import type { IBooking } from '@/types/IBooking';
-import type { ISalesReportSummary } from '@/types/ISalesReportSummary';
-const SalesReportPage = () => {
+ import type { ISalesReportSummary ,SalesReportResponseDTO} from '@/types/ISalesReportSummary';
+ const SalesReportPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [data, setData] = useState<IBooking[]>([]);
+  const [data, setData] = useState<SalesReportResponseDTO[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [summary, setSummary] = useState<ISalesReportSummary>({
     totalBookings: 0,
@@ -257,8 +256,7 @@ const SalesReportPage = () => {
                 <TableHead>Booking Code</TableHead>
                 <TableHead>Package Code</TableHead>
                 <TableHead>Username</TableHead>
-                <TableHead>Travelers</TableHead>
-                <TableHead>Payment Method</TableHead>
+                 <TableHead>Payment Method</TableHead>
 
                 <TableHead>Online Amount Paid</TableHead>
                 <TableHead>Wallet Amount Paid</TableHead>
@@ -272,10 +270,9 @@ const SalesReportPage = () => {
               {data.map((r) => (
                 <TableRow key={r._id}>
                   <TableCell>{r.bookingCode}</TableCell>
-                  <TableCell>{(r.packageId as any)?.packageCode}</TableCell>
-                  <TableCell>{(r.userId as any)?.username}</TableCell>
-                  <TableCell>{r.travelers?.length}</TableCell>
-                  <TableCell>{r.paymentMethod}</TableCell>
+                  <TableCell>{r.packageCode}</TableCell>
+                  <TableCell>{r.username}</TableCell>
+                   <TableCell>{r.paymentMethod}</TableCell>
 
                   <TableCell>{r.amountPaid}</TableCell>
                   <TableCell>{r.walletAmountUsed}</TableCell>

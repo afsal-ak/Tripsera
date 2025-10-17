@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { TripTypeEnum, AccommodationTypeEnum, CustomPkgStatusEnum } from "@constants/enum/customPackageEnum";
 
 export interface ICustomPackage {
    _id?: Types.ObjectId | string;
@@ -9,7 +10,7 @@ export interface ICustomPackage {
     phone?: string;
   };
   destination: string;
-  tripType: "romantic" | "adventure" | "family" | "luxury" | "budget" | "other";
+  tripType: TripTypeEnum;
   otherTripType?: string; // if tripType is "other"
   budget: number;
   startDate: Date;
@@ -17,9 +18,9 @@ export interface ICustomPackage {
   nights: number;
   adults: number;
   children?: number;
-  accommodation: "luxury" | "standard" | "budget";
+  accommodation: AccommodationTypeEnum;
   additionalDetails?: string; // for custom requirements
-  status: "pending" | "approved" | "rejected" | "inProgress" | "completed" | "cancelled";
+  status: CustomPkgStatusEnum
   adminResponse?: string;
   createdAt?: Date;
   updatedAt?: Date;

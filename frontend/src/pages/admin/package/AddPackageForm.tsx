@@ -1,4 +1,4 @@
-import {  useEffect,  useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "react-select";
@@ -86,7 +86,7 @@ export default function AddPackageForm() {
       try {
         const categories = await getCategory();
         if (!mounted) return; // skip state update if unmounted
-      
+
         // Map to value/label for your Select component
         const options = categories.map((c: any) => ({ value: c._id, label: c.name }));
         setCategoryOptions(options);
@@ -106,8 +106,8 @@ export default function AddPackageForm() {
 
   // images & crop state
   const images = watch("images");
- 
- 
+
+
   // Submit
   const onSubmit = async (data: AddPackageFormSchema) => {
     try {
@@ -118,7 +118,7 @@ export default function AddPackageForm() {
       croppedImages.forEach((file) => form.append('images', file))
 
       Object.entries(data).forEach(([key, value]) => {
-        if (key === "images") return;  
+        if (key === "images") return;
 
         if (Array.isArray(value) || typeof value === "object") {
           // stringify arrays and objects
@@ -130,7 +130,7 @@ export default function AddPackageForm() {
 
       // send
       await addPackage(form);
-       navigate("/admin/packages");
+      navigate("/admin/packages");
       toast.success("Package saved successfullly");
       reset();
       setCroppedImages([]);
@@ -164,6 +164,7 @@ export default function AddPackageForm() {
               image={currentImage}
               onCropComplete={handleCropComplete}
               onCancel={handleCropCancel}
+              aspect={16 / 9}  
             />
           </div>
         </div>

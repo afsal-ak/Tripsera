@@ -47,49 +47,78 @@ export class CategoryRepository implements ICategoryRepository {
     return await categoryModel.find({ isBlocked: false }).lean();
   }
 
-  async getAllCategories(
-    skip: number,
-    limit: number,
-    filters: IFilter
-  ): Promise<{ data: ICategory[]; pagination: PaginationInfo }> {
-    const matchStage: any = {};
+  // async getAllCategories(
+  //   skip: number,
+  //   limit: number,
+  //   filters: IFilter
+  // ): Promise<{ data: ICategory[]; pagination: PaginationInfo }> {
+  //   const matchStage: any = {};
 
-    //  Search filter
-    if (filters.search && filters.search.trim() !== "") {
-      matchStage.name = { $regex: filters.search.trim(), $options: "i" };
-    }
+  //   //  Search filter
+  //   if (filters.search) {
+  //     console.log(filters.search,'search');
+      
+  //     matchStage.name = { $regex: filters.search, $options: "i" };
+  //   }
 
-    // 🚦 Status filter
-    if (filters.status === "active") {
-      matchStage.isBlocked = false;
-    } else if (filters.status === "blocked") {
-      matchStage.isBlocked = true;
-    }
+  //   // Status filter
+  //   if (filters.status === "active") {
+  //     matchStage.isBlocked = false;
+  //   } else if (filters.status === "blocked") {
+  //     matchStage.isBlocked = true;
+  //   }
 
-    // 📦 Fetch data + count in parallel
-    const [categories, total] = await Promise.all([
-      categoryModel
-        .find(matchStage)
-        .sort({ updatedAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      categoryModel.countDocuments(matchStage),
-    ]);
+  //    const [categories, total] = await Promise.all([
+  //     categoryModel
+  //       .find(matchStage)
+  //       .sort({ updatedAt: -1 })
+  //       .skip(skip)
+  //       .limit(limit)
+  //       .lean(),
+  //     categoryModel.countDocuments(matchStage),
+  //   ]);
 
-    // 📄 Pagination info
-    const pagination: PaginationInfo = {
-      totalItems: total,
-      currentPage: Math.floor(skip / limit) + 1,
-      pageSize: limit,
-      totalPages: Math.ceil(total / limit),
-    };
+  //    const pagination: PaginationInfo = {
+  //     totalItems: total,
+  //     currentPage: Math.floor(skip / limit) + 1,
+  //     pageSize: limit,
+  //     totalPages: Math.ceil(total / limit),
+  //   };
 
-    return {
-      data: categories,
-      pagination,
-    };
+  //   return {
+  //     data: categories,
+  //     pagination,
+  //   };
+  // }
+async getAllCategories(
+  page: number,
+  limit: number,
+  filters: IFilter
+): Promise<{ data: ICategory[]; pagination: PaginationInfo }> {
+  const skip = (page - 1) * limit;
+  const matchStage: any = {};
+
+  if (filters.search?.trim()) {
+    matchStage.name = { $regex: filters.search.trim(), $options: "i" };
   }
+
+  if (filters.status === "active") matchStage.isBlocked = false;
+  else if (filters.status === "blocked") matchStage.isBlocked = true;
+
+  const [categories, total] = await Promise.all([
+    categoryModel.find(matchStage).sort({ updatedAt: -1 }).skip(skip).limit(limit).lean(),
+    categoryModel.countDocuments(matchStage),
+  ]);
+
+  const pagination: PaginationInfo = {
+    totalItems: total,
+    currentPage: page,
+    pageSize: limit,
+    totalPages: Math.ceil(total / limit),
+  };
+
+  return { data: categories, pagination };
+}
 
   async findById(id: string): Promise<ICategory | null> {
     return await categoryModel.findById(id).lean();

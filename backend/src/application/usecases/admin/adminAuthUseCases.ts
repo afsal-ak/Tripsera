@@ -6,6 +6,8 @@ import { hashPassword, comparePassword } from '@shared/utils/hash';
 import { sendOtpMail } from '@infrastructure/services/mail/mailer';
 import { generateAccessToken, generateRefreshToken } from '@shared/utils/jwt';
 import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
+import { LoginResponseDTO } from '@application/dtos/UserAuthDTO';
+import { UserMapper } from '@application/mappers/UserMapper';
 
 export class AdminAuthUseCases implements IAdminAuthUseCases {
   constructor(
@@ -17,7 +19,7 @@ export class AdminAuthUseCases implements IAdminAuthUseCases {
     email: string,
     password: string
   ): Promise<{
-    admin: IUser;
+    admin: LoginResponseDTO;
     accessToken: string;
     refreshToken: string;
   }> {
@@ -37,15 +39,15 @@ export class AdminAuthUseCases implements IAdminAuthUseCases {
     };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
-    const publicAdmin = {
-      _id: admin._id,
-      email: admin.email,
-      username: admin.username,
-      role: admin.role,
-    } as IUser;
+    // const publicAdmin = {
+    //   _id: admin._id,
+    //   email: admin.email,
+    //   username: admin.username,
+    //   role: admin.role,
+    // } as IUser;
 
     return {
-      admin: publicAdmin,
+      admin: UserMapper.mapToLoginResponseDTO(admin),
       accessToken,
       refreshToken,
     };

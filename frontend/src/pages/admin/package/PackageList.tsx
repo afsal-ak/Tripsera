@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Edit } from 'lucide-react';
@@ -21,16 +21,55 @@ import {
   blockPackage,
   unBlockPackage,
 } from '@/services/admin/packageService';
+
+import { FilterBar } from '@/components/FilterBar ';
+import { useSearchFilters } from '@/hooks/useSearchFilters';
+import { useDebounce } from 'use-debounce';
+import { useCleanFilter } from '@/hooks/useCleanFilter ';
+import { usePaginationButtons } from '@/hooks/usePaginationButtons';
+
 const PackageList = () => {
   const navigate = useNavigate();
   const [packages, setPackages] = useState<IPackage[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [totalPages, setTotalPages] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams()
   const [totalPages, setTotalPages] = useState(1);
+  const {
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    sort,
+    rating,
+    setRating,
+    setSort,
+    applyFilters,
+  } = useSearchFilters();
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
+
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '10', 10);
+  const cleanFilter = useCleanFilter()
 
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const res = await fetchPackagesData(currentPage, 3);
+        const rawFilters = {
+          search: debouncedSearch,
+          status: statusFilter,
+          sort,
+          startDate,
+          endDate,
+          rating
+        };
+        const filters = cleanFilter(rawFilters);
+
+        const res = await fetchPackagesData(currentPage, limit,filters);
 
         console.log('Pagination response', res);
         setPackages(res.data);
@@ -40,8 +79,56 @@ const PackageList = () => {
       }
     };
     fetchPackages();
-  }, [currentPage]);
+  }, [debouncedSearch, searchParams, currentPage]);
   console.log(packages);
+
+ useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (debouncedSearch) {
+      params.set('search', debouncedSearch);
+    }
+    else params.delete('search');
+    params.set('page', '1');
+    setSearchParams(params);
+  }, [debouncedSearch]);
+
+  const handlePageChange = (page: number) => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set('page', page.toString());
+      return newParams;
+    });
+  };
+  const paginationButtons = usePaginationButtons({
+    currentPage,
+    totalPages,
+    onPageChange: handlePageChange,
+  });
+
+
+
+
+  // Handlers passed to FilterBar
+  const handleSearchChange = (val: string) => setSearchQuery(val);
+  const handleStatusChange = (val: string) => setStatusFilter(val);
+  const handleSortChange = (val: string) => setSort(val);
+  const handleRatingChange = (val: string) => setRating(val);
+
+  const handleApplyFilters = () => {
+    applyFilters();
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("");
+    setStartDate("");
+    setEndDate("");
+    setSort("");
+    setRating('')
+    setSearchParams({ page: "1" }); 
+  };
+
+
   const handleToggleBlock = async (id: string, shouldBlock: boolean) => {
     const action = shouldBlock ? 'block' : 'unblock';
 
@@ -71,12 +158,37 @@ const PackageList = () => {
         <Button onClick={() => navigate('/admin/packages/add')}>Add Packages</Button>
       </CardHeader>
       <CardContent>
+        <FilterBar
+          searchValue={searchQuery}
+          statusValue={statusFilter}
+          startDateValue={startDate}
+          endDateValue={endDate}
+          sortValue={sort}
+           onSearchChange={handleSearchChange}
+          onStatusChange={handleStatusChange}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
+          onSortChange={handleSortChange}
+           onApply={handleApplyFilters}
+          onClear={handleClearFilters}
+          statusOptions={[
+            { value: "active", label: "Active" },
+            { value: "blocked", label: "Blocked" },
+          ]}
+          sortOptions={[
+            { value: "asc", label: "Newest" },
+            { value: "desc", label: "Oldest" },
+            
+          ]}
+          
+        />
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Category</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Final Price</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -87,11 +199,10 @@ const PackageList = () => {
                 <TableCell>{(currentPage - 1) * 3 + index + 1}</TableCell>
                 <TableCell>{pkg.title}</TableCell>
                 <TableCell>
-                  {pkg.category?.map((cat) => (
-                    <div key={cat._id} className="text-sm text-gray-700">
-                      {cat.name}
-                    </div>
-                  ))}
+                 {pkg.price}
+                </TableCell> 
+                <TableCell>
+                 {pkg.finalPrice}
                 </TableCell>
                 <TableCell>
                   {pkg.isBlocked ? (
@@ -114,7 +225,7 @@ const PackageList = () => {
                     <ConfirmDialog
                       title="Unblock this package?"
                       actionLabel="Unblock"
-                      onConfirm={() => handleToggleBlock(pkg._id, false)}
+                      onConfirm={() => handleToggleBlock(pkg?._id!, false)}
                     >
                       <Button
                         size="sm"
@@ -128,7 +239,7 @@ const PackageList = () => {
                     <ConfirmDialog
                       title="Block this package?"
                       actionLabel="Block"
-                      onConfirm={() => handleToggleBlock(pkg._id, true)}
+                      onConfirm={() => handleToggleBlock(pkg._id!, true)}
                     >
                       <Button size="sm" variant="destructive">
                         Block
@@ -140,8 +251,11 @@ const PackageList = () => {
             ))}
           </TableBody>
         </Table>
+        <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
+          {paginationButtons}
+        </div>
       </CardContent>
-      <div className="flex justify-center items-center gap-4 mt-6">
+      {/* <div className="flex justify-center items-center gap-4 mt-6">
         <Button
           variant="outline"
           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -159,7 +273,7 @@ const PackageList = () => {
         >
           Next
         </Button>
-      </div>
+      </div> */}
     </Card>
   );
 };

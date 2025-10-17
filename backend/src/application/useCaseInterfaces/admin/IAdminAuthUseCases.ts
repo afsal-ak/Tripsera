@@ -1,11 +1,11 @@
 import { IUser } from '@domain/entities/IUser';
-
+import { LoginResponseDTO } from '@application/dtos/UserAuthDTO';
 export interface IAdminAuthUseCases {
   adminLogin(
     email: string,
     password: string
   ): Promise<{
-    admin: IUser;
+    admin: LoginResponseDTO;
     accessToken: string;
     refreshToken: string;
   }>;

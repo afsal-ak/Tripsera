@@ -5,7 +5,7 @@ import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageU
 import { CreatePackageDTO, EditPackageDTO } from '@application/dtos/PackageDTO';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { parseJsonFields } from '@shared/utils/parseJsonFields';
-
+import { IFilter } from '@domain/entities/IFilter';
 
 export class PackageController {
 
@@ -16,16 +16,24 @@ export class PackageController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const { packages, totalPackages, totalPages } = await this._packageUseCase.getAllPackages(
+      const filters: IFilter = {
+        search: (req.query.search as string) || "",
+        status: (req.query.status as string) || "",
+        sort: (req.query.sort as string) || "",
+        startDate: (req.query.startDate as string) || "",
+        endDate: (req.query.endDate as string) || "",
+ 
+      };
+      const data = await this._packageUseCase.getAllPackages(
         page,
-        limit
+        limit,
+        filters
       );
-       res.status(HttpStatus.OK).json({
+      console.log(data,'in controller');
+      
+      res.status(HttpStatus.OK).json({
         message: 'Package fetched successfully',
-        data: packages,
-        totalPackages,
-        totalPages,
-        currentPage: page,
+        data,
       });
     } catch (error: any) {
       next(error)
@@ -36,7 +44,7 @@ export class PackageController {
     try {
       const { id } = req.params;
       const packages = await this._packageUseCase.getSinglePackage(id);
- 
+
       res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
     } catch (error: any) {
       next(error)
@@ -46,7 +54,7 @@ export class PackageController {
   createPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       let pkgData: CreatePackageDTO = req.body;
- 
+
       // Parse fields that are sent as JSON strings
       pkgData = parseJsonFields(pkgData, [
         "location",
@@ -57,9 +65,9 @@ export class PackageController {
         "category"
       ]);
 
-     // console.log("Parsed package data:", pkgData);
+      // console.log("Parsed package data:", pkgData);
 
-       const files = req.files as Express.Multer.File[];
+      const files = req.files as Express.Multer.File[];
       if (!files || files.length === 0) {
         res.status(HttpStatus.BAD_REQUEST).json({ message: "No images uploaded" });
         return;

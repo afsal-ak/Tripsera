@@ -12,7 +12,7 @@ export const getAllBlogs = async (page: number, limit: number,filter:IFilter) =>
         ...filter
     }
   const response = await api.get(`/admin/blogs`,{params});
-  return response.data;
+  return response.data.data;
 };
 export const changeBlogStatus = async (blogId: string, isBlocked: boolean) => {
   const res = await api.patch(`/admin/blog/status/${blogId}`, { isBlocked });

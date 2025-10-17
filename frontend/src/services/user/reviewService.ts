@@ -16,7 +16,7 @@ export const handlePackageReview = async (
   };
 
   const response = await api.get(`/user/packages/${packageId}/reviews`, { params });
-  return response.data;
+  return response.data.review;
 };
 
 
@@ -34,7 +34,9 @@ export const handleEditReview=async(reviewId:string,rating:number,title:string,c
 
 export const handleUserReview=async(page:number,limit:number)=>{
     const response=await api.get(`/user/users/me/reviews?page=${page}&limit=${limit}`)
-     return response.data
+    console.log(response.data.data,'in uer review');
+    
+     return response.data.data
 }
 
 export const handleReviewDetail=async(reviewId:string)=>{

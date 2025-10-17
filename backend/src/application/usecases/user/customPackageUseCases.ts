@@ -1,11 +1,12 @@
-import { CreateCustomPkgDTO, UpdateCustomPkgDTO } from "@application/dtos/CustomPkgDTO";
-import { PaginationInfo } from "@application/dtos/PaginationDto";
+import { CreateCustomPkgDTO,UpdateCustomPkgDTO, CustomPkgResponseDTO,CustomPkgUserListDTO } from "@application/dtos/CustomPkgDTO";
+import { IPaginatedResult } from "@domain/entities/IPaginatedResult";
 import { INotificationUseCases } from "@application/useCaseInterfaces/notification/INotificationUseCases";
 import { ICustomPkgUseCases } from "@application/useCaseInterfaces/user/ICustomPackageUseCases";
-import { ICustomPackage } from "@domain/entities/ICustomPackage";
-import { IFilter } from "@domain/entities/IFilter";
+ import { IFilter } from "@domain/entities/IFilter";
 import { ICustomPackageRepository } from "@domain/repositories/ICustomPackageRepository";
 import { IUserRepository } from "@domain/repositories/IUserRepository";
+import { CustomPkgMapper } from "@application/mappers/CustomPkgMapper";
+import { EnumUserRole } from "@constants/enum/userEnum";
 
 export class CustomPackageUseCases implements ICustomPkgUseCases {
     constructor(
@@ -14,7 +15,9 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
         private readonly _notificationUseCases: INotificationUseCases,
     ) { }
 
-    async createCutomPkg(data: CreateCustomPkgDTO): Promise<ICustomPackage> {
+
+    async createCutomPkg(data: CreateCustomPkgDTO): Promise<CustomPkgResponseDTO> {
+
         const customPkg = await this._customPkgRepo.create(data)
 
         const userId = customPkg.userId?.toString()
@@ -22,7 +25,7 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
         let message = `User ${user?.username} requested for custom package .`
 
         const notification = await this._notificationUseCases.sendNotification({
-            role: 'admin',
+            role: EnumUserRole.ADMIN,
             title: "Custom Package",
             entityType: 'customPacakage',
             customPackageId: customPkg._id?.toString(),
@@ -31,22 +34,28 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
             triggeredBy: userId,
         });
 
-        return customPkg
+        return CustomPkgMapper.toResponseDTO(customPkg)
     }
 
-    async updateCutomPkg(customPkgId: string, userId: string, data: UpdateCustomPkgDTO): Promise<ICustomPackage | null> {
+    async updateCutomPkg(customPkgId: string, userId: string, data: UpdateCustomPkgDTO): Promise<CustomPkgResponseDTO | null> {
         const pkg = await this._customPkgRepo.updateByFilter({ _id: customPkgId, userId }, data)
-        return pkg ? pkg : null
+        return pkg ? CustomPkgMapper.toResponseDTO(pkg) : null
 
     }
 
-    async getCustomPkgById(customPkgId: string): Promise<ICustomPackage | null> {
-        return await this._customPkgRepo.findById(customPkgId)
+    async getCustomPkgById(customPkgId: string): Promise<CustomPkgResponseDTO | null> {
+        const pkg = await this._customPkgRepo.findById(customPkgId)
+        return CustomPkgMapper.toResponseDTO(pkg!)
     }
+
 
     async getAllCustomPkg(userId: string, page: number, limit: number, filters?: IFilter
-    ): Promise<{ data: ICustomPackage[]; pagination: PaginationInfo; }> {
-        return await this._customPkgRepo.findAll(page, limit, { userId })
+    ): Promise<IPaginatedResult<CustomPkgUserListDTO>> {
+        const result = await this._customPkgRepo.findAll(page, limit, { userId })
+        return {
+            pagination: result.pagination,
+            data: result.data.map(CustomPkgMapper.toUserListDTO)
+        }
     }
 
     async deleteCustomPkg(customPkgId: string, userId: string): Promise<boolean> {

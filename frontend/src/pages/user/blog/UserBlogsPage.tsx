@@ -17,8 +17,8 @@ const UserBlogsPage = () => {
     const fetchBlogs = async () => {
       console.log(currentPage, limit, 'user blog');
       const response = await handleAllUserBlogs(currentPage, limit);
-      setBlogs(response.blogs);
-      //console.log(response.totalBlogs)
+      setBlogs(response.data);
+      console.log(response.data,'user blog')
 
       setTotalPages(response.totalBlogs);
     };

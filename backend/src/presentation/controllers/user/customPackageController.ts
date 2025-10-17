@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ICustomPkgUseCases } from "@application/useCaseInterfaces/user/ICustomPackageUseCases";
-import { CreateCustomPkgDTO, UpdateCustomPkgDTO, toCustomPkgResponseDTO } from "@application/dtos/CustomPkgDTO";
+import { CreateCustomPkgDTO, UpdateCustomPkgDTO } from "@application/dtos/CustomPkgDTO";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { AppError } from "@shared/utils/AppError";
@@ -18,10 +18,10 @@ export class CustomPackageController {
         userId,
       };
       const pkg = await this._customPkgUseCases.createCutomPkg(data)
- 
+
       res.status(HttpStatus.CREATED).json({
         success: true,
-        data: toCustomPkgResponseDTO(pkg),
+        data: pkg,
         message: 'Package created successfully',
       });
     } catch (error) {
@@ -38,11 +38,11 @@ export class CustomPackageController {
       const pkg = await this._customPkgUseCases.updateCutomPkg(pkgId, userId, data)
       console.log(data, 'data from pkg');
       if (!pkg) {
-        throw new AppError(HttpStatus.NOT_FOUND,'not found')
+        throw new AppError(HttpStatus.NOT_FOUND, 'not found')
       }
       res.status(HttpStatus.CREATED).json({
         success: true,
-        data: toCustomPkgResponseDTO(pkg),
+        data: pkg,
         message: 'Package updated successfully',
       });
     } catch (error) {
@@ -56,11 +56,10 @@ export class CustomPackageController {
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
-      const { data, pagination } = await this._customPkgUseCases.getAllCustomPkg(userId, page, limit);
+      const data = await this._customPkgUseCases.getAllCustomPkg(userId, page, limit);
 
       res.status(HttpStatus.OK).json({
-        data: data.map(toCustomPkgResponseDTO),
-        pagination,
+        data,
         message: 'Package fetched successfully',
       });
     } catch (error) {
@@ -74,9 +73,8 @@ export class CustomPackageController {
       const pkgId = req.params.packageId;
 
       const data = await this._customPkgUseCases.getCustomPkgById(pkgId);
-      const pkg = toCustomPkgResponseDTO(data!)
       res.status(HttpStatus.OK).json({
-        data: pkg,
+        data,
         message: 'Package fetched successfully',
       });
     } catch (error) {

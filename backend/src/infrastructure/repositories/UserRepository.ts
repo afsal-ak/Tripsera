@@ -1,10 +1,13 @@
-import { IRole, IUser } from '@domain/entities/IUser';
+import {  IUser } from '@domain/entities/IUser';
+import { EnumUserRole } from '@constants/enum/userEnum';
 import { UserModel } from '@infrastructure/models/User';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { AppError } from '@shared/utils/AppError';
 import { IFilter } from '@domain/entities/IFilter';
-import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
-import { PaginationInfo } from '@application/dtos/PaginationDto';
+ import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+
+
 export class UserRepository implements IUserRepository {
 
   async getAllAdmins(): Promise<IUser[]> {
@@ -189,7 +192,7 @@ export class UserRepository implements IUserRepository {
     const user = await UserModel.findByIdAndUpdate(id, { coverImage }).lean();
 
     if (!user) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
     return user;
@@ -202,7 +205,7 @@ export class UserRepository implements IUserRepository {
     });
 
     if (checkUsername) {
-      throw new AppError(400, 'Username is taken please try new one');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Username is taken please try new one');
     }
 
     const updated = await UserModel.findByIdAndUpdate(id, profileData, {
@@ -212,7 +215,7 @@ export class UserRepository implements IUserRepository {
       .lean();
 
     if (!updated) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
     return updated;
@@ -226,7 +229,7 @@ export class UserRepository implements IUserRepository {
     ).lean();
 
     if (!updated) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
     return updated;
   }
@@ -240,12 +243,12 @@ export class UserRepository implements IUserRepository {
     return user
   }
 
-  async searchUsersForChat(userId: string, search: string, role: IRole): Promise<IUser[]> {
+  async searchUsersForChat(userId: string, search: string, role: EnumUserRole): Promise<IUser[]> {
 
     const searchRegex = { $regex: search, $options: "i" };
 
     // If admin → search all non-blocked users
-    if (role === "admin") {
+    if (role === EnumUserRole.ADMIN) {
       const query: any = { isBlocked: false };
 
       // Apply regex only if search exists
@@ -285,7 +288,7 @@ export class UserRepository implements IUserRepository {
     }
 
     // Always allow chatting with admins
-    const adminBlock: any = { role: "admin" };
+    const adminBlock: any = { role: EnumUserRole.ADMIN };
     if (searchRegex) {
       adminBlock.$or = [
         { username: searchRegex },

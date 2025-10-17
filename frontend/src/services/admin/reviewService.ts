@@ -14,7 +14,8 @@ export const handleFetchReview = async (
   };
 
   const response = await api.get(`/admin/reviews`, { params });
-  return response.data;
+   
+  return response.data.data;
 };
 
  

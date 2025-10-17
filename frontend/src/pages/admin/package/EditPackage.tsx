@@ -86,12 +86,7 @@ export default function EditPackageForm() {
         const data = await getPackageById(id);
         console.log(data, "edit pkg");
 
-        // pre-fill form values
-        // reset({
-        //   ...data,
-        //   category: data.category?.map((c: any) => c._id ?? c),
-        //   images: [], // keep upload field empty
-        // });
+
         reset({
           ...data,
           category: data.category?.map((c: any) => c._id ?? c),
@@ -114,16 +109,7 @@ export default function EditPackageForm() {
         });
 
         setExistingImages(data.imageUrls || []);
-        // load existing image URLs as preview
-        // if (data.imageUrls?.length) {
-        //   setCroppedImages(
-        //     data.imageUrls.map((img: any) => ({
-        //       url: img.url,
-        //       public_id: img.public_id,
-        //       existing: true, // flag for distinguishing old vs new
-        //     }))
-        //   );
-        // }
+
       } catch (err) {
         console.error(err);
         toast.error("Failed to fetch package details");
@@ -167,81 +153,42 @@ export default function EditPackageForm() {
   const itineraryArray = useFieldArray({ control, name: "itinerary" });
   const totalImages = existingImages.length + croppedImages.length;
 
-  // onSubmit
-  // const onSubmit: SubmitHandler<EditPackageFormSchema> = async (data) => {
-  //   try {
-  //     if (!id) return;
-
-  //     const form = new FormData();
-  //     form.append("id", id);
-
-  //     // append new images
-  //     // NEW images
-  //     croppedImages.forEach((file) => {
-  //       if (file instanceof File) {
-  //         form.append("images", file);
-  //       }
-  //     });
-  //     // append rest of the form
-  //     Object.entries(data).forEach(([key, value]) => {
-  //       if (key === "images") return;
-  //       if (Array.isArray(value) || typeof value === "object") {
-  //         form.append(key, JSON.stringify(value));
-  //       } else {
-  //         form.append(key, String(value ?? ""));
-  //       }
-  //     });
-  //     // EXISTING images (keep)
-  //     existingImages.forEach((img, index) => {
-  //       form.append(`existingImages[${index}][url]`, img.url);
-  //       form.append(`existingImages[${index}][public_id]`, img.public_id);
-  //       form.append(`existingImages[${index}][_id]`, img._id);
-  //     });
-
-  //     await updatePackage(id, form);
-  //     toast.success("Package updated successfully");
-  //     navigate("/admin/packages");
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("Failed to update package");
-  //   }
-  // };
   const onSubmit: SubmitHandler<EditPackageFormSchema> = async (data) => {
-  try {
-    if (!id) return;
+    try {
+      if (!id) return;
 
-    const form = new FormData();
+      const form = new FormData();
 
-    // NEW images
-    croppedImages.forEach((file) => {
-      if (file instanceof File) {
-        form.append("images", file);
+      // NEW images
+      croppedImages.forEach((file) => {
+        if (file instanceof File) {
+          form.append("images", file);
+        }
+      });
+
+      // Rest of the form
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "images") return;
+        if (Array.isArray(value) || typeof value === "object") {
+          form.append(key, JSON.stringify(value));
+        } else {
+          form.append(key, String(value ?? ""));
+        }
+      });
+
+      // EXISTING images
+      if (existingImages.length) {
+        form.append("existingImages", JSON.stringify(existingImages));
       }
-    });
 
-    // Rest of the form
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "images") return;
-      if (Array.isArray(value) || typeof value === "object") {
-        form.append(key, JSON.stringify(value));
-      } else {
-        form.append(key, String(value ?? ""));
-      }
-    });
-
-    // EXISTING images
-    if (existingImages.length) {
-      form.append("existingImages", JSON.stringify(existingImages));
+      await updatePackage(id, form);
+      toast.success("Package updated successfully");
+      navigate("/admin/packages");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update package");
     }
-
-    await updatePackage(id, form);
-    toast.success("Package updated successfully");
-    navigate("/admin/packages");
-  } catch (err) {
-    console.error(err);
-    toast.error("Failed to update package");
-  }
-};
+  };
 
   const addDay = () => {
     itineraryArray.append({
@@ -253,6 +200,7 @@ export default function EditPackageForm() {
   };
   useEffect(() => {
     console.log("Form errors:", errors);
+
   }, [errors]);
 
   return (
@@ -265,6 +213,8 @@ export default function EditPackageForm() {
               image={currentImage}
               onCropComplete={handleCropComplete}
               onCancel={handleCropCancel}
+              aspect={16 / 9}
+
             />
           </div>
         </div>
@@ -317,14 +267,22 @@ export default function EditPackageForm() {
               <div>
                 <label className="block">Price</label>
                 <input type="number" {...register("price", { valueAsNumber: true })} className="border p-2 rounded w-full" />
+                {errors.price && <p className="text-red-500">{errors.price.message}</p>}
+
               </div>
               <div>
                 <label className="block">Days</label>
                 <input type="number" {...register("durationDays", { valueAsNumber: true })} className="border p-2 rounded w-full" />
+                {errors.durationDays &&
+                  <p className="text-red-500">{errors.durationDays?.message}</p>
+                }
               </div>
               <div>
                 <label className="block">Nights</label>
                 <input type="number" {...register("durationNights", { valueAsNumber: true })} className="border p-2 rounded w-full" />
+                {errors.durationNights &&
+                  <p className="text-red-500">{errors.durationNights?.message}</p>
+                }
               </div>
             </div>
 
@@ -333,23 +291,30 @@ export default function EditPackageForm() {
               <div>
                 <label>Start Date</label>
                 <input type="date" {...register("startDate")} className="border p-2 rounded w-full" />
+                {errors.startDate &&
+                  <p className="text-red-500">{errors.startDate?.message}</p>
+                }
               </div>
               <div>
                 <label>End Date</label>
                 <input type="date" {...register("endDate")} className="border p-2 rounded w-full" />
+                {errors.endDate &&
+                  <p className="text-red-500">{errors.endDate?.message}</p>
+                }
               </div>
+
             </div>
 
             {/* Start Point */}
             <div>
               <label>Start Point</label>
               <input {...register("startPoint")} className="border p-2 w-full rounded" />
+              {errors.startPoint &&
+                <p className="text-red-500">{errors.startPoint?.message}</p>
+              }
             </div>
 
-            {/* Locations, Included, Not Included, Itinerary, Offer, Images */}
-            {/* --- SAME as AddPackageForm --- */}
-            {/* copy your existing blocks for locations, included, notIncluded, itinerary, offer, images */}
-            {/* Locations */}
+
             <div>
               <label className="block font-medium mb-1">Locations</label>
               {locArray.fields.map((f, i) => (
@@ -729,41 +694,7 @@ export default function EditPackageForm() {
                 </div>
               </div>
             </div>
-            {/* <div>
-              <Label>Upload Images (Max 4)</Label><br />
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                className="hidden"
-              />
-              <Button type="button" onClick={() => fileInputRef.current?.click()}>
-                Upload Images
-              </Button>
-
-              {errors.images && <p className="text-red-500 text-sm">{errors.images.message}</p>}
-
-              <div className="grid grid-cols-4 gap-2 mt-2">
-                {croppedImages.map((file, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt="preview"
-                      className="w-full h-24 object-cover rounded"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div> */}
+          
             <div>
               <Label>Upload Images (Total Max {MAX_IMAGES})</Label><br />
               <input

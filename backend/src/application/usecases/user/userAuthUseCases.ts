@@ -1,9 +1,129 @@
+// import { IUserRepository } from '@domain/repositories/IUserRepository';
+// import { IOtpRepository } from '@domain/repositories/IOtpRepository';
+// import { IWalletRepository } from '@domain/repositories/IWalletRepository';
+// import { IReferralRepository } from '@domain/repositories/IReferralRepository';
+// import { sendOtpMail } from '@infrastructure/services/mail/mailer';
+// import { hashPassword, comparePassword } from '@shared/utils/hash';
+// import { generateOtp } from '@shared/utils/generateOtp';
+// import { verifyGoogleToken } from '@infrastructure/services/googleAuth/googleAuthService';
+// import { generateAccessToken, generateRefreshToken, verifyAccessToken } from '@shared/utils/jwt';
+// import { generateUniqueReferralCode } from '@shared/utils/generateRefferalCode';
+// import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
+// import { IUser } from '@domain/entities/IUser';
+// import { EnumUserRole } from '@constants/enum/userEnum';
+// import { IOTP } from '@domain/entities/IOTP';
+// import { AppError } from '@shared/utils/AppError';
+// import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+// import { UserMapper } from '@application/mappers/UserMapper';
+// import { UserDetailsDTO } from '@application/dtos/UserDTO';
+
+// export class UserAuthUsecases implements IUserAuthUseCases {
+//   constructor(
+//     private _userRepository: IUserRepository,
+//     private _otpRepository: IOtpRepository,
+//     private _walletRepository: IWalletRepository,
+//     private _referralRepository: IReferralRepository
+//   ) {}
+
+//   async preRegistration(userData: IOTP): Promise<void> {
+//     const { email, username, password, referredReferralCode } = userData;
+//     if (!email || !username || !password) throw new AppError(HttpStatus.BAD_REQUEST, 'Missing required fields');
+
+//     if (await this._userRepository.findByEmail(email)) throw new AppError(HttpStatus.CONFLICT, 'Email already taken');
+//     if (await this._userRepository.findByUsername(username)) throw new AppError(HttpStatus.CONFLICT, 'Username already taken');
+
+//     const hashedPassword = await hashPassword(password);
+//     const otp = generateOtp();
+//     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+//     await this._otpRepository.saveOtp({ email, username, referredReferralCode: referredReferralCode || '', password: hashedPassword, otp, expiresAt, attempts: 0 });
+//     await sendOtpMail(email, otp);
+//   }
+
+//   async verifyOtpAndRegister(email: string, otp: string): Promise<UserDetailsDTO> {
+//     if (!await this._otpRepository.verifyOtp(email, otp)) throw new AppError(HttpStatus.BAD_REQUEST, 'Invalid OTP');
+
+//     const otpDoc = await this._otpRepository.getOtpByEmail(email);
+//     if (!otpDoc?.username || !otpDoc?.password) throw new AppError(HttpStatus.BAD_REQUEST, 'Incomplete registration data');
+
+//     const referredBy = otpDoc.referredReferralCode
+//       ? await this._userRepository.findUserByReferralCode(otpDoc.referredReferralCode)
+//       : null;
+
+//     const referralCode = await generateUniqueReferralCode();
+
+//     const newUser: IUser = {
+//       email,
+//       username: otpDoc.username,
+//       password: otpDoc.password,
+//       referralCode,
+//       referredBy: referredBy?._id,
+//     };
+
+//     const user = await this._userRepository.createUser(newUser);
+//     if (!user?._id) throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'User creation failed');
+
+//     await this._otpRepository.deleteOtp(email);
+//     await this._walletRepository.createWallet(user._id.toString());
+
+//     const referralStatus = await this._referralRepository.getReferral();
+//     if (referredBy && referralStatus?.amount && !referralStatus.isBlocked) {
+//       await this._walletRepository.creditWallet(user._id.toString(), referralStatus.amount, 'Referral Reward');
+//       await this._walletRepository.creditWallet(referredBy._id!.toString(), referralStatus.amount, 'Referral Reward');
+//     }
+
+//     return UserMapper.toUserDetailsDTO(user);
+//   }
+
+//   async login(email: string, password: string): Promise<{ user: UserDetailsDTO; accessToken: string; refreshToken: string }> {
+//     const user = await this._userRepository.findByEmail(email);
+//     if (!user || !user.password) throw new AppError(HttpStatus.UNAUTHORIZED, 'Incorrect email or password');
+//     if (user.isBlocked) throw new AppError(HttpStatus.FORBIDDEN, 'User is blocked');
+
+//     if (!(await comparePassword(password, user.password))) throw new AppError(HttpStatus.UNAUTHORIZED, 'Incorrect email or password');
+
+//     const accessToken = generateAccessToken({ id: user._id, role: user.role });
+//     const refreshToken = generateRefreshToken({ id: user._id, role: user.role });
+
+//     return { user: UserMapper.toUserDetailsDTO(user), accessToken, refreshToken };
+//   }
+
+//   async loginWithGoole(token: string): Promise<{ accessToken: string; user: UserDetailsDTO }> {
+//     const { email, name, picture, googleId } = await verifyGoogleToken(token);
+//     let user = await this._userRepository.findByEmail(email);
+
+//     if (!user) {
+//       user = await this._userRepository.createUser({
+//         email,
+//         username: name,
+//         referralCode: await generateUniqueReferralCode(),
+//         profileImage: picture ? { url: picture, public_id: 'google-oauth' } : undefined,
+//         googleId,
+//         isGoogleUser: true,
+//       });
+//     }
+
+//     const accessToken = generateAccessToken({ id: user._id, email: user.email });
+//     return { accessToken, user: UserMapper.toUserDetailsDTO(user) };
+//   }
+
+//   async searchUsersForChat(userId: string, search: string, role: EnumUserRole): Promise<UserDetailsDTO[] | null> {
+//     const users = await this._userRepository.searchUsersForChat(userId, search, role);
+//     return users?.map(UserMapper.toUserDetailsDTO) || null;
+//   }
+
+//   // other methods (forgot password, change email/password) can also return DTO if needed
+// }
+
+
+
 import { IUserRepository } from '../../../domain/repositories/IUserRepository';
 import { IOtpRepository } from '../../../domain/repositories/IOtpRepository';
 import { sendOtpMail } from '@infrastructure/services/mail/mailer';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { hashPassword, comparePassword } from '@shared/utils/hash';
-import { IRole, IUser } from '../../../domain/entities/IUser';
+import { IUser } from '../../../domain/entities/IUser';
+import { EnumUserRole } from '@constants/enum/userEnum';
 import { IOTP } from '@domain/entities/IOTP';
 import { generateOtp } from '@shared/utils/generateOtp';
 import { verifyGoogleToken } from '@infrastructure/services/googleAuth/googleAuthService';
@@ -12,6 +132,11 @@ import { AppError } from '@shared/utils/AppError';
 import { generateUniqueReferralCode } from '@shared/utils/generateRefferalCode';
 import { IReferralRepository } from '@domain/repositories/IReferralRepository';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
+import { LoginResponseDTO, mapToLoginResponseDTO, PreRegistrationDTO } from '@application/dtos/UserAuthDTO';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { UserBasicResponseDTO } from '@application/dtos/UserDTO';
+import { UserMapper } from '@application/mappers/UserMapper';
+
 
 export class UserAuthUsecases implements IUserAuthUseCases {
   constructor(
@@ -19,9 +144,9 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     private _otpRepository: IOtpRepository,
     private _walletRepository: IWalletRepository,
     private _referraRepository: IReferralRepository
-  ) {}
+  ) { }
 
-  async preRegistration(userData: IOTP): Promise<void> {
+  async preRegistration(userData: PreRegistrationDTO): Promise<void> {
     const { email, username, password, referredReferralCode } = userData;
 
     const existingEmail = await this._userRepository.findByEmail(email);
@@ -109,7 +234,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   async resendOtp(email: string): Promise<void> {
     const existingUser = await this._userRepository.findByEmail(email);
     if (existingUser) {
-      throw new Error('Email already registered');
+      throw new AppError(HttpStatus.CONFLICT, 'Email already registered');
     }
 
     const otp = generateOtp();
@@ -122,7 +247,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   async login(
     email: string,
     password: string
-  ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> {
+  ): Promise<{ user: LoginResponseDTO; accessToken: string; refreshToken: string }> {
     const user = await this._userRepository.findByEmail(email);
     if (!user) {
       throw new Error('Incorrect email or password');
@@ -145,7 +270,12 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
-    return { user, accessToken, refreshToken };
+
+    return {
+      user: UserMapper.mapToLoginResponseDTO(user),
+      accessToken,
+      refreshToken
+    };
   }
 
   async forgotPasswordOtp(email: string): Promise<void> {
@@ -159,6 +289,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     await this._otpRepository.saveOtp({ email, otp, expiresAt });
     await sendOtpMail(email, otp);
   }
+
   async verifyOtpForForgotPassword(email: string, otp: string): Promise<{ token: string }> {
     const isValidOtp = await this._otpRepository.verifyOtp(email, otp);
     console.log({ email, otp }, 'y');
@@ -169,8 +300,6 @@ export class UserAuthUsecases implements IUserAuthUseCases {
       email: email,
     };
     const token = generateAccessToken(payload);
-    console.log(token, 'token');
-    //await this.otpRepository.deleteOtp(email)
     return { token };
   }
 
@@ -187,10 +316,9 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     await this._userRepository.updateUserPassword(email, hashedPassword);
   }
 
-  async loginWithGoole(token: string) {
+  async loginWithGoole(token: string): Promise<{ accessToken: string; user: LoginResponseDTO }> {
+
     const { email, name, picture, googleId } = await verifyGoogleToken(token);
-    console.log(email, 'google');
-    console.log(token, 'google token');
     let user = await this._userRepository.findByEmail(email);
     const referralCode = await generateUniqueReferralCode();
 
@@ -209,13 +337,13 @@ export class UserAuthUsecases implements IUserAuthUseCases {
       email: user.email,
     });
 
-    return { accessToken, user };
+    return { accessToken, user: mapToLoginResponseDTO(user) };
   }
 
   async requestEmailChange(userId: string, newEmail: string): Promise<void> {
     const existingUser = await this._userRepository.findByEmail(newEmail);
     if (existingUser) {
-      throw new AppError(400, 'Email already taken');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Email already taken');
     }
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
@@ -224,12 +352,13 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     await sendOtpMail(newEmail, otp);
   }
 
-  async verifyAndUpdateEmail(userId: string, newEmail: string, otp: string): Promise<IUser | null> {
+  async verifyAndUpdateEmail(userId: string, newEmail: string, otp: string): Promise<UserBasicResponseDTO | null> {
     const isValidOtp = await this._otpRepository.verifyOtp(newEmail, otp);
     if (!isValidOtp) {
-      throw new AppError(400, 'Invalid or expired OTP');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Invalid or expired OTP');
     }
-    return await this._userRepository.updateUserEmail(userId, newEmail);
+    const user = await this._userRepository.updateUserEmail(userId, newEmail);
+    return user ? UserMapper.toBasicResponse(user) : null
   }
 
   async changePassword(
@@ -239,18 +368,20 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   ): Promise<void> {
     const user = await this._userRepository.findById(userId);
     if (!user || !user.password) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
     const isPasswordMatch = await comparePassword(currentPassword, user.password);
     if (!isPasswordMatch) {
-      throw new AppError(401, 'Incorrect current password');
+      throw new AppError(HttpStatus.UNAUTHORIZED, 'Incorrect current password');
     }
     const hashNewPassword = await hashPassword(newPassword);
     await this._userRepository.changePassword(userId, hashNewPassword);
   }
 
-  async searchUsersForChat(userId: string, search: string, role: IRole): Promise<IUser[] | null> {
-    return await this._userRepository.searchUsersForChat(userId,search,role)
+  async searchUsersForChat(userId: string, search: string, role: EnumUserRole): Promise<UserBasicResponseDTO[] | null> {
+    const user = await this._userRepository.searchUsersForChat(userId, search, role)
+    return user ? user.map(UserMapper.toBasicResponse) : null
+
   }
 
 }
