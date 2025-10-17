@@ -1,4 +1,6 @@
 import { IPackage } from '@domain/entities/IPackage';
+import { IFilter } from '@domain/entities/IFilter';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 
 export interface IPackageRepository {
   create(pkg: IPackage): Promise<IPackage>;
@@ -10,7 +12,9 @@ export interface IPackageRepository {
   ): Promise<IPackage | null>;
 
   findById(id: string): Promise<IPackage | null>;
-  findAll(skip: number, limit: number): Promise<IPackage[]>;
+  // findAll(skip: number, limit: number): Promise<IPackage[]>;
+   findAll(page: number, limit: number, filters?: IFilter):
+     Promise<{ packages: IPackage[]; pagination: PaginationInfo }>
   countDocument(): Promise<number>;
   getActivePackages(filters: any, skip: number, limit: number, sort: any): Promise<IPackage[]>;
   countActivePackages(filters: any): Promise<number>;

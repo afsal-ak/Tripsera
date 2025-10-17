@@ -4,7 +4,7 @@
 // //   title: string;
 // //   description: string;
 // //   price: number;
-  
+
 
 // //   // Duration
 // //   duration: string;
@@ -158,7 +158,7 @@
 //   title: string;
 //   description: string;
 //   price: number;
-  
+
 
 //   // Duration
 //   duration: string;
@@ -399,7 +399,7 @@
 //   pkgId: string;
 //   isBlocked: boolean;
 // }
- 
+
 // export interface PackageResponseDTO {
 //   id: string;
 //   title: string;
@@ -548,11 +548,24 @@ export interface PackageTableResponseDTO {
   price: number;
   finalPrice: number;
   duration: string;
-    category: Types.ObjectId[];
-
+  category: Types.ObjectId[];
+  durationDays?: number;
+  durationNights?: number;
   isBlocked: boolean;
   offerName?: string;
   categoryCount: number;
-  locationCount: number;
   createdAt?: Date;
+}
+export interface PackageCardDTO {
+  _id: string;
+  title: string;
+  categoryNames: string[];
+  durationDays: number;
+  durationNights: number;
+  price: number;
+  finalPrice: number;
+  imageUrl: string | null;
+  offerName?: string;
+  offerType?: string;
+  offerValue?: number;
 }

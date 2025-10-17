@@ -8,30 +8,24 @@ import { CreatePackageDTO, EditPackageDTO, PackageResponseDTO, PackageTableRespo
 import { PackageMapper } from '@application/mappers/PackageMapper';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
-
+import { IFilter } from '@domain/entities/IFilter';
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 export class PackageUseCases implements IPackageUseCases {
 
   constructor(private _packageRepo: IPackageRepository) { }
 
   async getAllPackages(
     page: number,
-    limit: number
-  ): Promise<{
-    packages: PackageTableResponseDTO[];
-    totalPackages: number;
-    totalPages: number;
-  }> {
-    const skip = (page - 1) * limit;
+    limit: number,
+    filters?:IFilter
+  ): Promise<IPaginatedResult<PackageTableResponseDTO>> {
 
-    const [packages, totalPackages] = await Promise.all([
-      this._packageRepo.findAll(skip, limit),
-      this._packageRepo.countDocument(),
-    ]);
+    const result=await this._packageRepo.findAll(page,limit,filters)
+         console.log(result,'in usecase');
 
     return {
-      packages:packages.map(PackageMapper.toTableResponseDTO),
-      totalPackages,
-      totalPages: Math.ceil(totalPackages / limit),
+      data:result.packages.map(PackageMapper.toTableResponseDTO),
+      pagination:result.pagination
     };
   }
 
