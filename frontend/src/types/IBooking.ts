@@ -1,30 +1,26 @@
-
 export interface ITraveler {
   fullName: string;
   age: number;
-  gender: "male" | "female" | "other";
-  idType: "aadhaar" | "pan" | "passport";
+  gender: 'male' | 'female' | 'other';
+  idType: 'aadhaar' | 'pan' | 'passport';
   idNumber: string;
 }
 
 export interface ITravelerHistory {
   traveler: ITraveler;
-  action: "added" | "removed" | "updated";
-  changedBy?: string;  
+  action: 'added' | 'removed' | 'updated';
+  changedBy?: string;
   changedAt?: Date;
-    note?: string;
-
-} 
-
+  note?: string;
+}
 
 export interface ITravelDateHistory {
-  oldDate?: Date; 
-    newDate: Date;
-  action: "preponed" | "postponed";
-  changedBy?: string;  
+  oldDate?: Date;
+  newDate: Date;
+  action: 'preponed' | 'postponed';
+  changedBy?: string;
   changedAt?: Date;
-    note?: string;
-
+  note?: string;
 }
 
 export interface IAdjustmentHistory {
@@ -38,7 +34,12 @@ export interface IAdjustmentHistory {
 }
 
 export interface IBookingHistory {
-  action: "traveler_removed" | "traveler_added" | "date_changed" | "status_changed" | "amount_changed";
+  action:
+    | 'traveler_removed'
+    | 'traveler_added'
+    | 'date_changed'
+    | 'status_changed'
+    | 'amount_changed';
   oldValue?: any;
   newValue?: any;
   changedBy: string; // userId or "admin"
@@ -47,14 +48,14 @@ export interface IBookingHistory {
 }
 
 export interface IBooking {
-  _id?: string  ;
+  _id?: string;
   bookingCode: string;
   //userId:string;
   packageId: {
     _id: string;
     title: string;
     price: string;
-    packageCode:string;
+    packageCode: string;
     imageUrls: { url: string }[];
     //  location: PackageLocation[];
   };
@@ -63,7 +64,7 @@ export interface IBooking {
     email: string;
     username: string;
   };
- 
+
   travelers: ITraveler[];
   travelerHistory?: ITravelerHistory[];
 
@@ -77,7 +78,7 @@ export interface IBooking {
   adminNote?: string;
   cancelledBy?: string;
   cancelReason?: string;
-  
+
   walletUsed?: number;
   walletAmountUsed?: number;
   amountPaid: number;
@@ -105,66 +106,7 @@ export interface IBooking {
   createdAt: Date;
   updatedAt: Date;
   bookedAt?: Date;
-   packageTitle?: string;
+  packageTitle?: string;
   packageCode?: string;
   packageImage?: { url: string; public_id?: string };
 }
-
-
-// export interface ITraveler {
-//   fullName: string;
-//   age: number;
-//   gender: "male" | "female" | "other";
-//   idType: "aadhaar" | "pan" | "passport";
-//   idNumber: string;
-// }
-
-// export interface IBooking {
-//   _id?: string;
-//   bookingCode: string;
-//   // userId:   string;
-//   packageId: {
-//     _id: string;
-//     title: string;
-//     price: string;
-//     packageCode:string;
-//     imageUrls: { url: string }[];
-//     //  location: PackageLocation[];
-//   };
-//   userId: {
-//     _id: string;
-//     email: string;
-//     username: string;
-//   };
-
-//   travelers: ITraveler[];
-
-//   totalAmount: number;
-//   discount?: number;
-//   couponCode?: string;
-//   paymentMethod: 'razorpay' | 'wallet';
-//   paymentStatus: 'paid' | 'pending' | 'failed' | 'refunded';
-//   bookingStatus: 'confirmed' | 'booked' | 'cancelled' | 'pending';
-//   cancelReason?: string;
-//   walletUsed?: boolean;
-//   walletAmountUsed?:number;
-//   amountPaid: number;
-//   contactDetails: {
-//     name: string;
-//     phone: string;
-//     alternatePhone?: string;
-//     email: string;
-//   };
-//   razorpay?: {
-//     orderId?: string;
-//     paymentId?: string;
-//     signature?: string;
-//   };
-//   createdAt: Date;
-//   updatedAt: Date;
-//   bookedAt?: string;
-//   travelDate?: string;
-//   packageTitle?: string;
-//   packageCode?: string;
-//   packageImage?: { url: string; public_id?: string };
-// }

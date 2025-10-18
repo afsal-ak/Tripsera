@@ -16,7 +16,11 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Input } from '@/components/ui/Input';
 import { useDebounce } from 'use-debounce';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
-import { fetchCategoriesData, blockCategory, unBlockCategory } from '@/services/admin/categoryService';
+import {
+  fetchCategoriesData,
+  blockCategory,
+  unBlockCategory,
+} from '@/services/admin/categoryService';
 import type { ICategory } from '@/types/ICategory';
 
 const CategoryList = () => {
@@ -24,19 +28,19 @@ const CategoryList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 5;
 
-  const [searchInput, setSearchInput] = useState(searchParams.get("search") || "");
+  const [searchInput, setSearchInput] = useState(searchParams.get('search') || '');
   const [debouncedSearch] = useDebounce(searchInput, 500);
-  const [status, setStatus] = useState(searchParams.get("status") || "");
+  const [status, setStatus] = useState(searchParams.get('status') || '');
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.set("page", page.toString());
+      newParams.set('page', page.toString());
       return newParams;
     });
   };
@@ -48,14 +52,18 @@ const CategoryList = () => {
   });
 
   // Fetch data
-  const fetchCategories = async (page = currentPage, search = debouncedSearch, statusValue = status) => {
+  const fetchCategories = async (
+    page = currentPage,
+    search = debouncedSearch,
+    statusValue = status
+  ) => {
     try {
       const res = await fetchCategoriesData(page, limit, search, statusValue);
       setCategories(res.data);
       setTotalPages(res.pagination.totalPages);
-      console.log(totalPages, 'pages')
+      console.log(totalPages, 'pages');
     } catch {
-      toast.error("Failed to load categories");
+      toast.error('Failed to load categories');
     }
   };
 
@@ -75,27 +83,27 @@ const CategoryList = () => {
     try {
       if (shouldBlock) {
         await blockCategory(id);
-        toast.success("Category blocked successfully");
+        toast.success('Category blocked successfully');
       } else {
         await unBlockCategory(id);
-        toast.success("Category unblocked successfully");
+        toast.success('Category unblocked successfully');
       }
 
       setCategories((prev) =>
         prev.map((cat) => (cat._id === id ? { ...cat, isBlocked: shouldBlock } : cat))
       );
     } catch {
-      toast.error(`Failed to ${shouldBlock ? "block" : "unblock"} category`);
+      toast.error(`Failed to ${shouldBlock ? 'block' : 'unblock'} category`);
     }
   };
 
   //  Clear all filters and reload unfiltered data
   const handleClearAll = async () => {
-    setSearchInput("");
-    setStatus("");
+    setSearchInput('');
+    setStatus('');
     setCurrentPage(1);
     setSearchParams({});
-    await fetchCategories(1, "", "");
+    await fetchCategories(1, '', '');
   };
 
   return (
@@ -120,7 +128,7 @@ const CategoryList = () => {
             {searchInput && (
               <button
                 type="button"
-                onClick={() => setSearchInput("")}
+                onClick={() => setSearchInput('')}
                 className="absolute right-2.5 top-2.5 text-gray-400 hover:text-gray-600"
               >
                 <X className="h-4 w-4" />
@@ -153,7 +161,7 @@ const CategoryList = () => {
             </Button>
 
             <Button
-              onClick={() => navigate("/admin/categories/add")}
+              onClick={() => navigate('/admin/categories/add')}
               className="bg-blue-600 hover:bg-blue-700"
             >
               Add Category
@@ -202,7 +210,11 @@ const CategoryList = () => {
                         actionLabel="Unblock"
                         onConfirm={() => handleToggleBlock(cat._id, false)}
                       >
-                        <Button size="sm" variant="outline" className="text-green-600 border-green-600">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-green-600 border-green-600"
+                        >
                           Unblock
                         </Button>
                       </ConfirmDialog>

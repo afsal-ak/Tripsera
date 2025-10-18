@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { PhoneOff, Mic, MicOff, Camera, CameraOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useWebRTC } from "@/hooks/useWebRTC";
+import { useEffect, useRef, useState } from 'react';
+import { PhoneOff, Mic, MicOff, Camera, CameraOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useWebRTC } from '@/hooks/useWebRTC';
 
 interface VideoCallProps {
   currentUserId: string;
@@ -37,14 +37,7 @@ export const VideoCallUI = ({
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
-  const {
-    localStreamRef,
-    remoteStreamRef,
-    isCalling,
-    startCall,
-    acceptCall,
-    endCall,
-  } = useWebRTC({
+  const { localStreamRef, remoteStreamRef, isCalling, startCall, acceptCall, endCall } = useWebRTC({
     currentUserId,
     remoteUserId: remoteUserId || incomingCall?.fromUserId,
     roomId,
@@ -69,13 +62,13 @@ export const VideoCallUI = ({
   }, [remoteStreamRef.current]);
 
   const toggleMic = () => {
-    localStreamRef.current?.getAudioTracks().forEach(track => (track.enabled = !track.enabled));
-    setMicEnabled(prev => !prev);
+    localStreamRef.current?.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
+    setMicEnabled((prev) => !prev);
   };
 
   const toggleCam = () => {
-    localStreamRef.current?.getVideoTracks().forEach(track => (track.enabled = !track.enabled));
-    setCamEnabled(prev => !prev);
+    localStreamRef.current?.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+    setCamEnabled((prev) => !prev);
   };
 
   const handleAccept = () => {
@@ -95,10 +88,9 @@ export const VideoCallUI = ({
     setOutgoingCall(true);
   };
   const handleCancelCall = () => {
-    endCall()
+    endCall();
     setOutgoingCall(false);
-
-  }
+  };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center text-white z-50">
       {/* Remote Video */}
@@ -107,7 +99,13 @@ export const VideoCallUI = ({
 
         {/* Local Video */}
         <div className="absolute bottom-6 right-6 w-40 h-32 bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-          <video ref={localVideoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
+          <video
+            ref={localVideoRef}
+            autoPlay
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          />
         </div>
       </div>
 
@@ -117,21 +115,28 @@ export const VideoCallUI = ({
           {incomingCall.fromUserAvatar ? (
             <img
               src={incomingCall.fromUserAvatar}
-              alt={incomingCall.fromUserName || "Caller"}
+              alt={incomingCall.fromUserName || 'Caller'}
               className="w-24 h-24 rounded-full object-cover border-2 border-white mb-4"
             />
           ) : (
             <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-xl font-bold mb-4">
-              {incomingCall.fromUserName?.[0]?.toUpperCase() || "?"}
+              {incomingCall.fromUserName?.[0]?.toUpperCase() || '?'}
             </div>
           )}
-          <p className="text-lg font-semibold mb-2">{incomingCall.fromUserName || "Unknown"}</p>
+          <p className="text-lg font-semibold mb-2">{incomingCall.fromUserName || 'Unknown'}</p>
           <p className="text-gray-300 mb-4">is calling...</p>
           <div className="flex gap-4">
-            <Button onClick={handleAccept} className="px-6 py-2 text-lg bg-green-500 hover:bg-green-600 rounded-full">
+            <Button
+              onClick={handleAccept}
+              className="px-6 py-2 text-lg bg-green-500 hover:bg-green-600 rounded-full"
+            >
               Accept
             </Button>
-            <Button onClick={handleReject} variant="destructive" className="px-6 py-2 text-lg rounded-full">
+            <Button
+              onClick={handleReject}
+              variant="destructive"
+              className="px-6 py-2 text-lg rounded-full"
+            >
               Reject
             </Button>
           </div>
@@ -145,17 +150,17 @@ export const VideoCallUI = ({
           {remoteUserAvatar ? (
             <img
               src={remoteUserAvatar}
-              alt={remoteUserName || "User"}
+              alt={remoteUserName || 'User'}
               className="w-24 h-24 rounded-full object-cover border-2 border-white mb-4 shadow-lg"
             />
           ) : (
             <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-2xl font-bold mb-4 shadow-lg">
-              {remoteUserName?.[0]?.toUpperCase() || "?"}
+              {remoteUserName?.[0]?.toUpperCase() || '?'}
             </div>
           )}
 
           {/* Name & Label */}
-          <p className="text-xl font-semibold mb-1">{remoteUserName || "Start Call"}</p>
+          <p className="text-xl font-semibold mb-1">{remoteUserName || 'Start Call'}</p>
           <p className="text-gray-300 mb-6">Do you want to start a video call?</p>
 
           {/* Buttons */}
@@ -177,17 +182,28 @@ export const VideoCallUI = ({
         </div>
       )}
 
-
       {/* Call Controls */}
       {isCalling && (
         <div className="absolute bottom-8 flex items-center justify-center gap-6">
-          <Button onClick={toggleMic} variant="outline" className="rounded-full w-14 h-14 bg-gray-800 hover:bg-gray-700 border-none">
+          <Button
+            onClick={toggleMic}
+            variant="outline"
+            className="rounded-full w-14 h-14 bg-gray-800 hover:bg-gray-700 border-none"
+          >
             {micEnabled ? <Mic size={22} /> : <MicOff size={22} className="text-red-500" />}
           </Button>
-          <Button onClick={toggleCam} variant="outline" className="rounded-full w-14 h-14 bg-gray-800 hover:bg-gray-700 border-none">
+          <Button
+            onClick={toggleCam}
+            variant="outline"
+            className="rounded-full w-14 h-14 bg-gray-800 hover:bg-gray-700 border-none"
+          >
             {camEnabled ? <Camera size={22} /> : <CameraOff size={22} className="text-red-500" />}
           </Button>
-          <Button onClick={endCall} variant="destructive" className="rounded-full w-16 h-16 bg-red-600 hover:bg-red-700">
+          <Button
+            onClick={endCall}
+            variant="destructive"
+            className="rounded-full w-16 h-16 bg-red-600 hover:bg-red-700"
+          >
             <PhoneOff size={28} />
           </Button>
         </div>

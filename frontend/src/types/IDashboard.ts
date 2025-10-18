@@ -1,9 +1,9 @@
- export type DateFilter = "today" | "this_week" | "this_month" | "this_year" | "custom";
+export type DateFilter = 'today' | 'this_week' | 'this_month' | 'this_year' | 'custom';
 
 export interface IDateFilter {
   filter?: DateFilter;
   startDate?: string; // ISO yyyy-mm-dd
-  endDate?: string;   // ISO yyyy-mm-dd
+  endDate?: string; // ISO yyyy-mm-dd
 }
 
 export interface IDashboardSummary {
@@ -19,7 +19,7 @@ export interface ITopPackage {
   packageName: string;
   packageImage?: string;
   totalBookings: number;
-  totalRevenue:number
+  totalRevenue: number;
 }
 
 export interface ITopCategory {

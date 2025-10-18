@@ -38,7 +38,6 @@ const BannerList = () => {
       if (shouldBlock) {
         await blockBanner(id);
         toast.success('Banner blocked successfully');
-        
       } else {
         await unBlockBanner(id);
         toast.success('Banner unblocked successfully');
@@ -54,10 +53,10 @@ const BannerList = () => {
   };
   const handleDelete = async (id: string) => {
     try {
-      await deleteBanner(id); 
+      await deleteBanner(id);
       toast.success('Banner deleted successfully');
 
-       setBanners((prev) => prev.filter((banner) => banner._id.toString() !== id));
+      setBanners((prev) => prev.filter((banner) => banner._id.toString() !== id));
     } catch (error) {
       toast.error('Failed to delete banner');
       console.error('Delete error:', error);

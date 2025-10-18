@@ -1,10 +1,18 @@
-import api from "@/lib/axios/api";
+import api from '@/lib/axios/api';
 
-export const fetchCategoriesData = async (page: number, limit: number,search:string,status:string) => {
-  let params={
-    page,limit ,search,status
-  }
-  const response = await api.get(`/admin/categories`,{params});
+export const fetchCategoriesData = async (
+  page: number,
+  limit: number,
+  search: string,
+  status: string
+) => {
+  const params = {
+    page,
+    limit,
+    search,
+    status,
+  };
+  const response = await api.get(`/admin/categories`, { params });
   return response.data;
 };
 

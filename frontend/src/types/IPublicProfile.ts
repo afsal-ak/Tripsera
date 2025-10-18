@@ -1,4 +1,3 @@
-
 export interface IPublicProfile {
   _id: string;
   username: string;
@@ -15,6 +14,3 @@ export interface IPublicProfile {
   followersCount: number;
   followingCount: number;
 }
-
-
-

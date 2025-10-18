@@ -1,6 +1,6 @@
-import { Outlet, useParams, useNavigate } from "react-router-dom";
-import ChatListPage from "@/pages/admin/chat/ChatListPage";
-import { ArrowLeft } from "lucide-react";
+import { Outlet, useParams, useNavigate } from 'react-router-dom';
+import ChatListPage from '@/pages/admin/chat/ChatListPage';
+import { ArrowLeft } from 'lucide-react';
 
 const ChatAdminLayout = () => {
   const { roomId } = useParams();
@@ -13,7 +13,7 @@ const ChatAdminLayout = () => {
         className={`
           border-r border-gray-200 flex flex-col h-full
           lg:w-80 lg:block
-          ${roomId ? "hidden" : "w-full"}
+          ${roomId ? 'hidden' : 'w-full'}
           lg:flex-shrink-0
         `}
       >
@@ -24,7 +24,7 @@ const ChatAdminLayout = () => {
       <div
         className={`
           flex-1 flex flex-col h-full
-          ${!roomId ? "hidden lg:flex" : "flex"}
+          ${!roomId ? 'hidden lg:flex' : 'flex'}
         `}
       >
         {roomId ? (
@@ -32,7 +32,7 @@ const ChatAdminLayout = () => {
             {/* Mobile Back Header */}
             <div className="lg:hidden p-3 border-b flex items-center gap-3 bg-white sticky top-0 z-10 shadow-sm">
               <button
-                onClick={() => navigate("/admin/chat")}
+                onClick={() => navigate('/admin/chat')}
                 className="p-2 rounded-full hover:bg-gray-100 transition"
               >
                 <ArrowLeft size={20} />

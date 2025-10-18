@@ -7,21 +7,15 @@ import { logoutUser } from '@/redux/slices/userAuthSlice';
 import type { AppDispatch, RootState } from '@/redux/store';
 import { toast } from 'sonner';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
-import { fetchNotifications } from '@/redux/slices/notificationSlice';
- const Navbar = () => {
+const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { isAuthenticated, accessToken, user } = useSelector(
-    (state: RootState) => state.userAuth
-  );
+  const { isAuthenticated, accessToken, user } = useSelector((state: RootState) => state.userAuth);
 
- 
- const notificationUnread = useSelector(
-    (state: RootState) => state.notifications.unreadCount
-  )
-const totalChatUnread =useTotalUnreadCount(user?._id!)
+  const notificationUnread = useSelector((state: RootState) => state.notifications.unreadCount);
+  const totalChatUnread = useTotalUnreadCount(user?._id!);
 
-useEffect(() => {
+  useEffect(() => {
     if (!accessToken) {
       dispatch(logoutUser());
     }
@@ -53,7 +47,10 @@ useEffect(() => {
               <Link to="/blog" className="text-foreground hover:text-orange transition-colors">
                 Blog
               </Link>
-              <Link to="/custom-package" className="text-foreground hover:text-orange transition-colors">
+              <Link
+                to="/custom-package"
+                className="text-foreground hover:text-orange transition-colors"
+              >
                 Custom Package
               </Link>
               <Link to="/chatbot" className="text-foreground hover:text-orange transition-colors">
@@ -83,7 +80,7 @@ useEffect(() => {
             {/* Notification Bell */}
             <Link to="/notification" className="relative">
               <Bell className="w-6 h-6 text-foreground hover:text-orange" />
-               {notificationUnread > 0 && (
+              {notificationUnread > 0 && (
                 <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                   {notificationUnread}
                 </span>
@@ -195,7 +192,6 @@ useEffect(() => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Notification {notificationUnread > 0 && `(${notificationUnread})`}
-
             </Link>
             <Link
               to="/about"

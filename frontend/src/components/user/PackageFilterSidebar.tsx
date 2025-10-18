@@ -62,13 +62,6 @@ const PackageFilterSidebar: React.FC<Props> = ({ filters, onFilterChange, onClea
     onFilterChange(filtersToSend);
   };
 
-  //  const handleSearchChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const { value } = e.target;
-  //   onFilterChange({ ...filters, search: value });
-  // };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setLocalFilters((prev) => ({
@@ -76,10 +69,6 @@ const PackageFilterSidebar: React.FC<Props> = ({ filters, onFilterChange, onClea
       [name]: value,
     }));
   };
-  // console.log("Sending filters:", {
-  //   ...filters,
-  //   ...localFilters,
-  // });
 
   useEffect(() => {
     const loadCat = async () => {
@@ -98,21 +87,7 @@ const PackageFilterSidebar: React.FC<Props> = ({ filters, onFilterChange, onClea
     <aside className="w-full md:w-64 bg-white dark:bg-background p-4 rounded-lg border border-border shadow-sm space-y-6">
       <h3 className="text-xl font-semibold text-foreground">Filters</h3>
 
-      {/*  Search Input */}
-      {/* <div>
-        <label className="block text-sm font-medium text-muted-foreground mb-1">
-          Search
-        </label>
-        <input
-          name="search"
-          value={filters.search}
-          onChange={handleSearchChange}
-          placeholder="Search by title or location"
-          className="w-full mb-2 px-3 py-2 border rounded"
-        />
-      </div> */}
-
-      {/* 🗂️ Category Dropdown */}
+      {/*  Category Dropdown */}
       <div>
         <label className="block text-sm font-medium text-muted-foreground mb-1">Category</label>
         <select
@@ -151,9 +126,6 @@ const PackageFilterSidebar: React.FC<Props> = ({ filters, onFilterChange, onClea
           type="date"
           name="startDate"
           value={localFilters.startDate}
-          // onChange={(e) =>
-          //   setLocalFilters((prev) => ({ ...prev, startDate: e.target.value }))
-          // }
           onChange={(e) => {
             const newStartDate = e.target.value;
             setLocalFilters((prev) => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface UseLoadMoreProps {
   totalPages: number;
@@ -6,11 +6,7 @@ interface UseLoadMoreProps {
   onLoad: (page: number) => Promise<void>;
 }
 
-export const useLoadMore = ({
-  totalPages,
-  initialPage = 1,
-  onLoad,
-}: UseLoadMoreProps) => {
+export const useLoadMore = ({ totalPages, initialPage = 1, onLoad }: UseLoadMoreProps) => {
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -32,5 +28,5 @@ export const useLoadMore = ({
     }
   };
 
-  return { page, loadMore, hasMore, loadingPage:loading };
+  return { page, loadMore, hasMore, loadingPage: loading };
 };

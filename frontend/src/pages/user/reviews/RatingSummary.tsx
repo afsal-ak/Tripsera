@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export interface IRating {
   averageRating: number;
@@ -11,7 +11,7 @@ export interface IRating {
 }
 
 interface RatingSummaryProps {
-  summary?: IRating;  
+  summary?: IRating;
 }
 
 const RatingSummary: React.FC<RatingSummaryProps> = ({ summary }) => {
@@ -26,24 +26,19 @@ const RatingSummary: React.FC<RatingSummaryProps> = ({ summary }) => {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
       <div className="grid md:grid-cols-2 gap-8">
-        
         {/* Left side: Average */}
         <div className="text-center">
           <div className="text-5xl font-bold text-gray-900 mb-2">
-            {summary?.averageRating?.toFixed(1) || "0.0"}
+            {summary?.averageRating?.toFixed(1) || '0.0'}
           </div>
-          <p className="text-gray-600">
-            Based on {summary?.totalReviews || 0} reviews
-          </p>
+          <p className="text-gray-600">Based on {summary?.totalReviews || 0} reviews</p>
         </div>
 
         {/* Right side: Rating Distribution */}
         <div className="space-y-3">
           {[5, 4, 3, 2, 1].map((star) => {
             const count = starMap[star];
-            const percentage = summary?.totalReviews
-              ? (count / summary.totalReviews) * 100
-              : 0;
+            const percentage = summary?.totalReviews ? (count / summary.totalReviews) * 100 : 0;
 
             return (
               <div key={star} className="flex items-center gap-3">

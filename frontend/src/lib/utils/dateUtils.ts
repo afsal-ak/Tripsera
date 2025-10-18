@@ -14,13 +14,13 @@ export const formatMessageDate = (date: Date | string) => {
     messageDate.getMonth() === yesterday.getMonth() &&
     messageDate.getFullYear() === yesterday.getFullYear();
 
-  if (isToday) return "Today";
-  if (isYesterday) return "Yesterday";
+  if (isToday) return 'Today';
+  if (isYesterday) return 'Yesterday';
 
   // Older messages → return formatted date
-  return messageDate.toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
+  return messageDate.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
   });
 };

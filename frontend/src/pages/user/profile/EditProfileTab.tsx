@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/redux/store';
 import { setUser } from '@/redux/slices/userAuthSlice';
-import {  updateUserProfile } from '@/services/user/profileService';
+import { updateUserProfile } from '@/services/user/profileService';
 import { ProfileSchema, type ProfileFormSchema } from '@/schemas/ProfileFormSchema';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
@@ -19,13 +19,12 @@ type Props = {
   refetchUser: () => Promise<void>;
 };
 
-const EditProfileTab = ({ user, loading,refetchUser }: Props) => {
+const EditProfileTab = ({ user, loading, refetchUser }: Props) => {
   const accessToken = useSelector((state: RootState) => state.userAuth.accessToken);
   const currentUser = useSelector((state: RootState) => state.userAuth.user);
   const dispatch = useDispatch<AppDispatch>();
 
-
-// console.log(currentUser,'resux user')
+  // console.log(currentUser,'resux user')
   const {
     register,
     handleSubmit,
@@ -50,14 +49,13 @@ const EditProfileTab = ({ user, loading,refetchUser }: Props) => {
           user: {
             ...currentUser!,
             username: response?.userProfile?.username,
-            fullName:response?.userProfile?.fullName,
-            phone:response?.userProfile?.phone,
-
+            fullName: response?.userProfile?.fullName,
+            phone: response?.userProfile?.phone,
           },
           accessToken: accessToken!,
         })
       );
-      await refetchUser()
+      await refetchUser();
       toast.success('Profile updated successfully');
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Failed to update profile');
@@ -66,17 +64,17 @@ const EditProfileTab = ({ user, loading,refetchUser }: Props) => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-10">
-        {/* Cover Image Section */}
-    <div className="bg-white p-6 rounded-md shadow-md space-y-4">
-      <h2 className="text-xl font-semibold mb-2">Cover Image</h2>
-      <CoverImageTab user={user} loading={loading} />
-    </div>
+      {/* Cover Image Section */}
+      <div className="bg-white p-6 rounded-md shadow-md space-y-4">
+        <h2 className="text-xl font-semibold mb-2">Cover Image</h2>
+        <CoverImageTab user={user} loading={loading} />
+      </div>
 
-    {/* Profile Image Section */}
-    <div className="bg-white p-6 rounded-md shadow-md space-y-4">
-      <h2 className="text-xl font-semibold mb-2">Profile Image</h2>
-      <ProfileImageTab user={user} loading={loading} refetchUser={refetchUser} />
-    </div>
+      {/* Profile Image Section */}
+      <div className="bg-white p-6 rounded-md shadow-md space-y-4">
+        <h2 className="text-xl font-semibold mb-2">Profile Image</h2>
+        <ProfileImageTab user={user} loading={loading} refetchUser={refetchUser} />
+      </div>
 
       {/* Profile Info Form */}
       <form
@@ -87,25 +85,19 @@ const EditProfileTab = ({ user, loading,refetchUser }: Props) => {
           <div>
             <Label htmlFor="username">Username</Label>
             <Input {...register('username')} placeholder="Username" />
-            {errors.username && (
-              <p className="text-red-500 text-sm">{errors.username.message}</p>
-            )}
+            {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
           </div>
 
           <div>
             <Label htmlFor="fullName">Full Name</Label>
             <Input {...register('fullName')} placeholder="Full Name" />
-            {errors.fullName && (
-              <p className="text-red-500 text-sm">{errors.fullName.message}</p>
-            )}
+            {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName.message}</p>}
           </div>
 
           <div>
             <Label htmlFor="dob">Date of Birth</Label>
             <Input {...register('dob')} type="date" />
-            {errors.dob && (
-              <p className="text-red-500 text-sm">{errors.dob.message}</p>
-            )}
+            {errors.dob && <p className="text-red-500 text-sm">{errors.dob.message}</p>}
           </div>
 
           <div>
@@ -121,25 +113,14 @@ const EditProfileTab = ({ user, loading,refetchUser }: Props) => {
 
           <div className="md:col-span-2">
             <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              {...register('bio')}
-              placeholder="Tell us about yourself"
-            />
-            {errors.bio && (
-              <p className="text-red-500 text-sm">{errors.bio.message}</p>
-            )}
+            <Textarea {...register('bio')} placeholder="Tell us about yourself" />
+            {errors.bio && <p className="text-red-500 text-sm">{errors.bio.message}</p>}
           </div>
 
           <div>
             <Label htmlFor="phone">Phone Number</Label>
-            <Input
-              {...register('phone')}
-              type="number"
-              placeholder="Phone Number"
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message}</p>
-            )}
+            <Input {...register('phone')} type="number" placeholder="Phone Number" />
+            {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
           </div>
         </div>
 

@@ -21,25 +21,21 @@ import ReviewForm from '@/pages/user/reviews/ReviewForm';
 import UserReviewPage from '@/pages/user/reviews/UserReview';
 import ReviewDetail from '@/pages/user/reviews/ReviewDetail';
 import PublicProfile from '@/pages/user/profile/PublicProfile';
- import ReviewEditForm from '@/pages/user/reviews/ReviewEditForm';
+import ReviewEditForm from '@/pages/user/reviews/ReviewEditForm';
 import AddCustomPkgForm from '@/pages/user/customPkg/AddCustomPackageForm';
 import EditCustomPkgForm from '@/pages/user/customPkg/EditCustomPkgForm';
 import CustomPackagePage from '@/pages/user/customPkg/CustomPackagePage';
 import CustomPackageDetails from '@/pages/user/customPkg/CustomPackageDetailsPage';
 import ChatBot from '@/pages/user/chatbot/ChatBot';
 import UserSearchAndMessage from '@/components/chat/UserSearchForChat';
-// import MessagePage from '@/pages/user/chat/MessagePage';
 import ChatLayout from '@/layouts/ChatLayout';
-// import UploadImage from '@/pages/user/chat/UploadImage';
 import MessageMainPage from '@/pages/user/chat/MessageMainPage';
 import NotificationPage from '@/pages/user/notification/Notifications';
 
 const ProtectedRoutes = (
-  
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
     <Route path="/checkout/:id" element={<CheckoutPage />} />
-    {/* <Route path="/success" element={<BookingSuccessPage/>}/> */}
     <Route path="/booking-success/:id" element={<BookingSuccessPage />} />
     <Route path="/booking-failed/:id" element={<PaymentFailed />} />
     <Route path="/packages/:packageId/review" element={<ReviewPage />} />
@@ -47,15 +43,12 @@ const ProtectedRoutes = (
     <Route path="/profile/:username" element={<PublicProfile />} />
     <Route path="/custom-package" element={<AddCustomPkgForm />} />
     <Route path="/chatbot" element={<ChatBot />} />
-     <Route path="/user" element={<UserSearchAndMessage />} />
-     <Route path="/notification" element={<NotificationPage />} />
+    <Route path="/user" element={<UserSearchAndMessage />} />
+    <Route path="/notification" element={<NotificationPage />} />
 
-
-
-    <Route path='/chat' element={<ChatLayout />}>
+    <Route path="/chat" element={<ChatLayout />}>
       <Route path=":roomId" element={<MessageMainPage />} />
     </Route>
-
 
     <Route path="/account" element={<AccountLayout />}>
       <Route path="profile" element={<Profile />} />
@@ -76,8 +69,7 @@ const ProtectedRoutes = (
       <Route path="my-custom-package" element={<CustomPackagePage />} />
       <Route path="my-custom-package/:pkgId" element={<CustomPackageDetails />} />
       <Route path="my-custom-package/edit/:id" element={<EditCustomPkgForm />} />
-
-     </Route>
+    </Route>
   </Route>
 );
-export default ProtectedRoutes
+export default ProtectedRoutes;

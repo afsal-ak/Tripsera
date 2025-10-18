@@ -31,7 +31,7 @@ export const updateUserAddress = async (address: AddressFormSchema) => {
 
 export const getUserProfile = async () => {
   const response = await api.get('/user/profile');
-  console.log(response,'profile')
+  console.log(response, 'profile');
   return response.data;
 };
 
@@ -52,28 +52,27 @@ export const passwordChange = async (currentPassword: string, newPassword: strin
 
 //public profile
 
-export const fetchPublicProfile = async (username:string) => {
+export const fetchPublicProfile = async (username: string) => {
   const response = await api.get(`/user/profile/${username}`);
   return response.data;
 };
 
-export const handleFollow = async (userId:string) => {
+export const handleFollow = async (userId: string) => {
   const response = await api.post(`/user/follow/${userId}`);
   return response.data;
 };
 
-export const handleUnFollow = async (userId:string) => {
+export const handleUnFollow = async (userId: string) => {
   const response = await api.post(`/user/unfollow/${userId}`);
   return response.data;
 };
 
-export const handleProfilePrivacy = async (isPrivate:boolean) => {
-  const response = await api.patch(`/user/profile/privacy`,{isPrivate});
+export const handleProfilePrivacy = async (isPrivate: boolean) => {
+  const response = await api.patch(`/user/profile/privacy`, { isPrivate });
   return response.data;
 };
 
-
-export const handleSearchUserForChat = async (search:string) => {
+export const handleSearchUserForChat = async (search: string) => {
   const response = await api.get(`/user/users/search?search=${search}`);
   return response.data;
 };

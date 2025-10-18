@@ -1,17 +1,15 @@
-
-import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
-import type { IMessage, IChatRoom,IChatParticipant } from "@/types/IMessage";
-import { getUserRoom } from "@/services/user/messageService";
-import { adminGetUserRoom } from "@/services/admin/messageService";
-import type{ IChatRoomFilter } from "@/types/IChatRoom";
+import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import type { IMessage, IChatRoom, IChatParticipant } from '@/types/IMessage';
+import { getUserRoom } from '@/services/user/messageService';
+import { adminGetUserRoom } from '@/services/admin/messageService';
+import type { IChatRoomFilter } from '@/types/IChatRoom';
 interface ChatRoomsState {
   rooms: IChatRoom[];
   activeRoomId?: string;
   loading: boolean;
   error?: string;
   onlineStatus: Record<string, boolean>;
-  onlineUsers: string[],
-
+  onlineUsers: string[];
 }
 
 const initialState: ChatRoomsState = {
@@ -21,31 +19,26 @@ const initialState: ChatRoomsState = {
   error: undefined,
   onlineStatus: {},
   onlineUsers: [] as string[],
-
 };
 
 export const fetchUserRooms = createAsyncThunk(
-  "chatRooms/fetchRooms",
+  'chatRooms/fetchRooms',
   async (
     { isAdmin, filters }: { isAdmin?: boolean; filters?: IChatRoomFilter },
     { rejectWithValue }
   ) => {
     try {
-      const res = isAdmin
-        ? await adminGetUserRoom(filters)
-        : await getUserRoom(filters);
+      const res = isAdmin ? await adminGetUserRoom(filters) : await getUserRoom(filters);
 
       return res.data as IChatRoom[];
     } catch (err: any) {
-      return rejectWithValue(err.message || "Failed to fetch rooms");
+      return rejectWithValue(err.message || 'Failed to fetch rooms');
     }
   }
 );
 
-
-
 const chatRoomsSlice = createSlice({
-  name: "chatRooms",
+  name: 'chatRooms',
   initialState,
   reducers: {
     addRoom: (state, action: PayloadAction<IChatRoom>) => {
@@ -58,66 +51,58 @@ const chatRoomsSlice = createSlice({
 
       const room = state.rooms.find((r) => r._id === action.payload.roomId);
       if (room && room.unreadCounts) {
-   //     console.log(room, 'from setacive')
+        //     console.log(room, 'from setacive')
         room.unreadCounts[action.payload.currentUserId] = 0;
-        // room.totalUnread = Object.values(room.unreadCounts).reduce(
-        //   (sum, v) => sum + v,
-        //   0
-        // );
       }
-
     },
 
+    addMessageToRoom: (
+      state,
+      action: PayloadAction<{ roomId: string; message: IMessage; currentUserId: string }>
+    ) => {
+      const { roomId, message, currentUserId } = action.payload;
 
- addMessageToRoom: (
-  state,
-  action: PayloadAction<{ roomId: string; message: IMessage; currentUserId: string }>
-) => {
-  const { roomId, message, currentUserId } = action.payload;
+      const sender: IChatParticipant = {
+        _id: message.senderId._id,
+        username: message.senderId.username || 'Unknown',
+        profileImage: message.senderId.profileImage?.url,
+      };
 
-   
-  const sender: IChatParticipant = {
-    _id: message.senderId._id,
-    username: message.senderId.username || "Unknown",
-    profileImage: message.senderId.profileImage?.url,
-  };
+      const roomIndex = state.rooms.findIndex((r) => r._id === roomId);
 
-  const roomIndex = state.rooms.findIndex((r) => r._id === roomId);
+      if (roomIndex !== -1) {
+        // Room exists
+        const room = state.rooms[roomIndex];
+        room.lastMessageContent = message.content || message.mediaUrl;
+        room.updatedAt = new Date();
 
-  if (roomIndex !== -1) {
-    // Room exists
-    const room = state.rooms[roomIndex];
-    room.lastMessageContent = message.content || message.mediaUrl;
-    room.updatedAt = new Date();  
+        // Remove old position & move to top
+        state.rooms.splice(roomIndex, 1);
+        state.rooms.unshift(room);
+      } else {
+        // Room does not exist → create new
+        const newRoom: IChatRoom = {
+          _id: roomId,
+          participants: [sender],
+          createdBy: sender._id,
+          isGroup: false,
+          lastMessageContent: message.content ?? '',
+          unreadCounts: { [currentUserId]: 0 },
+          totalUnread: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        state.rooms.unshift(newRoom);
+      }
+    },
 
-    // Remove old position & move to top
-    state.rooms.splice(roomIndex, 1);
-    state.rooms.unshift(room);
-  } else {
-    // Room does not exist → create new
-    const newRoom: IChatRoom = {
-      _id: roomId,
-      participants: [sender],
-      createdBy: sender._id,
-      isGroup: false,
-      lastMessageContent: message.content ?? "",
-      unreadCounts: { [currentUserId]: 0 },
-      totalUnread: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    state.rooms.unshift(newRoom);
-  }
-}
-
-,
     updateRoomOnNewMessage: (
       state,
       action: PayloadAction<{ roomId: string; message: IMessage; currentUserId: string }>
     ) => {
       const { roomId, message, currentUserId } = action.payload;
       const room = state.rooms.find((r) => r._id === roomId);
-      console.log(message, 'redux')
+      console.log(message, 'redux');
       if (room) {
         //  update last message info for chat list
         room.lastMessageContent = message.content || message.mediaUrl;
@@ -126,17 +111,11 @@ const chatRoomsSlice = createSlice({
         //  if not sender, increase unread count
         if (message.senderId._id !== currentUserId) {
           if (!room.unreadCounts) {
-    room.unreadCounts = { [currentUserId]: 1 };
-            console.log(room.unreadCounts,'if')
+            room.unreadCounts = { [currentUserId]: 1 };
+            console.log(room.unreadCounts, 'if');
           } else {
-    room.unreadCounts[currentUserId] = (room.unreadCounts[currentUserId] || 0) + 1;
- // console.log("Room after:", JSON.parse(JSON.stringify(room)));
-
-            // room.unreadCounts![currentUserId] ++;
-                       // console.log((room.unreadCounts),'else')
-
+            room.unreadCounts[currentUserId] = (room.unreadCounts[currentUserId] || 0) + 1;
           }
-
         }
       }
     },
@@ -149,8 +128,7 @@ const chatRoomsSlice = createSlice({
       //console.log(lastMessageContent, 'redux')
       const room = state.rooms.find((r) => r._id === roomId);
       if (room) {
-        room.lastMessageContent = "Message deleted";
-
+        room.lastMessageContent = 'Message deleted';
       }
     },
     setUserOnline: (state, action: PayloadAction<string>) => {
@@ -165,26 +143,9 @@ const chatRoomsSlice = createSlice({
       state.onlineUsers = action.payload;
     },
 
-    markMessageAsReadInRoom: (
-      state,
-      action: PayloadAction<{ roomId: string; userId: string }>
-    ) => {
+    markMessageAsReadInRoom: (state, action: PayloadAction<{ roomId: string; userId: string }>) => {
       const { roomId, userId } = action.payload;
       const room = state.rooms.find((r) => r._id === roomId);
-
-      // if (room) {
-      //   // if (!room.unreadCounts) room.unreadCounts = {};
-      //   // //if (!room.unreadCounts[currentUserId]) room.unreadCounts[currentUserId] = 0;
-      //   // console.log('unread', room)
-      //   // room.unreadCounts[userId] = 0;
-
-      //   // room.totalUnread = Object.values(room.unreadCounts).reduce(
-      //   //   (sum, val) => sum + val,
-      //   //   0
-      //   // );
-      // }
-
-
     },
   },
 
@@ -197,10 +158,7 @@ const chatRoomsSlice = createSlice({
       .addCase(fetchUserRooms.fulfilled, (state, action: PayloadAction<IChatRoom[]>) => {
         state.loading = false;
         state.rooms = action.payload.map((room) => {
-          const totalUnread = Object.values(room.unreadCounts || {}).reduce(
-            (sum, v) => sum + v,
-            0
-          );
+          const totalUnread = Object.values(room.unreadCounts || {}).reduce((sum, v) => sum + v, 0);
           return { ...room, totalUnread };
         });
       })
@@ -217,12 +175,10 @@ export const {
   addMessageToRoom,
   deleteMessageFromRoom,
   markMessageAsReadInRoom,
-  // updateUserOnlineStatus
   updateRoomOnNewMessage,
   setCurrentOnlineUsers,
   setUserOffline,
-  setUserOnline
+  setUserOnline,
 } = chatRoomsSlice.actions;
 
 export default chatRoomsSlice.reducer;
-

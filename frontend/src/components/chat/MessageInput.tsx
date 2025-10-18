@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { Send } from "lucide-react";
+import { useState } from 'react';
+import { Send } from 'lucide-react';
 
 const MessageInput = () => {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   const handleSend = () => {
     if (!message.trim()) return;
-   // console.log("Send:", message);
-    setMessage("");
+    // console.log("Send:", message);
+    setMessage('');
   };
 
   return (

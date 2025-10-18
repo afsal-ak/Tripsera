@@ -1,9 +1,6 @@
-import React from "react";
+import React from 'react';
 
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean }
-> {
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
   constructor(props: any) {
     super(props);
     this.state = { hasError: false };
@@ -14,7 +11,7 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: any, errorInfo: any) {
-    console.error("Chart crashed:", error, errorInfo);
+    console.error('Chart crashed:', error, errorInfo);
   }
 
   render() {

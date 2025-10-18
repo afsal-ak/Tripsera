@@ -1,19 +1,13 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { useNavigate, useParams } from "react-router-dom";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Button } from "@/components/Button";
-import {
-  customPkgEditSchema,
-  type EditCustomPkgFormSchema,
-} from "@/schemas/customPkgSchema";
-import {
-  getCustomPkgById,
-  updateCustomPkg,
-} from "@/services/user/customPkgService";
-import { useEffect, useState } from "react";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Button } from '@/components/Button';
+import { customPkgEditSchema, type EditCustomPkgFormSchema } from '@/schemas/customPkgSchema';
+import { getCustomPkgById, updateCustomPkg } from '@/services/user/customPkgService';
+import { useEffect, useState } from 'react';
 
 const EditCustomPkgForm = () => {
   const { id } = useParams();
@@ -27,7 +21,7 @@ const EditCustomPkgForm = () => {
     formState: { errors },
   } = useForm<EditCustomPkgFormSchema>({
     resolver: zodResolver(customPkgEditSchema),
-    mode: "onBlur",
+    mode: 'onBlur',
   });
 
   // Fetch package data & prefill form
@@ -35,25 +29,25 @@ const EditCustomPkgForm = () => {
     const fetchData = async () => {
       try {
         const response = await getCustomPkgById(id!);
-        const pkg=response.data
-console.log(pkg,'pkg')
+        const pkg = response.data;
+        console.log(pkg, 'pkg');
         if (pkg) {
           // Prefill top-level fields
-          setValue("destination", pkg.destination || "");
-          setValue("tripType", pkg.tripType || "");
-          setValue("budget", pkg.budget || 0);
-          setValue("startDate", pkg.startDate?.split("T")[0] || "");
-           setValue("days", pkg.days || 0);
-          setValue("nights", pkg.nights || 0);
-          setValue("additionalDetails", pkg.additionalDetails || "");
+          setValue('destination', pkg.destination || '');
+          setValue('tripType', pkg.tripType || '');
+          setValue('budget', pkg.budget || 0);
+          setValue('startDate', pkg.startDate?.split('T')[0] || '');
+          setValue('days', pkg.days || 0);
+          setValue('nights', pkg.nights || 0);
+          setValue('additionalDetails', pkg.additionalDetails || '');
 
           // Prefill nested guest info safely
-          setValue("guestInfo.name", pkg.guestInfo?.name || "");
-          setValue("guestInfo.email", pkg.guestInfo?.email || "");
-          setValue("guestInfo.phone", pkg.guestInfo?.phone || "");
+          setValue('guestInfo.name', pkg.guestInfo?.name || '');
+          setValue('guestInfo.email', pkg.guestInfo?.email || '');
+          setValue('guestInfo.phone', pkg.guestInfo?.phone || '');
         }
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Failed to load package");
+        toast.error(error?.response?.data?.message || 'Failed to load package');
       } finally {
         setLoading(false);
       }
@@ -65,10 +59,10 @@ console.log(pkg,'pkg')
   const onSubmit = async (data: EditCustomPkgFormSchema) => {
     try {
       await updateCustomPkg(id!, data);
-      toast.success("Package updated successfully!");
+      toast.success('Package updated successfully!');
       navigate(-1);
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to update package");
+      toast.error(error?.response?.data?.message || 'Failed to update package');
     }
   };
 
@@ -81,12 +75,12 @@ console.log(pkg,'pkg')
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-6 bg-white shadow-lg rounded-xl p-6 max-w-2xl mx-auto"
     >
-  <div>
+      <div>
         <Label>Guest Info</Label>
         <div className="space-y-3">
-          <Input {...register("guestInfo.name")} placeholder="Guest Name" />
-          <Input {...register("guestInfo.email")} placeholder="Guest Email" />
-          <Input {...register("guestInfo.phone")} placeholder="Guest Phone" />
+          <Input {...register('guestInfo.name')} placeholder="Guest Name" />
+          <Input {...register('guestInfo.email')} placeholder="Guest Email" />
+          <Input {...register('guestInfo.phone')} placeholder="Guest Phone" />
           {(errors.guestInfo?.name || errors.guestInfo?.email || errors.guestInfo?.phone) && (
             <p className="text-red-500 text-sm">
               {errors.guestInfo?.name?.message ||
@@ -98,24 +92,14 @@ console.log(pkg,'pkg')
       </div>
       <div>
         <Label htmlFor="destination">Destination</Label>
-        <Input
-          id="destination"
-          {...register("destination")}
-          placeholder="Enter destination"
-        />
-        {errors.destination && (
-          <p className="text-red-500 text-sm">{errors.destination.message}</p>
-        )}
+        <Input id="destination" {...register('destination')} placeholder="Enter destination" />
+        {errors.destination && <p className="text-red-500 text-sm">{errors.destination.message}</p>}
       </div>
 
       {/* Trip Type */}
       <div>
         <Label htmlFor="tripType">Trip Type</Label>
-        <select
-          {...register("tripType")}
-          className="w-full border p-2 rounded"
-          id="tripType"
-        >
+        <select {...register('tripType')} className="w-full border p-2 rounded" id="tripType">
           <option value="">Select Trip Type</option>
           <option value="romantic">Romantic</option>
           <option value="adventure">Adventure</option>
@@ -124,9 +108,7 @@ console.log(pkg,'pkg')
           <option value="budget">Budget</option>
           <option value="other">Other</option>
         </select>
-        {errors.tripType && (
-          <p className="text-red-500 text-sm">{errors.tripType.message}</p>
-        )}
+        {errors.tripType && <p className="text-red-500 text-sm">{errors.tripType.message}</p>}
       </div>
 
       {/* Budget */}
@@ -135,66 +117,46 @@ console.log(pkg,'pkg')
         <Input
           id="budget"
           type="number"
-          {...register("budget", { valueAsNumber: true })}
+          {...register('budget', { valueAsNumber: true })}
           placeholder="Enter budget"
         />
-        {errors.budget && (
-          <p className="text-red-500 text-sm">{errors.budget.message}</p>
-        )}
+        {errors.budget && <p className="text-red-500 text-sm">{errors.budget.message}</p>}
       </div>
 
       {/* Dates */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="startDate">Start Date</Label>
-          <Input id="startDate" type="date" {...register("startDate")} />
-          {errors.startDate && (
-            <p className="text-red-500 text-sm">{errors.startDate.message}</p>
-          )}
+          <Input id="startDate" type="date" {...register('startDate')} />
+          {errors.startDate && <p className="text-red-500 text-sm">{errors.startDate.message}</p>}
         </div>
-        
       </div>
 
       {/* Days and Nights */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="days">Days</Label>
-          <Input
-            id="days"
-            type="number"
-            {...register("days", { valueAsNumber: true })}
-          />
-          {errors.days && (
-            <p className="text-red-500 text-sm">{errors.days.message}</p>
-          )}
+          <Input id="days" type="number" {...register('days', { valueAsNumber: true })} />
+          {errors.days && <p className="text-red-500 text-sm">{errors.days.message}</p>}
         </div>
         <div>
           <Label htmlFor="nights">Nights</Label>
-          <Input
-            id="nights"
-            type="number"
-            {...register("nights", { valueAsNumber: true })}
-          />
-          {errors.nights && (
-            <p className="text-red-500 text-sm">{errors.nights.message}</p>
-          )}
+          <Input id="nights" type="number" {...register('nights', { valueAsNumber: true })} />
+          {errors.nights && <p className="text-red-500 text-sm">{errors.nights.message}</p>}
         </div>
       </div>
 
-     
       {/* Additional Details */}
       <div>
         <Label htmlFor="additionalDetails">Additional Details</Label>
         <textarea
           id="additionalDetails"
-          {...register("additionalDetails")}
+          {...register('additionalDetails')}
           className="w-full border p-2 rounded"
           placeholder="Enter any additional details..."
         />
         {errors.additionalDetails && (
-          <p className="text-red-500 text-sm">
-            {errors.additionalDetails.message}
-          </p>
+          <p className="text-red-500 text-sm">{errors.additionalDetails.message}</p>
         )}
       </div>
 

@@ -1,35 +1,35 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
+import { useSelector } from 'react-redux';
 import {
   fetchComments,
   addComment,
   addReply,
   fetchReplies,
   deleteComment,
-} from "@/services/user/commentService";
-import type { IComment, ReplyComment } from "@/types/IComment";
-import type { RootState } from "@/redux/store";
-import { OptionsDropdown } from "./OptionsDropdown ";
-import { useLoadMore } from "@/hooks/useLoadMore";
+} from '@/services/user/commentService';
+import type { IComment, ReplyComment } from '@/types/IComment';
+import type { RootState } from '@/redux/store';
+import { OptionsDropdown } from './OptionsDropdown ';
+import { useLoadMore } from '@/hooks/useLoadMore';
 
 interface CommentSectionProps {
   parentId: string;
-  parentType: "blog" | "package" | "post";
+  parentType: 'blog' | 'package' | 'post';
 }
 
 const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
   const currentUser = useSelector((state: RootState) => state.userAuth.user);
 
   const [comments, setComments] = useState<IComment[]>([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [replyMap, setReplyMap] = useState<Record<string, IComment[]>>({});
   const [replyPage, setReplyPage] = useState<Record<string, number>>({});
   const [hasMoreReplies, setHasMoreReplies] = useState<Record<string, boolean>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState("");
+  const [replyText, setReplyText] = useState('');
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -52,7 +52,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
         setComments((prev) => [...prev, ...res.data]);
       }
     } catch (error) {
-      toast.error("Failed to fetch comments");
+      toast.error('Failed to fetch comments');
     } finally {
       setLoading(false);
     }
@@ -65,9 +65,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
 
       setReplyMap((prev) => ({
         ...prev,
-        [commentId]: pageParam === 1
-          ? newReplies
-          : [...(prev[commentId] || []), ...newReplies],
+        [commentId]: pageParam === 1 ? newReplies : [...(prev[commentId] || []), ...newReplies],
       }));
 
       setExpanded((prev) => ({ ...prev, [commentId]: true }));
@@ -77,13 +75,13 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
         [commentId]: pageParam < res.pagination.totalPages,
       }));
     } catch (error) {
-      console.error("Failed to load replies", error);
+      console.error('Failed to load replies', error);
     }
   };
 
   // Add comment or reply
   const onSubmit = async (message: string, parentCommentId?: string) => {
-    if (!message.trim()) return toast.error("Please write something");
+    if (!message.trim()) return toast.error('Please write something');
 
     try {
       if (parentCommentId) {
@@ -91,7 +89,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
           parentId,
           parentType,
           parentCommentId,
-          text: message
+          text: message,
         };
         const res = await addReply(reply);
 
@@ -99,7 +97,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
         setExpanded((prev) => ({ ...prev, [parentCommentId]: true }));
         loadReplies(parentCommentId, 1);
 
-        setReplyText("");
+        setReplyText('');
         setReplyingTo(null);
       } else {
         const newComment = await addComment({ parentId, parentType, text: message });
@@ -111,16 +109,16 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
             user: {
               _id: currentUser?._id,
               username: currentUser?.username,
-              profileImage: currentUser?.profileImage?.url || "/profile-default.jpg",
+              profileImage: currentUser?.profileImage?.url || '/profile-default.jpg',
             },
           },
           ...prev,
         ]);
-        setText("");
+        setText('');
       }
     } catch (error) {
       console.error(error);
-      toast.error("Error posting comment");
+      toast.error('Error posting comment');
     }
   };
 
@@ -136,9 +134,9 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
       } else {
         setComments((prev) => prev.filter((c) => c._id !== commentId));
       }
-      toast.success("Deleted successfully");
+      toast.success('Deleted successfully');
     } catch {
-      toast.error("Something went wrong");
+      toast.error('Something went wrong');
     }
   };
 
@@ -147,7 +145,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
     onLoad: loadComments,
   });
 
-  const options = [{ label: "Delete", value: "delete", className: "text-red-500" }];
+  const options = [{ label: 'Delete', value: 'delete', className: 'text-red-500' }];
 
   return (
     <div className="flex flex-col h-[500px] bg-white rounded-t-2xl">
@@ -174,7 +172,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
                 className="flex gap-3"
               >
                 <img
-                  src={comment.user?.profileImage || "/profile-default.jpg"}
+                  src={comment.user?.profileImage || '/profile-default.jpg'}
                   alt="user"
                   className="w-9 h-9 rounded-full object-cover"
                 />
@@ -198,9 +196,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
                   {/* Footer */}
                   <div className="text-xs text-muted-foreground flex gap-3 mt-1 pl-2 items-center">
                     <button
-                      onClick={() =>
-                        setReplyingTo(replyingTo === comment._id ? null : comment._id)
-                      }
+                      onClick={() => setReplyingTo(replyingTo === comment._id ? null : comment._id)}
                       className="hover:underline"
                     >
                       Reply
@@ -214,9 +210,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
                         }}
                         className="hover:underline"
                       >
-                        {expanded[comment._id]
-                          ? "Hide replies"
-                          : `View replies (${replyCount})`}
+                        {expanded[comment._id] ? 'Hide replies' : `View replies (${replyCount})`}
                       </button>
                     )}
 
@@ -229,7 +223,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
                   {replyingTo === comment._id && (
                     <div className="pl-6 mt-2 flex items-center gap-2">
                       <img
-                        src={currentUser?.profileImage?.url || "/profile-default.jpg"}
+                        src={currentUser?.profileImage?.url || '/profile-default.jpg'}
                         alt="User"
                         className="w-7 h-7 rounded-full object-cover"
                       />
@@ -261,7 +255,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
                             className="flex gap-2"
                           >
                             <img
-                              src={reply.user?.profileImage || "/profile-default.jpg"}
+                              src={reply.user?.profileImage || '/profile-default.jpg'}
                               alt="reply-user"
                               className="w-7 h-7 rounded-full object-cover"
                             />
@@ -303,9 +297,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
         </AnimatePresence>
 
         {loading && (
-          <p className="text-center text-xs text-muted-foreground py-2">
-            Loading comments...
-          </p>
+          <p className="text-center text-xs text-muted-foreground py-2">Loading comments...</p>
         )}
 
         {!loading && hasMore && (
@@ -327,7 +319,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
         className="border-t px-4 py-3 flex items-center gap-3"
       >
         <img
-          src={currentUser?.profileImage?.url || "/profile-default.jpg"}
+          src={currentUser?.profileImage?.url || '/profile-default.jpg'}
           alt="User"
           className="w-8 h-8 rounded-full object-cover"
         />
@@ -337,10 +329,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
           placeholder="Add a comment..."
           className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:outline-none"
         />
-        <button
-          type="submit"
-          className="text-orange font-semibold text-sm hover:text-orange/80"
-        >
+        <button type="submit" className="text-orange font-semibold text-sm hover:text-orange/80">
           Post
         </button>
       </form>

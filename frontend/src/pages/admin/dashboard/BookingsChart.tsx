@@ -1,4 +1,4 @@
-import type { IBookingsChartPoint } from "@/types/IDashboard";
+import type { IBookingsChartPoint } from '@/types/IDashboard';
 import {
   BarChart,
   Bar,
@@ -10,38 +10,38 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   Legend,
-} from "recharts";
-import { TrendingUp } from "lucide-react";
+} from 'recharts';
+import { TrendingUp } from 'lucide-react';
 
 interface BookingsChartProps {
   data: IBookingsChartPoint[];
-  type?: "line" | "bar";
+  type?: 'line' | 'bar';
 }
 
 // Safe formatter
 function formatLabel(item: any): string {
-  if (!item || !item._id) return "N/A";
+  if (!item || !item._id) return 'N/A';
 
-  if (typeof item._id === "string") return item._id;
+  if (typeof item._id === 'string') return item._id;
 
   const { day, month, year } = item._id;
 
   if (day && month && year) {
-    return `${String(day).padStart(2, "0")} ${new Date(year, month - 1).toLocaleString("default", {
-      month: "short",
+    return `${String(day).padStart(2, '0')} ${new Date(year, month - 1).toLocaleString('default', {
+      month: 'short',
     })}`;
   } else if (month && year) {
-    return `${new Date(year, month - 1).toLocaleString("default", {
-      month: "short",
+    return `${new Date(year, month - 1).toLocaleString('default', {
+      month: 'short',
     })} ${year}`;
   } else if (year) {
     return `${year}`;
   }
-  return "Unknown";
+  return 'Unknown';
 }
 
-export default function BookingsChart({ data, type = "bar" }: BookingsChartProps) {
-    //  Format safely
+export default function BookingsChart({ data, type = 'bar' }: BookingsChartProps) {
+  //  Format safely
   const formattedData = data.map((item) => ({
     ...item,
     label: formatLabel(item),
@@ -58,7 +58,7 @@ export default function BookingsChart({ data, type = "bar" }: BookingsChartProps
       </div>
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
-          {type === "bar" ? (
+          {type === 'bar' ? (
             <LineChart data={formattedData} margin={{ left: 10, right: 10, bottom: 10 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" interval={0} tick={{ fontSize: 12 }} />

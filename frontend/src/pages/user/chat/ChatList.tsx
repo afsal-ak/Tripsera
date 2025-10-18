@@ -1,13 +1,12 @@
-
-import { useSelector } from "react-redux";
-import type { RootState } from "@/redux/store";
-import { ChatRoomItem } from "@/components/chat/ChatRoomItem";
-import { ChatListHeader } from "@/components/chat/ChatListHeader";
-import UserSearchForChat from "@/components/chat/UserSearchForChat";
-import { MessageCircle } from "lucide-react";
-import { useState } from "react";
-import type { IChatRoom } from "@/types/IMessage";
-import { useTotalUnreadCount } from "@/hooks/useTotalUnreadCount";
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
+import { ChatRoomItem } from '@/components/chat/ChatRoomItem';
+import { ChatListHeader } from '@/components/chat/ChatListHeader';
+import UserSearchForChat from '@/components/chat/UserSearchForChat';
+import { MessageCircle } from 'lucide-react';
+import { useState } from 'react';
+import type { IChatRoom } from '@/types/IMessage';
+import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
 interface ChatListProps {
   onRoomSelect: (room: IChatRoom) => void;
   selectedRoomId?: string;
@@ -16,28 +15,27 @@ interface ChatListProps {
 export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
   const rooms = useSelector((state: RootState) => state.chatRoom.rooms);
   const currentUserId = useSelector((state: RootState) => state.userAuth.user?._id);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
-  let totalUnread= useTotalUnreadCount(currentUserId!)
-   console.log(totalUnread,'coutn unread')
-
+  const totalUnread = useTotalUnreadCount(currentUserId!);
+  console.log(totalUnread, 'coutn unread');
 
   const filteredRooms = rooms.filter((room) => {
-    const otherParticipant =room.otherUser
-    console.log(otherParticipant,'other')
+    const otherParticipant = room.otherUser;
+    console.log(otherParticipant, 'other');
     //  room.participants.find((p) => p._id !== currentUserId) || room.participants[0];
     const searchTerm = search.toLowerCase();
     return (
       otherParticipant?.username?.toLowerCase().includes(searchTerm) ||
       (room.isGroup && room.name?.toLowerCase().includes(searchTerm)) ||
-      (room.lastMessageContent || "").toLowerCase().includes(searchTerm)
+      (room.lastMessageContent || '').toLowerCase().includes(searchTerm)
     );
   });
 
   return (
     <div className="bg-white flex flex-col h-full">
       <div className="sticky top-0 z-10 bg-white shadow-sm">
-        <ChatListHeader role='user' totalUnread={totalUnread} />
+        <ChatListHeader role="user" totalUnread={totalUnread} />
         <UserSearchForChat onRoomCreated={() => {}} />
       </div>
 
@@ -54,8 +52,8 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
               onClick={() => onRoomSelect(room)}
               className={`cursor-pointer ${
                 selectedRoomId === room._id
-                  ? "bg-blue-50 border-l-4 border-blue-500"
-                  : "hover:bg-gray-50"
+                  ? 'bg-blue-50 border-l-4 border-blue-500'
+                  : 'hover:bg-gray-50'
               }`}
             >
               <ChatRoomItem

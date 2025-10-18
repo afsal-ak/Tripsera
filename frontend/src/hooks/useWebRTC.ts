@@ -1,6 +1,6 @@
-import { useRef, useState, useCallback, useEffect } from "react";
-import socket from "@/sockets/socket";
-import { SOCKET_WEBRTC_EVENTS } from "@/sockets/events";
+import { useRef, useState, useCallback, useEffect } from 'react';
+import socket from '@/sockets/socket';
+import { SOCKET_WEBRTC_EVENTS } from '@/sockets/events';
 
 interface UseWebRTCProps {
   currentUserId: string;
@@ -27,7 +27,7 @@ export const useWebRTC = ({
 
   const createPeerConnection = useCallback(() => {
     const pc = new RTCPeerConnection({
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     });
 
     pc.onicecandidate = (event) => {
@@ -42,9 +42,7 @@ export const useWebRTC = ({
 
     pc.ontrack = (event) => {
       if (!remoteStreamRef.current) remoteStreamRef.current = new MediaStream();
-      event.streams[0].getTracks().forEach((track) =>
-        remoteStreamRef.current?.addTrack(track)
-      );
+      event.streams[0].getTracks().forEach((track) => remoteStreamRef.current?.addTrack(track));
     };
 
     peerConnectionRef.current = pc;
@@ -70,19 +68,19 @@ export const useWebRTC = ({
     setIsCalling(true);
     onCallStarted?.();
 
-     socket.emit(
+    socket.emit(
       SOCKET_WEBRTC_EVENTS.OFFER,
       {
         to: remoteUserId,
         fromUserId: currentUserId,
         roomId,
-        callType: "video",
+        callType: 'video',
         offer,
       },
       (response: { callId?: string }) => {
         if (response?.callId) {
           setActiveCallId(response.callId);
-         }
+        }
       }
     );
   }, [remoteUserId, currentUserId, roomId, createPeerConnection, onCallStarted]);
@@ -139,16 +137,14 @@ export const useWebRTC = ({
   //  Socket handlers
   useEffect(() => {
     socket.on(SOCKET_WEBRTC_EVENTS.OFFER, async ({ from, offer, callId }) => {
-       setActiveCallId(callId);
+      setActiveCallId(callId);
       await acceptCall(offer, from, callId);
     });
 
     socket.on(SOCKET_WEBRTC_EVENTS.ANSWER, async ({ answer, callId }) => {
-       if (callId) setActiveCallId(callId);
+      if (callId) setActiveCallId(callId);
       if (peerConnectionRef.current) {
-        await peerConnectionRef.current.setRemoteDescription(
-          new RTCSessionDescription(answer)
-        );
+        await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(answer));
       }
     });
 
@@ -159,7 +155,7 @@ export const useWebRTC = ({
     });
 
     socket.on(SOCKET_WEBRTC_EVENTS.END, () => {
-       endCall();
+      endCall();
     });
 
     return () => {

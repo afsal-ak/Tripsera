@@ -5,7 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/Button';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/Dialog';
-import { getBookingById, cancelBooking, confirmBooking,changeTravelDate } from '@/services/admin/bookingService';
+import {
+  getBookingById,
+  cancelBooking,
+  confirmBooking,
+  changeTravelDate,
+} from '@/services/admin/bookingService';
 import { getPackageById } from '@/services/admin/packageService';
 import type { IPackage } from '@/types/IPackage';
 import type { IBooking } from '@/types/IBooking';
@@ -23,8 +28,8 @@ import {
   XCircle,
 } from 'lucide-react';
 import { ChangeTravelDate } from './ChangeTravelDate';
- import { BookingHistoryCard } from '@/components/booking/BookingHistoryCard';
- 
+import { BookingHistoryCard } from '@/components/booking/BookingHistoryCard';
+
 const BookingDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -33,7 +38,7 @@ const BookingDetails = () => {
   const [open, setOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [note, setNote] = useState('');
-  const [noteOpen, setNoteOpen] = useState(false)
+  const [noteOpen, setNoteOpen] = useState(false);
   const [pkg, setPkg] = useState<IPackage | null>(null);
 
   useEffect(() => {
@@ -41,7 +46,7 @@ const BookingDetails = () => {
       try {
         const data = await getBookingById(id!);
         setBooking(data.booking);
-        console.log(data, 'data')
+        console.log(data, 'data');
       } catch {
         toast.error('Failed to load booking.');
         navigate(-1);
@@ -50,9 +55,9 @@ const BookingDetails = () => {
       }
     };
     if (id) loadBooking();
-  }, [id,]);
+  }, [id]);
 
-  const pkgId = booking?.packageId._id
+  const pkgId = booking?.packageId._id;
   useEffect(() => {
     const loadPackage = async () => {
       if (!pkgId) {
@@ -60,7 +65,7 @@ const BookingDetails = () => {
       }
       try {
         const data = await getPackageById(pkgId);
-        console.log(data, 'pkg data')
+        console.log(data, 'pkg data');
         setPkg(data);
       } catch (error) {
         console.error('Failed to fetch package details', error);
@@ -83,10 +88,10 @@ const BookingDetails = () => {
       setBooking((prev) =>
         prev
           ? {
-            ...prev,
-            bookingStatus: 'cancelled',
-            updatedAt: new Date(),
-          }
+              ...prev,
+              bookingStatus: 'cancelled',
+              updatedAt: new Date(),
+            }
           : prev
       );
       setOpen(false);
@@ -95,24 +100,24 @@ const BookingDetails = () => {
     }
   };
   // Change travel date (prepone/postpone)
-    const handleChangeTravelDate = async (newDate: string | Date, note?: string) => {
-      if (!newDate) {
-        toast.error('Please select a new travel date.');
-        return;
-      }
-  
-      try {
-        const updatedBooking = await changeTravelDate(id!, newDate, note);
-        setBooking(updatedBooking)
-        console.log(updatedBooking, 'travel booking date cahge')
-        toast.success('Travel date updated successfully.');
-  
-        setBooking(updatedBooking);
-      } catch (error: any) {
-        toast.error('Failed to update travel date.');
-        console.error(error);
-      }
-    };
+  const handleChangeTravelDate = async (newDate: string | Date, note?: string) => {
+    if (!newDate) {
+      toast.error('Please select a new travel date.');
+      return;
+    }
+
+    try {
+      const updatedBooking = await changeTravelDate(id!, newDate, note);
+      setBooking(updatedBooking);
+      console.log(updatedBooking, 'travel booking date cahge');
+      toast.success('Travel date updated successfully.');
+
+      setBooking(updatedBooking);
+    } catch (error: any) {
+      toast.error('Failed to update travel date.');
+      console.error(error);
+    }
+  };
   const handleConfirm = async () => {
     if (!note.trim()) {
       toast.error('Please provide a cancellation reason.');
@@ -126,10 +131,10 @@ const BookingDetails = () => {
       setBooking((prev) =>
         prev
           ? {
-            ...prev,
-            bookingStatus: 'confirmed',
-            updatedAt: new Date(),
-          }
+              ...prev,
+              bookingStatus: 'confirmed',
+              updatedAt: new Date(),
+            }
           : prev
       );
       setNoteOpen(false);
@@ -139,21 +144,31 @@ const BookingDetails = () => {
   };
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'confirmed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      case 'failed': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'confirmed':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'failed':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'confirmed': return <CheckCircle className="w-4 h-4" />;
-      case 'pending': return <Clock className="w-4 h-4" />;
-      case 'cancelled': return <XCircle className="w-4 h-4" />;
-      case 'failed': return <AlertCircle className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
+      case 'confirmed':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'pending':
+        return <Clock className="w-4 h-4" />;
+      case 'cancelled':
+        return <XCircle className="w-4 h-4" />;
+      case 'failed':
+        return <AlertCircle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
     }
   };
 
@@ -179,7 +194,9 @@ const BookingDetails = () => {
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
                   {booking?.packageId?.title}
                 </h1>
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(booking?.bookingStatus || '')}`}>
+                <div
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(booking?.bookingStatus || '')}`}
+                >
                   {getStatusIcon(booking?.bookingStatus || '')}
                   {booking?.bookingStatus?.toUpperCase()}
                 </div>
@@ -195,8 +212,6 @@ const BookingDetails = () => {
                 </span>
               </div>
             </div>
-
-
           </div>
         </div>
       </div>
@@ -209,7 +224,10 @@ const BookingDetails = () => {
             {booking?.packageId?.imageUrls?.[0]?.url && (
               <Card className="overflow-hidden">
                 <img
-                  src={booking?.packageId.imageUrls[0].url.replace("/upload/", "/upload/f_auto,q_auto/")}
+                  src={booking?.packageId.imageUrls[0].url.replace(
+                    '/upload/',
+                    '/upload/f_auto,q_auto/'
+                  )}
                   alt={booking?.packageId.title}
                   className="w-full h-64 lg:h-80 object-cover"
                 />
@@ -240,7 +258,9 @@ const BookingDetails = () => {
               <CardContent>
                 <div className="space-y-6">
                   <section className="bg-white rounded-xl p-8 shadow-sm border">
-                    <h2 className="text-2xl font-bold text-foreground mb-6">Day by Day Itinerary</h2>
+                    <h2 className="text-2xl font-bold text-foreground mb-6">
+                      Day by Day Itinerary
+                    </h2>
                     <div className="space-y-4">
                       {pkg?.itinerary?.map((day, index) => (
                         <Card
@@ -257,16 +277,18 @@ const BookingDetails = () => {
                                   {day.title}
                                 </h3>
                                 {day.description && (
-                                  <p className="text-sm text-muted-foreground mb-3">{day.description}</p>
+                                  <p className="text-sm text-muted-foreground mb-3">
+                                    {day.description}
+                                  </p>
                                 )}
                                 <ul className="space-y-2">
                                   {day.activities
                                     .sort((a, b) => a.startTime.localeCompare(b.startTime))
                                     .map((activity, actIndex) => {
                                       const formatTime = (time24: string) => {
-                                        const [hourStr, minute] = time24.split(":");
+                                        const [hourStr, minute] = time24.split(':');
                                         let hour = parseInt(hourStr, 10);
-                                        const ampm = hour >= 12 ? "PM" : "AM";
+                                        const ampm = hour >= 12 ? 'PM' : 'AM';
                                         hour = hour % 12 || 12;
                                         return `${hour}:${minute} ${ampm}`;
                                       };
@@ -274,9 +296,12 @@ const BookingDetails = () => {
                                       return (
                                         <li key={actIndex} className="flex items-center space-x-2">
                                           <span className="text-orange font-semibold">
-                                            {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
+                                            {formatTime(activity.startTime)} -{' '}
+                                            {formatTime(activity.endTime)}
                                           </span>
-                                          <span className="text-muted-foreground">{activity.activity}</span>
+                                          <span className="text-muted-foreground">
+                                            {activity.activity}
+                                          </span>
                                         </li>
                                       );
                                     })}
@@ -288,7 +313,6 @@ const BookingDetails = () => {
                       ))}
                     </div>
                   </section>
-
                 </div>
               </CardContent>
             </Card>
@@ -348,30 +372,40 @@ const BookingDetails = () => {
                   <span className="text-gray-600">Travel Date</span>
                   <span className="font-medium">
                     {booking?.travelDate
-                      ? new Date(booking?.travelDate).toLocaleDateString("en-IN", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })
-                      : "—"}
+                      ? new Date(booking?.travelDate).toLocaleDateString('en-IN', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      : '—'}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Total Amount</span>
-                  <span className="font-semibold text-xl text-green-600">₹{booking?.totalAmount}</span>
+                  <span className="font-semibold text-xl text-green-600">
+                    ₹{booking?.totalAmount}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Total Amount Paid</span>
-                  <span className="font-semibold text-xl text-green-600">₹{booking?.amountPaid}</span>
+                  <span className="font-semibold text-xl text-green-600">
+                    ₹{booking?.amountPaid}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Payment Status</span>
-                  <span className={`font-medium ${booking?.paymentStatus === 'paid' ? 'text-green-600' :
-                    booking?.paymentStatus === 'pending' ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
+                  <span
+                    className={`font-medium ${
+                      booking?.paymentStatus === 'paid'
+                        ? 'text-green-600'
+                        : booking?.paymentStatus === 'pending'
+                          ? 'text-yellow-600'
+                          : 'text-red-600'
+                    }`}
+                  >
                     {booking?.paymentStatus}
                   </span>
                 </div>
@@ -395,8 +429,6 @@ const BookingDetails = () => {
                     <span className="font-medium text-green-600">{booking?.couponCode}</span>
                   </div>
                 )}
-
-
               </CardContent>
             </Card>
 
@@ -423,7 +455,6 @@ const BookingDetails = () => {
                   ))}
                 </div>
               </CardContent>
-
             </Card>
 
             {booking &&
@@ -435,8 +466,6 @@ const BookingDetails = () => {
                   handleChangeTravelDate={handleChangeTravelDate}
                 />
               )}
-
-
 
             <Card>
               <CardHeader>
@@ -454,10 +483,10 @@ const BookingDetails = () => {
                     </div>
                     <div>
                       <p className="text-gray-800 font-medium">
-                        {booking?.userId?.username || "N/A"}
+                        {booking?.userId?.username || 'N/A'}
                       </p>
                       <p className="text-gray-500 text-sm">
-                        {booking?.userId?.email || "No email available"}
+                        {booking?.userId?.email || 'No email available'}
                       </p>
                     </div>
                   </div>
@@ -478,7 +507,7 @@ const BookingDetails = () => {
                     </div>
                     <div>
                       <p className="text-gray-700 font-medium">
-                        {booking?.contactDetails?.name || "N/A"}
+                        {booking?.contactDetails?.name || 'N/A'}
                       </p>
                     </div>
                   </div>
@@ -489,9 +518,7 @@ const BookingDetails = () => {
                       <Phone className="w-4 h-4 text-yellow-600" />
                     </div>
                     <div>
-                      <p className="text-gray-700">
-                        {booking?.contactDetails?.phone || "N/A"}
-                      </p>
+                      <p className="text-gray-700">{booking?.contactDetails?.phone || 'N/A'}</p>
                     </div>
                   </div>
 
@@ -501,23 +528,20 @@ const BookingDetails = () => {
                       <Mail className="w-4 h-4 text-purple-600" />
                     </div>
                     <div>
-                      <p className="text-gray-700">
-                        {booking?.contactDetails?.email || "N/A"}
-                      </p>
+                      <p className="text-gray-700">{booking?.contactDetails?.email || 'N/A'}</p>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-
             {/* Action Buttons */}
             <div className="space-y-3">
               {/* Confirms Buttons */}
 
-              {booking?.bookingStatus !== "cancelled" &&
-                booking?.bookingStatus !== "confirmed" && new Date(booking?.travelDate!) > new Date() && (
-
+              {booking?.bookingStatus !== 'cancelled' &&
+                booking?.bookingStatus !== 'confirmed' &&
+                new Date(booking?.travelDate!) > new Date() && (
                   <Dialog open={noteOpen} onOpenChange={setNoteOpen}>
                     <DialogTrigger asChild>
                       <Button variant="destructive" className="w-full">
@@ -536,7 +560,11 @@ const BookingDetails = () => {
                           className="w-full"
                         />
                         <div className="flex gap-3">
-                          <Button variant="outline" onClick={() => setNoteOpen(false)} className="flex-1">
+                          <Button
+                            variant="outline"
+                            onClick={() => setNoteOpen(false)}
+                            className="flex-1"
+                          >
                             Close
                           </Button>
                           <Button onClick={handleConfirm} variant="destructive" className="flex-1">
@@ -548,40 +576,44 @@ const BookingDetails = () => {
                   </Dialog>
                 )}
 
-
               {/* Cancel Booking */}
-              {booking?.bookingStatus !== "cancelled" && new Date(booking?.travelDate!) > new Date() && (
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="destructive" className="w-full">
-                      Cancel Booking
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Cancel Booking</h3>
-                      <p className="text-gray-600">Please provide a reason for cancellation:</p>
-                      <Textarea
-                        rows={4}
-                        value={cancelReason}
-                        onChange={(e) => setCancelReason(e.target.value)}
-                        placeholder="Enter your reason for cancellation..."
-                        className="w-full"
-                      />
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => setOpen(false)} className="flex-1">
-                          Keep Booking
-                        </Button>
-                        <Button onClick={handleCancel} variant="destructive" className="flex-1">
-                          Cancel Booking
-                        </Button>
+              {booking?.bookingStatus !== 'cancelled' &&
+                new Date(booking?.travelDate!) > new Date() && (
+                  <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="destructive" className="w-full">
+                        Cancel Booking
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Cancel Booking</h3>
+                        <p className="text-gray-600">Please provide a reason for cancellation:</p>
+                        <Textarea
+                          rows={4}
+                          value={cancelReason}
+                          onChange={(e) => setCancelReason(e.target.value)}
+                          placeholder="Enter your reason for cancellation..."
+                          className="w-full"
+                        />
+                        <div className="flex gap-3">
+                          <Button
+                            variant="outline"
+                            onClick={() => setOpen(false)}
+                            className="flex-1"
+                          >
+                            Keep Booking
+                          </Button>
+                          <Button onClick={handleCancel} variant="destructive" className="flex-1">
+                            Cancel Booking
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
+                    </DialogContent>
+                  </Dialog>
+                )}
 
-              {booking?.bookingStatus !== "cancelled" &&
+              {booking?.bookingStatus !== 'cancelled' &&
                 new Date(booking?.travelDate!) <= new Date() && (
                   <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex items-start gap-2">
@@ -597,7 +629,7 @@ const BookingDetails = () => {
         </div>
       </div>
 
-  <BookingHistoryCard
+      <BookingHistoryCard
         title="Traveler History"
         type="traveler"
         history={booking?.travelerHistory || []}
@@ -607,8 +639,6 @@ const BookingDetails = () => {
         type="date"
         history={booking?.history || []}
       />
-
-
     </div>
   );
 };

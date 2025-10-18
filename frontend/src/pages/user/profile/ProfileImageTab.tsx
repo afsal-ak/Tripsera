@@ -1,21 +1,21 @@
-import {  useState } from 'react';
+import { useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/redux/store';
 import { setUser } from '@/redux/slices/userAuthSlice';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { updateProfilepic,   } from '@/services/user/profileService';
-   import { Button } from '@/components/Button';
- import ImageCropper from '@/components/ImageCropper';
+import { updateProfilepic } from '@/services/user/profileService';
+import { Button } from '@/components/Button';
+import ImageCropper from '@/components/ImageCropper';
 import type { IUser } from '@/types/IUser';
- import { toast } from 'sonner';
- type Props = {
+import { toast } from 'sonner';
+type Props = {
   user?: IUser;
   loading: boolean;
-  refetchUser:()=>Promise<void>
+  refetchUser: () => Promise<void>;
 };
 
-const ProfileImageTab = ({ user, loading,refetchUser }: Props) => {
+const ProfileImageTab = ({ user, loading, refetchUser }: Props) => {
   const accessToken = useSelector((state: RootState) => state.userAuth.accessToken);
   const currentUser = useSelector((state: RootState) => state.userAuth.user);
   const dispatch = useDispatch<AppDispatch>();
@@ -63,18 +63,12 @@ const ProfileImageTab = ({ user, loading,refetchUser }: Props) => {
     }
   };
 
-   
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-10">
-      
       {/* Profile Image Section */}
       <div className="flex flex-col items-center gap-3">
         <img
-          src={
-            croppedImages[0]
-              ? URL.createObjectURL(croppedImages[0])
-              : profilePicPreview
-          }
+          src={croppedImages[0] ? URL.createObjectURL(croppedImages[0]) : profilePicPreview}
           alt="Profile"
           className="w-28 h-28 rounded-full object-cover border-4 border-orange shadow-md"
         />
@@ -135,8 +129,6 @@ const ProfileImageTab = ({ user, loading,refetchUser }: Props) => {
         </div>
       </div>
 
-
-
       {/* Crop Modal */}
       {currentImage && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center px-4">
@@ -153,8 +145,6 @@ const ProfileImageTab = ({ user, loading,refetchUser }: Props) => {
           </div>
         </div>
       )}
-
-     
     </div>
   );
 };

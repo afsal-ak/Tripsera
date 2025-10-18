@@ -116,14 +116,6 @@ const EmailOtpPage = () => {
             {loading ? 'Verifying...' : 'Verify OTP'}
           </Button>
 
-          {/* <Button
-          variant="ghost"
-          className="w-full text-sm text-blue-600"
-          onClick={handleResend}
-          disabled={resendLoading}
-        >
-          {resendLoading ? "Resending..." : "Resend OTP"}
-        </Button> */}
           <p className="text-sm text-center text-muted-foreground">
             Didn’t receive the code?{' '}
             <button

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { User, Heart, Calendar, X, BadgePercent, Wallet, IdCard,List } from 'lucide-react';
+import { User, Heart, Calendar, X, BadgePercent, Wallet, IdCard, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Props {

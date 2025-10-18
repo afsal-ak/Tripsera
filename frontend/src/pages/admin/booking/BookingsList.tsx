@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useDebounce } from 'use-debounce'
+import { useDebounce } from 'use-debounce';
 import { toast } from 'sonner';
 import { Edit } from 'lucide-react';
 import { Button } from '@/components/Button';
@@ -68,41 +67,38 @@ const BookingList = () => {
     };
 
     fetchBookings();
-  }, [currentPage, debouncedSearch,searchParams]);
- // console.log(bookings, 'booki');
+  }, [currentPage, debouncedSearch, searchParams]);
+  // console.log(bookings, 'booki');
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
     if (debouncedSearch) {
       params.set('package', debouncedSearch);
-    }
-    else params.delete('package');
+    } else params.delete('package');
     params.set('page', '1');
     setSearchParams(params);
   }, [debouncedSearch]);
 
- 
-
   const handleFilterChange = () => {
-  const params = new URLSearchParams(searchParams);
-  if (statusFilter) {
-    params.set('status', statusFilter);
-  } else {
-    params.delete('status');
-  }
-  if (startDate) {
-    params.set('startDate', startDate);
-  } else {
-    params.delete('startDate');
-  }
-  if (endDate) {
-    params.set('endDate', endDate);
-  } else {
-    params.delete('endDate');
-  }
-  params.set('page', '1'); 
-  setSearchParams(params);
-};
+    const params = new URLSearchParams(searchParams);
+    if (statusFilter) {
+      params.set('status', statusFilter);
+    } else {
+      params.delete('status');
+    }
+    if (startDate) {
+      params.set('startDate', startDate);
+    } else {
+      params.delete('startDate');
+    }
+    if (endDate) {
+      params.set('endDate', endDate);
+    } else {
+      params.delete('endDate');
+    }
+    params.set('page', '1');
+    setSearchParams(params);
+  };
 
   const handleClearFilters = () => {
     const newParams = new URLSearchParams(searchParams);
@@ -119,7 +115,6 @@ const BookingList = () => {
 
     setSearchParams(newParams);
   };
-
 
   const handlePageChange = (page: number) => {
     setSearchParams((prev) => {
@@ -226,12 +221,13 @@ const BookingList = () => {
                       </TableCell>
                       <TableCell>
                         <span
-                          className={`font-medium ${booking.bookingStatus === 'confirmed'
-                            ? 'text-green-600'
-                            : booking.bookingStatus === 'pending'
-                              ? 'text-yellow-600'
-                              : 'text-red-600'
-                            }`}
+                          className={`font-medium ${
+                            booking.bookingStatus === 'confirmed'
+                              ? 'text-green-600'
+                              : booking.bookingStatus === 'pending'
+                                ? 'text-yellow-600'
+                                : 'text-red-600'
+                          }`}
                         >
                           {booking.bookingStatus}
                         </span>

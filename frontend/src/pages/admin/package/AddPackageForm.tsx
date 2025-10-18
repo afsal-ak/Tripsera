@@ -1,19 +1,18 @@
-import { useEffect, useState } from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Select from "react-select";
-import { addPackageSchema, type AddPackageFormSchema } from "@/schemas/AddPackageSchema";
-import { addPackage } from "@/services/admin/packageService";
-import { getCategory } from "@/services/admin/packageService";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { useEffect, useState } from 'react';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Select from 'react-select';
+import { addPackageSchema, type AddPackageFormSchema } from '@/schemas/AddPackageSchema';
+import { addPackage } from '@/services/admin/packageService';
+import { getCategory } from '@/services/admin/packageService';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import ImageCropper from '@/components/ImageCropper';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { Label } from "@/components/ui/Label";
-import { Button } from "@/components/ui/button";
+import { Label } from '@/components/ui/Label';
+import { Button } from '@/components/ui/button';
 
 export default function AddPackageForm() {
-
   const {
     croppedImages,
     setCroppedImages,
@@ -35,38 +34,38 @@ export default function AddPackageForm() {
     formState: { errors, isSubmitting },
   } = useForm<AddPackageFormSchema>({
     resolver: zodResolver(addPackageSchema),
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: {
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       price: 0,
       durationDays: 1,
       durationNights: 0,
-      startDate: "",
-      endDate: "",
+      startDate: '',
+      endDate: '',
       category: [],
-      startPoint: "",
+      startPoint: '',
       location: [
         {
-          name: "",
-          lat: "",
-          lng: "",
+          name: '',
+          lat: '',
+          lng: '',
         },
       ],
 
-      included: [""],
+      included: [''],
 
-      notIncluded: [""],
+      notIncluded: [''],
       itinerary: [
         {
           day: 1,
-          title: "",
-          description: "",
-          activities: [{ startTime: "", endTime: "", activity: "" }],
+          title: '',
+          description: '',
+          activities: [{ startTime: '', endTime: '', activity: '' }],
         },
       ],
       images: [],
-      offer: { type: "percentage", value: 0, validUntil: "", isActive: false },
+      offer: { type: 'percentage', value: 0, validUntil: '', isActive: false },
     },
   });
   // keep RHF images in sync with hook state
@@ -79,7 +78,7 @@ export default function AddPackageForm() {
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [isSubmittingPkg, setIsSubmittingPkg] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     let mounted = true;
     const fetchCategories = async () => {
@@ -96,17 +95,17 @@ export default function AddPackageForm() {
       }
     };
     fetchCategories();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-
   // Field arrays for location, included, notIncluded, itinerary
-  const locArray = useFieldArray({ control, name: "location" as const });
-  const itineraryArray = useFieldArray({ control, name: "itinerary" as const });
+  const locArray = useFieldArray({ control, name: 'location' as const });
+  const itineraryArray = useFieldArray({ control, name: 'itinerary' as const });
 
   // images & crop state
-  const images = watch("images");
-
+  const images = watch('images');
 
   // Submit
   const onSubmit = async (data: AddPackageFormSchema) => {
@@ -115,28 +114,28 @@ export default function AddPackageForm() {
 
       const form = new FormData();
 
-      croppedImages.forEach((file) => form.append('images', file))
+      croppedImages.forEach((file) => form.append('images', file));
 
       Object.entries(data).forEach(([key, value]) => {
-        if (key === "images") return;
+        if (key === 'images') return;
 
-        if (Array.isArray(value) || typeof value === "object") {
+        if (Array.isArray(value) || typeof value === 'object') {
           // stringify arrays and objects
           form.append(key, JSON.stringify(value));
         } else {
-          form.append(key, String(value ?? ""));
+          form.append(key, String(value ?? ''));
         }
       });
 
       // send
       await addPackage(form);
-      navigate("/admin/packages");
-      toast.success("Package saved successfullly");
+      navigate('/admin/packages');
+      toast.success('Package saved successfullly');
       reset();
       setCroppedImages([]);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to save");
+      toast.error('Failed to save');
     } finally {
       setIsSubmittingPkg(false);
     }
@@ -145,13 +144,13 @@ export default function AddPackageForm() {
   const addDay = () => {
     itineraryArray.append({
       day: itineraryArray.fields.length + 1,
-      title: "",
-      description: "",
-      activities: [{ startTime: "", endTime: "", activity: "" }],
+      title: '',
+      description: '',
+      activities: [{ startTime: '', endTime: '', activity: '' }],
     });
   };
   useEffect(() => {
-    console.log("Form errors:", errors);
+    console.log('Form errors:', errors);
   }, [errors]);
 
   return (
@@ -164,7 +163,7 @@ export default function AddPackageForm() {
               image={currentImage}
               onCropComplete={handleCropComplete}
               onCancel={handleCropCancel}
-              aspect={16 / 9}  
+              aspect={16 / 9}
             />
           </div>
         </div>
@@ -177,14 +176,14 @@ export default function AddPackageForm() {
             {/* Title */}
             <div>
               <label className="block font-medium">Title</label>
-              <input {...register("title")} className="border p-2 w-full rounded" />
+              <input {...register('title')} className="border p-2 w-full rounded" />
               {errors.title && <p className="text-red-500">{errors.title.message}</p>}
             </div>
 
             {/* Description */}
             <div>
               <label className="block font-medium">Description</label>
-              <textarea {...register("description")} className="border p-2 w-full rounded" />
+              <textarea {...register('description')} className="border p-2 w-full rounded" />
               {errors.description && <p className="text-red-500">{errors.description.message}</p>}
             </div>
 
@@ -198,7 +197,7 @@ export default function AddPackageForm() {
                     options={categoryOptions}
                     isLoading={loadingCategories}
                     isMulti
-                    value={categoryOptions.filter(c => field.value?.includes(c.value))}
+                    value={categoryOptions.filter((c) => field.value?.includes(c.value))}
                     onChange={(selected) =>
                       field.onChange((selected as any).map((s: any) => s.value))
                     }
@@ -206,27 +205,41 @@ export default function AddPackageForm() {
                   />
                 )}
               />
-              {errors.category && (
-                <p className="text-red-500">{errors.category.message}</p>
-              )}
+              {errors.category && <p className="text-red-500">{errors.category.message}</p>}
             </div>
 
             {/* Price & duration */}
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block">Price</label>
-                <input type="number" {...register("price", { valueAsNumber: true })} className="border p-2 rounded w-full" />
+                <input
+                  type="number"
+                  {...register('price', { valueAsNumber: true })}
+                  className="border p-2 rounded w-full"
+                />
                 {errors.price && <p className="text-red-500">{errors.price.message}</p>}
               </div>
               <div>
                 <label className="block">Days</label>
-                <input type="number" {...register("durationDays", { valueAsNumber: true })} className="border p-2 rounded w-full" />
-                {errors.durationDays && <p className="text-red-500">{errors.durationDays.message}</p>}
+                <input
+                  type="number"
+                  {...register('durationDays', { valueAsNumber: true })}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.durationDays && (
+                  <p className="text-red-500">{errors.durationDays.message}</p>
+                )}
               </div>
               <div>
                 <label className="block">Nights</label>
-                <input type="number" {...register("durationNights", { valueAsNumber: true })} className="border p-2 rounded w-full" />
-                {errors.durationNights && <p className="text-red-500">{errors.durationNights.message}</p>}
+                <input
+                  type="number"
+                  {...register('durationNights', { valueAsNumber: true })}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.durationNights && (
+                  <p className="text-red-500">{errors.durationNights.message}</p>
+                )}
               </div>
             </div>
 
@@ -234,12 +247,16 @@ export default function AddPackageForm() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label>Start Date</label>
-                <input type="date" {...register("startDate")} className="border p-2 rounded w-full" />
+                <input
+                  type="date"
+                  {...register('startDate')}
+                  className="border p-2 rounded w-full"
+                />
                 {errors.startDate && <p className="text-red-500">{errors.startDate.message}</p>}
               </div>
               <div>
                 <label>End Date</label>
-                <input type="date" {...register("endDate")} className="border p-2 rounded w-full" />
+                <input type="date" {...register('endDate')} className="border p-2 rounded w-full" />
                 {errors.endDate && <p className="text-red-500">{errors.endDate.message}</p>}
               </div>
             </div>
@@ -247,10 +264,9 @@ export default function AddPackageForm() {
             {/* Start point */}
             <div>
               <label>Start Point</label>
-              <input {...register("startPoint")} className="border p-2 w-full rounded" />
+              <input {...register('startPoint')} className="border p-2 w-full rounded" />
               {errors.startPoint && <p className="text-red-500">{errors.startPoint.message}</p>}
             </div>
-
 
             {/* Locations */}
             <div>
@@ -258,7 +274,6 @@ export default function AddPackageForm() {
               {locArray.fields.map((f, i) => (
                 <div key={f.id} className="border p-4 rounded mb-4">
                   <div className="flex flex-col gap-2">
-
                     {/* Name Field */}
                     <div className="flex flex-col">
                       <label className="text-sm font-medium">Name</label>
@@ -303,7 +318,7 @@ export default function AddPackageForm() {
                       type="button"
                       onClick={() => locArray.remove(i)}
                       disabled={locArray.fields.length === 1}
-                      className={`mt-2 text-red-600 ${locArray.fields.length === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className={`mt-2 text-red-600 ${locArray.fields.length === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       Remove
                     </button>
@@ -313,19 +328,17 @@ export default function AddPackageForm() {
 
               <button
                 type="button"
-                onClick={() => locArray.append({ name: "", lat: "", lng: "" })}
+                onClick={() => locArray.append({ name: '', lat: '', lng: '' })}
                 className="text-blue-600 mt-2"
               >
                 + Add Location
               </button>
             </div>
 
-
-
             {/* Included */}
             <div>
               <label className="block font-medium">Included</label>
-              {watch("included")?.map((_, i) => (
+              {watch('included')?.map((_, i) => (
                 <div key={i} className="flex flex-col gap-1 mb-2">
                   <div className="flex gap-2">
                     <input
@@ -336,15 +349,16 @@ export default function AddPackageForm() {
                       type="button"
                       onClick={() =>
                         setValue(
-                          "included",
-                          watch("included").filter((_, idx) => idx !== i)
+                          'included',
+                          watch('included').filter((_, idx) => idx !== i)
                         )
                       }
-                      disabled={watch("included")?.length === 1} // always keep at least 1
-                      className={`${watch("included")?.length === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "text-red-600"
-                        }`}
+                      disabled={watch('included')?.length === 1} // always keep at least 1
+                      className={`${
+                        watch('included')?.length === 1
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'text-red-600'
+                      }`}
                     >
                       ❌
                     </button>
@@ -356,9 +370,7 @@ export default function AddPackageForm() {
               ))}
               <button
                 type="button"
-                onClick={() =>
-                  setValue("included", [...(watch("included") ?? []), ""])
-                }
+                onClick={() => setValue('included', [...(watch('included') ?? []), ''])}
                 className="text-blue-600 mt-1"
               >
                 + Add Included
@@ -368,7 +380,7 @@ export default function AddPackageForm() {
             {/* Not Included */}
             <div className="mt-4">
               <label className="block font-medium">Not Included</label>
-              {watch("notIncluded")?.map((_, i) => (
+              {watch('notIncluded')?.map((_, i) => (
                 <div key={i} className="flex flex-col gap-1 mb-2">
                   <div className="flex gap-2">
                     <input
@@ -379,15 +391,16 @@ export default function AddPackageForm() {
                       type="button"
                       onClick={() =>
                         setValue(
-                          "notIncluded",
-                          watch("notIncluded").filter((_, idx) => idx !== i)
+                          'notIncluded',
+                          watch('notIncluded').filter((_, idx) => idx !== i)
                         )
                       }
-                      disabled={watch("notIncluded")?.length === 1} // always keep at least 1
-                      className={`${watch("notIncluded")?.length === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "text-red-600"
-                        }`}
+                      disabled={watch('notIncluded')?.length === 1} // always keep at least 1
+                      className={`${
+                        watch('notIncluded')?.length === 1
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'text-red-600'
+                      }`}
                     >
                       ❌
                     </button>
@@ -399,26 +412,20 @@ export default function AddPackageForm() {
               ))}
               <button
                 type="button"
-                onClick={() =>
-                  setValue("notIncluded", [...(watch("notIncluded") ?? []), ""])
-                }
+                onClick={() => setValue('notIncluded', [...(watch('notIncluded') ?? []), ''])}
                 className="text-blue-600 mt-1"
               >
                 + Add Not Included
               </button>
             </div>
 
-
             {/* Itinerary */}
 
             <div>
               <label className="block font-medium">Itinerary</label>
               {errors.itinerary?.root?.message && (
-                <p className="text-red-500 text-sm mb-2">
-                  {errors.itinerary.root.message}
-                </p>
+                <p className="text-red-500 text-sm mb-2">{errors.itinerary.root.message}</p>
               )}
-
 
               {itineraryArray.fields.map((day, i) => (
                 <div key={day.id} className="border p-4 rounded-md mb-4">
@@ -428,10 +435,11 @@ export default function AddPackageForm() {
                       type="button"
                       onClick={() => itineraryArray.remove(i)}
                       disabled={itineraryArray.fields.length === 1}
-                      className={`${itineraryArray.fields.length === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "text-red-600"
-                        }`}
+                      className={`${
+                        itineraryArray.fields.length === 1
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'text-red-600'
+                      }`}
                     >
                       Delete Day
                     </button>
@@ -454,7 +462,9 @@ export default function AddPackageForm() {
                     className="border p-2 w-full mb-2"
                   />
                   {errors.itinerary?.[i]?.description && (
-                    <p className="text-red-500 text-sm">{errors.itinerary[i]?.description?.message}</p>
+                    <p className="text-red-500 text-sm">
+                      {errors.itinerary[i]?.description?.message}
+                    </p>
                   )}
 
                   {/* Activities */}
@@ -524,7 +534,9 @@ export default function AddPackageForm() {
                             <button
                               type="button"
                               onClick={() =>
-                                field.onChange(field.value.filter((_: any, idx: number) => idx !== j))
+                                field.onChange(
+                                  field.value.filter((_: any, idx: number) => idx !== j)
+                                )
                               }
                               className="text-red-600"
                               disabled={field.value.length === 1} // keep at least 1 activity
@@ -539,7 +551,7 @@ export default function AddPackageForm() {
                           onClick={() =>
                             field.onChange([
                               ...(field.value ?? []),
-                              { startTime: "", endTime: "", activity: "" },
+                              { startTime: '', endTime: '', activity: '' },
                             ])
                           }
                           className="text-blue-600"
@@ -568,7 +580,7 @@ export default function AddPackageForm() {
                 <input
                   type="text"
                   placeholder="Offer name"
-                  {...register("offer.name" as const)}
+                  {...register('offer.name' as const)}
                   className="border p-2 rounded w-full"
                 />
                 {errors.offer?.name && (
@@ -581,16 +593,17 @@ export default function AddPackageForm() {
                 <div className="flex flex-col mb-2 md:mb-0">
                   <label className="text-sm font-medium mb-1">Type</label>
                   <select
-                    {...register("offer.type" as const)}
+                    {...register('offer.type' as const)}
                     className="border p-2 rounded w-full"
                   >
                     <option value="percentage">Percentage</option>
                     <option value="flat">Flat</option>
                   </select>
                   {errors.offer?.value?.message && (
-                    <p className="text-red-500 text-sm mt-1">{(errors.offer.value as any).message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {(errors.offer.value as any).message}
+                    </p>
                   )}
-
                 </div>
 
                 {/* Offer Value */}
@@ -599,7 +612,7 @@ export default function AddPackageForm() {
                   <input
                     type="number"
                     placeholder="Value"
-                    {...register("offer.value" as const, { valueAsNumber: true })}
+                    {...register('offer.value' as const, { valueAsNumber: true })}
                     className="border p-2 rounded w-full md:w-32"
                   />
                   {errors.offer?.value && (
@@ -612,7 +625,7 @@ export default function AddPackageForm() {
                   <label className="text-sm font-medium mb-1">Valid Until</label>
                   <input
                     type="date"
-                    {...register("offer.validUntil" as const)}
+                    {...register('offer.validUntil' as const)}
                     className="border p-2 rounded w-full"
                   />
                   {errors.offer?.validUntil && (
@@ -624,16 +637,19 @@ export default function AddPackageForm() {
                 <div className="flex items-center mt-5 md:mt-0">
                   <input
                     type="checkbox"
-                    {...register("offer.isActive" as const)}
+                    {...register('offer.isActive' as const)}
                     id="offerActive"
                     className="mr-2"
                   />
-                  <label htmlFor="offerActive" className="text-sm font-medium">Active</label>
+                  <label htmlFor="offerActive" className="text-sm font-medium">
+                    Active
+                  </label>
                 </div>
               </div>
             </div>
             <div>
-              <Label>Upload Images (Max 4)</Label><br />
+              <Label>Upload Images (Max 4)</Label>
+              <br />
               <input
                 type="file"
                 accept="image/*"

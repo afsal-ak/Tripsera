@@ -3,9 +3,6 @@ import z from 'zod';
 const imageFileSchema = z.instanceof(File).refine((file) => file.size <= 5 * 1024 * 1024, {
   message: 'Image size must be less than 5MB',
 });
-// .refine(file => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type), {
-//   message: "Invalid image format. Only JPG, PNG, WEBP allowed",
-// });
 
 export const blogSchema = z.object({
   title: z
@@ -25,9 +22,6 @@ export const blogSchema = z.object({
       required_error: 'Status is required',
     })
     .optional(),
-
-  //   // Optional frontend-uploaded file
-  //   coverImage: imageFileSchema.optional(),
 
   images: z
     .array(imageFileSchema)

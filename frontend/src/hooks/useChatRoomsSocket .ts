@@ -1,8 +1,7 @@
-
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import socket from "@/sockets/socket";
-import { SOCKET_EVENTS } from "@/sockets/events";
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import socket from '@/sockets/socket';
+import { SOCKET_EVENTS } from '@/sockets/events';
 import {
   updateRoomOnNewMessage,
   deleteMessageFromRoom,
@@ -10,9 +9,9 @@ import {
   setUserOnline,
   setUserOffline,
   setCurrentOnlineUsers,
-} from "@/redux/slices/chatRoomSlice";
-import type { AppDispatch } from "@/redux/store";
-import type { IMessage } from "@/types/IMessage";
+} from '@/redux/slices/chatRoomSlice';
+import type { AppDispatch } from '@/redux/store';
+import type { IMessage } from '@/types/IMessage';
 
 interface UseChatRoomsSocketProps {
   currentUserId: string;
@@ -24,37 +23,30 @@ export const useChatRoomsSocket = ({ currentUserId }: UseChatRoomsSocketProps) =
   useEffect(() => {
     if (!currentUserId) return;
 
-   // console.log("Attaching socket listeners for user:", currentUserId);
-
     socket.emit(SOCKET_EVENTS.USER_CONNECTED, { userId: currentUserId });
 
     const handleNewMessage = (message: IMessage) => {
-     // console.log(" New message received:", message._id);
       dispatch(updateRoomOnNewMessage({ roomId: message.roomId, message, currentUserId }));
     };
 
     const handleMessageDeleted = ({ roomId, messageId }: { roomId: string; messageId: string }) => {
-     // console.log("🗑 Message deleted:", messageId);
       dispatch(deleteMessageFromRoom({ roomId, messageId }));
     };
 
     const handleMessageRead = ({ roomId, userId }: { roomId: string; userId: string }) => {
-   //   console.log(" Message read in room:", roomId, "by", userId);
       dispatch(markMessageAsReadInRoom({ roomId, userId }));
     };
 
     const handleUserOnline = ({ userId }: { userId: string }) => {
-    //  console.log(" User online:", userId);
       dispatch(setUserOnline(userId));
     };
 
     const handleUserOffline = ({ userId }: { userId: string }) => {
-     // console.log(" User offline:", userId);
       dispatch(setUserOffline(userId));
     };
 
     const handleCurrentOnlineUsers = ({ users }: { users: string[] }) => {
-     // console.log(" Current online users:", users);
+      // console.log(" Current online users:", users);
       dispatch(setCurrentOnlineUsers(users));
     };
 
@@ -75,7 +67,7 @@ export const useChatRoomsSocket = ({ currentUserId }: UseChatRoomsSocketProps) =
     socket.on(SOCKET_EVENTS.CURRENT_ONLINE_USERS, handleCurrentOnlineUsers);
 
     return () => {
-    //  console.log("Cleaning up socket listeners for user:", currentUserId);
+      //  console.log("Cleaning up socket listeners for user:", currentUserId);
       socket.emit(SOCKET_EVENTS.USER_DISCONNECTED, { userId: currentUserId });
 
       socket.off(SOCKET_EVENTS.NEW_MESSAGE, handleNewMessage);

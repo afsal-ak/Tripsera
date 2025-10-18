@@ -1,17 +1,15 @@
- 
 export interface ICall {
-    _id?:  string;
+  _id?: string;
 
-    callerId:  string;
-    receiverId: string;
-    roomId:  string;
-    callType: "audio" | "video";
-    status: "initiated" | "answered" | "missed" | "ended";
-    startedAt?: Date;
-    endedAt?: Date;
+  callerId: string;
+  receiverId: string;
+  roomId: string;
+  callType: 'audio' | 'video';
+  status: 'initiated' | 'answered' | 'missed' | 'ended';
+  startedAt?: Date;
+  endedAt?: Date;
   createdAt: Date;
-    updatedAt?: Date;
+  updatedAt?: Date;
 
-    duration?: number;
+  duration?: number;
 }
-

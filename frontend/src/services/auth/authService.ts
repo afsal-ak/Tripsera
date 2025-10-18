@@ -1,11 +1,15 @@
-import api from "@/lib/axios/api";
+import api from '@/lib/axios/api';
 export const handlePreRegister = async (
   email: string,
   username: string,
   password: string,
-  referralCode?:string
+  referralCode?: string
 ): Promise<string> => {
-  const response = await api.post(`/user/pre-register?referralCode=${referralCode}`, { email, username, password });
+  const response = await api.post(`/user/pre-register?referralCode=${referralCode}`, {
+    email,
+    username,
+    password,
+  });
   return response.data;
 };
 
@@ -20,7 +24,7 @@ export const handleResendOtp = async (email: string) => {
 
 export const handleLogin = async (email: string, password: string) => {
   const response = await api.post('/user/login', { email, password });
-  console.log(response,'from service')
+  console.log(response, 'from service');
   return response.data;
 };
 

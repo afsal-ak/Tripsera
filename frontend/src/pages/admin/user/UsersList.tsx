@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -34,7 +33,7 @@ const UserList = () => {
   const [status, setStatus] = useState(searchParams.get('status') || '');
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+    setCurrentPage(page);
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
       newParams.set('page', page.toString());
@@ -48,28 +47,28 @@ const UserList = () => {
     onPageChange: handlePageChange,
   });
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
-        let filters:IFilter={
-          page:currentPage,
+        const filters: IFilter = {
+          page: currentPage,
           limit,
-          search:debouncedSearch,
-          status
-        }
+          search: debouncedSearch,
+          status,
+        };
         const res = await fetchUsersData(filters);
-        console.log(res,'ress');
-        
+        console.log(res, 'ress');
+
         setUsers(res.data);
         setTotalPages(res.pagination.totalPages);
-       } catch (error) {
+      } catch (error) {
         toast.error('Failed to load user data');
       }
     };
     fetchUsers();
   }, [currentPage, debouncedSearch, status]);
 
-   useEffect(() => {
+  useEffect(() => {
     const params: Record<string, string> = {};
     if (debouncedSearch) params.search = debouncedSearch;
     if (status) params.status = status;
@@ -153,7 +152,6 @@ const UserList = () => {
             >
               Clear All
             </Button>
-             
           </div>
         </div>
       </CardHeader>
@@ -190,7 +188,11 @@ const UserList = () => {
                         actionLabel="Unblock"
                         onConfirm={() => handleToggleBlock(user._id!, false)}
                       >
-                        <Button size="sm" variant="outline" className="text-green-600 border-green-600">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-green-600 border-green-600"
+                        >
                           Unblock
                         </Button>
                       </ConfirmDialog>

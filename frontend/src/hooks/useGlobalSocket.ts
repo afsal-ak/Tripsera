@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import socket from "@/sockets/socket";
-import { SOCKET_EVENTS, SOCKET_WEBRTC_EVENTS } from "@/sockets/events";
+import { useEffect } from 'react';
+import socket from '@/sockets/socket';
+import { SOCKET_EVENTS, SOCKET_WEBRTC_EVENTS } from '@/sockets/events';
 
 interface UseGlobalSocketProps {
   userId: string;
@@ -11,7 +11,7 @@ interface UseGlobalSocketProps {
     fromUserName?: string,
     fromUserAvatar?: string,
     callId?: string,
-    callType?: string,
+    callType?: string
   ) => void;
 }
 
@@ -32,10 +32,9 @@ export function useGlobalSocket({ userId, onIncomingCall }: UseGlobalSocketProps
       callId,
       callType,
     }: any) => {
-      console.log("Incoming call OFFER:", { from, offer, roomId, fromUserName, callId });
+      console.log('Incoming call OFFER:', { from, offer, roomId, fromUserName, callId });
       onIncomingCall?.(offer, from, roomId, fromUserName, fromUserAvatar, callId, callType);
     };
-
 
     socket.on(SOCKET_WEBRTC_EVENTS.OFFER, handleOffer);
 

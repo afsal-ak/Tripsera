@@ -1,6 +1,6 @@
-import React from "react";
-import { X } from "lucide-react";
-import type { UserBasicInfo } from "@/types/UserBasicInfo";
+import React from 'react';
+import { X } from 'lucide-react';
+import type { UserBasicInfo } from '@/types/UserBasicInfo';
 
 interface UserProfileModalProps {
   user: UserBasicInfo | null;
@@ -8,11 +8,7 @@ interface UserProfileModalProps {
   onClose: () => void;
 }
 
-const UserProfileModal: React.FC<UserProfileModalProps> = ({
-  user,
-  isOpen,
-  onClose,
-}) => {
+const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, isOpen, onClose }) => {
   if (!isOpen || !user) return null;
 
   return (
@@ -29,7 +25,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
         {/* Profile Info */}
         <div className="flex flex-col items-center mt-4">
           <img
-            src={user.profileImage || "/default-profile.jpg"}
+            src={user.profileImage || '/default-profile.jpg'}
             alt={user.username}
             className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
           />

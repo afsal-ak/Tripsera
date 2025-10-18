@@ -1,4 +1,4 @@
-import api from "@/lib/axios/api";
+import api from '@/lib/axios/api';
 export const getAllBooking = async (
   page: number,
   limit: number,
@@ -31,18 +31,16 @@ export const cancelBooking = async (id: string, reason: string) => {
   return response.data;
 };
 
-
 export const confirmBooking = async (id: string, note: string) => {
   const response = await api.put(`/admin/booking/confirm/${id}`, { note });
   return response.data;
 };
 
-
- export const changeTravelDate = async (
+export const changeTravelDate = async (
   bookingId: string,
   newDate: string | Date,
   note?: string
-)=> {
+) => {
   const response = await api.put(`/admin/booking/${bookingId}/change-travel-date`, {
     newDate,
     note,

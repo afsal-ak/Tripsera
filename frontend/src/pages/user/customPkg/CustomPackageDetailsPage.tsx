@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams,useSearchParams } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/button";
-import { Loader2, Edit3, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import { getCustomPkgById, deleteCustomPkg } from "@/services/user/customPkgService";
-import type { ICustomPackage } from "@/types/ICustomPkg";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { usePaginationButtons } from "@/hooks/usePaginationButtons";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/button';
+import { Loader2, Edit3, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { getCustomPkgById, deleteCustomPkg } from '@/services/user/customPkgService';
+import type { ICustomPackage } from '@/types/ICustomPkg';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 const CustomPackageDetails = () => {
   const { pkgId } = useParams();
   const [pkg, setPkg] = useState<ICustomPackage | null>(null);
@@ -19,17 +18,15 @@ const CustomPackageDetails = () => {
 
   const navigate = useNavigate();
 
+  const [totalPages, setTotalPages] = useState(1);
 
-    const [totalPages, setTotalPages] = useState(1);
-   
-    const currentPage = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '10', 10);
-  
-    const handlePageChange = (page: number) => {
-      setSearchParams({ page: page.toString(), limit: limit.toString() });
-    };
-  
-    
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '10', 10);
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ page: page.toString(), limit: limit.toString() });
+  };
+
   // Fetch package details
   useEffect(() => {
     if (!pkgId) return;
@@ -37,8 +34,8 @@ const CustomPackageDetails = () => {
       try {
         const response = await getCustomPkgById(pkgId);
         setPkg(response.data);
-       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Failed to fetch package details");
+      } catch (error: any) {
+        toast.error(error?.response?.data?.message || 'Failed to fetch package details');
       } finally {
         setLoading(false);
       }
@@ -52,10 +49,10 @@ const CustomPackageDetails = () => {
     try {
       setDeleting(true);
       await deleteCustomPkg(pkgId);
-      toast.success("Package deleted successfully");
-      navigate("/account/my-custom-package");
+      toast.success('Package deleted successfully');
+      navigate('/account/my-custom-package');
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to delete package");
+      toast.error(error?.response?.data?.message || 'Failed to delete package');
     } finally {
       setDeleting(false);
       setShowDeleteConfirm(false);
@@ -77,20 +74,20 @@ const CustomPackageDetails = () => {
   // Get badge color based on status
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
-        return "bg-yellow-500";
-      case "approved":
-        return "bg-green-500";
-      case "rejected":
-        return "bg-red-500";
-      case "cancelled":
-        return "bg-gray-500";
-      case "inProgress":
-        return "bg-blue-500";
-      case "completed":
-        return "bg-purple-600";
+      case 'pending':
+        return 'bg-yellow-500';
+      case 'approved':
+        return 'bg-green-500';
+      case 'rejected':
+        return 'bg-red-500';
+      case 'cancelled':
+        return 'bg-gray-500';
+      case 'inProgress':
+        return 'bg-blue-500';
+      case 'completed':
+        return 'bg-purple-600';
       default:
-        return "bg-gray-400";
+        return 'bg-gray-400';
     }
   };
 
@@ -114,11 +111,7 @@ const CustomPackageDetails = () => {
             </Button>
 
             {/* Delete confirmation dialog */}
-            <ConfirmDialog
-              title="Delete Package?"
-              actionLabel="Delete"
-               onConfirm={handleDelete}
-            >
+            <ConfirmDialog title="Delete Package?" actionLabel="Delete" onConfirm={handleDelete}>
               <Button
                 variant="destructive"
                 size="sm"
@@ -139,12 +132,12 @@ const CustomPackageDetails = () => {
             <InfoBlock label="Destination" value={pkg.destination} />
             <InfoBlock
               label="Trip Type"
-              value={pkg.tripType === "other" ? pkg.otherTripType || "Other" : pkg.tripType}
+              value={pkg.tripType === 'other' ? pkg.otherTripType || 'Other' : pkg.tripType}
             />
             <InfoBlock label="Budget" value={`₹ ${pkg.budget.toLocaleString()}`} />
             <InfoBlock
               label="Start Date"
-              value={new Date(pkg.startDate).toLocaleDateString("en-IN")}
+              value={new Date(pkg.startDate).toLocaleDateString('en-IN')}
             />
             <InfoBlock label="Days" value={`${pkg.days} Days`} />
             <InfoBlock label="Nights" value={`${pkg.nights} Nights`} />
@@ -183,9 +176,15 @@ const CustomPackageDetails = () => {
             <h3 className="text-lg font-semibold mb-2">Guest Information</h3>
             {pkg.guestInfo ? (
               <div className="bg-gray-50 p-4 rounded-lg shadow-sm space-y-2">
-                <p><strong>Name:</strong> {pkg.guestInfo.name}</p>
-                <p><strong>Email:</strong> {pkg.guestInfo.email}</p>
-                <p><strong>Phone:</strong> {pkg.guestInfo.phone}</p>
+                <p>
+                  <strong>Name:</strong> {pkg.guestInfo.name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {pkg.guestInfo.email}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {pkg.guestInfo.phone}
+                </p>
               </div>
             ) : (
               <p className="text-gray-500 italic">No guest info available</p>

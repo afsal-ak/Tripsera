@@ -1,4 +1,4 @@
-import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/Button';
@@ -28,7 +28,7 @@ const PackageDetails = () => {
   const [isWishlisted, setWishlisted] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [previewReviews, setPreviewReviews] = useState<IReview[]>([]);
-  const [ratingSummary, setRatingSummary] = useState<IRating>()
+  const [ratingSummary, setRatingSummary] = useState<IRating>();
 
   useEffect(() => {
     if (!id) {
@@ -53,7 +53,7 @@ const PackageDetails = () => {
       }
       try {
         const data = await fetchPackgeById(id);
-        console.log(data, 'pkg data')
+        console.log(data, 'pkg data');
         setPkg(data as IPackage);
       } catch (error) {
         console.error('Failed to fetch package details', error);
@@ -85,15 +85,15 @@ const PackageDetails = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       const res = await handlePackageReview(id!, 1, 3, {});
-      console.log(res.review, 'review res ponse')
+      console.log(res.review, 'review res ponse');
       const reviewRating = await handleReviewRating(id!);
-      setRatingSummary(reviewRating.summary)
+      setRatingSummary(reviewRating.summary);
       //console.log(reviewRating, 'review')
       setPreviewReviews(res.review.data);
     };
     fetchReviews();
   }, []);
-  console.log(ratingSummary, 'rating')
+  console.log(ratingSummary, 'rating');
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -151,7 +151,8 @@ const PackageDetails = () => {
                     <Star className="w-4 h-4 text-orange mr-1 fill-current" />
                     <span className="font-medium">{ratingSummary.averageRating.toFixed(1)}</span>
                     <span className="text-muted-foreground ml-1">
-                      ({ratingSummary.totalReviews} {ratingSummary.totalReviews === 1 ? 'review' : 'reviews'})
+                      ({ratingSummary.totalReviews}{' '}
+                      {ratingSummary.totalReviews === 1 ? 'review' : 'reviews'})
                     </span>
                   </div>
                 )}
@@ -171,7 +172,6 @@ const PackageDetails = () => {
               >
                 <Share2 className="w-4 h-4" />
               </Button>
-
 
               <Button
                 onClick={handleWishlist}
@@ -214,8 +214,9 @@ const PackageDetails = () => {
                         <div
                           key={index}
                           onClick={() => setSelectedImage(index)}
-                          className={`relative h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${isSelected ? 'ring-2 ring-orange ring-offset-2' : 'hover:opacity-80'
-                            }`}
+                          className={`relative h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${
+                            isSelected ? 'ring-2 ring-orange ring-offset-2' : 'hover:opacity-80'
+                          }`}
                         >
                           <img
                             src={image}
@@ -245,8 +246,6 @@ const PackageDetails = () => {
             </section>
             <PackageDetailPickUp startPoint={pkg?.startPoint!} />
 
-
-
             {/* Itinerary */}
             <section className="bg-white rounded-xl p-8 shadow-sm border">
               <h2 className="text-2xl font-bold text-foreground mb-6">Day by Day Itinerary</h2>
@@ -273,9 +272,9 @@ const PackageDetails = () => {
                               .sort((a, b) => a.startTime.localeCompare(b.startTime))
                               .map((activity, actIndex) => {
                                 const formatTime = (time24: string) => {
-                                  const [hourStr, minute] = time24.split(":");
+                                  const [hourStr, minute] = time24.split(':');
                                   let hour = parseInt(hourStr, 10);
-                                  const ampm = hour >= 12 ? "PM" : "AM";
+                                  const ampm = hour >= 12 ? 'PM' : 'AM';
                                   hour = hour % 12 || 12;
                                   return `${hour}:${minute} ${ampm}`;
                                 };
@@ -283,9 +282,12 @@ const PackageDetails = () => {
                                 return (
                                   <li key={actIndex} className="flex items-center space-x-2">
                                     <span className="text-orange font-semibold">
-                                      {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
+                                      {formatTime(activity.startTime)} -{' '}
+                                      {formatTime(activity.endTime)}
                                     </span>
-                                    <span className="text-muted-foreground">{activity.activity}</span>
+                                    <span className="text-muted-foreground">
+                                      {activity.activity}
+                                    </span>
                                   </li>
                                 );
                               })}
@@ -341,16 +343,15 @@ const PackageDetails = () => {
             {/* Booking Card */}
             <Card className="sticky top-4 border-2 border-orange/20 shadow-lg">
               <CardContent className="p-8">
-
                 <div className="text-center mb-6">
                   <div className="flex items-center justify-center mb-2 space-x-3 relative">
-                    {pkg.offer && pkg.offer.isActive && new Date(pkg.offer.validUntil) > new Date() ? (
+                    {pkg.offer &&
+                    pkg.offer.isActive &&
+                    new Date(pkg.offer.validUntil) > new Date() ? (
                       <>
                         {/* Original Price (strike-through) */}
                         {pkg.price !== pkg.finalPrice && (
-                          <span className="text-sm text-gray-400 line-through">
-                            ₹{pkg.price}
-                          </span>
+                          <span className="text-sm text-gray-400 line-through">₹{pkg.price}</span>
                         )}
 
                         {/* Discounted Price */}
@@ -360,7 +361,7 @@ const PackageDetails = () => {
 
                         {/* Discount Badge */}
                         <span className="absolute -top-2 -right-6 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded shadow-md">
-                          {pkg.offer.type === "percentage"
+                          {pkg.offer.type === 'percentage'
                             ? `${pkg.offer.value}% OFF`
                             : `₹${pkg.offer.value} OFF`}
                           <br />
@@ -376,9 +377,6 @@ const PackageDetails = () => {
                   <span className="text-gray-500 text-sm">per person</span>
                 </div>
 
-
-
-
                 <div className="space-y-4 mb-8">
                   <div className="flex items-center justify-between py-3 border-b">
                     <div className="flex items-center">
@@ -388,9 +386,8 @@ const PackageDetails = () => {
                     <span className="text-sm font-semibold">
                       {pkg?.durationDays !== null && pkg?.durationNights !== null
                         ? `${pkg.durationDays} Days ${pkg.durationNights} Nights`
-                        : pkg?.duration || "N/A"}
+                        : pkg?.duration || 'N/A'}
                     </span>
-
                   </div>
 
                   <div className="flex items-center justify-between py-3">
@@ -398,11 +395,13 @@ const PackageDetails = () => {
                       <Calendar className="w-4 h-4 text-orange mr-3" />
                       <span className="text-sm font-medium">Ending Date</span>
                     </div>
-                    {pkg.endDate ? new Date(pkg.endDate).toLocaleDateString("en-US", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric"
-                    }) : "-"}
+                    {pkg.endDate
+                      ? new Date(pkg.endDate).toLocaleDateString('en-US', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })
+                      : '-'}
                   </div>
                 </div>
 
@@ -448,8 +447,6 @@ const PackageDetails = () => {
               </CardContent>
             </Card> */}
           </div>
-
-
         </div>
         <section className="mt-8">
           <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
@@ -461,14 +458,16 @@ const PackageDetails = () => {
           {/* Reviews List */}
           <div className="space-y-6">
             {previewReviews.map((review) => (
-              <div key={review._id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6">
+              <div
+                key={review._id}
+                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6"
+              >
                 <div className="flex items-start gap-4">
                   <img
-                    src={review?.userId?.profileImage?.url || "/profile-default.jpg"}
+                    src={review?.userId?.profileImage?.url || '/profile-default.jpg'}
                     alt={review.userId.username}
                     className="w-12 h-12 rounded-full object-cover"
                   />
-
 
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
@@ -480,25 +479,21 @@ const PackageDetails = () => {
                         </span>
                       )} */}
                       </div>
-                      <span className="text-sm text-gray-500"><span>{formatTimeAgo(review.createdAt)}</span></span>
+                      <span className="text-sm text-gray-500">
+                        <span>{formatTimeAgo(review.createdAt)}</span>
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="flex gap-1">
-                        {renderStars(review.rating)}
-                      </div>
+                      <div className="flex gap-1">{renderStars(review.rating)}</div>
                       <span className="text-sm font-medium text-gray-700">{review.rating}.0</span>
                     </div>
 
                     <h4 className="font-semibold text-gray-900 mb-2">{review.title}</h4>
 
                     <ReadMore text={review.comment} wordLimit={10} />
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-
-                    </div>
-
+                    <div className="flex items-center gap-4 text-sm text-gray-500"></div>
                   </div>
-
                 </div>
               </div>
             ))}
@@ -510,14 +505,17 @@ const PackageDetails = () => {
           >
             See all reviews →
           </button>
-          <br /><br />
+          <br />
+          <br />
           <div className="flex items-center justify-between mb-6">
-            <button onClick={handleAddReview} className="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-dark transition">
+            <button
+              onClick={handleAddReview}
+              className="bg-orange text-white px-4 py-2 rounded-md hover:bg-orange-dark transition"
+            >
               Write a Review
             </button>
           </div>
         </section>
-
       </div>
     </div>
   );

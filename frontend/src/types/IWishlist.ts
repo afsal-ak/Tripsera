@@ -1,23 +1,22 @@
-
 interface PackageLocation {
   name: string;
-  contry:string
+  contry: string;
   geo: {
     type: string;
     coordinates: number[];
   };
 }
 
- export interface WishlistPackageDTO {
+export interface WishlistPackageDTO {
   _id: string;
   title: string;
   price: number;
   duration: string;
   location: PackageLocation[];
-  imageUrls: { url: string } ;
+  imageUrls: { url: string };
 }
 
-export interface IWishlist{
+export interface IWishlist {
   _id: string;
   userId: string;
   package: WishlistPackageDTO;

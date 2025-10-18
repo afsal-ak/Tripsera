@@ -1,6 +1,5 @@
 export type EnumParentType = 'blog' | 'review';
 
-
 export interface IComment {
   _id: string;
   parentId: string;
@@ -8,12 +7,12 @@ export interface IComment {
   user: {
     _id: string;
     username: string;
-    profileImage:string
+    profileImage: string;
   };
   replyUser?: {
     _id: string;
     username: string;
-    profileImage:{url?:string}
+    profileImage: { url?: string };
   };
   text: string;
   mentions?: {
@@ -22,23 +21,22 @@ export interface IComment {
   }[];
   likes?: string[];
   parentCommentId?: string | null;
-  replyCount?:number;
+  replyCount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
 
-
 export interface CreateComment {
   parentId: string;
   parentType: string;
-   text: string;
+  text: string;
   mentions?: string[];
- }
+}
 
- export interface ReplyComment {
+export interface ReplyComment {
   parentId: string;
   parentType: string;
-   text: string;
+  text: string;
   mentions?: string[];
-  parentCommentId: string 
- }
+  parentCommentId: string;
+}

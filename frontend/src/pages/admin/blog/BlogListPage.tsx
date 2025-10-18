@@ -17,7 +17,6 @@ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
 import { getAllBlogs } from '@/services/admin/blogService';
 import type { IBlog } from '@/types/IBlog';
 
-
 import { useDebounce } from 'use-debounce';
 import { useCleanFilter } from '@/hooks/useCleanFilter ';
 import { FilterBar } from '@/components/FilterBar ';
@@ -26,12 +25,11 @@ import { useSearchFilters } from '@/hooks/useSearchFilters';
 const AdminBlogList = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const cleanFilter = useCleanFilter()
+  const cleanFilter = useCleanFilter();
 
   const [blogs, setBlogs] = useState<IBlog[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-
 
   const {
     searchQuery,
@@ -64,11 +62,11 @@ const AdminBlogList = () => {
           sort,
           startDate,
           endDate,
-          customFilter
-        }
-        const filter = cleanFilter(rawFilters)
+          customFilter,
+        };
+        const filter = cleanFilter(rawFilters);
         const response = await getAllBlogs(currentPage, limit, filter);
-        console.log(response, 'bl;og res')
+        console.log(response, 'bl;og res');
         setBlogs(response.data);
         setTotalPages(response.pagination.totalPages);
       } catch (error) {
@@ -80,34 +78,33 @@ const AdminBlogList = () => {
     fetchBlogs();
   }, [searchParams]);
   useEffect(() => {
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(searchParams);
     if (debouncedSearch) {
-      params.set('search', debouncedSearch)
+      params.set('search', debouncedSearch);
     } else {
-      params.delete('search')
+      params.delete('search');
     }
-    params.set('page', '1')
-    setSearchParams(params)
-  }, [debouncedSearch])
+    params.set('page', '1');
+    setSearchParams(params);
+  }, [debouncedSearch]);
 
   const handlePageChange = (page: number) => {
     setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev)
-      newParams.set('page', page.toString())
-      return newParams
-    })
-  }
+      const newParams = new URLSearchParams(prev);
+      newParams.set('page', page.toString());
+      return newParams;
+    });
+  };
   useEffect(() => {
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(searchParams);
     if (debouncedSearch) {
-      params.set('search', debouncedSearch)
+      params.set('search', debouncedSearch);
     } else {
-      params.delete('search')
+      params.delete('search');
     }
-    params.set('page', '1')
-    setSearchParams(params)
-  }, [debouncedSearch])
-
+    params.set('page', '1');
+    setSearchParams(params);
+  }, [debouncedSearch]);
 
   // Handlers passed to FilterBar
   const handleSearchChange = (val: string) => setSearchQuery(val);
@@ -120,22 +117,21 @@ const AdminBlogList = () => {
   };
 
   const handleClearFilters = () => {
-    setSearchQuery("");
-    setStatusFilter("");
-    setStartDate("");
-    setEndDate("");
-    setSort("");
-    setCustomFilter("")
-    setSearchParams({ page: "1" });
+    setSearchQuery('');
+    setStatusFilter('');
+    setStartDate('');
+    setEndDate('');
+    setSort('');
+    setCustomFilter('');
+    setSearchParams({ page: '1' });
   };
-
 
   const paginationButtons = usePaginationButtons({
     currentPage,
     totalPages,
     onPageChange: handlePageChange,
   });
-   return (
+  return (
     <div className="p-4 space-y-6">
       <Card>
         <CardHeader>
@@ -150,7 +146,6 @@ const AdminBlogList = () => {
             sortValue={sort}
             customFilterValue={customFilter}
             customLabel="Report Type"
-
             onSearchChange={handleSearchChange}
             onStatusChange={handleStatusChange}
             onStartDateChange={setStartDate}
@@ -160,15 +155,14 @@ const AdminBlogList = () => {
             onApply={handleApplyFilters}
             onClear={handleClearFilters}
             statusOptions={[
-              { value: "active", label: "Active" },
-              { value: "blocked", label: "Blocked" },
+              { value: 'active', label: 'Active' },
+              { value: 'blocked', label: 'Blocked' },
               // { value: "dismissed", label: "Dismissed" },
             ]}
             sortOptions={[
-              { value: "asc", label: "Oldest" },
-              { value: "desc", label: "Newest" },
+              { value: 'asc', label: 'Oldest' },
+              { value: 'desc', label: 'Newest' },
             ]}
-
           />
 
           <div className="overflow-auto">
@@ -213,8 +207,8 @@ const AdminBlogList = () => {
           </div>
           <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
             {paginationButtons}
-          </div>    
-              </CardContent>
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

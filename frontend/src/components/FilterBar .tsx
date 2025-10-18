@@ -1,13 +1,13 @@
-import React from "react";
-import { Button } from "@/components/Button";
-import { Input } from "@/components/ui/Input";
+import React from 'react';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/ui/Input';
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/Select";
+} from '@/components/ui/Select';
 
 interface Option {
   value: string;
@@ -24,7 +24,6 @@ interface FilterBarProps {
   customFilterValue: string;
   customLabel?: string;
 
-
   onSearchChange: (val: string) => void;
   onStatusChange: (val: string) => void;
   onStartDateChange: (val: string) => void;
@@ -38,8 +37,8 @@ interface FilterBarProps {
 
   statusOptions: Option[];
   sortOptions: Option[];
-  ratingOptions: Option[]
-  customOption: Option[]
+  ratingOptions: Option[];
+  customOption: Option[];
 }
 
 export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
@@ -50,8 +49,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
   sortValue,
   ratingValue,
   customFilterValue,
-  customLabel = "Sort By",
-
+  customLabel = 'Sort By',
 
   onSearchChange,
   onStatusChange,
@@ -67,11 +65,10 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
   statusOptions,
   sortOptions,
   ratingOptions,
-  customOption
+  customOption,
 }) => {
   return (
     <div className="flex flex-wrap gap-4 items-center bg-white p-4 rounded-lg mb-4">
-
       {/* Search */}
       {onSearchChange && (
         <div className="flex flex-col">
@@ -81,7 +78,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
           <Input
             id="searchInput"
             placeholder="Search..."
-            value={searchValue ?? ""}
+            value={searchValue ?? ''}
             onChange={(e) => onSearchChange?.(e.target.value)}
             className="w-48"
           />
@@ -94,7 +91,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
           <label className="mb-1 font-medium text-gray-700" htmlFor="statusSelect">
             Status
           </label>
-          <Select value={statusValue ?? ""} onValueChange={onStatusChange}  >
+          <Select value={statusValue ?? ''} onValueChange={onStatusChange}>
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
@@ -118,7 +115,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
           <input
             id="startDateInput"
             type="date"
-            value={startDateValue ?? ""}
+            value={startDateValue ?? ''}
             onChange={(e) => onStartDateChange?.(e.target.value)}
             className="border rounded px-2 py-1"
           />
@@ -134,7 +131,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
           <input
             id="endDateInput"
             type="date"
-            value={endDateValue ?? ""}
+            value={endDateValue ?? ''}
             onChange={(e) => onEndDateChange?.(e.target.value)}
             className="border rounded px-2 py-1"
           />
@@ -147,7 +144,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
           <label className="mb-1 font-medium text-gray-700" htmlFor="sortSelect">
             Sort By
           </label>
-          <Select value={sortValue ?? ""} onValueChange={onSortChange} >
+          <Select value={sortValue ?? ''} onValueChange={onSortChange}>
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Sort by..." />
             </SelectTrigger>
@@ -167,7 +164,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
           <label className="mb-1 font-medium text-gray-700" htmlFor="sortSelect">
             {customLabel}
           </label>
-          <Select value={customFilterValue ?? ""} onValueChange={onCustomFilterChange} >
+          <Select value={customFilterValue ?? ''} onValueChange={onCustomFilterChange}>
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Sort by Type" />
             </SelectTrigger>
@@ -188,7 +185,7 @@ export const FilterBar: React.FC<Partial<FilterBarProps>> = ({
           <label className="mb-1 font-medium text-gray-700" htmlFor="ratingSelect">
             Rating
           </label>
-          <Select value={ratingValue ?? ""} onValueChange={onRatingChange} >
+          <Select value={ratingValue ?? ''} onValueChange={onRatingChange}>
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Sort by Rating..." />
             </SelectTrigger>

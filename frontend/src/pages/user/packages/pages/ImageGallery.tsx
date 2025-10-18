@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState } from 'react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ImageGalleryProps {
   images: string[];
@@ -9,8 +9,8 @@ interface ImageGalleryProps {
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({
   images,
-  packageTitle = "Package Gallery",
-  categories = ["Destinations", "Stays", "Activities", "Adventures", "Nature", "Events"],
+  packageTitle = 'Package Gallery',
+  categories = ['Destinations', 'Stays', 'Activities', 'Adventures', 'Nature', 'Events'],
 }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
@@ -24,10 +24,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     );
   }
 
-  const nextImage = () =>
-    setSelectedImage((prev) => (prev + 1) % images.length);
-  const prevImage = () =>
-    setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
+  const nextImage = () => setSelectedImage((prev) => (prev + 1) % images.length);
+  const prevImage = () => setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
 
   const openFullScreen = (index: number) => {
     setSelectedImage(index);
@@ -38,53 +36,47 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     <>
       {/* Gallery Grid */}
       <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-2 h-[500px]">
-  {/* Left: Main Large Image */}
-  <div
-    className="relative cursor-pointer"
-    onClick={() => openFullScreen(0)}
-  >
-    <img
-      src={images[0]}
-      alt={`${packageTitle} - Main`}
-      className="w-full h-full object-cover rounded-lg"
-    />
-  </div>
-
-  {/* Right: Large Column of Thumbnails */}
-  <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
-    {images.slice(1, 5).map((image, index) => {
-      const imgIndex = index + 1;
-      const isLastThumb = index === 3; // 4th small image
-      return (
-        <div
-          key={imgIndex}
-          className="relative cursor-pointer"
-          onClick={() =>
-            isLastThumb && images.length > 5
-              ? setIsAllImagesOpen(true)
-              : openFullScreen(imgIndex)
-          }
-        >
+        {/* Left: Main Large Image */}
+        <div className="relative cursor-pointer" onClick={() => openFullScreen(0)}>
           <img
-            src={image}
-            alt={`${packageTitle} - Thumbnail ${index + 1}`}
+            src={images[0]}
+            alt={`${packageTitle} - Main`}
             className="w-full h-full object-cover rounded-lg"
           />
-
-          {/* Overlay for more images */}
-          {isLastThumb && images.length > 5 && (
-            <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
-              <span className="text-white text-lg font-semibold">
-                +{images.length - 4}
-              </span>
-            </div>
-          )}
         </div>
-      );
-    })}
-  </div>
-</div>
 
+        {/* Right: Large Column of Thumbnails */}
+        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
+          {images.slice(1, 5).map((image, index) => {
+            const imgIndex = index + 1;
+            const isLastThumb = index === 3; // 4th small image
+            return (
+              <div
+                key={imgIndex}
+                className="relative cursor-pointer"
+                onClick={() =>
+                  isLastThumb && images.length > 5
+                    ? setIsAllImagesOpen(true)
+                    : openFullScreen(imgIndex)
+                }
+              >
+                <img
+                  src={image}
+                  alt={`${packageTitle} - Thumbnail ${index + 1}`}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+
+                {/* Overlay for more images */}
+                {isLastThumb && images.length > 5 && (
+                  <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-lg font-semibold">+{images.length - 4}</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Fullscreen Modal (carousel) */}
       {isFullScreenOpen && (

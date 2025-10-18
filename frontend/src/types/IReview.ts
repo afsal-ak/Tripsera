@@ -11,22 +11,12 @@ export interface UpdateReviewDTO {
   isBlocked?: boolean;
 }
 
-//  export interface IReview {
-//   _id: string;
-//   userId: string;
-//   packageId: string;
-//   rating: number;
-//   comment: string;
-//   isBlocked: boolean;
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
 export interface IReview {
   _id: string;
   userId: {
-    username?: string
+    username?: string;
     email?: string;
-    profileImage?: { url: string }
+    profileImage?: { url: string };
   };
   username?: string;
   profileTitle?: string;
@@ -42,7 +32,6 @@ export interface IReview {
   createdAt: string;
   updatedAt: string;
 }
-
 
 export interface IRating {
   averageRating: number;

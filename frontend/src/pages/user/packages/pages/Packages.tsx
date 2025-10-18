@@ -167,10 +167,11 @@ const Packages = () => {
               <button
                 onClick={() => handlePageChange(page - 1)}
                 disabled={page === 1}
-                className={`px-3 py-1.5 text-sm rounded border ${page === 1
+                className={`px-3 py-1.5 text-sm rounded border ${
+                  page === 1
                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-border'
                     : 'bg-orange text-white hover:bg-orange/90'
-                  }`}
+                }`}
               >
                 Prev
               </button>
@@ -182,10 +183,11 @@ const Packages = () => {
               <button
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page === totalPages}
-                className={`px-3 py-1.5 text-sm rounded border ${page === totalPages
+                className={`px-3 py-1.5 text-sm rounded border ${
+                  page === totalPages
                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-border'
                     : 'bg-orange text-white hover:bg-orange/90'
-                  }`}
+                }`}
               >
                 Next
               </button>

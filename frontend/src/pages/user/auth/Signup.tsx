@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { handlePreRegister } from '@/services/auth/authService';
- import GoogleLoginButton from '@/components/user/GoogleLoginButton';
+import GoogleLoginButton from '@/components/user/GoogleLoginButton';
 import { toast } from 'sonner';
 
 const Signup = () => {
@@ -11,7 +11,7 @@ const Signup = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [searchParams,setSearchParams]=useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({
@@ -61,7 +61,7 @@ const Signup = () => {
     return Object.values(newErrors).every((e) => e === '');
   };
 
-  const refferalCode=searchParams.get('referralCode')||''
+  const refferalCode = searchParams.get('referralCode') || '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +70,7 @@ const Signup = () => {
     }
     setLoading(true);
     try {
-      const result = await handlePreRegister(email, username, password,refferalCode);
+      const result = await handlePreRegister(email, username, password, refferalCode);
       localStorage.setItem('signupEmail', email);
       toast.success('OTP sent to your email');
       console.log(email, 'preregistration');

@@ -24,7 +24,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const { user, accessToken } = await handleLogin(email, password);
-      console.log(accessToken,'toekn from redux')
+      console.log(accessToken, 'toekn from redux');
       console.log('user from redux', user);
       return { user, accessToken };
     } catch (error: any) {

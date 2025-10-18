@@ -1,7 +1,7 @@
-import { useState } from "react";
-import type { IDateFilter, DateFilter } from "@/types/IDashboard";
-import { CalendarDays } from "lucide-react";
-import { toast } from "sonner";
+import { useState } from 'react';
+import type { IDateFilter, DateFilter } from '@/types/IDashboard';
+import { CalendarDays } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function DateFilterControls({
   value,
@@ -10,9 +10,9 @@ export default function DateFilterControls({
   value: IDateFilter;
   onChange: (v: IDateFilter) => void;
 }) {
-  const [isCustomMode, setIsCustomMode] = useState(value.filter === "custom");
-  const [customStart, setCustomStart] = useState<string>(value.startDate || "");
-  const [customEnd, setCustomEnd] = useState<string>(value.endDate || "");
+  const [isCustomMode, setIsCustomMode] = useState(value.filter === 'custom');
+  const [customStart, setCustomStart] = useState<string>(value.startDate || '');
+  const [customEnd, setCustomEnd] = useState<string>(value.endDate || '');
 
   const setQuick = (filter: DateFilter) => {
     setIsCustomMode(false);
@@ -21,40 +21,40 @@ export default function DateFilterControls({
 
   const handleApplyCustom = () => {
     if (!customStart || !customEnd) {
-      toast.error("Please select both start and end dates!");
+      toast.error('Please select both start and end dates!');
       return;
     }
 
-      if (customEnd < customStart) {
-      toast.error("End date cannot be earlier than start date!");
+    if (customEnd < customStart) {
+      toast.error('End date cannot be earlier than start date!');
       return;
     }
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split('T')[0];
     if (customStart > today || customEnd > today) {
-      toast.error("Dates cannot be in the future!");
+      toast.error('Dates cannot be in the future!');
       return;
     }
-    onChange({ filter: "custom", startDate: customStart, endDate: customEnd });
+    onChange({ filter: 'custom', startDate: customStart, endDate: customEnd });
   };
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="w-full flex flex-col md:flex-row md:items-end gap-3">
       {/* Quick Filter Buttons */}
       <div className="flex flex-wrap gap-2">
-        {(["today", "this_week", "this_month", "this_year"] as DateFilter[]).map((f) => (
+        {(['today', 'this_week', 'this_month', 'this_year'] as DateFilter[]).map((f) => (
           <button
             key={f}
             onClick={() => setQuick(f)}
             className={`px-3 py-2 rounded-2xl text-sm border transition ${
               value.filter === f
-                ? "bg-black text-white border-black"
-                : "bg-white hover:bg-gray-50 border-gray-300"
+                ? 'bg-black text-white border-black'
+                : 'bg-white hover:bg-gray-50 border-gray-300'
             }`}
           >
-            {f.replace("_", " ")}
+            {f.replace('_', ' ')}
           </button>
         ))}
 
@@ -63,8 +63,8 @@ export default function DateFilterControls({
           onClick={() => setIsCustomMode(true)}
           className={`px-3 py-2 rounded-2xl text-sm border transition ${
             isCustomMode
-              ? "bg-black text-white border-black"
-              : "bg-white hover:bg-gray-50 border-gray-300"
+              ? 'bg-black text-white border-black'
+              : 'bg-white hover:bg-gray-50 border-gray-300'
           }`}
         >
           Custom
@@ -80,8 +80,7 @@ export default function DateFilterControls({
               type="date"
               className="px-3 py-2 rounded-xl border border-gray-300"
               value={customStart}
-                            max={today}
-
+              max={today}
               onChange={(e) => setCustomStart(e.target.value)}
             />
           </div>
@@ -91,7 +90,7 @@ export default function DateFilterControls({
               type="date"
               className="px-3 py-2 rounded-xl border border-gray-300"
               value={customEnd}
-              min={customStart || undefined}  
+              min={customStart || undefined}
               max={today}
               onChange={(e) => setCustomEnd(e.target.value)}
             />

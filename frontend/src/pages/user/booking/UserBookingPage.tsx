@@ -108,12 +108,13 @@ const UserBookingPage = () => {
                       <TableCell>₹{booking.amountPaid}</TableCell>
                       <TableCell>
                         <span
-                          className={`font-medium ${booking.bookingStatus === 'confirmed'
+                          className={`font-medium ${
+                            booking.bookingStatus === 'confirmed'
                               ? 'text-green-600'
                               : booking.bookingStatus === 'pending'
                                 ? 'text-yellow-600'
                                 : 'text-red-600'
-                            }`}
+                          }`}
                         >
                           {booking.bookingStatus}
                         </span>
@@ -138,9 +139,7 @@ const UserBookingPage = () => {
                           <Edit className="w-4 h-4 mr-2" /> View
                         </Button>
                       </TableCell>
-
                     </TableRow>
-
                   ))
                 )}
                 <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
@@ -149,8 +148,6 @@ const UserBookingPage = () => {
               </TableBody>
             </Table>
           </div>
-
-
         </CardContent>
       </Card>
     </div>

@@ -6,15 +6,12 @@ export interface ISalesReportSummary {
   totalRevenue: number;
 }
 
-
-
-
 export interface SalesReportResponseDTO {
   _id: string;
   bookingCode: string;
   username: string;
   packageTitle: string;
-  packageCode:string;
+  packageCode: string;
   totalAmount: number;
   discount: number;
   walletAmountUsed?: number;
@@ -22,7 +19,7 @@ export interface SalesReportResponseDTO {
   paymentMethod: string;
   paymentStatus: string;
   bookingStatus: string;
-  bookedAt:string;
+  bookedAt: string;
   createdAt: Date;
   travelDate?: Date;
 }

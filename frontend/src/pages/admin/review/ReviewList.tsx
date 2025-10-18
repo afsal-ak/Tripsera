@@ -3,8 +3,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { handleFetchReview } from '@/services/admin/reviewService';
 import type { IReview } from '@/types/IReview';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
-import { Star } from 'lucide-react';
-import { formatTimeAgo } from '@/lib/utils/formatTime';
 
 import { Button } from '@/components/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -21,10 +19,9 @@ import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { useDebounce } from 'use-debounce';
 import { useCleanFilter } from '@/hooks/useCleanFilter ';
 const ReviewList = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [reviews, setreviews] = useState<IReview[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(1);
   const {
     searchQuery,
@@ -45,7 +42,7 @@ const ReviewList = () => {
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '10', 10);
-  const cleanFilter = useCleanFilter()
+  const cleanFilter = useCleanFilter();
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -56,14 +53,14 @@ const ReviewList = () => {
           sort,
           startDate,
           endDate,
-          rating
+          rating,
         };
 
         // Remove any empty, null, or undefined filter fields to avoid sending unnecessary query parameters
         const filters = cleanFilter(rawFilters);
 
         const response = await handleFetchReview(currentPage, limit, filters);
-       
+
         setreviews(response.data);
         setTotalPages(response.pagination.totalPages);
         //    console.log(response.pagination,'pagination')
@@ -74,13 +71,12 @@ const ReviewList = () => {
     fetchReviews();
   }, [debouncedSearch, searchParams, currentPage]);
 
-  console.log(reviews, 'revies')
+  console.log(reviews, 'revies');
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
     if (debouncedSearch) {
       params.set('search', debouncedSearch);
-    }
-    else params.delete('search');
+    } else params.delete('search');
     params.set('page', '1');
     setSearchParams(params);
   }, [debouncedSearch]);
@@ -98,9 +94,6 @@ const ReviewList = () => {
     onPageChange: handlePageChange,
   });
 
-
-
-
   // Handlers passed to FilterBar
   const handleSearchChange = (val: string) => setSearchQuery(val);
   const handleStatusChange = (val: string) => setStatusFilter(val);
@@ -112,29 +105,25 @@ const ReviewList = () => {
   };
 
   const handleClearFilters = () => {
-    setSearchQuery("");
-    setStatusFilter("");
-    setStartDate("");
-    setEndDate("");
-    setSort("");
-    setRating('')
-    setSearchParams({ page: "1" }); // reset to page 1
+    setSearchQuery('');
+    setStatusFilter('');
+    setStartDate('');
+    setEndDate('');
+    setSort('');
+    setRating('');
+    setSearchParams({ page: '1' }); // reset to page 1
   };
 
   const handleClick = (reviewId: string) => {
-    navigate(`/admin/reviews/${reviewId}`)
-  }
+    navigate(`/admin/reviews/${reviewId}`);
+  };
 
   return (
-
-
     <Card>
       <CardHeader>
         <CardTitle>Reviews</CardTitle>
       </CardHeader>
       <CardContent>
-
-
         <FilterBar
           searchValue={searchQuery}
           statusValue={statusFilter}
@@ -151,21 +140,21 @@ const ReviewList = () => {
           onApply={handleApplyFilters}
           onClear={handleClearFilters}
           statusOptions={[
-            { value: "active", label: "Active" },
-            { value: "blocked", label: "Blocked" },
+            { value: 'active', label: 'Active' },
+            { value: 'blocked', label: 'Blocked' },
           ]}
           sortOptions={[
-            { value: "asc", label: "Newest" },
-            { value: "desc", label: "Oldest" },
-            { value: "rating_highest", label: "Highest Rating" },
-            { value: "rating_lowest", label: "Lowest Rating" },
+            { value: 'asc', label: 'Newest' },
+            { value: 'desc', label: 'Oldest' },
+            { value: 'rating_highest', label: 'Highest Rating' },
+            { value: 'rating_lowest', label: 'Lowest Rating' },
           ]}
           ratingOptions={[
-            { value: "1", label: "1 Star" },
-            { value: "2", label: "2 Star" },
-            { value: "3", label: "3 Star" },
-            { value: "4", label: "4 Star" },
-            { value: "5", label: "5 Star" },
+            { value: '1', label: '1 Star' },
+            { value: '2', label: '2 Star' },
+            { value: '3', label: '3 Star' },
+            { value: '4', label: '4 Star' },
+            { value: '5', label: '5 Star' },
           ]}
         />
         <Table>
@@ -191,7 +180,7 @@ const ReviewList = () => {
                   {/* {review.comment.split(/\s+/).length > 10
                     ? review.comment.split(/\s+/).slice(0, 10).join(" ") + "..."
                     : review.comment} */}
-                    {review.title}
+                  {review.title}
                 </TableCell>
                 <TableCell>
                   {review.isBlocked ? (
@@ -200,10 +189,9 @@ const ReviewList = () => {
                     <span className="text-green-500">Active</span>
                   )}
                 </TableCell>
-               
+
                 <Button
                   className="mt-5 text-center"
-
                   onClick={() => handleClick(review._id)}
                   variant="outline"
                   size="sm"
@@ -213,7 +201,6 @@ const ReviewList = () => {
               </TableRow>
             ))}
           </TableBody>
-
         </Table>
         <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
           {paginationButtons}

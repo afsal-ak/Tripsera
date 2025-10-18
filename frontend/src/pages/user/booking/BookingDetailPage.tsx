@@ -5,7 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/Button';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/Dialog';
-import { getBookingById, cancelBooking, downloadInvoice, changeTravelDate, removeTraveler } from '@/services/user/bookingService';
+import {
+  getBookingById,
+  cancelBooking,
+  downloadInvoice,
+  changeTravelDate,
+  removeTraveler,
+} from '@/services/user/bookingService';
 import { fetchPackgeById } from '@/services/user/PackageService';
 import type { IPackage } from '@/types/IPackage';
 import type { IBooking } from '@/types/IBooking';
@@ -23,7 +29,7 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
-  Star
+  Star,
 } from 'lucide-react';
 import { ChangeTravelDate } from './ChangeTravelDate';
 import PackageDetailPickUp from '../packages/pages/PackageDetailPickUp';
@@ -46,7 +52,7 @@ const BookingDetailPage = () => {
       try {
         const data = await getBookingById(id!);
         setBooking(data.booking);
-        console.log(data, 'data')
+        console.log(data, 'data');
       } catch {
         toast.error('Failed to load booking.');
         navigate('/account/bookings');
@@ -55,9 +61,9 @@ const BookingDetailPage = () => {
       }
     };
     if (id) loadBooking();
-  }, [id,]);
+  }, [id]);
 
-  const pkgId = booking?.packageId._id
+  const pkgId = booking?.packageId._id;
   useEffect(() => {
     const loadPackage = async () => {
       if (!pkgId) {
@@ -65,7 +71,7 @@ const BookingDetailPage = () => {
       }
       try {
         const data = await fetchPackgeById(pkgId);
-        console.log(data, 'pkg data')
+        console.log(data, 'pkg data');
         setPkg(data as IPackage);
       } catch (error) {
         console.error('Failed to fetch package details', error);
@@ -88,10 +94,10 @@ const BookingDetailPage = () => {
       setBooking((prev) =>
         prev
           ? {
-            ...prev,
-            bookingStatus: 'cancelled',
-            updatedAt: new Date(),
-          }
+              ...prev,
+              bookingStatus: 'cancelled',
+              updatedAt: new Date(),
+            }
           : prev
       );
       setOpen(false);
@@ -101,14 +107,14 @@ const BookingDetailPage = () => {
   };
 
   const handleDownloadInvoice = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await downloadInvoice(booking?._id!)
+      const response = await downloadInvoice(booking?._id!);
     } catch (error) {
-      console.error("Error downloading invoice", error);
-      toast.error("Failed to download invoice. Please try again.");
+      console.error('Error downloading invoice', error);
+      toast.error('Failed to download invoice. Please try again.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -140,8 +146,8 @@ const BookingDetailPage = () => {
 
     try {
       const updatedBooking = await changeTravelDate(id!, newDate, note);
-      setBooking(updatedBooking)
-      console.log(updatedBooking, 'travel booking date cahge')
+      setBooking(updatedBooking);
+      console.log(updatedBooking, 'travel booking date cahge');
       toast.success('Travel date updated successfully.');
 
       setBooking(updatedBooking);
@@ -151,28 +157,38 @@ const BookingDetailPage = () => {
     }
   };
 
-  const packageId = booking?.packageId._id
+  const packageId = booking?.packageId._id;
   const handleAddReview = () => {
     navigate(`/packages/${packageId}/review/add`);
   };
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'confirmed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      case 'failed': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'confirmed':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'failed':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'confirmed': return <CheckCircle className="w-4 h-4" />;
-      case 'pending': return <Clock className="w-4 h-4" />;
-      case 'cancelled': return <XCircle className="w-4 h-4" />;
-      case 'failed': return <AlertCircle className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
+      case 'confirmed':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'pending':
+        return <Clock className="w-4 h-4" />;
+      case 'cancelled':
+        return <XCircle className="w-4 h-4" />;
+      case 'failed':
+        return <AlertCircle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
     }
   };
 
@@ -198,7 +214,9 @@ const BookingDetailPage = () => {
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
                   {booking?.packageId?.title}
                 </h1>
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(booking?.bookingStatus || '')}`}>
+                <div
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(booking?.bookingStatus || '')}`}
+                >
                   {getStatusIcon(booking?.bookingStatus || '')}
                   {booking?.bookingStatus?.toUpperCase()}
                 </div>
@@ -223,10 +241,10 @@ const BookingDetailPage = () => {
                 className="flex items-center gap-2 px-4 py-2"
               >
                 <DownloadIcon className="w-4 h-4" />
-                {loading ? "Downloading..." : "Download Invoice"}
+                {loading ? 'Downloading...' : 'Download Invoice'}
               </Button>
 
-              {booking?.bookingStatus == "confirmed" && (
+              {booking?.bookingStatus == 'confirmed' && (
                 <Button
                   onClick={handleAddReview}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700"
@@ -248,7 +266,10 @@ const BookingDetailPage = () => {
             {booking?.packageId?.imageUrls?.[0]?.url && (
               <Card className="overflow-hidden">
                 <img
-                  src={booking?.packageId.imageUrls[0].url.replace("/upload/", "/upload/f_auto,q_auto/")}
+                  src={booking?.packageId.imageUrls[0].url.replace(
+                    '/upload/',
+                    '/upload/f_auto,q_auto/'
+                  )}
                   alt={booking?.packageId.title}
                   className="w-full h-64 lg:h-80 object-cover"
                 />
@@ -295,9 +316,9 @@ const BookingDetailPage = () => {
                               .sort((a, b) => a.startTime.localeCompare(b.startTime))
                               .map((activity, actIndex) => {
                                 const formatTime = (time24: string) => {
-                                  const [hourStr, minute] = time24.split(":");
+                                  const [hourStr, minute] = time24.split(':');
                                   let hour = parseInt(hourStr, 10);
-                                  const ampm = hour >= 12 ? "PM" : "AM";
+                                  const ampm = hour >= 12 ? 'PM' : 'AM';
                                   hour = hour % 12 || 12;
                                   return `${hour}:${minute} ${ampm}`;
                                 };
@@ -305,9 +326,12 @@ const BookingDetailPage = () => {
                                 return (
                                   <li key={actIndex} className="flex items-center space-x-2">
                                     <span className="text-orange font-semibold">
-                                      {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
+                                      {formatTime(activity.startTime)} -{' '}
+                                      {formatTime(activity.endTime)}
                                     </span>
-                                    <span className="text-muted-foreground">{activity.activity}</span>
+                                    <span className="text-muted-foreground">
+                                      {activity.activity}
+                                    </span>
                                   </li>
                                 );
                               })}
@@ -375,30 +399,40 @@ const BookingDetailPage = () => {
                   <span className="text-gray-600">Travel Date</span>
                   <span className="font-medium">
                     {booking?.travelDate
-                      ? new Date(booking?.travelDate).toLocaleDateString("en-IN", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })
-                      : "—"}
+                      ? new Date(booking?.travelDate).toLocaleDateString('en-IN', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      : '—'}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Total Amount</span>
-                  <span className="font-semibold text-xl text-green-600">₹{booking?.totalAmount}</span>
+                  <span className="font-semibold text-xl text-green-600">
+                    ₹{booking?.totalAmount}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Total Amount Paid</span>
-                  <span className="font-semibold text-xl text-green-600">₹{booking?.amountPaid}</span>
+                  <span className="font-semibold text-xl text-green-600">
+                    ₹{booking?.amountPaid}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Payment Status</span>
-                  <span className={`font-medium ${booking?.paymentStatus === 'paid' ? 'text-green-600' :
-                    booking?.paymentStatus === 'pending' ? 'text-yellow-600' : 'text-red-600'
-                    }`}>
+                  <span
+                    className={`font-medium ${
+                      booking?.paymentStatus === 'paid'
+                        ? 'text-green-600'
+                        : booking?.paymentStatus === 'pending'
+                          ? 'text-yellow-600'
+                          : 'text-red-600'
+                    }`}
+                  >
                     {booking?.paymentStatus}
                   </span>
                 </div>
@@ -422,8 +456,6 @@ const BookingDetailPage = () => {
                     <span className="font-medium text-green-600">{booking?.couponCode}</span>
                   </div>
                 )}
-
-
               </CardContent>
             </Card>
             {booking &&
@@ -435,7 +467,6 @@ const BookingDetailPage = () => {
                   handleChangeTravelDate={handleChangeTravelDate}
                 />
               )}
-
 
             <Card>
               <CardHeader>
@@ -519,7 +550,6 @@ const BookingDetailPage = () => {
               </Dialog>
             </Card>
 
-
             {/* 
 
             {/* Contact Information */}
@@ -560,7 +590,7 @@ const BookingDetailPage = () => {
             {/* Action Buttons */}
             <div className="space-y-3">
               {/* Retry Payment */}
-              {(booking?.paymentStatus === "pending" || booking?.paymentStatus === "failed") && (
+              {(booking?.paymentStatus === 'pending' || booking?.paymentStatus === 'failed') && (
                 <Button
                   onClick={() => setShowRetryModal(true)}
                   className="w-full bg-orange-600 hover:bg-orange-700"
@@ -570,38 +600,43 @@ const BookingDetailPage = () => {
               )}
 
               {/* Cancel Booking */}
-              {booking?.bookingStatus !== "cancelled" && new Date(booking?.travelDate!) > new Date() && (
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="destructive" className="w-full">
-                      Cancel Booking
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Cancel Booking</h3>
-                      <p className="text-gray-600">Please provide a reason for cancellation:</p>
-                      <Textarea
-                        rows={4}
-                        value={cancelReason}
-                        onChange={(e) => setCancelReason(e.target.value)}
-                        placeholder="Enter your reason for cancellation..."
-                        className="w-full"
-                      />
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => setOpen(false)} className="flex-1">
-                          Keep Booking
-                        </Button>
-                        <Button onClick={handleCancel} variant="destructive" className="flex-1">
-                          Cancel Booking
-                        </Button>
+              {booking?.bookingStatus !== 'cancelled' &&
+                new Date(booking?.travelDate!) > new Date() && (
+                  <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="destructive" className="w-full">
+                        Cancel Booking
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Cancel Booking</h3>
+                        <p className="text-gray-600">Please provide a reason for cancellation:</p>
+                        <Textarea
+                          rows={4}
+                          value={cancelReason}
+                          onChange={(e) => setCancelReason(e.target.value)}
+                          placeholder="Enter your reason for cancellation..."
+                          className="w-full"
+                        />
+                        <div className="flex gap-3">
+                          <Button
+                            variant="outline"
+                            onClick={() => setOpen(false)}
+                            className="flex-1"
+                          >
+                            Keep Booking
+                          </Button>
+                          <Button onClick={handleCancel} variant="destructive" className="flex-1">
+                            Cancel Booking
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
+                    </DialogContent>
+                  </Dialog>
+                )}
 
-              {booking?.bookingStatus !== "cancelled" &&
+              {booking?.bookingStatus !== 'cancelled' &&
                 new Date(booking?.travelDate!) <= new Date() && (
                   <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex items-start gap-2">
@@ -627,16 +662,15 @@ const BookingDetailPage = () => {
         history={booking?.history || []}
       />
 
-
       {/* Retry Payment Modal */}
       <RetryPaymentModal
         open={showRetryModal}
         onClose={() => setShowRetryModal(false)}
-        bookingId={booking?._id || ""}
+        bookingId={booking?._id || ''}
         prefill={{
-          name: booking?.contactDetails?.name || "",
-          email: booking?.contactDetails?.email || "",
-          contact: booking?.contactDetails?.phone || "",
+          name: booking?.contactDetails?.name || '',
+          email: booking?.contactDetails?.email || '',
+          contact: booking?.contactDetails?.phone || '',
         }}
         onRetrySuccess={(updated) => setBooking(updated)}
       />

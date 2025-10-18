@@ -1,7 +1,7 @@
-import { useEffect, useCallback } from "react";
-import socket from "@/sockets/socket";
-import { SOCKET_EVENTS } from "@/sockets/events";
-import type { IMessage, ISendMessage } from "@/types/IMessage";
+import { useEffect, useCallback } from 'react';
+import socket from '@/sockets/socket';
+import { SOCKET_EVENTS } from '@/sockets/events';
+import type { IMessage, ISendMessage } from '@/types/IMessage';
 
 interface UseChatSocketProps {
   roomId?: string;
@@ -30,7 +30,6 @@ export const useChatSocket = ({
   );
 
   const handleMessageRead = useCallback(
-    
     ({ messageId, userId }: { messageId: string; userId: string }) =>
       onMessageRead(messageId, userId),
     [onMessageRead]
@@ -57,7 +56,7 @@ export const useChatSocket = ({
 
     // --- room listeners only ---
     socket.on(SOCKET_EVENTS.NEW_MESSAGE, onMessageReceived);
-   socket.on(SOCKET_EVENTS.MESSAGE_SEND, onMessageReceived);
+    socket.on(SOCKET_EVENTS.MESSAGE_SEND, onMessageReceived);
     socket.on(SOCKET_EVENTS.MESSAGE_DELETED, handleMessageDeleted);
     socket.on(SOCKET_EVENTS.MESSAGE_READ, handleMessageRead);
     socket.on(SOCKET_EVENTS.TYPING, handleTyping);

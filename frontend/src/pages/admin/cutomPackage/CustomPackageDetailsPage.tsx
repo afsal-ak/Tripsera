@@ -1,16 +1,32 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/button";
-import { Loader2, Edit3, Trash2, RefreshCw } from "lucide-react";
-import { toast } from "sonner";
-import { getCustomPkgById, deleteCustomPkg, updateCustomPkg } from "@/services/admin/customPkgService";
-import type { ICustomPackage } from "@/types/ICustomPkg";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/Select";
-import { Textarea } from "@/components/ui/textarea";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/button';
+import { Loader2, Trash2, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  getCustomPkgById,
+  deleteCustomPkg,
+  updateCustomPkg,
+} from '@/services/admin/customPkgService';
+import type { ICustomPackage } from '@/types/ICustomPkg';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/Dialog';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/textarea';
 
 const CustomPackageDetails = () => {
   const { pkgId } = useParams();
@@ -21,8 +37,8 @@ const CustomPackageDetails = () => {
 
   // Modal state
   const [open, setOpen] = useState<boolean>(false);
-  const [status, setStatus] = useState<string>("");
-  const [adminResponse, setAdminResponse] = useState<string>("");
+  const [status, setStatus] = useState<string>('');
+  const [adminResponse, setAdminResponse] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -33,9 +49,9 @@ const CustomPackageDetails = () => {
       const response = await getCustomPkgById(pkgId);
       setPkg(response.data);
       setStatus(response.data.status);
-      setAdminResponse(response.data.adminResponse || "");
+      setAdminResponse(response.data.adminResponse || '');
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to fetch package details");
+      toast.error(error?.response?.data?.message || 'Failed to fetch package details');
     } finally {
       setLoading(false);
     }
@@ -45,15 +61,15 @@ const CustomPackageDetails = () => {
     fetchPkg();
   }, [pkgId]);
 
-   const handleDelete = async () => {
+  const handleDelete = async () => {
     if (!pkgId) return;
     try {
       setDeleting(true);
       await deleteCustomPkg(pkgId);
-      toast.success("Package deleted successfully");
-      navigate("/admin/custom-packages");
+      toast.success('Package deleted successfully');
+      navigate('/admin/custom-packages');
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to delete package");
+      toast.error(error?.response?.data?.message || 'Failed to delete package');
     } finally {
       setDeleting(false);
     }
@@ -64,12 +80,12 @@ const CustomPackageDetails = () => {
     if (!pkgId) return;
     try {
       setUpdating(true);
-      await updateCustomPkg(pkgId,  status, adminResponse );
-      toast.success("Package updated successfully");
+      await updateCustomPkg(pkgId, status, adminResponse);
+      toast.success('Package updated successfully');
       setOpen(false);
       fetchPkg();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to update package");
+      toast.error(error?.response?.data?.message || 'Failed to update package');
     } finally {
       setUpdating(false);
     }
@@ -90,20 +106,20 @@ const CustomPackageDetails = () => {
   // Get badge color based on status
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
-        return "bg-yellow-500";
-      case "approved":
-        return "bg-green-500";
-      case "rejected":
-        return "bg-red-500";
-      case "cancelled":
-        return "bg-gray-500";
-      case "inProgress":
-        return "bg-blue-500";
-      case "completed":
-        return "bg-purple-600";
+      case 'pending':
+        return 'bg-yellow-500';
+      case 'approved':
+        return 'bg-green-500';
+      case 'rejected':
+        return 'bg-red-500';
+      case 'cancelled':
+        return 'bg-gray-500';
+      case 'inProgress':
+        return 'bg-blue-500';
+      case 'completed':
+        return 'bg-purple-600';
       default:
-        return "bg-gray-400";
+        return 'bg-gray-400';
     }
   };
 
@@ -116,7 +132,6 @@ const CustomPackageDetails = () => {
             Package Details
           </CardTitle>
           <div className="flex gap-3">
-      
             {/* Update status button */}
             <Button
               variant="outline"
@@ -129,11 +144,7 @@ const CustomPackageDetails = () => {
             </Button>
 
             {/* Delete confirmation dialog */}
-            <ConfirmDialog
-              title="Delete Package?"
-              actionLabel="Delete"
-              onConfirm={handleDelete}
-            >
+            <ConfirmDialog title="Delete Package?" actionLabel="Delete" onConfirm={handleDelete}>
               <Button
                 variant="destructive"
                 size="sm"
@@ -149,28 +160,36 @@ const CustomPackageDetails = () => {
 
         {/* Package Info */}
         <CardContent className="space-y-6 mt-4">
-           {/* Guest Info */}
+          {/* Guest Info */}
           <div className="pt-4 border-t border-gray-100">
             <h3 className="text-lg font-semibold mb-2">Guest Information</h3>
             {pkg.guestInfo ? (
               <div className="bg-gray-50 p-4 rounded-lg shadow-sm space-y-2">
-                <p><strong>Name:</strong> {pkg.guestInfo.name}</p>
-                <p><strong>Email:</strong> {pkg.guestInfo.email}</p>
-                <p><strong>Phone:</strong> {pkg.guestInfo.phone}</p>
+                <p>
+                  <strong>Name:</strong> {pkg.guestInfo.name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {pkg.guestInfo.email}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {pkg.guestInfo.phone}
+                </p>
               </div>
             ) : (
               <p className="text-gray-500 italic">No guest info available</p>
             )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
             <InfoBlock label="Destination" value={pkg.destination} />
             <InfoBlock
               label="Trip Type"
-              value={pkg.tripType === "other" ? pkg.otherTripType || "Other" : pkg.tripType}
+              value={pkg.tripType === 'other' ? pkg.otherTripType || 'Other' : pkg.tripType}
             />
             <InfoBlock label="Budget" value={`₹ ${pkg.budget.toLocaleString()}`} />
-            <InfoBlock label="Start Date" value={new Date(pkg.startDate).toLocaleDateString("en-IN")} />
+            <InfoBlock
+              label="Start Date"
+              value={new Date(pkg.startDate).toLocaleDateString('en-IN')}
+            />
             <InfoBlock label="Days" value={`${pkg.days} Days`} />
             <InfoBlock label="Nights" value={`${pkg.nights} Nights`} />
             <InfoBlock label="Adults" value={pkg.adults} />
@@ -202,8 +221,6 @@ const CustomPackageDetails = () => {
               <p className="text-gray-700 mt-1">{pkg.adminResponse}</p>
             </div>
           )}
-
-         
         </CardContent>
       </Card>
 
@@ -237,9 +254,11 @@ const CustomPackageDetails = () => {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleUpdate} disabled={updating}>
-              {updating ? <Loader2 className="animate-spin h-4 w-4" /> : "Update"}
+              {updating ? <Loader2 className="animate-spin h-4 w-4" /> : 'Update'}
             </Button>
           </DialogFooter>
         </DialogContent>

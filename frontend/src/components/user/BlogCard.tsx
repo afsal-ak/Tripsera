@@ -28,17 +28,17 @@ const BlogCard = ({ blog, linkPrefix }: Props) => {
           <h3 className="text-lg font-bold mb-3 line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors duration-200 leading-tight min-h-[3.5rem]">
             {blog.title}
           </h3>
-          
+
           <p className="text-sm text-gray-600 line-clamp-3 mb-6 leading-relaxed flex-grow min-h-[4.5rem]">
             {blog.content}
           </p>
-          
+
           {/* Author and Date Row */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
             <div className="flex items-center space-x-3">
               {blog.author.profileImage?.url ? (
                 <img
-                  src={blog.author.profileImage?.url||'profile-default.jpg'}
+                  src={blog.author.profileImage?.url || 'profile-default.jpg'}
                   alt={blog.author.username}
                   className="w-8 h-8 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-blue-200 transition-colors flex-shrink-0"
                 />
@@ -48,21 +48,33 @@ const BlogCard = ({ blog, linkPrefix }: Props) => {
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold text-gray-800 truncate">{blog.author.username}</div>
+                <div className="text-sm font-semibold text-gray-800 truncate">
+                  {blog.author.username}
+                </div>
                 <div className="text-xs text-gray-500">
                   {new Date(blog.createdAt!).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
-                    day: 'numeric'
+                    day: 'numeric',
                   })}
                 </div>
               </div>
             </div>
-            
+
             {/* Read More Arrow */}
             <div className="text-blue-500 group-hover:text-blue-600 transition-colors flex-shrink-0">
-              <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <svg
+                className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </div>
           </div>

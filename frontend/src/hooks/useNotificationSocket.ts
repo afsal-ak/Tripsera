@@ -1,11 +1,10 @@
-
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import socket from "@/sockets/socket";
-import { SOCKET_NOTIFICATION_EVENTS } from "@/sockets/events";
-import type { INotification } from "@/types/INotifications";
-import { toast } from "sonner";
-import { addNotification } from "@/redux/slices/notificationSlice";
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import socket from '@/sockets/socket';
+import { SOCKET_NOTIFICATION_EVENTS } from '@/sockets/events';
+import type { INotification } from '@/types/INotifications';
+import { toast } from 'sonner';
+import { addNotification } from '@/redux/slices/notificationSlice';
 
 export function useNotificationSocket(userId: string) {
   const dispatch = useDispatch();
@@ -28,5 +27,5 @@ export function useNotificationSocket(userId: string) {
   }, [userId, dispatch]);
 
   // Return an empty object or any other data if needed
-  return {}; 
+  return {};
 }

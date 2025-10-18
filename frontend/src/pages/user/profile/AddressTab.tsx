@@ -14,8 +14,7 @@ type Props = {
   refetchUser: () => Promise<void>;
 };
 
-
-const AddressTab = ({ user, loading,refetchUser }: Props) => {
+const AddressTab = ({ user, loading, refetchUser }: Props) => {
   const {
     register,
     handleSubmit,

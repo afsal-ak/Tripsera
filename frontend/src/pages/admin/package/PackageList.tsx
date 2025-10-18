@@ -16,11 +16,7 @@ import {
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 import type { IPackage } from '@/types/IPackage';
-import {
-  fetchPackagesData,
-  blockPackage,
-  unBlockPackage,
-} from '@/services/admin/packageService';
+import { fetchPackagesData, blockPackage, unBlockPackage } from '@/services/admin/packageService';
 
 import { FilterBar } from '@/components/FilterBar ';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
@@ -33,7 +29,7 @@ const PackageList = () => {
   const [packages, setPackages] = useState<IPackage[]>([]);
   // const [currentPage, setCurrentPage] = useState(1);
   // const [totalPages, setTotalPages] = useState(1);
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(1);
   const {
     searchQuery,
@@ -54,7 +50,7 @@ const PackageList = () => {
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '10', 10);
-  const cleanFilter = useCleanFilter()
+  const cleanFilter = useCleanFilter();
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -65,11 +61,11 @@ const PackageList = () => {
           sort,
           startDate,
           endDate,
-          rating
+          rating,
         };
         const filters = cleanFilter(rawFilters);
 
-        const res = await fetchPackagesData(currentPage, limit,filters);
+        const res = await fetchPackagesData(currentPage, limit, filters);
 
         console.log('Pagination response', res);
         setPackages(res.data);
@@ -82,12 +78,11 @@ const PackageList = () => {
   }, [debouncedSearch, searchParams, currentPage]);
   console.log(packages);
 
- useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(searchParams);
     if (debouncedSearch) {
       params.set('search', debouncedSearch);
-    }
-    else params.delete('search');
+    } else params.delete('search');
     params.set('page', '1');
     setSearchParams(params);
   }, [debouncedSearch]);
@@ -105,9 +100,6 @@ const PackageList = () => {
     onPageChange: handlePageChange,
   });
 
-
-
-
   // Handlers passed to FilterBar
   const handleSearchChange = (val: string) => setSearchQuery(val);
   const handleStatusChange = (val: string) => setStatusFilter(val);
@@ -119,15 +111,14 @@ const PackageList = () => {
   };
 
   const handleClearFilters = () => {
-    setSearchQuery("");
-    setStatusFilter("");
-    setStartDate("");
-    setEndDate("");
-    setSort("");
-    setRating('')
-    setSearchParams({ page: "1" }); 
+    setSearchQuery('');
+    setStatusFilter('');
+    setStartDate('');
+    setEndDate('');
+    setSort('');
+    setRating('');
+    setSearchParams({ page: '1' });
   };
-
 
   const handleToggleBlock = async (id: string, shouldBlock: boolean) => {
     const action = shouldBlock ? 'block' : 'unblock';
@@ -164,23 +155,21 @@ const PackageList = () => {
           startDateValue={startDate}
           endDateValue={endDate}
           sortValue={sort}
-           onSearchChange={handleSearchChange}
+          onSearchChange={handleSearchChange}
           onStatusChange={handleStatusChange}
           onStartDateChange={setStartDate}
           onEndDateChange={setEndDate}
           onSortChange={handleSortChange}
-           onApply={handleApplyFilters}
+          onApply={handleApplyFilters}
           onClear={handleClearFilters}
           statusOptions={[
-            { value: "active", label: "Active" },
-            { value: "blocked", label: "Blocked" },
+            { value: 'active', label: 'Active' },
+            { value: 'blocked', label: 'Blocked' },
           ]}
           sortOptions={[
-            { value: "asc", label: "Newest" },
-            { value: "desc", label: "Oldest" },
-            
+            { value: 'asc', label: 'Newest' },
+            { value: 'desc', label: 'Oldest' },
           ]}
-          
         />
         <Table>
           <TableHeader>
@@ -198,12 +187,8 @@ const PackageList = () => {
               <TableRow key={pkg._id}>
                 <TableCell>{(currentPage - 1) * 3 + index + 1}</TableCell>
                 <TableCell>{pkg.title}</TableCell>
-                <TableCell>
-                 {pkg.price}
-                </TableCell> 
-                <TableCell>
-                 {pkg.finalPrice}
-                </TableCell>
+                <TableCell>{pkg.price}</TableCell>
+                <TableCell>{pkg.finalPrice}</TableCell>
                 <TableCell>
                   {pkg.isBlocked ? (
                     <span className="text-red-500">Blocked</span>
@@ -255,25 +240,6 @@ const PackageList = () => {
           {paginationButtons}
         </div>
       </CardContent>
-      {/* <div className="flex justify-center items-center gap-4 mt-6">
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-        <span className="text-sm font-medium">
-          Page {currentPage} of {totalPages}
-        </span>
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </Button>
-      </div> */}
     </Card>
   );
 };

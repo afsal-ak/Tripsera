@@ -3,60 +3,42 @@ import { z } from 'zod';
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-// export const TravelerSchema = z.object({
-//   // fullName: z.string().min(1, "Full name is required"),
-//   fullName: z
-//     .string()
-//     .transform((val) => val.trim())
-//     .refine((val) => val.length >= 3, {
-//       message: 'name must be at least 3 characters',
-//     }),
-//   age: z.number({ invalid_type_error: 'Age must be a number' }).min(1, 'Invalid age'),
-//   gender: z.enum(['male', 'female', 'other'], {
-//     required_error: 'Gender is required',
-//   }),
-//   id: z.string().min(3, 'Government ID (Passport/Aadhaar) is required'),
-// });
-
 export const TravelerSchema = z
   .object({
-    fullName: z.string().trim().min(3, "Name must be at least 3 characters"),
-    age: z.number({ invalid_type_error: "Age must be a number" }).min(1, "Invalid age"),
-    gender: z.enum(["male", "female", "other"], {
-      required_error: "Gender is required",
+    fullName: z.string().trim().min(3, 'Name must be at least 3 characters'),
+    age: z.number({ invalid_type_error: 'Age must be a number' }).min(1, 'Invalid age'),
+    gender: z.enum(['male', 'female', 'other'], {
+      required_error: 'Gender is required',
     }),
 
-    // idType: z.enum(["aadhaar", "pan", "passport"], {
-    //   required_error: "Select an ID type",
-    // }),
-idType: z.enum(["aadhaar", "pan", "passport"]).optional(),
+    idType: z.enum(['aadhaar', 'pan', 'passport']).optional(),
 
     idNumber: z.string().trim(),
   })
   .superRefine((data, ctx) => {
     const { idType, idNumber } = data;
 
-    if (idType === "aadhaar" && !/^\d{12}$/.test(idNumber)) {
+    if (idType === 'aadhaar' && !/^\d{12}$/.test(idNumber)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["idNumber"],
-        message: "Aadhaar must be 12 digits",
+        path: ['idNumber'],
+        message: 'Aadhaar must be 12 digits',
       });
     }
 
-    if (idType === "pan" && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(idNumber)) {
+    if (idType === 'pan' && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(idNumber)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["idNumber"],
-        message: "PAN must be in format ABCDE1234F",
+        path: ['idNumber'],
+        message: 'PAN must be in format ABCDE1234F',
       });
     }
 
-    if (idType === "passport" && !/^[A-PR-WYa-pr-wy][1-9]\d{6}[1-9]$/.test(idNumber)) {
+    if (idType === 'passport' && !/^[A-PR-WYa-pr-wy][1-9]\d{6}[1-9]$/.test(idNumber)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["idNumber"],
-        message: "Passport must be valid (e.g., A1234567)",
+        path: ['idNumber'],
+        message: 'Passport must be valid (e.g., A1234567)',
       });
     }
   });

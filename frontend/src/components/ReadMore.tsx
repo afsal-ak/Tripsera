@@ -11,16 +11,13 @@ const ReadMore: React.FC<ReadMoreProps> = ({ text, wordLimit = 20 }) => {
   const words = text.trim().split(/\s+/);
   const isLong = words.length > wordLimit;
 
-  const previewText = isLong ? words.slice(0, wordLimit).join(" ") : text;
+  const previewText = isLong ? words.slice(0, wordLimit).join(' ') : text;
 
   return (
     <span>
       {expanded || !isLong ? text : `${previewText}... `}
       {isLong && (
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="text-blue-500 hover:underline"
-        >
+        <button onClick={() => setExpanded(!expanded)} className="text-blue-500 hover:underline">
           {expanded ? 'Show Less' : 'Read More'}
         </button>
       )}

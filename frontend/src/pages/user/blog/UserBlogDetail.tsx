@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, Verified, } from 'lucide-react';
+import { Heart, MessageCircle, Send, Bookmark, Verified } from 'lucide-react';
 import {
   fetchBlogBySlug,
   handleLikeBlog,
   handleUnLikeBlog,
-  handleBlogEdit,
   handleDeleteBlog,
-  fetchBlogLikeList
+  fetchBlogLikeList,
 } from '@/services/user/blogService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -25,7 +24,7 @@ import type { UserBasicInfo } from '@/types/UserBasicInfo';
 import CommentModal from '@/components/CommentModal';
 const UserBlogDetails = () => {
   const { slug } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   //console.log(slug, 'from param');
   const [liked, setLiked] = useState(false);
   // const [savedPosts, setSavedPosts] = useState();
@@ -34,7 +33,7 @@ const UserBlogDetails = () => {
   const [likedUsers, setLikedUsers] = useState<UserBasicInfo[]>([]);
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
 
-  const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null)
+  const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null);
   const [showReportModal, setShowReportModal] = useState(true);
   const [showCommentModal, setShowCommentModal] = useState(false);
 
@@ -44,15 +43,15 @@ const UserBlogDetails = () => {
 
       try {
         const response = await fetchBlogBySlug(slug);
-        console.log(response, 'response fr')
+        console.log(response, 'response fr');
         setBlogData(response.blog);
         setLiked(response.blog?.isLiked || false);
         setLikesCount(response.blog?.likes?.length || 0);
         if (response.blog?._id) {
-          console.log(response.blog._id, 'llllll')
+          console.log(response.blog._id, 'llllll');
 
           const likesResponse = await fetchBlogLikeList(response.blog._id);
-          setLikedUsers(likesResponse)
+          setLikedUsers(likesResponse);
           console.log(likesResponse, 'blog likes');
         }
       } catch (error: any) {
@@ -102,25 +101,22 @@ const UserBlogDetails = () => {
   };
 
   const handleNavigateUseProfile = (username: string) => {
-    navigate(`/profile/${username}`)
-  }
+    navigate(`/profile/${username}`);
+  };
   const options = [
-    { label: "Edit", value: "edit", className: "text-black-500" },
-    { label: "Delete", value: "delete", className: "text-red-500" },
+    { label: 'Edit', value: 'edit', className: 'text-black-500' },
+    { label: 'Delete', value: 'delete', className: 'text-red-500' },
     // { label: "Delete", value: "delete" },
     // { label: "Block User", value: "block" },
   ];
 
-
   function handleOptionSelect(value: string, _id: string, reportedType: IReportedType) {
-    console.log("Selected option:", value);
+    console.log('Selected option:', value);
     // Add your logic here based on value
     if (value == 'delete') {
-      handleDelete()
+      handleDelete();
     } else if (value === 'edit') {
-
-      navigate(`/account/my-blogs/edit/${blogData?._id}`)
-
+      navigate(`/account/my-blogs/edit/${blogData?._id}`);
     }
   }
   return (
@@ -129,7 +125,10 @@ const UserBlogDetails = () => {
         <article className="bg-white shadow-md rounded-xl overflow-hidden max-w-3xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <div onClick={() => handleNavigateUseProfile(blogData.author.username)} className="flex items-center space-x-3">
+            <div
+              onClick={() => handleNavigateUseProfile(blogData.author.username)}
+              className="flex items-center space-x-3"
+            >
               <img
                 src={blogData.author?.profileImage?.url || '/profile-default.jpg'}
                 alt={blogData.author?.username}
@@ -150,7 +149,10 @@ const UserBlogDetails = () => {
                 )} */}
               </div>
             </div>
-            <OptionsDropdown options={options} onSelect={(value) => handleOptionSelect(value, blogData?._id!, 'blog')} />
+            <OptionsDropdown
+              options={options}
+              onSelect={(value) => handleOptionSelect(value, blogData?._id!, 'blog')}
+            />
           </div>
 
           {/* Images */}
@@ -181,10 +183,11 @@ const UserBlogDetails = () => {
               <div className="flex items-center space-x-4">
                 <button onClick={toggleLike}>
                   <Heart
-                    className={`w-6 h-6 transition-all duration-200 ${liked
-                      ? 'fill-red-500 text-red-500'
-                      : 'text-darkText hover:text-muted-foreground'
-                      }`}
+                    className={`w-6 h-6 transition-all duration-200 ${
+                      liked
+                        ? 'fill-red-500 text-red-500'
+                        : 'text-darkText hover:text-muted-foreground'
+                    }`}
                   />
                 </button>
 
@@ -224,14 +227,6 @@ const UserBlogDetails = () => {
                       ✕
                     </button>
                   </div>
-                  {/* <div className="max-h-[70vh] overflow-y-auto">
-        <CommentSection
-          parentId={blogData._id!}
-          parentType="blog"
-          // pass logged-in user if available
-        />
-      </div> */}
-
                 </div>
               </Modal>
             )}
@@ -268,12 +263,11 @@ const UserBlogDetails = () => {
           <CommentModal
             isOpen={showCommentModal}
             onClose={() => setShowCommentModal(false)}
-            imageUrl={blogData.images!?.[0]?.url}
+            imageUrl={blogData.images?.[0]?.url}
             parentId={blogData._id!}
             parentType="blog"
           />
           {/* Comments Modal */}
-
         </article>
       )}
       {showReportModal && selectedReport && (
@@ -285,7 +279,6 @@ const UserBlogDetails = () => {
           />
         </Modal>
       )}
-
     </div>
   );
 };

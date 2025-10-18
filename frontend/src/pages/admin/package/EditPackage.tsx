@@ -1,15 +1,15 @@
-import { useEffect, useState, useCallback } from "react";
-import { useForm, Controller, useFieldArray, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Select from "react-select";
-import { addPackageSchema, editPackageSchema, type EditPackageFormSchema, } from "@/schemas/AddPackageSchema";
-import { getCategory, getPackageById, updatePackage } from "@/services/admin/packageService";
-import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
+import { useEffect, useState, useCallback } from 'react';
+import { useForm, Controller, useFieldArray, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Select from 'react-select';
+import { editPackageSchema, type EditPackageFormSchema } from '@/schemas/AddPackageSchema';
+import { getCategory, getPackageById, updatePackage } from '@/services/admin/packageService';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import ImageCropper from '@/components/ImageCropper';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { Label } from "@/components/ui/Label";
-import { Button } from "@/components/ui/button";
+import { Label } from '@/components/ui/Label';
+import { Button } from '@/components/ui/button';
 
 type ExistingImage = {
   url: string;
@@ -46,7 +46,7 @@ export default function EditPackageForm() {
     formState: { errors, isSubmitting },
   } = useForm<EditPackageFormSchema>({
     resolver: zodResolver(editPackageSchema),
-    mode: "onChange",
+    mode: 'onChange',
   });
 
   // categories state
@@ -65,7 +65,7 @@ export default function EditPackageForm() {
         setCategoryOptions(options);
       } catch {
         if (!mounted) return;
-        toast.error("Failed to fetch categories");
+        toast.error('Failed to fetch categories');
       } finally {
         setLoadingCategories(false);
       }
@@ -84,40 +84,38 @@ export default function EditPackageForm() {
     const fetchData = async () => {
       try {
         const data = await getPackageById(id);
-        console.log(data, "edit pkg");
-
+        console.log(data, 'edit pkg');
 
         reset({
           ...data,
           category: data.category?.map((c: any) => c._id ?? c),
-          startDate: data.startDate ? new Date(data.startDate).toISOString().split("T")[0] : "",
-          endDate: data.endDate ? new Date(data.endDate).toISOString().split("T")[0] : "",
+          startDate: data.startDate ? new Date(data.startDate).toISOString().split('T')[0] : '',
+          endDate: data.endDate ? new Date(data.endDate).toISOString().split('T')[0] : '',
           location: data.location?.map((loc: any) => ({
             name: loc.name,
-            lat: loc.geo.coordinates[1].toString(),  // lat is 2nd
-            lng: loc.geo.coordinates[0].toString(),  // lng is 1st
+            lat: loc.geo.coordinates[1].toString(), // lat is 2nd
+            lng: loc.geo.coordinates[0].toString(), // lng is 1st
           })),
           offer: data.offer
             ? {
-              ...data.offer,
-              validUntil: data.offer.validUntil
-                ? new Date(data.offer.validUntil).toISOString().split("T")[0]
-                : "",
-            }
+                ...data.offer,
+                validUntil: data.offer.validUntil
+                  ? new Date(data.offer.validUntil).toISOString().split('T')[0]
+                  : '',
+              }
             : undefined,
           images: [], // keep upload field empty
         });
 
         setExistingImages(data.imageUrls || []);
-
       } catch (err) {
         console.error(err);
-        toast.error("Failed to fetch package details");
+        toast.error('Failed to fetch package details');
       }
     };
     fetchData();
   }, [id, reset, setCroppedImages]);
-  console.log(existingImages, 'exist')
+  console.log(existingImages, 'exist');
   const onImageChangeWithLimit = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
@@ -145,12 +143,12 @@ export default function EditPackageForm() {
 
   // keep cropped images in sync with form
   useEffect(() => {
-    setValue("images", croppedImages, { shouldValidate: true });
+    setValue('images', croppedImages, { shouldValidate: true });
   }, [croppedImages, setValue]);
 
   // field arrays
-  const locArray = useFieldArray({ control, name: "location" });
-  const itineraryArray = useFieldArray({ control, name: "itinerary" });
+  const locArray = useFieldArray({ control, name: 'location' });
+  const itineraryArray = useFieldArray({ control, name: 'itinerary' });
   const totalImages = existingImages.length + croppedImages.length;
 
   const onSubmit: SubmitHandler<EditPackageFormSchema> = async (data) => {
@@ -162,45 +160,44 @@ export default function EditPackageForm() {
       // NEW images
       croppedImages.forEach((file) => {
         if (file instanceof File) {
-          form.append("images", file);
+          form.append('images', file);
         }
       });
 
       // Rest of the form
       Object.entries(data).forEach(([key, value]) => {
-        if (key === "images") return;
-        if (Array.isArray(value) || typeof value === "object") {
+        if (key === 'images') return;
+        if (Array.isArray(value) || typeof value === 'object') {
           form.append(key, JSON.stringify(value));
         } else {
-          form.append(key, String(value ?? ""));
+          form.append(key, String(value ?? ''));
         }
       });
 
       // EXISTING images
       if (existingImages.length) {
-        form.append("existingImages", JSON.stringify(existingImages));
+        form.append('existingImages', JSON.stringify(existingImages));
       }
 
       await updatePackage(id, form);
-      toast.success("Package updated successfully");
-      navigate("/admin/packages");
+      toast.success('Package updated successfully');
+      navigate('/admin/packages');
     } catch (err) {
       console.error(err);
-      toast.error("Failed to update package");
+      toast.error('Failed to update package');
     }
   };
 
   const addDay = () => {
     itineraryArray.append({
       day: itineraryArray.fields.length + 1,
-      title: "",
-      description: "",
-      activities: [{ startTime: "", endTime: "", activity: "" }],
+      title: '',
+      description: '',
+      activities: [{ startTime: '', endTime: '', activity: '' }],
     });
   };
   useEffect(() => {
-    console.log("Form errors:", errors);
-
+    console.log('Form errors:', errors);
   }, [errors]);
 
   return (
@@ -214,7 +211,6 @@ export default function EditPackageForm() {
               onCropComplete={handleCropComplete}
               onCancel={handleCropCancel}
               aspect={16 / 9}
-
             />
           </div>
         </div>
@@ -227,14 +223,14 @@ export default function EditPackageForm() {
             {/* Title */}
             <div>
               <label className="block font-medium">Title</label>
-              <input {...register("title")} className="border p-2 w-full rounded" />
+              <input {...register('title')} className="border p-2 w-full rounded" />
               {errors.title && <p className="text-red-500">{errors.title.message}</p>}
             </div>
 
             {/* Description */}
             <div>
               <label className="block font-medium">Description</label>
-              <textarea {...register("description")} className="border p-2 w-full rounded" />
+              <textarea {...register('description')} className="border p-2 w-full rounded" />
               {errors.description && <p className="text-red-500">{errors.description.message}</p>}
             </div>
 
@@ -249,7 +245,7 @@ export default function EditPackageForm() {
                     options={categoryOptions}
                     isLoading={loadingCategories}
                     isMulti
-                    value={categoryOptions.filter(c => field.value?.includes(c.value))}
+                    value={categoryOptions.filter((c) => field.value?.includes(c.value))}
                     onChange={(selected) =>
                       field.onChange((selected as any).map((s: any) => s.value))
                     }
@@ -257,32 +253,41 @@ export default function EditPackageForm() {
                   />
                 )}
               />
-              {errors.category && (
-                <p className="text-red-500">{errors.category.message}</p>
-              )}
+              {errors.category && <p className="text-red-500">{errors.category.message}</p>}
             </div>
 
             {/* Price / Days / Nights */}
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block">Price</label>
-                <input type="number" {...register("price", { valueAsNumber: true })} className="border p-2 rounded w-full" />
+                <input
+                  type="number"
+                  {...register('price', { valueAsNumber: true })}
+                  className="border p-2 rounded w-full"
+                />
                 {errors.price && <p className="text-red-500">{errors.price.message}</p>}
-
               </div>
               <div>
                 <label className="block">Days</label>
-                <input type="number" {...register("durationDays", { valueAsNumber: true })} className="border p-2 rounded w-full" />
-                {errors.durationDays &&
+                <input
+                  type="number"
+                  {...register('durationDays', { valueAsNumber: true })}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.durationDays && (
                   <p className="text-red-500">{errors.durationDays?.message}</p>
-                }
+                )}
               </div>
               <div>
                 <label className="block">Nights</label>
-                <input type="number" {...register("durationNights", { valueAsNumber: true })} className="border p-2 rounded w-full" />
-                {errors.durationNights &&
+                <input
+                  type="number"
+                  {...register('durationNights', { valueAsNumber: true })}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.durationNights && (
                   <p className="text-red-500">{errors.durationNights?.message}</p>
-                }
+                )}
               </div>
             </div>
 
@@ -290,37 +295,32 @@ export default function EditPackageForm() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label>Start Date</label>
-                <input type="date" {...register("startDate")} className="border p-2 rounded w-full" />
-                {errors.startDate &&
-                  <p className="text-red-500">{errors.startDate?.message}</p>
-                }
+                <input
+                  type="date"
+                  {...register('startDate')}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.startDate && <p className="text-red-500">{errors.startDate?.message}</p>}
               </div>
               <div>
                 <label>End Date</label>
-                <input type="date" {...register("endDate")} className="border p-2 rounded w-full" />
-                {errors.endDate &&
-                  <p className="text-red-500">{errors.endDate?.message}</p>
-                }
+                <input type="date" {...register('endDate')} className="border p-2 rounded w-full" />
+                {errors.endDate && <p className="text-red-500">{errors.endDate?.message}</p>}
               </div>
-
             </div>
 
             {/* Start Point */}
             <div>
               <label>Start Point</label>
-              <input {...register("startPoint")} className="border p-2 w-full rounded" />
-              {errors.startPoint &&
-                <p className="text-red-500">{errors.startPoint?.message}</p>
-              }
+              <input {...register('startPoint')} className="border p-2 w-full rounded" />
+              {errors.startPoint && <p className="text-red-500">{errors.startPoint?.message}</p>}
             </div>
-
 
             <div>
               <label className="block font-medium mb-1">Locations</label>
               {locArray.fields.map((f, i) => (
                 <div key={f.id} className="border p-4 rounded mb-4">
                   <div className="flex flex-col gap-2">
-
                     {/* Name Field */}
                     <div className="flex flex-col">
                       <label className="text-sm font-medium">Name</label>
@@ -365,7 +365,7 @@ export default function EditPackageForm() {
                       type="button"
                       onClick={() => locArray.remove(i)}
                       disabled={locArray.fields.length === 1}
-                      className={`mt-2 text-red-600 ${locArray.fields.length === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className={`mt-2 text-red-600 ${locArray.fields.length === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       Remove
                     </button>
@@ -375,19 +375,17 @@ export default function EditPackageForm() {
 
               <button
                 type="button"
-                onClick={() => locArray.append({ name: "", lat: "", lng: "" })}
+                onClick={() => locArray.append({ name: '', lat: '', lng: '' })}
                 className="text-blue-600 mt-2"
               >
                 + Add Location
               </button>
             </div>
 
-
-
             {/* Included */}
             <div>
               <label className="block font-medium">Included</label>
-              {watch("included")?.map((_, i) => (
+              {watch('included')?.map((_, i) => (
                 <div key={i} className="flex flex-col gap-1 mb-2">
                   <div className="flex gap-2">
                     <input
@@ -398,15 +396,16 @@ export default function EditPackageForm() {
                       type="button"
                       onClick={() =>
                         setValue(
-                          "included",
-                          watch("included").filter((_, idx) => idx !== i)
+                          'included',
+                          watch('included').filter((_, idx) => idx !== i)
                         )
                       }
-                      disabled={watch("included")?.length === 1} // always keep at least 1
-                      className={`${watch("included")?.length === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "text-red-600"
-                        }`}
+                      disabled={watch('included')?.length === 1} // always keep at least 1
+                      className={`${
+                        watch('included')?.length === 1
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'text-red-600'
+                      }`}
                     >
                       ❌
                     </button>
@@ -418,9 +417,7 @@ export default function EditPackageForm() {
               ))}
               <button
                 type="button"
-                onClick={() =>
-                  setValue("included", [...(watch("included") ?? []), ""])
-                }
+                onClick={() => setValue('included', [...(watch('included') ?? []), ''])}
                 className="text-blue-600 mt-1"
               >
                 + Add Included
@@ -430,7 +427,7 @@ export default function EditPackageForm() {
             {/* Not Included */}
             <div className="mt-4">
               <label className="block font-medium">Not Included</label>
-              {watch("notIncluded")?.map((_, i) => (
+              {watch('notIncluded')?.map((_, i) => (
                 <div key={i} className="flex flex-col gap-1 mb-2">
                   <div className="flex gap-2">
                     <input
@@ -441,15 +438,16 @@ export default function EditPackageForm() {
                       type="button"
                       onClick={() =>
                         setValue(
-                          "notIncluded",
-                          watch("notIncluded").filter((_, idx) => idx !== i)
+                          'notIncluded',
+                          watch('notIncluded').filter((_, idx) => idx !== i)
                         )
                       }
-                      disabled={watch("notIncluded")?.length === 1} // always keep at least 1
-                      className={`${watch("notIncluded")?.length === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "text-red-600"
-                        }`}
+                      disabled={watch('notIncluded')?.length === 1} // always keep at least 1
+                      className={`${
+                        watch('notIncluded')?.length === 1
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'text-red-600'
+                      }`}
                     >
                       ❌
                     </button>
@@ -461,26 +459,20 @@ export default function EditPackageForm() {
               ))}
               <button
                 type="button"
-                onClick={() =>
-                  setValue("notIncluded", [...(watch("notIncluded") ?? []), ""])
-                }
+                onClick={() => setValue('notIncluded', [...(watch('notIncluded') ?? []), ''])}
                 className="text-blue-600 mt-1"
               >
                 + Add Not Included
               </button>
             </div>
 
-
             {/* Itinerary */}
 
             <div>
               <label className="block font-medium">Itinerary</label>
               {errors.itinerary?.root?.message && (
-                <p className="text-red-500 text-sm mb-2">
-                  {errors.itinerary.root.message}
-                </p>
+                <p className="text-red-500 text-sm mb-2">{errors.itinerary.root.message}</p>
               )}
-
 
               {itineraryArray.fields.map((day, i) => (
                 <div key={day.id} className="border p-4 rounded-md mb-4">
@@ -490,10 +482,11 @@ export default function EditPackageForm() {
                       type="button"
                       onClick={() => itineraryArray.remove(i)}
                       disabled={itineraryArray.fields.length === 1}
-                      className={`${itineraryArray.fields.length === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "text-red-600"
-                        }`}
+                      className={`${
+                        itineraryArray.fields.length === 1
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'text-red-600'
+                      }`}
                     >
                       Delete Day
                     </button>
@@ -516,7 +509,9 @@ export default function EditPackageForm() {
                     className="border p-2 w-full mb-2"
                   />
                   {errors.itinerary?.[i]?.description && (
-                    <p className="text-red-500 text-sm">{errors.itinerary[i]?.description?.message}</p>
+                    <p className="text-red-500 text-sm">
+                      {errors.itinerary[i]?.description?.message}
+                    </p>
                   )}
 
                   {/* Activities */}
@@ -586,7 +581,9 @@ export default function EditPackageForm() {
                             <button
                               type="button"
                               onClick={() =>
-                                field.onChange(field.value.filter((_: any, idx: number) => idx !== j))
+                                field.onChange(
+                                  field.value.filter((_: any, idx: number) => idx !== j)
+                                )
                               }
                               className="text-red-600"
                               disabled={field.value.length === 1} // keep at least 1 activity
@@ -601,7 +598,7 @@ export default function EditPackageForm() {
                           onClick={() =>
                             field.onChange([
                               ...(field.value ?? []),
-                              { startTime: "", endTime: "", activity: "" },
+                              { startTime: '', endTime: '', activity: '' },
                             ])
                           }
                           className="text-blue-600"
@@ -630,7 +627,7 @@ export default function EditPackageForm() {
                 <input
                   type="text"
                   placeholder="Offer name"
-                  {...register("offer.name" as const)}
+                  {...register('offer.name' as const)}
                   className="border p-2 rounded w-full"
                 />
                 {errors.offer?.name && (
@@ -643,16 +640,17 @@ export default function EditPackageForm() {
                 <div className="flex flex-col mb-2 md:mb-0">
                   <label className="text-sm font-medium mb-1">Type</label>
                   <select
-                    {...register("offer.type" as const)}
+                    {...register('offer.type' as const)}
                     className="border p-2 rounded w-full"
                   >
                     <option value="percentage">Percentage</option>
                     <option value="flat">Flat</option>
                   </select>
                   {errors.offer?.value?.message && (
-                    <p className="text-red-500 text-sm mt-1">{(errors.offer.value as any).message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {(errors.offer.value as any).message}
+                    </p>
                   )}
-
                 </div>
 
                 {/* Offer Value */}
@@ -661,7 +659,7 @@ export default function EditPackageForm() {
                   <input
                     type="number"
                     placeholder="Value"
-                    {...register("offer.value" as const, { valueAsNumber: true })}
+                    {...register('offer.value' as const, { valueAsNumber: true })}
                     className="border p-2 rounded w-full md:w-32"
                   />
                   {errors.offer?.value && (
@@ -674,7 +672,7 @@ export default function EditPackageForm() {
                   <label className="text-sm font-medium mb-1">Valid Until</label>
                   <input
                     type="date"
-                    {...register("offer.validUntil" as const)}
+                    {...register('offer.validUntil' as const)}
                     className="border p-2 rounded w-full"
                   />
                   {errors.offer?.validUntil && (
@@ -686,17 +684,20 @@ export default function EditPackageForm() {
                 <div className="flex items-center mt-5 md:mt-0">
                   <input
                     type="checkbox"
-                    {...register("offer.isActive" as const)}
+                    {...register('offer.isActive' as const)}
                     id="offerActive"
                     className="mr-2"
                   />
-                  <label htmlFor="offerActive" className="text-sm font-medium">Active</label>
+                  <label htmlFor="offerActive" className="text-sm font-medium">
+                    Active
+                  </label>
                 </div>
               </div>
             </div>
-          
+
             <div>
-              <Label>Upload Images (Total Max {MAX_IMAGES})</Label><br />
+              <Label>Upload Images (Total Max {MAX_IMAGES})</Label>
+              <br />
               <input
                 type="file"
                 accept="image/*"
@@ -714,14 +715,18 @@ export default function EditPackageForm() {
                 {/* Existing images */}
                 {existingImages.map((img) => (
                   <div key={img.public_id} className="relative group">
-                    <img src={img.url} alt="existing" className="w-full h-24 object-cover rounded" />
+                    <img
+                      src={img.url}
+                      alt="existing"
+                      className="w-full h-24 object-cover rounded"
+                    />
                     <button
                       type="button"
                       //onClick={() => handleDeleteExistingImage(img.public_id)}
                       //     disabled={totalImages <= 1} // disable if only 1 image
                       onClick={() => {
                         if (totalImages <= 1) {
-                          toast.error("At least one image must remain");
+                          toast.error('At least one image must remain');
                           return;
                         }
                         handleDeleteExistingImage(img.public_id);
@@ -745,22 +750,22 @@ export default function EditPackageForm() {
                       type="button"
                       onClick={() => {
                         if (totalImages <= 1) {
-                          toast.error("At least one image must remain");
+                          toast.error('At least one image must remain');
                           return;
                         }
                         handleRemoveImage(index);
-                      }} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
+                      }}
+                      className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
                     >
                       ✕
                     </button>
                   </div>
                 ))}
-
               </div>
             </div>
 
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Update Package"}
+              {isSubmitting ? 'Updating...' : 'Update Package'}
             </Button>
           </form>
         )}

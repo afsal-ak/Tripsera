@@ -8,7 +8,7 @@ import imageCompression from 'browser-image-compression';
 interface Props {
   image: string;
   onCropComplete: (croppedFile: File, previewUrl: string) => void;
-  aspect?: number; 
+  aspect?: number;
   onCancel: () => void;
 }
 

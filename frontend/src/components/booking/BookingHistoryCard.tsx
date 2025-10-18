@@ -1,6 +1,5 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import type { ITravelerHistory } from "@/types/IBooking";
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 interface TravelerHistory {
   traveler?: {
     fullName: string;
@@ -26,7 +25,7 @@ interface DateHistory {
 
 interface BookingHistoryCardProps {
   title: string;
-  type: "traveler" | "date"; // choose what kind of history to show
+  type: 'traveler' | 'date'; // choose what kind of history to show
   history?: TravelerHistory[] | DateHistory[];
 }
 
@@ -41,12 +40,9 @@ export const BookingHistoryCard = ({ title, type, history }: BookingHistoryCardP
       <CardContent>
         <div className="space-y-4">
           {history.map((item: any, i: number) => (
-            <div
-              key={i}
-              className="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm"
-            >
+            <div key={i} className="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm">
               {/* Traveler Info */}
-              {type === "traveler" && item.traveler && (
+              {type === 'traveler' && item.traveler && (
                 <div className="mb-3">
                   <div className="text-gray-900 font-semibold text-lg">
                     {item.traveler.fullName}
@@ -61,15 +57,15 @@ export const BookingHistoryCard = ({ title, type, history }: BookingHistoryCardP
               )}
 
               {/* Date Change Info */}
-              {type === "date" && (
+              {type === 'date' && (
                 <div className="mb-3 text-sm text-gray-700">
                   <p>
-                    <span className="font-medium">Old Date:</span>{" "}
-                    {item.oldValue ? new Date(item.oldValue).toLocaleDateString() : "-"}
+                    <span className="font-medium">Old Date:</span>{' '}
+                    {item.oldValue ? new Date(item.oldValue).toLocaleDateString() : '-'}
                   </p>
                   <p>
-                    <span className="font-medium">New Date:</span>{" "}
-                    {item.newValue ? new Date(item.newValue).toLocaleDateString() : "-"}
+                    <span className="font-medium">New Date:</span>{' '}
+                    {item.newValue ? new Date(item.newValue).toLocaleDateString() : '-'}
                   </p>
                 </div>
               )}
@@ -77,11 +73,11 @@ export const BookingHistoryCard = ({ title, type, history }: BookingHistoryCardP
               {/* Action Badge */}
               <Badge
                 className={`mb-3 ${
-                  item.action?.toLowerCase().includes("remove")
-                    ? "bg-red-100 text-red-700 hover:bg-red-100"
-                    : item.action?.toLowerCase().includes("add")
-                    ? "bg-green-100 text-green-700 hover:bg-green-100"
-                    : "bg-blue-100 text-blue-700 hover:bg-blue-100"
+                  item.action?.toLowerCase().includes('remove')
+                    ? 'bg-red-100 text-red-700 hover:bg-red-100'
+                    : item.action?.toLowerCase().includes('add')
+                      ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                      : 'bg-blue-100 text-blue-700 hover:bg-blue-100'
                 }`}
               >
                 {item.action.toUpperCase()}

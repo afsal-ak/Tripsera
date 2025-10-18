@@ -1,4 +1,4 @@
-import api from "@/lib/axios/api";
+import api from '@/lib/axios/api';
 export const fetchBannerData = async (page = 1, limit = 10) => {
   const response = await api.get(`/admin/banners?page=${page}&limit=${limit}`);
   return response.data;

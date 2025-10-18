@@ -1,42 +1,40 @@
-import { useEffect, useState } from "react";
-import { handleFetchReport, handleChangeStatusReport } from "@/services/admin/reportService";
-import { fetchBlogById, changeBlogStatus, deleteBlogAdmin } from "@/services/admin/blogService";
-import { handleChangeStatus, handleReviewDetail, handleDeleteReview } from "@/services/admin/reviewService";
-import { toggleBlockUser, fetchUserDetails } from "@/services/admin/userService";
-import type { IReport } from "@/types/IReport";
-import type { IUser } from "@/types/IUser";
-import type { IBlog } from "@/types/IBlog";
-import type { IReview } from "@/types/IReview";
-import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
+import { useEffect, useState } from 'react';
+import { handleFetchReport, handleChangeStatusReport } from '@/services/admin/reportService';
+import { fetchBlogById, changeBlogStatus, deleteBlogAdmin } from '@/services/admin/blogService';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/Card";
+  handleChangeStatus,
+  handleReviewDetail,
+  handleDeleteReview,
+} from '@/services/admin/reviewService';
+import { toggleBlockUser, fetchUserDetails } from '@/services/admin/userService';
+import type { IReport } from '@/types/IReport';
+import type { IUser } from '@/types/IUser';
+import type { IBlog } from '@/types/IBlog';
+import type { IReview } from '@/types/IReview';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/Select";
-import { Badge } from "@/components/ui/Badge";
-import BlogDetailCard from "../blog/BlogDetailCard";
-import ReviewDetailCard from "../review/ReviewDetailCard";
+} from '@/components/ui/Select';
+import { Badge } from '@/components/ui/Badge';
+import BlogDetailCard from '../blog/BlogDetailCard';
+import ReviewDetailCard from '../review/ReviewDetailCard';
 
-import UserDetailsCard from "../user/UserDetailsCard";
+import UserDetailsCard from '../user/UserDetailsCard';
 const ReportDetails = () => {
   const { reportId } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [report, setReport] = useState<IReport>();
   //const [targetData, setTargetData] = useState<IUser | IBlog | IReview>();
   const [blogData, setBlogData] = useState<IBlog>();
   const [userData, setUserData] = useState<IUser>();
   const [reviewData, setReviewData] = useState<IReview>();
-  const [status, setStatus] = useState("pending"); // initial value
-
+  const [status, setStatus] = useState('pending'); // initial value
 
   // Fetch main report
   useEffect(() => {
@@ -46,11 +44,11 @@ const ReportDetails = () => {
     const fetchReport = async () => {
       try {
         const response = await handleFetchReport(reportId);
-        console.log(response, 'response')
+        console.log(response, 'response');
         setReport(response.report);
         setStatus(response.report.status);
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Failed to load report");
+        toast.error(error?.response?.data?.message || 'Failed to load report');
       }
     };
     fetchReport();
@@ -58,56 +56,51 @@ const ReportDetails = () => {
 
   useEffect(() => {
     if (!report?.reportedId || !report?.reportedType) {
-      console.log('fetch')
+      console.log('fetch');
       return;
     }
-    console.log('fetch')
+    console.log('fetch');
 
     const fetchTarget = async () => {
       if (!report?.reportedId || !report?.reportedType) {
-        console.log('fetch')
+        console.log('fetch');
         return;
       }
       try {
-
-        console.log('fetch')
+        console.log('fetch');
         if (report.reportedType == 'blog') {
-          const response = await fetchBlogById(report.reportedId)
+          const response = await fetchBlogById(report.reportedId);
           // console.log(response, 'blog res')
 
-          setBlogData(response.blog)
-        }
-        else if (report.reportedType == 'review') {
-          const response = await handleReviewDetail(report.reportedId)
-          console.log(response, 'review res')
+          setBlogData(response.blog);
+        } else if (report.reportedType == 'review') {
+          const response = await handleReviewDetail(report.reportedId);
+          console.log(response, 'review res');
 
-          setReviewData(response.review)
-        }
-        else if (report.reportedType == 'user') {
-          const response = await fetchUserDetails(report.reportedId)
-          console.log(response, 'user res')
+          setReviewData(response.review);
+        } else if (report.reportedType == 'user') {
+          const response = await fetchUserDetails(report.reportedId);
+          console.log(response, 'user res');
 
-          setUserData(response.user)
+          setUserData(response.user);
         }
-
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Failed to load target");
+        toast.error(error?.response?.data?.message || 'Failed to load target');
       }
     };
     fetchTarget();
   }, [!report?.reportedId || !report?.reportedType]);
 
-
   const handleStatusChange = async (value: string) => {
     if (!reportId) return;
     try {
-      console.log(value, 'value')
+      console.log(value, 'value');
       await handleChangeStatusReport(reportId, value);
       setStatus(value);
-      toast.success("Report status updated");
+      toast.success('Report status updated');
     } catch (error: any) {
-      console.log(error, 'error')
-      toast.error(error?.response?.data?.message || "Failed to change status");
+      console.log(error, 'error');
+      toast.error(error?.response?.data?.message || 'Failed to change status');
     }
   };
 
@@ -132,38 +125,36 @@ const ReportDetails = () => {
     if (!id) return;
     try {
       if (report?.reportedType == 'blog') {
-        console.log(isBlocked, 'blocked in blog')
+        console.log(isBlocked, 'blocked in blog');
 
-        await changeBlogStatus(id, isBlocked)
-        setBlogData(prev => {
+        await changeBlogStatus(id, isBlocked);
+        setBlogData((prev) => {
           if (!prev) return prev;
           return {
             ...prev,
-            isBlocked: !prev.isBlocked
+            isBlocked: !prev.isBlocked,
           };
         });
-
       } else if (report?.reportedType == 'review') {
-        console.log(isBlocked, 'blocked in review')
-        await handleChangeStatus(reviewData?._id!, isBlocked)
+        console.log(isBlocked, 'blocked in review');
+        await handleChangeStatus(reviewData?._id!, isBlocked);
 
-        setReviewData(prev => {
+        setReviewData((prev) => {
           if (!prev) return prev;
           return {
             ...prev,
-            isBlocked
+            isBlocked,
           };
         });
-      }
-      else if (report?.reportedType == 'user') {
-        console.log(isBlocked, 'blocked in review')
-        await toggleBlockUser(userData?._id!)
+      } else if (report?.reportedType == 'user') {
+        console.log(isBlocked, 'blocked in review');
+        await toggleBlockUser(userData?._id!);
 
-        setUserData(prev => {
+        setUserData((prev) => {
           if (!prev) return prev;
           return {
             ...prev,
-            isBlocked
+            isBlocked,
           };
         });
       }
@@ -174,7 +165,6 @@ const ReportDetails = () => {
     }
   };
 
-
   return (
     <div className="p-6 space-y-6">
       {/* Report Info */}
@@ -182,48 +172,38 @@ const ReportDetails = () => {
         <CardHeader className="border-b pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl font-semibold text-gray-800">
-                Report Details
-              </CardTitle>
-              <p className="text-sm text-gray-500 mt-1">
-                View the report and update its status
-              </p>
+              <CardTitle className="text-xl font-semibold text-gray-800">Report Details</CardTitle>
+              <p className="text-sm text-gray-500 mt-1">View the report and update its status</p>
             </div>
             <Badge
               variant={
-                status === "pending"
-                  ? "secondary"
-                  : status === "resolved"
-                    ? "default"  
-                    : "destructive"
+                status === 'pending'
+                  ? 'secondary'
+                  : status === 'resolved'
+                    ? 'default'
+                    : 'destructive'
               }
-              className={
-                status === "resolved" ? "bg-green-500 text-white" : ""
-              }
+              className={status === 'resolved' ? 'bg-green-500 text-white' : ''}
             >
               {status}
             </Badge>
-
           </div>
         </CardHeader>
 
         <CardContent className="space-y-4 pt-4">
           <div className="grid gap-2">
             <p>
-              <strong>Reported Type:</strong> {report?.reportedType || "N/A"}
+              <strong>Reported Type:</strong> {report?.reportedType || 'N/A'}
             </p>
             <p>
-              <strong>Reason:</strong> {report?.reason || "N/A"}
+              <strong>Reason:</strong> {report?.reason || 'N/A'}
             </p>
             <p>
-              <strong>Description:</strong>{" "}
-              {report?.description || "No description provided"}
+              <strong>Description:</strong> {report?.description || 'No description provided'}
             </p>
             <p>
-              <strong>Reported At:</strong>{" "}
-              {report?.createdAt
-                ? new Date(report.createdAt).toLocaleString()
-                : "N/A"}
+              <strong>Reported At:</strong>{' '}
+              {report?.createdAt ? new Date(report.createdAt).toLocaleString() : 'N/A'}
             </p>
           </div>
 
@@ -247,21 +227,15 @@ const ReportDetails = () => {
       {/* Target Info */}
       <Card className="shadow-sm border rounded-lg">
         <CardHeader className="border-b pb-4">
-          <CardTitle className="text-xl font-semibold text-gray-800">
-            Target Details
-          </CardTitle>
-          <p className="text-sm text-gray-500 mt-1">
-            Information about the reported entity
-          </p>
+          <CardTitle className="text-xl font-semibold text-gray-800">Target Details</CardTitle>
+          <p className="text-sm text-gray-500 mt-1">Information about the reported entity</p>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* User */}
           {userData && (
             <UserDetailsCard
               userData={userData}
-              onToggleBlock={() =>
-                handleBlockToggle(userData?._id!, !userData.isBlocked)
-              }
+              onToggleBlock={() => handleBlockToggle(userData?._id!, !userData.isBlocked)}
             />
           )}
 
@@ -271,9 +245,7 @@ const ReportDetails = () => {
               blog={blogData}
               likesCount={blogData?.likes?.length || 0}
               onDelete={() => handleDelete(blogData?._id!)}
-              onToggleBlock={() =>
-                handleBlockToggle(blogData?._id!, !blogData.isBlocked)
-              }
+              onToggleBlock={() => handleBlockToggle(blogData?._id!, !blogData.isBlocked)}
             />
           )}
 

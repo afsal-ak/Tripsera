@@ -1,9 +1,6 @@
- import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import {
-  verifyRazorpayPayment,
-  cancelUnpaidBooking,
-} from '@/services/user/bookingService';
+import { verifyRazorpayPayment, cancelUnpaidBooking } from '@/services/user/bookingService';
 
 export const useRazorpayPayment = () => {
   const navigate = useNavigate();

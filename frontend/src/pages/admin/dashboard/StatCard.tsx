@@ -1,7 +1,14 @@
+import { motion } from 'framer-motion';
 
-import { motion } from "framer-motion";
-
-function StatCard({ icon: Icon, label, value }: { icon: any; label: string; value: number | string; }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: any;
+  label: string;
+  value: number | string;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -21,4 +28,4 @@ function StatCard({ icon: Icon, label, value }: { icon: any; label: string; valu
     </motion.div>
   );
 }
-export default StatCard
+export default StatCard;

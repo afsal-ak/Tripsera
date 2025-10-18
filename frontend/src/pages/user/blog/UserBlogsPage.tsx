@@ -18,7 +18,7 @@ const UserBlogsPage = () => {
       console.log(currentPage, limit, 'user blog');
       const response = await handleAllUserBlogs(currentPage, limit);
       setBlogs(response.data);
-      console.log(response.data,'user blog')
+      console.log(response.data, 'user blog');
 
       setTotalPages(response.totalBlogs);
     };

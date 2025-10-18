@@ -1,11 +1,27 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "@/redux/store";
-import { fetchNotifications, markAsReadThunk } from "@/redux/slices/notificationSlice";
-import { useNotificationSocket } from "@/hooks/useNotificationSocket";
-import { Bell, Check, Clock, Calendar, User, Wallet, Package, Flag, Star, MoreVertical, Briefcase, AlertCircle, CheckCircle, AlertTriangle, Info } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import type { INotification } from "@/types/INotifications";
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '@/redux/store';
+import { fetchNotifications, markAsReadThunk } from '@/redux/slices/notificationSlice';
+import { useNotificationSocket } from '@/hooks/useNotificationSocket';
+import {
+  Bell,
+  Check,
+  Clock,
+  Calendar,
+  User,
+  Wallet,
+  Package,
+  Flag,
+  Star,
+  MoreVertical,
+  Briefcase,
+  AlertCircle,
+  CheckCircle,
+  AlertTriangle,
+  Info,
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import type { INotification } from '@/types/INotifications';
 
 const NotificationPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,21 +31,21 @@ const NotificationPage = () => {
   );
   const userId = useSelector((s: RootState) => s.userAuth.user?._id);
 
-  useNotificationSocket(userId || "");
+  useNotificationSocket(userId || '');
 
-  const [filter, setFilter] = useState<"all" | "read" | "unRead">("all");
+  const [filter, setFilter] = useState<'all' | 'read' | 'unRead'>('all');
   const [showMenu, setShowMenu] = useState<string | null>(null);
 
   // Get link based on entity type
   const getNotificationLink = (n: INotification) => {
     switch (n.entityType) {
-      case "booking":
+      case 'booking':
         return `/account/my-bookings/${n.bookingId?._id || n.bookingId}`;
-      case "package":
+      case 'package':
         return `/packages/${n.packageId}`;
-      case "wallet":
+      case 'wallet':
         return `/account/wallet`;
-      case "follow":
+      case 'follow':
         return `/profile/${n.triggeredBy?.username}`;
       default:
         return `/user/notifications`;
@@ -39,17 +55,17 @@ const NotificationPage = () => {
   // Get icon based on entity type
   const getEntityIcon = (entityType: string) => {
     switch (entityType) {
-      case "booking":
+      case 'booking':
         return <Calendar className="w-5 h-5" />;
-      case "package":
+      case 'package':
         return <Package className="w-5 h-5" />;
-      case "review":
+      case 'review':
         return <Star className="w-5 h-5" />;
-      case "wallet":
+      case 'wallet':
         return <Wallet className="w-5 h-5" />;
-      case "report":
+      case 'report':
         return <Flag className="w-5 h-5" />;
-      case "follow":
+      case 'follow':
         return <User className="w-5 h-5" />;
       default:
         return <Bell className="w-5 h-5" />;
@@ -60,37 +76,37 @@ const NotificationPage = () => {
   const getTypeStyles = (type: string, isRead: boolean) => {
     if (isRead) {
       return {
-        container: "border-slate-200 bg-white hover:border-slate-300",
-        icon: "bg-slate-100 text-slate-600",
-        badge: "bg-slate-400"
+        container: 'border-slate-200 bg-white hover:border-slate-300',
+        icon: 'bg-slate-100 text-slate-600',
+        badge: 'bg-slate-400',
       };
     }
 
     switch (type) {
-      case "success":
+      case 'success':
         return {
-          container: "border-green-200 bg-green-50/50 hover:border-green-300",
-          icon: "bg-gradient-to-br from-green-500 to-green-600 text-white",
-          badge: "bg-green-500"
+          container: 'border-green-200 bg-green-50/50 hover:border-green-300',
+          icon: 'bg-gradient-to-br from-green-500 to-green-600 text-white',
+          badge: 'bg-green-500',
         };
-      case "error":
+      case 'error':
         return {
-          container: "border-red-200 bg-red-50/50 hover:border-red-300",
-          icon: "bg-gradient-to-br from-red-500 to-red-600 text-white",
-          badge: "bg-red-500"
+          container: 'border-red-200 bg-red-50/50 hover:border-red-300',
+          icon: 'bg-gradient-to-br from-red-500 to-red-600 text-white',
+          badge: 'bg-red-500',
         };
-      case "warning":
+      case 'warning':
         return {
-          container: "border-amber-200 bg-amber-50/50 hover:border-amber-300",
-          icon: "bg-gradient-to-br from-amber-500 to-amber-600 text-white",
-          badge: "bg-amber-500"
+          container: 'border-amber-200 bg-amber-50/50 hover:border-amber-300',
+          icon: 'bg-gradient-to-br from-amber-500 to-amber-600 text-white',
+          badge: 'bg-amber-500',
         };
-      case "info":
+      case 'info':
       default:
         return {
-          container: "border-blue-200 bg-blue-50/50 hover:border-blue-300",
-          icon: "bg-gradient-to-br from-blue-500 to-blue-600 text-white",
-          badge: "bg-blue-500"
+          container: 'border-blue-200 bg-blue-50/50 hover:border-blue-300',
+          icon: 'bg-gradient-to-br from-blue-500 to-blue-600 text-white',
+          badge: 'bg-blue-500',
         };
     }
   };
@@ -98,13 +114,13 @@ const NotificationPage = () => {
   // Get type indicator icon
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "success":
+      case 'success':
         return <CheckCircle className="w-3.5 h-3.5" />;
-      case "error":
+      case 'error':
         return <AlertCircle className="w-3.5 h-3.5" />;
-      case "warning":
+      case 'warning':
         return <AlertTriangle className="w-3.5 h-3.5" />;
-      case "info":
+      case 'info':
       default:
         return <Info className="w-3.5 h-3.5" />;
     }
@@ -119,7 +135,7 @@ const NotificationPage = () => {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return "Just now";
+    if (minutes < 1) return 'Just now';
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
@@ -134,7 +150,7 @@ const NotificationPage = () => {
         filters: {
           page: 1,
           limit: 5,
-          status: filter === "all" ? undefined : filter,
+          status: filter === 'all' ? undefined : filter,
         },
       })
     );
@@ -153,29 +169,32 @@ const NotificationPage = () => {
   };
 
   const markAllAsRead = () => {
-    items.filter(n => !n.isRead).forEach(n => handleMarkAsRead(n._id));
+    items.filter((n) => !n.isRead).forEach((n) => handleMarkAsRead(n._id));
   };
 
   // Group notifications by date
-  const groupedNotifications = items.reduce((acc, notif) => {
-    const date = new Date(notif.createdAt);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  const groupedNotifications = items.reduce(
+    (acc, notif) => {
+      const date = new Date(notif.createdAt);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
 
-    let key = "Older";
-    if (date.toDateString() === today.toDateString()) {
-      key = "Today";
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      key = "Yesterday";
-    } else if (today.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
-      key = "This Week";
-    }
+      let key = 'Older';
+      if (date.toDateString() === today.toDateString()) {
+        key = 'Today';
+      } else if (date.toDateString() === yesterday.toDateString()) {
+        key = 'Yesterday';
+      } else if (today.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
+        key = 'This Week';
+      }
 
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(notif);
-    return acc;
-  }, {} as Record<string, INotification[]>);
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(notif);
+      return acc;
+    },
+    {} as Record<string, INotification[]>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
@@ -210,18 +229,18 @@ const NotificationPage = () => {
 
           {/* Filters */}
           <div className="flex gap-2">
-            {(["all", "unRead", "read"] as const).map((f) => (
+            {(['all', 'unRead', 'read'] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
                 className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   filter === f
-                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
-                {f === "all" ? "All" : f === "read" ? "Read" : "Unread"}
-                {f === "unRead" && unreadCount > 0 && (
+                {f === 'all' ? 'All' : f === 'read' ? 'Read' : 'Unread'}
+                {f === 'unRead' && unreadCount > 0 && (
                   <span className="ml-2 bg-white/20 px-2 py-0.5 rounded-full text-xs">
                     {unreadCount}
                   </span>
@@ -267,7 +286,9 @@ const NotificationPage = () => {
                       >
                         <div className="flex items-start gap-4 p-4">
                           {/* Icon */}
-                          <div className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center shadow-sm ${styles.icon}`}>
+                          <div
+                            className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center shadow-sm ${styles.icon}`}
+                          >
                             {getEntityIcon(n.entityType)}
                           </div>
 
@@ -277,11 +298,15 @@ const NotificationPage = () => {
                             onClick={() => handleNotificationClick(n)}
                           >
                             <div className="flex items-start justify-between gap-3 mb-1">
-                              <h3 className={`font-semibold text-base leading-tight ${n.isRead ? "text-slate-700" : "text-slate-900"}`}>
+                              <h3
+                                className={`font-semibold text-base leading-tight ${n.isRead ? 'text-slate-700' : 'text-slate-900'}`}
+                              >
                                 {n.title}
                               </h3>
                               {!n.isRead && (
-                                <div className={`w-2.5 h-2.5 ${styles.badge} rounded-full flex-shrink-0 mt-1.5 shadow-lg shadow-${n.type}-500/50`}></div>
+                                <div
+                                  className={`w-2.5 h-2.5 ${styles.badge} rounded-full flex-shrink-0 mt-1.5 shadow-lg shadow-${n.type}-500/50`}
+                                ></div>
                               )}
                             </div>
                             <p className="text-slate-600 text-sm leading-relaxed mb-2 line-clamp-2">

@@ -1,39 +1,38 @@
-
-export type IType = "info" | "warning" | "success" | "error"|"warning";
-export type IEntityType = "booking" | "package"|"customPackage" | "review" | "wallet" | 'report'|'follow';
+export type IType = 'info' | 'warning' | 'success' | 'error' | 'warning';
+export type IEntityType =
+  | 'booking'
+  | 'package'
+  | 'customPackage'
+  | 'review'
+  | 'wallet'
+  | 'report'
+  | 'follow';
 
 export interface INotification {
   _id: string;
-  userId?:string;
+  userId?: string;
   //role: IRole,
   title: string;
   message: string;
-  entityType: IEntityType,
-  type: IType,
+  entityType: IEntityType;
+  type: IType;
   isRead: boolean;
   packageId?: string;
-  bookingId?:{_id:string};
+  bookingId?: { _id: string };
   reportedId?: string;
   metadata?: Record<string, any>;
   triggeredBy?: {
-    _id:string,
-    username:string
+    _id: string;
+    username: string;
   };
   createdAt: Date;
   updatedAt: Date;
-
 }
 
- export interface INotificationFilter {
+export interface INotificationFilter {
   page?: number;
   limit?: number;
-    type?: string;          
-  entityType?: string;  
-  status?: "all" | "read" | "unRead";
+  type?: string;
+  entityType?: string;
+  status?: 'all' | 'read' | 'unRead';
 }
-
-// export interface INotificationFilter {
-//   status?: string;
-//   type?: IType;
-//   entityType?: IEntityType;
-// }

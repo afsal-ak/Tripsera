@@ -1,13 +1,11 @@
-
-import { useState } from "react";
-import { X, Plus, Settings, FilterIcon } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import UserSearchForChat from "@/components/chat/UserSearchForChat";
-import ChatFilter from "./ChatFilter";
+import { useState } from 'react';
+import { X, Plus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import ChatFilter from './ChatFilter';
 
 interface ChatListHeaderProps {
-  role:'user'|'admin',
-  totalUnread:number,
+  role: 'user' | 'admin';
+  totalUnread: number;
   onToggleSidebar?: () => void;
   showToggle?: boolean;
 }
@@ -17,7 +15,7 @@ export const ChatListHeader = ({
   onToggleSidebar,
   showToggle = false,
 }: ChatListHeaderProps) => {
-    const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
+  const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
 
   return (
@@ -47,11 +45,9 @@ export const ChatListHeader = ({
           </button>
           <div className="relative">
             {/* FilterIcon Button */}
-            
-              <ChatFilter role={role} totalUnread={totalUnread} />
- 
-          </div>
 
+            <ChatFilter role={role} totalUnread={totalUnread} />
+          </div>
         </div>
       </div>
 
@@ -72,7 +68,7 @@ export const ChatListHeader = ({
               initial={{ scale: 0.8, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 50 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
               className="bg-white rounded-xl shadow-xl w-full max-w-lg relative p-5"
               onClick={(e) => e.stopPropagation()}
             >
@@ -85,7 +81,6 @@ export const ChatListHeader = ({
               </button>
 
               {/* User Search Component */}
-
             </motion.div>
           </motion.div>
         )}

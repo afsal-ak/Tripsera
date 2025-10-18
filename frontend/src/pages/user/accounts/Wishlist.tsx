@@ -38,7 +38,7 @@ const Wishlist = () => {
     try {
       await deleteFromWishlist(packageId);
       toast.success('Removed from wishlist');
-      setWishlist((prev) => prev.filter((item) => item.package._id!== packageId));
+      setWishlist((prev) => prev.filter((item) => item.package._id !== packageId));
     } catch (err) {
       toast.error('Failed to remove item');
     }

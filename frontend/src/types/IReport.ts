@@ -1,10 +1,8 @@
-
-export type IReportedType = "blog" | "review" | "user";
-export type IReportStatus = "pending" | "resolved" | "dismissed";
-export type IAdminAction = "warn" | "block" | "delete" | "none";
+export type IReportedType = 'blog' | 'review' | 'user';
+export type IReportStatus = 'pending' | 'resolved' | 'dismissed';
+export type IAdminAction = 'warn' | 'block' | 'delete' | 'none';
 
 export interface IReport {
-
   _id: string;
   reportedId: string;
   reporterId: string;
@@ -23,22 +21,19 @@ export interface ICreateReport {
   description: string;
 }
 
-
 export interface UpdateReportDTO {
   reportId: string;
   reportedId: string;
   reportedType: IReportedType;
   adminAction: IAdminAction;
   status: IReportStatus;
-  isBlocked: "active" | "block"
+  isBlocked: 'active' | 'block';
 }
 
 export type ISelectedReport = {
   _id: string;
-  reportedType: IReportedType
+  reportedType: IReportedType;
 };
-
-
 
 export interface IAdminReport {
   _id: string;

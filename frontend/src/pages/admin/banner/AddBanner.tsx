@@ -56,34 +56,6 @@ const AddBannerForm = () => {
     }
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (isSubmitting) return; // prevent double submit
-
-  //   // Trim inputs
-  //   const trimmedTitle = title.trim();
-  //   const trimmedDescription = description.trim();
-
-  //   // Basic validation
-  //   if (!trimmedTitle || !trimmedDescription || !imageFile) {
-  //     toast.error("Please fill all fields and upload an image.");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append('title', trimmedTitle);
-  //   formData.append('description', trimmedDescription);
-  //   formData.append('image', imageFile);
-
-  //   try {
-  //     await addBanner(formData);
-  //     toast.success("Banner added successfully!");
-  //     navigate('/admin/banners');
-  //   } catch (error) {
-  //     toast.error("Failed to add banner.");
-  //     console.error("Banner creation error:", error);
-  //   }
-  // };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

@@ -1,22 +1,25 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Send, Paperclip } from "lucide-react";
-import type { IMessage, ISendMessage, IChatRoom, IMessageUserInfo } from "@/types/IMessage";
-import { getMessagesByRoom, getChatRoomById } from "@/services/user/messageService";
-import { adminGetMessagesByRoom, adminGetChatRoomById } from "@/services/admin/messageService";
-import { MessageBubble } from "@/components/chat/MessageBubble";
-import TypingIndicator from "@/components/chat/TypingIndicator";
-import { useChatSocket } from "@/hooks/useChatSocket";
-import { IMessageType } from "@/types/IMessage";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Send, Paperclip } from 'lucide-react';
+import type { IMessage, ISendMessage, IChatRoom, IMessageUserInfo } from '@/types/IMessage';
+import { getMessagesByRoom, getChatRoomById } from '@/services/user/messageService';
+import { adminGetMessagesByRoom, adminGetChatRoomById } from '@/services/admin/messageService';
+import { MessageBubble } from '@/components/chat/MessageBubble';
+import TypingIndicator from '@/components/chat/TypingIndicator';
+import { useChatSocket } from '@/hooks/useChatSocket';
+import { IMessageType } from '@/types/IMessage';
 
-import { formatMessageDate } from "@/lib/utils/dateUtils";
-import { ChatHeader } from "@/components/chat/ChatHeader";
-import AttachmentMenu from "@/components/chat/AttachmentMenu";
-import ImageUpload from "@/components/chat/ImageUpload";
-import { ConfirmDialog } from "../ui/ConfirmDialog";
-import { useDispatch, useSelector } from "react-redux";
-import { addMessageToRoom, deleteMessageFromRoom, markMessageAsReadInRoom } from "@/redux/slices/chatRoomSlice";
-import type { RootState } from "@/redux/store";
-import { setActiveRoom } from "@/redux/slices/chatRoomSlice";
+import { formatMessageDate } from '@/lib/utils/dateUtils';
+import { ChatHeader } from '@/components/chat/ChatHeader';
+import AttachmentMenu from '@/components/chat/AttachmentMenu';
+import ImageUpload from '@/components/chat/ImageUpload';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addMessageToRoom,
+  deleteMessageFromRoom,
+  markMessageAsReadInRoom,
+} from '@/redux/slices/chatRoomSlice';
+import type { RootState } from '@/redux/store';
+import { setActiveRoom } from '@/redux/slices/chatRoomSlice';
 interface Props {
   roomId: string;
   user: IMessageUserInfo;
@@ -25,14 +28,14 @@ interface Props {
 const MessagePage = ({ roomId, user }: Props) => {
   const dispatch = useDispatch();
   const onlineUsers = useSelector((state: RootState) => state.chatRoom.onlineUsers);
- 
+
   const [room, setRoom] = useState<IChatRoom | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [messageInput, setMessageInput] = useState("");
+  const [messageInput, setMessageInput] = useState('');
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [pickedFile, setPickedFile] = useState<File | null>(null);
   const [showMenu, setShowMenu] = useState(false);
-  const [selectedUpload, setSelectedUpload] = useState<"image" | "audio" | "file" | null>(null);
+  const [selectedUpload, setSelectedUpload] = useState<'image' | 'audio' | 'file' | null>(null);
   const [partnersOnlineStatus, setPartnersOnlineStatus] = useState<Record<string, boolean>>({});
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -44,10 +47,10 @@ const MessagePage = ({ roomId, user }: Props) => {
     const fetchRoom = async () => {
       if (!roomId) return;
 
-      if (user.role === "user") {
+      if (user.role === 'user') {
         const response = await getChatRoomById(roomId);
         setRoom(response.data);
-      } else if (user.role === "admin") {
+      } else if (user.role === 'admin') {
         const response = await adminGetChatRoomById(roomId);
         setRoom(response.data);
       }
@@ -61,9 +64,9 @@ const MessagePage = ({ roomId, user }: Props) => {
 
     const fetchMessages = async () => {
       let response;
-      if (user.role === "user") {
+      if (user.role === 'user') {
         response = await getMessagesByRoom(roomId);
-      } else if (user.role === "admin") {
+      } else if (user.role === 'admin') {
         response = await adminGetMessagesByRoom(roomId);
       }
       setMessages(response.data);
@@ -72,13 +75,18 @@ const MessagePage = ({ roomId, user }: Props) => {
     fetchMessages();
   }, [roomId, user.role]);
 
-
   const handleMessageReceived = useCallback(
     (newMessage: IMessage) => {
       setMessages((prev) => [...prev, newMessage]);
-      console.log('new messssage recied')
+      console.log('new messssage recied');
       scrollToBottom();
-      dispatch(addMessageToRoom({ roomId: newMessage.roomId, message: newMessage, currentUserId: user._id! }));
+      dispatch(
+        addMessageToRoom({
+          roomId: newMessage.roomId,
+          message: newMessage,
+          currentUserId: user._id!,
+        })
+      );
     },
     [dispatch, user._id]
   );
@@ -86,7 +94,7 @@ const MessagePage = ({ roomId, user }: Props) => {
   const handleMessageDeleted = useCallback(
     (messageId: string) => {
       setMessages((prev) => prev.filter((m) => m._id !== messageId));
-      dispatch(deleteMessageFromRoom({ roomId, messageId, lastMessageContent: "deletedMessage" }));
+      dispatch(deleteMessageFromRoom({ roomId, messageId, lastMessageContent: 'deletedMessage' }));
     },
     [dispatch, roomId]
   );
@@ -96,7 +104,7 @@ const MessagePage = ({ roomId, user }: Props) => {
       setMessages((prev) =>
         prev.map((msg) => (msg._id === messageId ? { ...msg, isRead: true } : msg))
       );
-   //   console.log('kkkkkkkkkkkkk')
+      //   console.log('kkkkkkkkkkkkk')
       dispatch(markMessageAsReadInRoom({ roomId, userId }));
     },
     [dispatch, roomId]
@@ -118,7 +126,7 @@ const MessagePage = ({ roomId, user }: Props) => {
     onStopTyping: handleStopTyping,
   });
 
-  const currentUserId = user?._id!
+  const currentUserId = user?._id!;
 
   useEffect(() => {
     if (roomId && currentUserId) {
@@ -139,7 +147,7 @@ const MessagePage = ({ roomId, user }: Props) => {
   // --- Helpers ---
   const scrollToBottom = () => {
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
 
@@ -149,20 +157,20 @@ const MessagePage = ({ roomId, user }: Props) => {
     const newMessage: ISendMessage = {
       roomId: room?._id,
       senderId: user._id!,
-      content: messageInput??'Image',
+      content: messageInput ?? 'Image',
       type: IMessageType.TEXT,
     };
-        console.log(newMessage,'new message from message page')
+    console.log(newMessage, 'new message from message page');
 
     sendMessage(newMessage);
-    setMessageInput("");
+    setMessageInput('');
   };
 
   const handleSendImage = (url: string, caption?: string) => {
     const newMessage: ISendMessage = {
       roomId: room?._id,
       senderId: user._id!,
-      content: caption || "",
+      content: caption || '',
       mediaUrl: url,
       type: IMessageType.IMAGE,
     };
@@ -173,15 +181,12 @@ const MessagePage = ({ roomId, user }: Props) => {
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
 
-  const groupedMessages = sortedMessages.reduce(
-    (groups: Record<string, IMessage[]>, message) => {
-      const dateKey = formatMessageDate(message.createdAt);
-      if (!groups[dateKey]) groups[dateKey] = [];
-      groups[dateKey].push(message);
-      return groups;
-    },
-    {}
-  );
+  const groupedMessages = sortedMessages.reduce((groups: Record<string, IMessage[]>, message) => {
+    const dateKey = formatMessageDate(message.createdAt);
+    if (!groups[dateKey]) groups[dateKey] = [];
+    groups[dateKey].push(message);
+    return groups;
+  }, {});
 
   if (!roomId) {
     return (
@@ -197,11 +202,7 @@ const MessagePage = ({ roomId, user }: Props) => {
       {room && (
         <ChatHeader
           room={room}
-          isPartnerOnline={
-            room?.otherUser?._id
-              ? onlineUsers.includes(room.otherUser._id)
-              : false
-          }
+          isPartnerOnline={room?.otherUser?._id ? onlineUsers.includes(room.otherUser._id) : false}
           isMobile={window.innerWidth < 1024}
         />
       )}
@@ -223,9 +224,7 @@ const MessagePage = ({ roomId, user }: Props) => {
                   isOwn={message.senderId?._id === user?._id}
                   onDelete={deleteMessage}
                   currentUser={user || undefined}
-                  isPartnerOnline={
-                    partnersOnlineStatus[room?.otherUser?._id || ""] || false
-                  }
+                  isPartnerOnline={partnersOnlineStatus[room?.otherUser?._id || ''] || false}
                 />
               ))}
             </div>
@@ -255,15 +254,15 @@ const MessagePage = ({ roomId, user }: Props) => {
             <AttachmentMenu
               onSelect={(type) => {
                 setShowMenu(false);
-                if (type === "image") {
-                  document.getElementById("hidden-image-input")?.click();
+                if (type === 'image') {
+                  document.getElementById('hidden-image-input')?.click();
                 }
               }}
               onClose={() => setShowMenu(false)}
             />
           )}
 
-          {selectedUpload === "image" && pickedFile && (
+          {selectedUpload === 'image' && pickedFile && (
             <ImageUpload
               file={pickedFile}
               onUpload={(url, caption) => {
@@ -283,7 +282,7 @@ const MessagePage = ({ roomId, user }: Props) => {
               const file = e.target.files?.[0];
               if (!file) return;
               setPickedFile(file);
-              setSelectedUpload("image");
+              setSelectedUpload('image');
             }}
           />
 
@@ -295,7 +294,7 @@ const MessagePage = ({ roomId, user }: Props) => {
             onChange={(e) => setMessageInput(e.target.value)}
             onKeyDown={(e) => {
               startTyping();
-              if (e.key === "Enter") handleSendMessage();
+              if (e.key === 'Enter') handleSendMessage();
             }}
             onBlur={stopTyping}
           />
@@ -309,6 +308,6 @@ const MessagePage = ({ roomId, user }: Props) => {
         </div>
       </div>
     </div>
-  )
-}
-export default MessagePage
+  );
+};
+export default MessagePage;

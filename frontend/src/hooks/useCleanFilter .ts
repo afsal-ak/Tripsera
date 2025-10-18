@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import type { IFilter } from "@/types/IFilter";
+import { useCallback } from 'react';
+import type { IFilter } from '@/types/IFilter';
 
 export function useCleanFilter() {
   const cleanFilter = useCallback((filter: IFilter) => {
@@ -7,7 +7,7 @@ export function useCleanFilter() {
 
     for (const key in filter) {
       const value = filter[key as keyof IFilter];
-      if (value !== "" && value != null) {
+      if (value !== '' && value != null) {
         cleaned[key] = value;
       }
     }

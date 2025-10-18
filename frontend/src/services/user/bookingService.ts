@@ -2,10 +2,6 @@ import type { BookingFormSchema } from '@/schemas/BookingSchema';
 import api from '@/lib/axios/api';
 import type { IBooking } from '@/types/IBooking';
 
-// router.get('/booking',userAuthMiddleware,bookingController.getUserBookings)
-// router.get('/booking/:bookingId',userAuthMiddleware,bookingController.getBookingById)
-// router.patch('/booking/cancel',userAuthMiddleware,bookingController.cancelBooking)
-
 export const getUserBooking = async (page: number, limit: number) => {
   const response = await api.get(`/user/booking?page=${page}&limit=${limit}`);
   return response.data;
@@ -57,35 +53,27 @@ export const cancelUnpaidBooking = async (bookingId: string): Promise<{ message:
   return response.data;
 };
 
-
-
 export const downloadInvoice = async (bookingId: string) => {
-    try {
-      console.log(bookingId)
-      const response = await api.get(
-       `/user/booking/invoice/${bookingId}/download`,
-        {
-          responseType: "blob", 
-        }
-      );
- 
-      // Create blob link to download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `invoice-${bookingId}.pdf`); // filename
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Error downloading invoice", error);
-     }
+  try {
+    console.log(bookingId);
+    const response = await api.get(`/user/booking/invoice/${bookingId}/download`, {
+      responseType: 'blob',
+    });
 
+    // Create blob link to download
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `invoice-${bookingId}.pdf`); // filename
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error('Error downloading invoice', error);
+  }
+};
 
-  };
-
-  
- export const removeTraveler = async (
+export const removeTraveler = async (
   bookingId: string,
   travelerIndex: number,
   note?: string
@@ -97,11 +85,11 @@ export const downloadInvoice = async (bookingId: string) => {
   return response.data;
 };
 
- export const changeTravelDate = async (
+export const changeTravelDate = async (
   bookingId: string,
   newDate: string | Date,
   note?: string
-)=> {
+) => {
   const response = await api.put(`/user/booking/${bookingId}/change-travel-date`, {
     newDate,
     note,

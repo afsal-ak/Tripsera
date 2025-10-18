@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useImageUpload } from '@/hooks/useImageUpload';
 
@@ -13,7 +13,6 @@ type Props = {
 };
 
 const CoverImageTab = ({ user, loading }: Props) => {
- 
   const [loadingImage, setLoadingImage] = useState(false);
 
   const {
@@ -29,7 +28,7 @@ const CoverImageTab = ({ user, loading }: Props) => {
   const profilePicPreview = user?.coverImage?.url
     ? user.coverImage.url.replace('/upload/', '/upload/f_webp,q_auto/')
     : '/profile-default.jpg';
-console.log(profilePicPreview,'cover image')
+  console.log(profilePicPreview, 'cover image');
   const uploadCoverImage = async (file: File) => {
     try {
       setLoadingImage(true);
@@ -38,7 +37,6 @@ console.log(profilePicPreview,'cover image')
 
       const response = await uploadCoverpic(formData);
 
-   
       toast.success('Cover image updated!');
       handleCropCancel(); // close cropper modal
     } catch (error: any) {
@@ -48,18 +46,12 @@ console.log(profilePicPreview,'cover image')
     }
   };
 
-  
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-10">
       {/* Cover Image Section */}
       <div className="flex flex-col items-center gap-3">
         <img
-          src={
-            croppedImages[0]
-              ? URL.createObjectURL(croppedImages[0])
-              : profilePicPreview
-          }
+          src={croppedImages[0] ? URL.createObjectURL(croppedImages[0]) : profilePicPreview}
           alt="Profile"
           className="w-28 h-28 rounded-full object-cover border-4 border-orange shadow-md"
         />
@@ -120,27 +112,22 @@ console.log(profilePicPreview,'cover image')
         </div>
       </div>
 
-
-
-    {currentImage && (
-  <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center px-4">
-    <div className="bg-white p-6 rounded-lg w-full max-w-4xl h-[500px] flex flex-col items-center justify-center">
-      {loadingImage ? (
-        <p className="text-sm text-gray-500">Uploading...</p>
-      ) : (
-        <ImageCropper
-          image={currentImage}
-          onCropComplete={handleCropComplete}
-          onCancel={handleCropCancel}
-          aspect={1280 / 400}
-        />
+      {currentImage && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center px-4">
+          <div className="bg-white p-6 rounded-lg w-full max-w-4xl h-[500px] flex flex-col items-center justify-center">
+            {loadingImage ? (
+              <p className="text-sm text-gray-500">Uploading...</p>
+            ) : (
+              <ImageCropper
+                image={currentImage}
+                onCropComplete={handleCropComplete}
+                onCancel={handleCropCancel}
+                aspect={1280 / 400}
+              />
+            )}
+          </div>
+        </div>
       )}
-    </div>
-  </div>
-)}
-
-
-    
     </div>
   );
 };

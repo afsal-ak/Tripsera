@@ -111,14 +111,14 @@ const Dashboard = ({ user, loading, refetchUser }: Props) => {
                     title={user?.isPrivate ? 'Make profile Public' : 'Make profile Private'}
                     actionLabel={user?.isPrivate ? 'Public' : 'Private'}
                     onConfirm={handleProfilePrivacyToggle}
-
                   >
                     <Button
                       className={`px-6 py-2 rounded-full flex items-center gap-2 transition-all duration-300
-                      ${user?.isPrivate
+                      ${
+                        user?.isPrivate
                           ? 'bg-red-600 text-white hover:bg-red-700'
                           : 'bg-green-600 text-white hover:bg-green-700'
-                        }`}
+                      }`}
                     >
                       {user?.isPrivate ? (
                         <>
@@ -133,7 +133,6 @@ const Dashboard = ({ user, loading, refetchUser }: Props) => {
                       )}
                     </Button>
                   </ConfirmDialog>
-
 
                   <Button
                     variant="outline"

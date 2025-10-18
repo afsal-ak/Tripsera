@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface DataTableProps<T> {
   title: string;
@@ -7,12 +7,7 @@ interface DataTableProps<T> {
   emptyText?: string;
 }
 
-function DataTable<T>({
-  title,
-  columns,
-  rows,
-  emptyText = "No data",
-}: DataTableProps<T>) {
+function DataTable<T>({ title, columns, rows, emptyText = 'No data' }: DataTableProps<T>) {
   //  Always ensure we have safe defaults
   const safeColumns = Array.isArray(columns) ? columns : [];
   const safeRows = Array.isArray(rows) ? rows : [];
@@ -30,10 +25,7 @@ function DataTable<T>({
           <thead>
             <tr className="text-left text-gray-500">
               {columns.map((c) => (
-                <th
-                  key={String(c.key)}
-                  className={`py-2 pr-4 font-medium ${c.width ?? ""}`}
-                >
+                <th key={String(c.key)} className={`py-2 pr-4 font-medium ${c.width ?? ''}`}>
                   {c.label}
                 </th>
               ))}
@@ -43,10 +35,7 @@ function DataTable<T>({
             {/* ----- Empty State ----- */}
             {safeRows.length === 0 && (
               <tr>
-                <td
-                  className="py-6 text-gray-500 text-center"
-                  colSpan={safeColumns.length}
-                >
+                <td className="py-6 text-gray-500 text-center" colSpan={safeColumns.length}>
                   {emptyText}
                 </td>
               </tr>
@@ -61,10 +50,11 @@ function DataTable<T>({
                   return (
                     <td key={String(c.key)} className="py-3 pr-4">
                       {value !== null && value !== undefined
-                        ? typeof value === "object"
+                        ? typeof value === 'object'
                           ? JSON.stringify(value) // ✅ Avoid crashing on objects
                           : String(value)
-                        : "-"} {/* ✅ Show a dash instead of crashing */}
+                        : '-'}{' '}
+                      {/* ✅ Show a dash instead of crashing */}
                     </td>
                   );
                 })}

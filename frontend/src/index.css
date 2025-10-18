@@ -1,12 +1,12 @@
-/* ✅ Place @import at the very top */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
 
-/* ✅ Tailwind base styles */
+/* Tailwind base styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ✅ Root CSS variables */
+/*  Root CSS variables */
 :root {
   --brand: 24 100% 55%;
   --brand-light: 24 100% 65%;

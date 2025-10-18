@@ -1,4 +1,4 @@
-import { MessageCircle, Send,Heart , MoreHorizontal, Verified } from 'lucide-react';
+import { Heart, MoreHorizontal, Verified } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css/navigation';
@@ -15,8 +15,9 @@ interface BlogDetailCardProps {
 }
 
 const BlogDetailCard = ({ blog, likesCount, onDelete, onToggleBlock }: BlogDetailCardProps) => {
-  const formatNumber = (num: number) => (num >= 1000 ? (num / 1000).toFixed(1) + 'k' : num.toString());
-console.log(blog,'blog')
+  const formatNumber = (num: number) =>
+    num >= 1000 ? (num / 1000).toFixed(1) + 'k' : num.toString();
+  console.log(blog, 'blog');
   return (
     <article className="bg-white shadow-md rounded-xl overflow-hidden max-w-3xl mx-auto">
       {/* Admin Actions */}
@@ -30,9 +31,7 @@ console.log(blog,'blog')
           </Button>
         )}
         {onToggleBlock && (
-          <Button onClick={onToggleBlock}>
-            {blog.isBlocked ? 'Unblock' : 'Block'}
-          </Button>
+          <Button onClick={onToggleBlock}>{blog.isBlocked ? 'Unblock' : 'Block'}</Button>
         )}
       </div>
 
@@ -40,15 +39,13 @@ console.log(blog,'blog')
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center space-x-3">
           <img
-            src={blog.author?.profileImage?.url|| "/profile-default.jpg"}
+            src={blog.author?.profileImage?.url || '/profile-default.jpg'}
             alt={blog.author?.username}
             className="w-10 h-10 rounded-full object-cover ring-2 ring-orange/30"
           />
           <div>
             <div className="flex items-center space-x-1">
-              <span className="text-sm font-semibold text-darkText">
-                {blog.author?.username}
-              </span>
+              <span className="text-sm font-semibold text-darkText">{blog.author?.username}</span>
               <Verified className="w-4 h-4 text-orange" />
             </div>
           </div>
@@ -80,25 +77,15 @@ console.log(blog,'blog')
 
       {/* Actions */}
       <div className="p-4">
-        {/* <div className="flex justify-between mb-2">
-          <div className="flex items-center space-x-4">
-            <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" />
-            <Send className="w-6 h-6 text-darkText hover:text-muted-foreground" />
-          </div>
-          <Bookmark className="w-6 h-6 text-darkText hover:text-muted-foreground" />
-        </div> */}
-
         {/* Likes */}
         <div className="text-sm font-semibold text-darkText mb-2">
-            <Heart/>
+          <Heart />
           {formatNumber(likesCount)} likes
         </div>
 
         {/* Content */}
         <div className="mb-3">
-          <span className="font-semibold text-sm text-darkText mr-2">
-            {blog.author?.username}
-          </span>
+          <span className="font-semibold text-sm text-darkText mr-2">{blog.author?.username}</span>
           <span className="text-lg text-darkText">{blog.title}</span>
           <br />
           <span className="text-sm text-darkText">{blog.content}</span>

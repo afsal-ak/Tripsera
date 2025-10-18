@@ -1,12 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/Button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import {
   Table,
   TableBody,
@@ -22,8 +17,8 @@ import {
   downloadSalesReportPDF,
 } from '@/services/admin/salesReportService';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
- import type { ISalesReportSummary ,SalesReportResponseDTO} from '@/types/ISalesReportSummary';
- const SalesReportPage = () => {
+import type { ISalesReportSummary, SalesReportResponseDTO } from '@/types/ISalesReportSummary';
+const SalesReportPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState<SalesReportResponseDTO[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -72,9 +67,7 @@ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
     fetchData();
   }, [searchParams]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const name = e.target.name;
     const value = e.target.value;
 
@@ -97,9 +90,7 @@ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
   };
 
   const clearFilters = () => {
-    setSearchParams(
-      new URLSearchParams({ page: '1', limit: limit.toString() })
-    );
+    setSearchParams(new URLSearchParams({ page: '1', limit: limit.toString() }));
   };
 
   return (
@@ -107,142 +98,116 @@ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
       <h1 className="text-2xl font-semibold mb-4">Sales Reports</h1>
 
       {/* Filters */}
- 
-       
 
-    <div className="bg-white p-4 rounded-lg shadow mb-6">
-  <h2 className="text-lg font-semibold mb-4">Sales Report Filters</h2>
+      <div className="bg-white p-4 rounded-lg shadow mb-6">
+        <h2 className="text-lg font-semibold mb-4">Sales Report Filters</h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-    {/* Specific Day */}
-    <div>
-      <label
-        htmlFor="day"
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        Specific Day
-      </label>
-      <input
-        type="date"
-        id="day"
-        name="day"
-        value={filters.day}
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2 text-sm"
-      />
-    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {/* Specific Day */}
+          <div>
+            <label htmlFor="day" className="block text-sm font-medium text-gray-700 mb-1">
+              Specific Day
+            </label>
+            <input
+              type="date"
+              id="day"
+              name="day"
+              value={filters.day}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2 text-sm"
+            />
+          </div>
 
-    {/* Month */}
-    <div>
-      <label
-        htmlFor="month"
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        Month
-      </label>
-      <input
-        type="month"
-        id="month"
-        name="month"
-        value={filters.month}
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2 text-sm"
-      />
-    </div>
+          {/* Month */}
+          <div>
+            <label htmlFor="month" className="block text-sm font-medium text-gray-700 mb-1">
+              Month
+            </label>
+            <input
+              type="month"
+              id="month"
+              name="month"
+              value={filters.month}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2 text-sm"
+            />
+          </div>
 
-    {/* Year */}
-    <div>
-      <label
-        htmlFor="year"
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        Year
-      </label>
-      <input
-        type="number"
-        id="year"
-        name="year"
-        placeholder="e.g., 2025"
-        value={filters.year}
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2 text-sm"
-      />
-    </div>
+          {/* Year */}
+          <div>
+            <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">
+              Year
+            </label>
+            <input
+              type="number"
+              id="year"
+              name="year"
+              placeholder="e.g., 2025"
+              value={filters.year}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2 text-sm"
+            />
+          </div>
 
-    {/* From Date */}
-    <div>
-      <label
-        htmlFor="from"
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        From Date
-      </label>
-      <input
-        type="date"
-        id="from"
-        name="from"
-        value={filters.from}
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2 text-sm"
-      />
-    </div>
+          {/* From Date */}
+          <div>
+            <label htmlFor="from" className="block text-sm font-medium text-gray-700 mb-1">
+              From Date
+            </label>
+            <input
+              type="date"
+              id="from"
+              name="from"
+              value={filters.from}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2 text-sm"
+            />
+          </div>
 
-    {/* To Date */}
-    <div>
-      <label
-        htmlFor="to"
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        To Date
-      </label>
-      <input
-        type="date"
-        id="to"
-        name="to"
-        value={filters.to}
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2 text-sm"
-      />
-    </div>
+          {/* To Date */}
+          <div>
+            <label htmlFor="to" className="block text-sm font-medium text-gray-700 mb-1">
+              To Date
+            </label>
+            <input
+              type="date"
+              id="to"
+              name="to"
+              value={filters.to}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2 text-sm"
+            />
+          </div>
 
-    {/* Sort By */}
-    <div>
-      <label
-        htmlFor="sort"
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        Sort By
-      </label>
-      <select
-        id="sort"
-        name="paymentMethod"
-                  value={filters.paymentMethod}
+          {/* Sort By */}
+          <div>
+            <label htmlFor="sort" className="block text-sm font-medium text-gray-700 mb-1">
+              Sort By
+            </label>
+            <select
+              id="sort"
+              name="paymentMethod"
+              value={filters.paymentMethod}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2 text-sm"
+            >
+              <option value="">All Payment</option>
+              <option value="razorpay">RazorPay</option>
+              <option value="wallet">Wallet</option>
+              <option value="wallet+razorpay">Razorpay+Wallet</option>
+            </select>
+          </div>
+        </div>
 
-         onChange={handleChange}
-        className="w-full border rounded px-3 py-2 text-sm"
-      >
-        
-        
-          <option value="">All Payment</option>
-          <option value="razorpay">RazorPay</option>
-          <option value="wallet">Wallet</option>
-          <option value="wallet+razorpay">Razorpay+Wallet</option>
-        </select>
-     </div>
-  </div>
-
-  {/* Action buttons */}
-  <div className="flex flex-wrap items-center gap-3 mt-6">
-    <Button onClick={handleExcelDownload}>Download Excel</Button>
-    <Button onClick={handlePDFDownload}>Download PDF</Button>
-    <Button onClick={clearFilters} variant="outline">
-      Clear Filters
-    </Button>
-  </div>
-</div>
-
-
-     
+        {/* Action buttons */}
+        <div className="flex flex-wrap items-center gap-3 mt-6">
+          <Button onClick={handleExcelDownload}>Download Excel</Button>
+          <Button onClick={handlePDFDownload}>Download PDF</Button>
+          <Button onClick={clearFilters} variant="outline">
+            Clear Filters
+          </Button>
+        </div>
+      </div>
 
       {/* Report Table */}
       <Card>
@@ -256,7 +221,7 @@ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
                 <TableHead>Booking Code</TableHead>
                 <TableHead>Package Code</TableHead>
                 <TableHead>Username</TableHead>
-                 <TableHead>Payment Method</TableHead>
+                <TableHead>Payment Method</TableHead>
 
                 <TableHead>Online Amount Paid</TableHead>
                 <TableHead>Wallet Amount Paid</TableHead>
@@ -272,7 +237,7 @@ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
                   <TableCell>{r.bookingCode}</TableCell>
                   <TableCell>{r.packageCode}</TableCell>
                   <TableCell>{r.username}</TableCell>
-                   <TableCell>{r.paymentMethod}</TableCell>
+                  <TableCell>{r.paymentMethod}</TableCell>
 
                   <TableCell>{r.amountPaid}</TableCell>
                   <TableCell>{r.walletAmountUsed}</TableCell>
@@ -280,9 +245,7 @@ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
                   <TableCell>{r.bookingStatus}</TableCell>
                   <TableCell>{r.amountPaid + r.walletAmountUsed! || 0}</TableCell>
                   <TableCell>
-                    {r.bookedAt
-                      ? new Date(r.bookedAt).toLocaleDateString()
-                      : ''}
+                    {r.bookedAt ? new Date(r.bookedAt).toLocaleDateString() : ''}
                   </TableCell>
                   {/* <TableCell>
                     {r.travelDate

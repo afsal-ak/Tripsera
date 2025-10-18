@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-//import { CheckCircle, Calendar, Users, CreditCard, MapPin, Package, Download, Share } from "lucide-react";
 import { Package, CheckCircle2 } from 'lucide-react';
 
 import { Card, CardContent } from '@/components/ui/Card';

@@ -7,7 +7,7 @@ import EditProfileTab from './EditProfileTab';
 import SecurityTab from './SecurityTab';
 import AddressTab from './AddressTab';
 import Dashboard from './Dashboard';
- const Profile = () => {
+const Profile = () => {
   const [user, setUser] = useState<IUser>();
   const [loading, setLoading] = useState(true);
 
@@ -53,4 +53,4 @@ import Dashboard from './Dashboard';
     </div>
   );
 };
-export default Profile
+export default Profile;

@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Bot } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Bot } from 'lucide-react';
 
 const ChatbotLauncher = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const ChatbotLauncher = () => {
       <motion.button
         whileHover={{ scale: 1.15 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => navigate("/chatbot")}
+        onClick={() => navigate('/chatbot')}
         className="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] hover:shadow-[0_0_25px_rgba(168,85,247,0.8)] transition-all duration-300"
       >
         {/* Robot Icon */}

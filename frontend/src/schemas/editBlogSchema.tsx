@@ -12,14 +12,6 @@ export const editBlogSchema = z.object({
   tags: z.array(z.string().transform((tag) => tag.trim())).optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
 
-  // existingImages: z.array(
-  //   z.object({
-  //     url: z.string(),
-  //     public_id: z.string(),
-  //     _id: z.string(),
-  //   })
-  // ).optional(),
-
   existingImages: z
     .array(
       z.object({

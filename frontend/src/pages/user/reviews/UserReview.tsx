@@ -54,8 +54,7 @@ const UserReviewPage = () => {
     return [...Array(5)].map((_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-          }`}
+        className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
       />
     ));
   };
@@ -80,29 +79,21 @@ const UserReviewPage = () => {
               />
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-900">
-                    {user?.username}
-                  </h3>
-                  <span className="text-xs text-gray-500">
-                    {formatTimeAgo(review.createdAt)}
-                  </span>
+                  <h3 className="font-semibold text-gray-900">{user?.username}</h3>
+                  <span className="text-xs text-gray-500">{formatTimeAgo(review.createdAt)}</span>
                 </div>
 
                 {/* Rating */}
                 <div className="flex items-center gap-2 mt-1">
                   <div className="flex">{renderStars(review.rating)}</div>
-                  <span className="text-sm font-medium text-gray-700">
-                    {review.rating}.0
-                  </span>
+                  <span className="text-sm font-medium text-gray-700">{review.rating}.0</span>
                 </div>
               </div>
             </div>
 
             {/* Review Content */}
             <div className="mt-4 border-t border-gray-100 pt-4">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                {review.title}
-              </h4>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">{review.title}</h4>
               <ReadMore text={review.comment} wordLimit={10} />
             </div>
           </div>

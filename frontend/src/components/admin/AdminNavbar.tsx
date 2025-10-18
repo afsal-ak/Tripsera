@@ -1,16 +1,12 @@
-
-import { Button } from "@/components/Button";
-import { Menu, LogOut, Bell, MessageCircle } from "lucide-react";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { handleAdminLogout } from "@/services/admin/adminService";
-import { logoutAdmin } from "@/redux/slices/adminAuthSlice";
-import { useState } from "react";
-import type { AppDispatch, RootState } from "@/redux/store";
-import { useTotalUnreadCount } from "@/hooks/useTotalUnreadCount";
-import { useNotificationSocket } from "@/hooks/useNotificationSocket";
-import { fetchNotifications } from "@/redux/slices/notificationSlice";
+import { Button } from '@/components/Button';
+import { Menu, LogOut, Bell, MessageCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleAdminLogout } from '@/services/admin/adminService';
+import { logoutAdmin } from '@/redux/slices/adminAuthSlice';
+import type { AppDispatch, RootState } from '@/redux/store';
+import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
 interface AdminNavbarProps {
   onSidebarToggle: () => void;
   title: string;
@@ -20,24 +16,20 @@ const AdminNavbar = ({ onSidebarToggle, title }: AdminNavbarProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const adminId = useSelector(
-    (state: RootState) => state.adminAuth.admin?._id
-  );
-  const notificationUnread = useSelector(
-    (state: RootState) => state.notifications.unreadCount
-  )
-   const totalUnread = useTotalUnreadCount(adminId!);
-console.log(notificationUnread,'notifica')
+  const adminId = useSelector((state: RootState) => state.adminAuth.admin?._id);
+  const notificationUnread = useSelector((state: RootState) => state.notifications.unreadCount);
+  const totalUnread = useTotalUnreadCount(adminId!);
+  console.log(notificationUnread, 'notifica');
 
   const handleLogout = async () => {
     try {
       await handleAdminLogout();
       dispatch(logoutAdmin());
-      toast.success("Logged out successfully");
-      navigate("/admin/login");
+      toast.success('Logged out successfully');
+      navigate('/admin/login');
     } catch (err: any) {
-      toast.error(err.message || "Logout failed");
-      console.error("Logout Error:", err);
+      toast.error(err.message || 'Logout failed');
+      console.error('Logout Error:', err);
     }
   };
 
@@ -54,9 +46,7 @@ console.log(notificationUnread,'notifica')
           >
             <Menu className="h-6 w-6 text-gray-700" />
           </Button>
-          <h1 className="text-base sm:text-xl font-semibold text-gray-800 truncate">
-            {title}
-          </h1>
+          <h1 className="text-base sm:text-xl font-semibold text-gray-800 truncate">{title}</h1>
         </div>
 
         {/* Right Side - Notifications, Chat & Logout */}
@@ -71,7 +61,7 @@ console.log(notificationUnread,'notifica')
               variant="ghost"
               size="icon"
               className="relative rounded-full hover:bg-gray-100"
-              onClick={() => navigate("/admin/notification")}
+              onClick={() => navigate('/admin/notification')}
             >
               <Bell className="h-5 w-5 text-gray-600" />
               {notificationUnread > 0 && (
@@ -88,7 +78,7 @@ console.log(notificationUnread,'notifica')
               variant="ghost"
               size="icon"
               className="relative rounded-full hover:bg-gray-100"
-              onClick={() => navigate("/admin/chat")}
+              onClick={() => navigate('/admin/chat')}
             >
               <MessageCircle className="h-5 w-5 text-gray-600" />
               {totalUnread > 0 && (

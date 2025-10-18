@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate,useSearchParams } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -8,91 +8,79 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/Table";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/button";
-import { Loader2, Eye } from "lucide-react";
-import { toast } from "sonner";
-import { getAllCustomPkg } from "@/services/admin/customPkgService";
-import type { ICustomPackage } from "@/types/ICustomPkg";
-import { usePaginationButtons } from "@/hooks/usePaginationButtons";
+} from '@/components/ui/Table';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/button';
+import { Loader2, Eye } from 'lucide-react';
+import { toast } from 'sonner';
+import { getAllCustomPkg } from '@/services/admin/customPkgService';
+import type { ICustomPackage } from '@/types/ICustomPkg';
+import { usePaginationButtons } from '@/hooks/usePaginationButtons';
 import { FilterBar } from '@/components/FilterBar ';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
- import { useCleanFilter } from '@/hooks/useCleanFilter ';
-
+import { useCleanFilter } from '@/hooks/useCleanFilter ';
 
 const CustomPackagePage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [pkg, setPkg] = useState<ICustomPackage[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(1);
 
- const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '10', 10);
 
- 
+  const {
+    statusFilter,
+    setStatusFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    sort,
+    rating,
+    setRating,
+    setSort,
+    applyFilters,
+  } = useSearchFilters();
 
-    const {
-      statusFilter,
-      setStatusFilter,
-      startDate,
-      setStartDate,
-      endDate,
-      setEndDate,
-      sort,
-      rating,
-      setRating,
-      setSort,
-      applyFilters,
-    } = useSearchFilters();
-   
-   
-    const cleanFilter = useCleanFilter()
+  const cleanFilter = useCleanFilter();
 
-
-    const handlePageChange = (page: number) => {
+  const handlePageChange = (page: number) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
       newParams.set('page', page.toString());
       return newParams;
     });
   };
- 
-    useEffect(() => {
+
+  useEffect(() => {
     const fetchPkg = async () => {
       try {
-          const rawFilters = {
-           status: statusFilter,
+        const rawFilters = {
+          status: statusFilter,
           sort,
           startDate,
           endDate,
-          rating
+          rating,
         };
 
-         const filters = cleanFilter(rawFilters);
+        const filters = cleanFilter(rawFilters);
 
-        const response = await getAllCustomPkg(currentPage,limit,filters);
+        const response = await getAllCustomPkg(currentPage, limit, filters);
         const data = response.data;
         setPkg(data);
-        setTotalPages(response?.pagination?.totalPages)
+        setTotalPages(response?.pagination?.totalPages);
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Failed to fetch packages");
+        toast.error(error?.response?.data?.message || 'Failed to fetch packages');
       } finally {
         setLoading(false);
       }
     };
     fetchPkg();
   }, [searchParams, currentPage]);
-
-
 
   const paginationButtons = usePaginationButtons({
     currentPage,
@@ -102,35 +90,34 @@ const CustomPackagePage = () => {
   // Status badge color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
-        return "bg-yellow-500";
-      case "approved":
-        return "bg-green-500";
-      case "rejected":
-        return "bg-red-500";
-      case "cancelled":
-        return "bg-gray-500";
+      case 'pending':
+        return 'bg-yellow-500';
+      case 'approved':
+        return 'bg-green-500';
+      case 'rejected':
+        return 'bg-red-500';
+      case 'cancelled':
+        return 'bg-gray-500';
       default:
-        return "bg-blue-500";
+        return 'bg-blue-500';
     }
   };
 
   // Handlers passed to FilterBar
-   const handleStatusChange = (val: string) => setStatusFilter(val);
+  const handleStatusChange = (val: string) => setStatusFilter(val);
   const handleSortChange = (val: string) => setSort(val);
-  const handleRatingChange = (val: string) => setRating(val);
 
   const handleApplyFilters = () => {
     applyFilters();
   };
 
   const handleClearFilters = () => {
-     setStatusFilter("");
-    setStartDate("");
-    setEndDate("");
-    setSort("");
-    setRating('')
-    setSearchParams({ page: "1" }); // reset to page 1
+    setStatusFilter('');
+    setStartDate('');
+    setEndDate('');
+    setSort('');
+    setRating('');
+    setSearchParams({ page: '1' }); // reset to page 1
   };
 
   if (loading) {
@@ -144,36 +131,30 @@ const CustomPackagePage = () => {
   return (
     <Card className="p-6 shadow-xl border rounded-xl">
       <CardHeader className="flex items-center justify-between">
-        
         <FilterBar
-           statusValue={statusFilter}
-          
+          statusValue={statusFilter}
           sortValue={sort}
-            onStatusChange={handleStatusChange}
+          onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
-           onApply={handleApplyFilters}
+          onApply={handleApplyFilters}
           onClear={handleClearFilters}
           statusOptions={[
-            { value: "pending", label: "pending" },
-            { value: "approved", label: "Approved" },
-            { value: "rejected", label: "Rejected" },
-            { value: "cancelled", label: "Cancelled" },
-           ]}
+            { value: 'pending', label: 'pending' },
+            { value: 'approved', label: 'Approved' },
+            { value: 'rejected', label: 'Rejected' },
+            { value: 'cancelled', label: 'Cancelled' },
+          ]}
           sortOptions={[
-            { value: "asc", label: "Newest" },
-            { value: "desc", label: "Oldest" },
-           ]}
-         
+            { value: 'asc', label: 'Newest' },
+            { value: 'desc', label: 'Oldest' },
+          ]}
         />
-        <CardTitle className="text-2xl font-semibold text-gray-800">
-         </CardTitle>
+        <CardTitle className="text-2xl font-semibold text-gray-800"></CardTitle>
       </CardHeader>
 
       <CardContent>
         {pkg.length === 0 ? (
-          <p className="text-gray-500 text-center py-6 text-lg">
-            No custom packages found.
-          </p>
+          <p className="text-gray-500 text-center py-6 text-lg">No custom packages found.</p>
         ) : (
           <div className="overflow-x-auto">
             <Table>
@@ -192,24 +173,16 @@ const CustomPackagePage = () => {
 
               <TableBody>
                 {pkg.map((item) => (
-                  <TableRow
-                    key={item.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
+                  <TableRow key={item.id} className="hover:bg-gray-50 transition-colors">
                     <TableCell className="font-medium text-gray-800">
                       {item.userId?.username}
-                    </TableCell><TableCell className="font-medium text-gray-800">
-                      {item.destination}
                     </TableCell>
-                    <TableCell className="capitalize text-gray-700">
-                      {item.tripType}
-                    </TableCell>
+                    <TableCell className="font-medium text-gray-800">{item.destination}</TableCell>
+                    <TableCell className="capitalize text-gray-700">{item.tripType}</TableCell>
                     <TableCell className="font-semibold text-gray-900">
                       ₹ {item.budget.toLocaleString()}
                     </TableCell>
-                    <TableCell>
-                      {new Date(item.startDate).toLocaleDateString("en-IN")}
-                    </TableCell>
+                    <TableCell>{new Date(item.startDate).toLocaleDateString('en-IN')}</TableCell>
                     <TableCell>
                       <Badge
                         className={`${getStatusColor(
@@ -224,16 +197,10 @@ const CustomPackagePage = () => {
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() =>
-                          navigate(`/admin/custom-packages/${item.id}`)
-                        }
+                        onClick={() => navigate(`/admin/custom-packages/${item.id}`)}
                       >
                         <Eye className="w-4 h-4 mr-1" /> Details
                       </Button>
-
-                  
-
-
                     </TableCell>
                   </TableRow>
                 ))}
@@ -246,7 +213,6 @@ const CustomPackagePage = () => {
         {paginationButtons}
       </div>
     </Card>
-    
   );
 };
 

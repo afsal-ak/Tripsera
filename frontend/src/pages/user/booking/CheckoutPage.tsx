@@ -32,10 +32,9 @@ declare global {
 
 const CheckoutPage = () => {
   const { id } = useParams();
-  console.log(id, ' prrrrrrrrrrrrrr')
   const navigate = useNavigate();
 
-  const userData = useSelector((state: RootState) => state.userAuth.user)
+  const userData = useSelector((state: RootState) => state.userAuth.user);
 
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [couponCode, setCouponCode] = useState('');
@@ -107,10 +106,10 @@ const CheckoutPage = () => {
   };
 
   const handleCouponRemove = () => {
-    setCouponCode("");
+    setCouponCode('');
     setCouponDiscount(0);
     setIsCouponApplied(false);
-    setCouponError("");
+    setCouponError('');
   };
 
   //console.log(localStorage.getItem('user'), 'reduc user info')
@@ -122,7 +121,7 @@ const CheckoutPage = () => {
       }
       try {
         const data = await fetchPackgeById(id);
- 
+
         setPackageData(data as IPackage);
       } catch (error) {
         console.error('Failed to fetch package details', error);
@@ -143,11 +142,9 @@ const CheckoutPage = () => {
     defaultValues: {
       packageId: id ?? '',
       travelDate: '',
-     // travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
-      travelers: [
-    { fullName: "", age: 0, gender: "male", idType: undefined, idNumber: "" },
-  ], 
-     contactDetails: {
+      // travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
+      travelers: [{ fullName: '', age: 0, gender: 'male', idType: undefined, idNumber: '' }],
+      contactDetails: {
         name: userData?.fullName || '',
         phone: userData?.phone ? String(userData.phone) : '',
         alternatePhone: '',
@@ -332,8 +329,8 @@ const CheckoutPage = () => {
                   <div className="flex flex-col">
                     <Input
                       placeholder="Name *"
-                      defaultValue={userData?.fullName || ""}
-                      {...register("contactDetails.name")}
+                      defaultValue={userData?.fullName || ''}
+                      {...register('contactDetails.name')}
                     />
                     {errors.contactDetails?.name && (
                       <p className="text-red-500 text-sm mt-1">
@@ -346,8 +343,8 @@ const CheckoutPage = () => {
                   <div className="flex flex-col">
                     <Input
                       placeholder="Email *"
-                      defaultValue={userData?.email || ""}
-                      {...register("contactDetails.email")}
+                      defaultValue={userData?.email || ''}
+                      {...register('contactDetails.email')}
                     />
                     {errors.contactDetails?.email && (
                       <p className="text-red-500 text-sm mt-1">
@@ -360,8 +357,8 @@ const CheckoutPage = () => {
                   <div className="flex flex-col">
                     <Input
                       placeholder="Phone *"
-                      defaultValue={userData?.phone || ""}
-                      {...register("contactDetails.phone")}
+                      defaultValue={userData?.phone || ''}
+                      {...register('contactDetails.phone')}
                     />
                     {errors.contactDetails?.phone && (
                       <p className="text-red-500 text-sm mt-1">
@@ -374,7 +371,7 @@ const CheckoutPage = () => {
                   <div className="flex flex-col">
                     <Input
                       placeholder="Alternate Phone *"
-                      {...register("contactDetails.alternatePhone")}
+                      {...register('contactDetails.alternatePhone')}
                     />
                     {errors.contactDetails?.alternatePhone && (
                       <p className="text-red-500 text-sm mt-1">
@@ -385,7 +382,6 @@ const CheckoutPage = () => {
                 </div>
               </CardContent>
             </Card>
-
 
             <Card>
               {/* <CardContent className="p-6">
@@ -467,115 +463,122 @@ const CheckoutPage = () => {
                 </Button>
               </CardContent> */}
               <CardContent className="p-6">
-  <h3 className="text-xl font-semibold mb-4">Traveler Details</h3>
+                <h3 className="text-xl font-semibold mb-4">Traveler Details</h3>
 
-  {fields.map((field, index) => (
-    <div key={field.id} className="space-y-4 p-4 border rounded-lg mb-4">
-      <div className="flex justify-between">
-        <h4 className="font-medium">Traveler {index + 1}</h4>
-        {fields.length > 1 && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="text-red-500"
-            onClick={() => remove(index)}
-          >
-            <Minus className="w-4 h-4" />
-          </Button>
-        )}
-      </div>
+                {fields.map((field, index) => (
+                  <div key={field.id} className="space-y-4 p-4 border rounded-lg mb-4">
+                    <div className="flex justify-between">
+                      <h4 className="font-medium">Traveler {index + 1}</h4>
+                      {fields.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500"
+                          onClick={() => remove(index)}
+                        >
+                          <Minus className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Full Name */}
-        <div>
-          <Input
-            placeholder="Full Name *"
-            {...register(`travelers.${index}.fullName`)}
-          />
-          {errors.travelers?.[index]?.fullName && (
-            <p className="text-red-500 text-xs">
-              {errors.travelers[index]?.fullName?.message}
-            </p>
-          )}
-        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Full Name */}
+                      <div>
+                        <Input
+                          placeholder="Full Name *"
+                          {...register(`travelers.${index}.fullName`)}
+                        />
+                        {errors.travelers?.[index]?.fullName && (
+                          <p className="text-red-500 text-xs">
+                            {errors.travelers[index]?.fullName?.message}
+                          </p>
+                        )}
+                      </div>
 
-        {/* Age */}
-        <div>
-          <Input
-            type="number"
-            placeholder="Age *"
-            {...register(`travelers.${index}.age`, { valueAsNumber: true })}
-          />
-          {errors.travelers?.[index]?.age && (
-            <p className="text-red-500 text-xs">
-              {errors.travelers[index]?.age?.message}
-            </p>
-          )}
-        </div>
+                      {/* Age */}
+                      <div>
+                        <Input
+                          type="number"
+                          placeholder="Age *"
+                          {...register(`travelers.${index}.age`, { valueAsNumber: true })}
+                        />
+                        {errors.travelers?.[index]?.age && (
+                          <p className="text-red-500 text-xs">
+                            {errors.travelers[index]?.age?.message}
+                          </p>
+                        )}
+                      </div>
 
-        {/* ID Type */}
-        <div>
-          <select
-            {...register(`travelers.${index}.idType`)}
-            className="border px-3 py-2 rounded text-sm w-full"
-          >
-            <option value="">Select ID Type *</option>
-            <option value="aadhaar">Aadhaar</option>
-            <option value="pan">PAN</option>
-            <option value="passport">Passport</option>
-          </select>
-          {errors.travelers?.[index]?.idType && (
-            <p className="text-red-500 text-xs">
-              {errors.travelers[index]?.idType?.message}
-            </p>
-          )}
-        </div>
+                      {/* ID Type */}
+                      <div>
+                        <select
+                          {...register(`travelers.${index}.idType`)}
+                          className="border px-3 py-2 rounded text-sm w-full"
+                        >
+                          <option value="">Select ID Type *</option>
+                          <option value="aadhaar">Aadhaar</option>
+                          <option value="pan">PAN</option>
+                          <option value="passport">Passport</option>
+                        </select>
+                        {errors.travelers?.[index]?.idType && (
+                          <p className="text-red-500 text-xs">
+                            {errors.travelers[index]?.idType?.message}
+                          </p>
+                        )}
+                      </div>
 
-        {/* ID Number */}
-        <div>
-          <Input
-            placeholder="Enter ID Number *"
-            {...register(`travelers.${index}.idNumber`)}
-          />
-          {errors.travelers?.[index]?.idNumber && (
-            <p className="text-red-500 text-xs">
-              {errors.travelers[index]?.idNumber?.message}
-            </p>
-          )}
-        </div>
+                      {/* ID Number */}
+                      <div>
+                        <Input
+                          placeholder="Enter ID Number *"
+                          {...register(`travelers.${index}.idNumber`)}
+                        />
+                        {errors.travelers?.[index]?.idNumber && (
+                          <p className="text-red-500 text-xs">
+                            {errors.travelers[index]?.idNumber?.message}
+                          </p>
+                        )}
+                      </div>
 
-        {/* Gender */}
-        <div>
-          <select
-            {...register(`travelers.${index}.gender`)}
-            className="border px-3 py-2 rounded text-sm w-full"
-          >
-            <option value="">Select Gender *</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-          {errors.travelers?.[index]?.gender && (
-            <p className="text-red-500 text-xs">
-              {errors.travelers[index]?.gender?.message}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  ))}
+                      {/* Gender */}
+                      <div>
+                        <select
+                          {...register(`travelers.${index}.gender`)}
+                          className="border px-3 py-2 rounded text-sm w-full"
+                        >
+                          <option value="">Select Gender *</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
+                        {errors.travelers?.[index]?.gender && (
+                          <p className="text-red-500 text-xs">
+                            {errors.travelers[index]?.gender?.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
 
-  <Button
-    type="button"
-    variant="outline"
-    onClick={() => append({ fullName: "", age: 0, gender: "male",    idType: undefined, idNumber: "" })}
-    className="w-full text-orange border-orange hover:bg-orange hover:text-white"
-  >
-    <Plus className="w-4 h-4 mr-2" /> Add Another Traveler
-  </Button>
-</CardContent>
-
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    append({
+                      fullName: '',
+                      age: 0,
+                      gender: 'male',
+                      idType: undefined,
+                      idNumber: '',
+                    })
+                  }
+                  className="w-full text-orange border-orange hover:bg-orange hover:text-white"
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Add Another Traveler
+                </Button>
+              </CardContent>
             </Card>
             <Card>
               <CardContent className="p-6">
@@ -586,11 +589,12 @@ const CheckoutPage = () => {
                   {...register('travelDate')}
                   max={
                     packageData?.endDate
-                      ? new Date(packageData.endDate).toISOString().split("T")[0]
+                      ? new Date(packageData.endDate).toISOString().split('T')[0]
                       : undefined
                   }
-                  {...register("travelDate")}
-                  className="border-gray-300" />
+                  {...register('travelDate')}
+                  className="border-gray-300"
+                />
                 {errors.travelDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.travelDate.message}</p>
                 )}
@@ -764,11 +768,11 @@ const CheckoutPage = () => {
 
                   {(watch('paymentMethod') === 'wallet' ||
                     watch('paymentMethod') === 'wallet+razorpay') && (
-                      <div className="flex justify-between">
-                        <span>Wallet Used:</span>
-                        <span>- ₹{walletUsed.toLocaleString()}</span>
-                      </div>
-                    )}
+                    <div className="flex justify-between">
+                      <span>Wallet Used:</span>
+                      <span>- ₹{walletUsed.toLocaleString()}</span>
+                    </div>
+                  )}
 
                   <Separator />
 

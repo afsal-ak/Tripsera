@@ -1,15 +1,8 @@
-import React from "react";
-import {
-  Check,
-  CheckCheck,
-  Trash2,
-  Video,
-  PhoneMissed,
-  Clock,
-} from "lucide-react";
-import type { IMessage, IMessageUserInfo } from "@/types/IMessage";
-import ImageViewer from "./ImageViewer";
-import { ConfirmDialog } from "../ui/ConfirmDialog";
+import React from 'react';
+import { Check, CheckCheck, Trash2, Video, PhoneMissed } from 'lucide-react';
+import type { IMessage, IMessageUserInfo } from '@/types/IMessage';
+import ImageViewer from './ImageViewer';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 interface Props {
   message: IMessage;
   isOwn: boolean;
@@ -18,37 +11,30 @@ interface Props {
   isPartnerOnline: boolean;
 }
 
-export const MessageBubble: React.FC<Props> = ({
-  message,
-  isOwn,
-  onDelete,
-  currentUser,
-}) => {
+export const MessageBubble: React.FC<Props> = ({ message, isOwn, onDelete, currentUser }) => {
   const formatTime = (date: Date | string) =>
-    new Date(date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   const sender = message.senderId || currentUser;
-  const senderName = isOwn ? "You" : sender?.username || "Unknown";
-  const senderAvatar = isOwn
-    ? currentUser?.profileImage?.url
-    : sender?.profileImage?.url;
+  const senderName = isOwn ? 'You' : sender?.username || 'Unknown';
+  const senderAvatar = isOwn ? currentUser?.profileImage?.url : sender?.profileImage?.url;
 
-  const isCall = message.type === "call";
+  const isCall = message.type === 'call';
   const callInfo = message.callInfo;
 
   const getCallStatusColor = () => {
-    if (!callInfo) return "text-gray-500";
+    if (!callInfo) return 'text-gray-500';
     switch (callInfo.status) {
-      case "answered":
-        return "text-green-400";
-      case "missed":
-        return "text-red-400";
-      case "ended":
-        return "text-gray-400";
-      case "initiated":
-        return "text-blue-400";
+      case 'answered':
+        return 'text-green-400';
+      case 'missed':
+        return 'text-red-400';
+      case 'ended':
+        return 'text-gray-400';
+      case 'initiated':
+        return 'text-blue-400';
       default:
-        return "text-gray-500";
+        return 'text-gray-500';
     }
   };
 
@@ -64,69 +50,62 @@ export const MessageBubble: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className={`flex items-end mb-3 ${isOwn ? "justify-end" : "justify-start"
-        }`}
-    >
+    <div className={`flex items-end mb-3 ${isOwn ? 'justify-end' : 'justify-start'}`}>
       {/* Partner avatar */}
       {!isOwn && (
         <img
-          src={senderAvatar || "/profile-default.jpg"}
+          src={senderAvatar || '/profile-default.jpg'}
           alt={senderName}
           className="w-8 h-8 rounded-full mr-2 shadow-sm"
         />
       )}
 
       <div
-        className={`relative group max-w-[75%] sm:max-w-md px-3 py-2 rounded-2xl shadow-sm ${isOwn
-          ? "bg-blue-500 text-white rounded-br-none"
-          : "bg-gray-200 text-gray-900 rounded-bl-none"
-          }`}
+        className={`relative group max-w-[75%] sm:max-w-md px-3 py-2 rounded-2xl shadow-sm ${
+          isOwn
+            ? 'bg-blue-500 text-white rounded-br-none'
+            : 'bg-gray-200 text-gray-900 rounded-bl-none'
+        }`}
       >
         {/*  Sender Name */}
-        {!isOwn && (
-          <p className="text-xs font-semibold text-gray-700 mb-1">{senderName}</p>
-        )}
+        {!isOwn && <p className="text-xs font-semibold text-gray-700 mb-1">{senderName}</p>}
 
         {/* 🎥 Video Call Message */}
         {isCall ? (
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              {callInfo?.status === "missed" ? (
+              {callInfo?.status === 'missed' ? (
                 <PhoneMissed className={`w-5 h-5 ${getCallStatusColor()}`} />
               ) : (
                 <Video className={`w-5 h-5 ${getCallStatusColor()}`} />
               )}
 
               <div>
-                <p
-                  className={`text-sm sm:text-base font-medium ${getCallStatusColor()}`}
-                >
-                  {callInfo?.status === "missed"
-                    ? "Missed Video Call"
-                    : callInfo?.status === "answered"
-                      ? "Video Call Answered"
-                      : callInfo?.status === "ended"
-                        ? "Video Call Ended"
-                        : callInfo?.status === "cancelled"
+                <p className={`text-sm sm:text-base font-medium ${getCallStatusColor()}`}>
+                  {callInfo?.status === 'missed'
+                    ? 'Missed Video Call'
+                    : callInfo?.status === 'answered'
+                      ? 'Video Call Answered'
+                      : callInfo?.status === 'ended'
+                        ? 'Video Call Ended'
+                        : callInfo?.status === 'cancelled'
                           ? 'Call Cancelled'
-
-                          : "Call "}
+                          : 'Call '}
                 </p>
 
                 <p className="text-xs text-gray-300">
-                  {callInfo?.status === "ended"
+                  {callInfo?.status === 'ended'
                     ? formatDuration(callInfo.duration)
                       ? `Duration: ${formatDuration(callInfo.duration)}`
-                      : ""
-                    : callInfo?.status === "answered"
-                      ? "On call..."
-                      : ""}
+                      : ''
+                    : callInfo?.status === 'answered'
+                      ? 'On call...'
+                      : ''}
                 </p>
               </div>
             </div>
           </div>
-        ) : message.type === "image" && message.mediaUrl ? (
+        ) : message.type === 'image' && message.mediaUrl ? (
           <div className="flex flex-col max-w-xs sm:max-w-sm">
             <ImageViewer src={message.mediaUrl} className="max-w-xs sm:max-w-sm" />
             {message.content?.trim() && (
@@ -141,8 +120,9 @@ export const MessageBubble: React.FC<Props> = ({
 
         {/* Time + Read status */}
         <div
-          className={`flex items-center justify-end gap-1 mt-1 text-[11px] ${isOwn ? "text-blue-100" : "text-gray-500"
-            }`}
+          className={`flex items-center justify-end gap-1 mt-1 text-[11px] ${
+            isOwn ? 'text-blue-100' : 'text-gray-500'
+          }`}
         >
           <span>{formatTime(message.createdAt)}</span>
           {isOwn &&
@@ -161,7 +141,7 @@ export const MessageBubble: React.FC<Props> = ({
           // >
           //   <Trash2 size={14} className="text-white hover:text-red-400" />
           // </button>
-            <div className="absolute top-0 right-0 mt-1 mr-1 hidden group-hover:block">
+          <div className="absolute top-0 right-0 mt-1 mr-1 hidden group-hover:block">
             <ConfirmDialog
               title="Do you want to  Delete this Message"
               actionLabel="Delete"
@@ -178,7 +158,7 @@ export const MessageBubble: React.FC<Props> = ({
       {/* User avatar (own) */}
       {isOwn && (
         <img
-          src={senderAvatar || "/profile-default.jpg"}
+          src={senderAvatar || '/profile-default.jpg'}
           alt={senderName}
           className="w-8 h-8 rounded-full ml-2 shadow-sm"
         />

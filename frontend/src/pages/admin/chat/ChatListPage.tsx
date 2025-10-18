@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { fetchUserRooms } from "@/redux/slices/chatRoomSlice";
-import { useChatRoomsSocket } from "@/hooks/useChatRoomsSocket ";
-import type { RootState, AppDispatch } from "@/redux/store";
-import { ChatList } from "./ChatList";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
+import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
+import type { RootState, AppDispatch } from '@/redux/store';
+import { ChatList } from './ChatList';
 
 const ChatListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,11 +14,10 @@ const ChatListPage = () => {
   const currentUserId = useSelector((state: RootState) => state.adminAuth.admin?._id);
   const { loading, error } = useSelector((state: RootState) => state.chatRoom);
   if (!currentUserId) {
-    return
+    return;
   }
 
   useChatRoomsSocket({ currentUserId });
-
 
   useEffect(() => {
     if (currentUserId) {

@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { fetchUserRooms } from "@/redux/slices/chatRoomSlice";
-import { useChatRoomsSocket } from "@/hooks/useChatRoomsSocket ";
-import type { RootState, AppDispatch } from "@/redux/store";
-import { ChatList } from "./ChatList";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
+import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
+import type { RootState, AppDispatch } from '@/redux/store';
+import { ChatList } from './ChatList';
 
 const ChatListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,7 +21,7 @@ const ChatListPage = () => {
 
   useEffect(() => {
     if (currentUserId) {
-      dispatch(fetchUserRooms({isAdmin:false}));
+      dispatch(fetchUserRooms({ isAdmin: false }));
     }
   }, [dispatch, currentUserId]);
 
@@ -29,10 +29,7 @@ const ChatListPage = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <ChatList
-      onRoomSelect={(room) => navigate(`/chat/${room._id}`)}
-      selectedRoomId={roomId}
-    />
+    <ChatList onRoomSelect={(room) => navigate(`/chat/${room._id}`)} selectedRoomId={roomId} />
   );
 };
 

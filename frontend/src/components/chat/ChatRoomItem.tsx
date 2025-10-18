@@ -1,7 +1,7 @@
-import type { IChatRoom } from "@/types/IMessage";
-import { MapPin } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "@/redux/store";
+import type { IChatRoom } from '@/types/IMessage';
+import { MapPin } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
 
 interface ChatRoomItemProps {
   room: IChatRoom;
@@ -16,12 +16,11 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
   onSelect,
   isSelected = false,
 }) => {
+  const onlineUsers = useSelector((state: RootState) => state.chatRoom.onlineUsers);
 
-  const onlineUsers = useSelector((state: RootState) => state.chatRoom.onlineUsers)
-  
   // Get the other participant (not current user)
   // const otherParticipant = room.participants.find(p => p._id !== currentUserId) || room.participants[0];
-    const otherParticipant = room.otherUser
+  const otherParticipant = room.otherUser;
 
   //console.log(otherParticipant, 'other')
   const isOnline = onlineUsers.includes(otherParticipant?._id!);
@@ -35,7 +34,11 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
     const diffHours = (now.getTime() - msgDate.getTime()) / (1000 * 60 * 60);
 
     if (diffHours < 24) {
-      return msgDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+      return msgDate.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
     } else if (diffHours < 168) {
       return msgDate.toLocaleDateString('en-US', { weekday: 'short' });
     } else {
@@ -46,8 +49,9 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
   return (
     <div
       onClick={() => onSelect(room)}
-      className={`flex items-center p-4 cursor-pointer border-b border-gray-100 hover:bg-blue-50 transition-colors ${isSelected ? 'bg-blue-100 border-blue-200' : ''
-        }`}
+      className={`flex items-center p-4 cursor-pointer border-b border-gray-100 hover:bg-blue-50 transition-colors ${
+        isSelected ? 'bg-blue-100 border-blue-200' : ''
+      }`}
     >
       <div className="relative mr-3">
         <img
@@ -65,9 +69,7 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
           <h3 className="font-medium text-gray-900 truncate">
             {room.isGroup ? room.name : otherParticipant?.username}
           </h3>
-          <span className="text-xs text-gray-500 font-medium">
-            {formatTime(room.updatedAt)}
-          </span>
+          <span className="text-xs text-gray-500 font-medium">{formatTime(room.updatedAt)}</span>
         </div>
 
         {otherParticipant?.location && !room.isGroup && (
@@ -79,7 +81,7 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
 
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-600 truncate pr-2">
-            {room.lastMessageContent || "No messages yet"}
+            {room.lastMessageContent || 'No messages yet'}
           </p>
           {unreadCount > 0 && (
             <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
