@@ -96,6 +96,9 @@ export const REVIEW_ROUTE = {
 export const REPORT_ROUTE = {
   CREATE: '/report/:reportedId',
 };
+export const CHATBOT_ROUTE = {
+  CREATE: '/chatbot',
+};
 
 export const CUSTOM_PACKAGE_ROUTE = {
   CREATE: '/custom-package/create',
@@ -139,11 +142,11 @@ export const BLOCK_ROUTE={
 
 
 export const COMMENT_ROUTE = {
-  CREATE: '/comment',                      // POST → create comment or reply
+  CREATE: '/comment',                       
   REPLY: '/comment/reply',                     
-   GET_ALL: '/comment/:parentId',           // GET → get all comments for a blog/review
-  GET_REPLIES: '/comment/:commentId/replies', // GET → get replies for a specific comment
-  UPDATE: '/comment/:commentId',           // PUT → edit a comment
+   GET_ALL: '/comment/:parentId',           
+  GET_REPLIES: '/comment/:commentId/replies',  
+  UPDATE: '/comment/:commentId',         
   DELETE: '/comment/delete/:commentId',           
-  LIKE: '/comment/:commentId/like',        // PATCH → like/unlike a comment
+  LIKE: '/comment/:commentId/like',      
 };

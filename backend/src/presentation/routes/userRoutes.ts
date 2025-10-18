@@ -20,7 +20,8 @@ import {
   MESSAGE_ROUTE,
   NOTIFICATION_ROUTE,
   BLOCK_ROUTE,
-  COMMENT_ROUTE
+  COMMENT_ROUTE,
+  CHATBOT_ROUTE
 } from 'constants/route-constants/userRoutes';
 
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
@@ -33,8 +34,7 @@ import { HomeUseCases } from '@application/usecases/user/homeUseCases';
 import { HomeController } from '@presentation/controllers/user/homeController';
 import { BannerRepository } from '@infrastructure/repositories/BannerRepository';
 import { PackageRepository } from '@infrastructure/repositories/PackageRepository';
-//import { userAuthMiddleware } from '@presentation/middlewares/userAuthMiddleware';
-
+ 
 import { WishlistController } from '@presentation/controllers/user/wishlistController';
 import { WishlistUseCases } from '@application/usecases/user/wishlistUseCases';
 import { WishlistRepository } from '@infrastructure/repositories/WishlistRepository';
@@ -355,7 +355,7 @@ router.get(CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG, userAuthMiddleware, customPkgContro
 router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, userAuthMiddleware,customPkgController.deleteCustomPkg);
 
 //CHATBOT
-router.post('/chatbot', userAuthMiddleware, chatController.chatBot);
+router.post(CHATBOT_ROUTE.CREATE, userAuthMiddleware, chatController.chatBot);
 
 //CHAT ROOM ROUTES
  router.post(CHAT_ROOM_ROUTE.CREATE, userAuthMiddleware, chatRoomController.createRoom);

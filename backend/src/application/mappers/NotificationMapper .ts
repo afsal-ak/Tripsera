@@ -1,39 +1,3 @@
-// import { INotification } from "@domain/entities/INotification";
-// import { NotificationResponseDTO } from "@application/dtos/NotificationDTO";
-
-// export abstract class NotificationMapper {
-//   static toResponseDto(notification: INotification): NotificationResponseDTO {
-//     return {
-//       _id: notification._id!.toString(),
-//       userId: notification.userId?.toString(),
-//       title: notification.title,
-//       message: notification.message,
-//       type: notification.type,
-//       entityType: notification.entityType,
-//       isRead: notification.isRead,
-//       bookingId: notification.bookingId?.toString(),
-//       packageId: notification.packageId?.toString(),
-//       customPackageId: notification.customPackageId?.toString(),
-//       reportedId: notification.reportedId?.toString(),
-//       walletId: notification.walletId?.toString(),
-//       triggeredBy: notification.triggeredBy?.toString(),
-//       metadata: notification.metadata
-//         ? Object.fromEntries(
-//             Object.entries(notification.metadata).map(([key, value]) => [
-//               key,
-//               typeof value === "object" && value?.toString ? value.toString() : value,
-//             ])
-//           )
-//         : undefined,
-//       createdAt: notification.createdAt.toISOString(),
-//       updatedAt: notification.updatedAt?.toISOString(),
-//     };
-//   }
-
-//   static toResponseDtos(notifications: INotification[]): NotificationResponseDto[] {
-//     return notifications.map(this.toResponseDto);
-//   }
-// }
 import { INotification } from "@domain/entities/INotification";
 import { INotificationPopulated } from "@infrastructure/db/types.ts/INotificationPopulated";
 import {

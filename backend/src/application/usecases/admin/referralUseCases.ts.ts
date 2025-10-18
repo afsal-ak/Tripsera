@@ -1,6 +1,6 @@
  import { IReferralUseCases } from '@application/useCaseInterfaces/admin/IReferralUserCases';
 import { IReferralRepository } from '@domain/repositories/IReferralRepository';
-import { UpdateReferralDTO, ReferralResponseDTO } from '@application/dtos/ReferralDTO';
+import { UpdateReferralDTO, ReferralResponseDTO } from '@application/dtos/ReferralDto';
 import { ReferralMapper } from '@application/mappers/ReferralMapper';
 
 export class ReferralUseCase implements IReferralUseCases {

@@ -1,5 +1,5 @@
  import { IReferral } from '@domain/entities/IReferral';
-import { ReferralResponseDTO } from '@application/dtos/ReferralDTO';
+import { ReferralResponseDTO } from '@application/dtos/ReferralDto';
 
 export abstract class ReferralMapper {
   static toResponseDTO(referral: IReferral): ReferralResponseDTO {

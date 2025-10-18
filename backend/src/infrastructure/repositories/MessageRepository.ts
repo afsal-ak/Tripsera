@@ -21,16 +21,7 @@ export class MessageRepository extends BaseRepository<IMessage> implements IMess
     return populatedMessage!
 
   }
-
-
-  // async getMessagesByRoom(roomId: string, limit: number, skip: number): Promise<IMessage[]> {
-  //   return await MessageModel.find({ roomId })
-  //     .populate("senderId", "username profileImage")
-  //     .sort({ createdAt: 1 })
-  //     .skip(skip)
-  //     .limit(limit)
-  //     .lean();
-  // }
+ 
   async getMessagesByRoom(roomId: string, limit: number, skip: number): Promise<IMessagePopulated[]> {
     return await MessageModel.find({ roomId })
       .populate("senderId", "_id username profileImage")
@@ -53,17 +44,6 @@ export class MessageRepository extends BaseRepository<IMessage> implements IMess
   }
 
 
-  // async updateMessage(
-  //   messageId: string,
-  //   updates: Partial<IMessage>
-  // ): Promise<IMessage | null> {
-  //   const updatedMessage = await MessageModel.findByIdAndUpdate(
-  //     messageId,
-  //     { $set: updates },
-  //     { new: true }
-  //   );
-  //   return updatedMessage;
-  // }
     async updateMessage(
     messageId: string,
     updates: Partial<IMessage>

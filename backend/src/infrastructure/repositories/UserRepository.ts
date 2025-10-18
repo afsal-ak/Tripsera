@@ -51,7 +51,7 @@ export class UserRepository implements IUserRepository {
     const following = await UserModel.findById(followingId);
 
     if (!follower || !following) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
     const alreadyFollowing = following?.followers!.some(
@@ -71,7 +71,7 @@ export class UserRepository implements IUserRepository {
     const following = await UserModel.findById(followingId);
 
     if (!follower || !following) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
     const isFollowing = following.followers!.some(
@@ -157,7 +157,7 @@ export class UserRepository implements IUserRepository {
   async updateUserEmail(id: string, email: string): Promise<IUser | null> {
     const checkEmail = await UserModel.findOne({ email: email });
     if (checkEmail) {
-      throw new AppError(400, 'Email Already taken');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Email Already taken');
     }
     const newEmail = await UserModel.findByIdAndUpdate(id, { email: email }, { new: true });
     return newEmail;
@@ -179,7 +179,7 @@ export class UserRepository implements IUserRepository {
     const user = await UserModel.findByIdAndUpdate(id, { profileImage }, { new: true }).lean();
 
     if (!user) {
-      throw new AppError(404, 'User not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
     return user;

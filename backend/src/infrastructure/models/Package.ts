@@ -29,24 +29,6 @@ import { IPackage } from '@domain/entities/IPackage';
   { _id: false }
 );
 
-//  const locationSchema = new Schema(
-//   {
-//     name: { type: String, required: true },
-//     geo: {
-//       type: {
-//         type: String,
-//         enum: ['Point'],
-//         default: 'Point',
-//         required: true,
-//       },
-//       coordinates: {
-//         type: [Number], // [lng, lat]
-//         required: true,
-//       },
-//     },
-//   },
-//   { _id: false }
-// );
 const locationSchema = new Schema(
   {
     name: { type: String, required: true }, // e.g., "Calangute Beach"

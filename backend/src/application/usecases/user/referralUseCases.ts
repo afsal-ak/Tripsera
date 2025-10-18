@@ -1,4 +1,4 @@
-import { ReferralResponseDTO } from '@application/dtos/ReferralDTO';
+import { ReferralResponseDTO } from '@application/dtos/ReferralDto';
 import { ReferralMapper } from '@application/mappers/ReferralMapper';
 import { IReferralUseCases } from '@application/useCaseInterfaces/user/IReferralUseCases';
 import { IReferralRepository } from '@domain/repositories/IReferralRepository';

@@ -15,16 +15,4 @@ export interface WalletResponseDTO {
   createdAt: Date;
   updatedAt: Date;
 }
-
-// export interface WalletSingleTransactionDTO {
-//   type: EnumWalletTransactionType;
-//   amount: number;
-//   description?: string;
-//   createdAt: Date;
-// }
-
-// export interface WalletTransactionsResponseDTO {
-//   balance: number;
-//   total: number;
-//   transactions: WalletSingleTransactionDTO[];
-// }
+ 

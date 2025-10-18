@@ -15,13 +15,3 @@ export interface ReferralResponseDTO {
   isBlocked: boolean;
   
 }
-
-// export const toReferralResponseDTO = (referral: IReferral): ReferralResponseDTO => {
-//   return {
-//     _id: referral._id!.toString(),
-//     amount: referral.amount,
-//     isBlocked: referral.isBlocked ?? false,
-//     createdAt: referral.createdAt!,
-//     updatedAt: referral.updatedAt!,
-//   };
-// };

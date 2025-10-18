@@ -68,8 +68,3 @@ export const mapToBookingChartResponseDTO = (chart: IBookingsChartData): IBookin
     totalRevenue: chart.totalRevenue,
   }
 }
-//  getBookingChartData(
-//     startDate: Date,
-//     endDate: Date,
-//     groupBy: "hour" | "day" | "month" | "year"
-//   ): Promise<Array<{ _id: string; totalBookings: number; totalRevenue: number }>>;

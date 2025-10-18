@@ -1,4 +1,4 @@
- 
+
 export interface CreateBannerDTO {
   title: string;
   description?: string;

@@ -306,12 +306,8 @@ router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, adminAuthMiddleware, chatRoomControll
 router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware,chatRoomController.deleteRoom);
 
 //MESSAGE ROUTES
-// router.post(MESSAGE_ROUTE.SEND, adminAuthMiddleware, messageController.sendMessage);
- router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
+  router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
  router.post(MESSAGE_ROUTE.UPLOAD_MEDIA, adminAuthMiddleware,chatUpload.single('file'), messageController.uploadMediaToChat);
-//router.patch(MESSAGE_ROUTE.MARK_AS_READ, adminAuthMiddleware, messageController.markMessageRead);
- //router.delete(MESSAGE_ROUTE.DELETE, adminAuthMiddleware,messageController.deleteMessage);
-
 
  router.get(NOTIFICATION_ROUTE.FETCH_NOTIFICATION,adminAuthMiddleware,notificationController.getNotifications)
  router.patch(NOTIFICATION_ROUTE.MARK_AS_READ,adminAuthMiddleware,notificationController.markAsRead)

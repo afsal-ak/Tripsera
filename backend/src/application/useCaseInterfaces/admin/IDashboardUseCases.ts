@@ -6,6 +6,5 @@ export interface IDashboardUseCases {
    getTopBookedCategories(filter?: IDateFilter): Promise<ITopCategory[]>;
  
    getBookingsChartData (filter?: IDateFilter):Promise<IBookingsChartData[]>
-// ):Promise<IBookingsChartData>
- 
+  
 }

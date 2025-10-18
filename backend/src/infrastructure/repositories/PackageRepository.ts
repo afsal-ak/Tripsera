@@ -44,57 +44,6 @@ export class PackageRepository implements IPackageRepository {
     return await PackageModel.findByIdAndUpdate(id, updateOps, { new: true });
   }
 
-  // async findAll(page: number, limit: number, filters: IFilter):
-  //   Promise<{ packages: IPackage[]; pagination: PaginationInfo }> {
-  //   const skip = (page - 1) * limit;
-  //   const query: any = {};
-
-  //   if (filters.search) {
-  //     query.title= { $regex: filters.search, $options: "i" } 
-      
-  //   }
-
-  //   if (filters.status === "active") {
-  //     query.isBlocked = false;
-  //   } else if (filters.status === "blocked") {
-  //     query.isBlocked = true;
-  //   }
-  //   if (filters.startDate && filters.endDate) {
-  //     query.createdAt = {
-  //       $gte: new Date(filters.startDate),
-  //       $lte: new Date(filters.endDate)
-  //     };
-  //   }
-  //   const sortOption: Record<string, SortOrder> = {};
-
-  //   // Handle createdAt sorting
-  //   if (filters.sort === 'desc') {
-  //     sortOption.createdAt = -1;
-  //   } else if (filters.sort === 'asc') {
-  //     sortOption.createdAt = 1;
-  //   }
-
-
-  //   const [packages, total] = await Promise.all([
-  //     PackageModel.find(query)
-
-  //       .sort(sortOption)
-  //       .skip(skip)
-  //       .limit(limit)
-  //       .lean(),
-  //     PackageModel.countDocuments(query),
-  //   ]);
-
-
-  //   const pagination: PaginationInfo = {
-  //     totalItems: total,
-  //     currentPage: page,
-  //     pageSize: limit,
-  //     totalPages: Math.ceil(total / limit),
-  //   };
-
-  //   return { packages, pagination };
-  // }
   async findAll(
   page: number,
   limit: number,
@@ -204,25 +153,6 @@ export class PackageRepository implements IPackageRepository {
     return pkg;
   }
 
-  // async getActivePackages(
-  //   filters: any = {},
-  //   skip: number,
-  //   limit: number,
-  //   sortBy: string
-  // ): Promise<IPackage[]> {
-  //   const query = { ...filters, isBlocked: false };
-
-  //   // const sortOption: any = { createdAt: -1 };
-  //   // if (sort === "price_asc") sortOption.price = 1;
-  //   // else if (sort === "price_desc") sortOption.price = -1;
-
-  //   return await PackageModel.find(query)
-  //     .populate('category')
-  //     .sort(sortBy)
-  //     .skip(skip)
-  //     .limit(limit)
-  //     .lean();
-  // }
 async getActivePackages(
   filters: any = {},
   skip: number,

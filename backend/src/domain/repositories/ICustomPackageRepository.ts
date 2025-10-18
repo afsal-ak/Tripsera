@@ -9,10 +9,7 @@ export interface ICustomPackageRepository extends IBaseRepository<ICustomPackage
         limit: number,
         filters?: IFilter
     ): Promise<{ data: ICustomPackage[]; pagination: PaginationInfo }>
-    // changeStatusAndResponse(
-    //     pkgId: string,
-    //     data: UpdateCustomPkgStatusDTO
-    // ): Promise<ICustomPackage | null>
+   
     changeStatusAndResponse(
         pkgId: string,
         data: Partial<ICustomPackage>

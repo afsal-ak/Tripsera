@@ -8,8 +8,7 @@ export interface IDashboardRepository {
   getTotalCustomPlans(startDate?: Date, endDate?: Date): Promise<number>;
   getTotalBlogs(startDate?: Date, endDate?: Date): Promise<number>;
   getTopBookedPackages(startDate?: Date, endDate?: Date): Promise<ITopPackage[]>;
-//  getTopCategory(startDate?: Date, endDate?: Date): Promise<ITopCategory[]>;
-  getTopBookedCategories(startDate?: Date, endDate?: Date): Promise<ITopCategory[]>;
+   getTopBookedCategories(startDate?: Date, endDate?: Date): Promise<ITopCategory[]>;
   getBookingsChartData(
     startDate?: Date,
     endDate?: Date,

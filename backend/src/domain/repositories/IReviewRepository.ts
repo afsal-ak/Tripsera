@@ -8,8 +8,7 @@ export interface IReviewRepository extends IBaseRepository<IReview> {
     page: number,
     limit: number,
     filters?:IFilter
-    //sort: 'newest' | 'oldest'
-  ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
+   ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
   findPackageReviews(
     packageId: string,
     page?: number,

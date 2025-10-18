@@ -23,8 +23,7 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
         }
 
     }
-    //async getAllCustomPkg( page: number, limit: number, filters?: IFilter
-
+ 
     async changeCustomPkgStatus(customPkgId: string, data: UpdateCustomPkgStatusDTO): Promise<CustomPkgResponseDTO | null> {
         const customPkg = await this._customPkgRepo.changeStatusAndResponse(customPkgId, data)
         return customPkg ? CustomPkgMapper.toResponseDTO(customPkg) : null;

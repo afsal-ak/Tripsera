@@ -4,9 +4,7 @@ import { IChatbotService } from "@domain/entities/IChatBotService";
 export class ChatbotUseCase implements IChatbotUseCase {
   constructor(private readonly _chatbotService: IChatbotService) { }
 
-  // async chatBotResponse(message: string): Promise<string> {
-  //   return await this.chatbotService.generateResponse(message);
-  // }
+   
 
   async chatBotResponse(message: string): Promise<string> {
     const keywords = [

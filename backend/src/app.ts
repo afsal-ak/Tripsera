@@ -18,16 +18,15 @@ import { ChatRoomRepository } from "@infrastructure/repositories/ChatRoomReposit
 import { MessageRepository } from "@infrastructure/repositories/MessageRepository";
 import { SocketService } from "@infrastructure/sockets/SocketService";
 
- 
+
 // Notifications
 import { NotificationRepository } from "@infrastructure/repositories/NotificationRepository";
 import { NotificationUseCases } from "@application/usecases/notification/notificationUseCases";
 import { UserRepository } from "@infrastructure/repositories/UserRepository";
-import { PackageRepository } from "@infrastructure/repositories/PackageRepository";
 
 import { initNotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
 import { ChatRoomUseCase } from "@application/usecases/chat/chatRoomUseCases";
- 
+
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 4001;
@@ -52,22 +51,21 @@ const userRepository = new UserRepository();
 
 const chatRoomRepository = new ChatRoomRepository();
 const messageRepository = new MessageRepository();
- const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
+const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
 const chatRoomUseCases = new ChatRoomUseCase(chatRoomRepository);
 
- 
-const socketService = new SocketService(io, messageUseCases, chatRoomUseCases,userRepository);
+
+const socketService = new SocketService(io, messageUseCases, chatRoomUseCases, userRepository);
 socketService.initialize();
 
 
 // create repo + useCases
 const notificationRepository = new NotificationRepository();
-const packageRepository = new PackageRepository()
 const notificationUseCases = new NotificationUseCases(notificationRepository, userRepository);
 
 // initialize singleton
 initNotificationSocketService(io, notificationUseCases);
- 
+
 // Middlewares
 app.use(cookieParser());
 app.use(
@@ -90,7 +88,6 @@ process.on("uncaughtException", (error) => {
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
-//app.use("/api/chat", chatRoutes);
 
 // Error handler
 app.use(errorHandler);

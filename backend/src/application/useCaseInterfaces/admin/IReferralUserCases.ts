@@ -1,4 +1,4 @@
-import { UpdateReferralDTO,ReferralResponseDTO } from '@application/dtos/ReferralDTO';
+import { UpdateReferralDTO,ReferralResponseDTO } from '@application/dtos/ReferralDto';
 
 export interface IReferralUseCases {
   upsertReferral(data: UpdateReferralDTO): Promise<ReferralResponseDTO>;

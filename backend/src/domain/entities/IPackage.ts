@@ -1,15 +1,6 @@
 
 import { Types } from 'mongoose';
 
-// export interface GeoPoint {
-//   type: "Point";
-//   coordinates: [number, number]; // [lng, lat]
-// }
-
-// export interface ILocation {
-//   name: string;
-//   geo: GeoPoint;
-// }
 export interface GeoPoint {
   type: "Point";
   coordinates: [number, number]; // [longitude, latitude]

@@ -39,13 +39,7 @@ export class AdminAuthUseCases implements IAdminAuthUseCases {
     };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
-    // const publicAdmin = {
-    //   _id: admin._id,
-    //   email: admin.email,
-    //   username: admin.username,
-    //   role: admin.role,
-    // } as IUser;
-
+     
     return {
       admin: UserMapper.mapToLoginResponseDTO(admin),
       accessToken,

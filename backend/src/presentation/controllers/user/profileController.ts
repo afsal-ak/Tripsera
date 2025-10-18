@@ -120,8 +120,7 @@ export class ProfileController {
       console.log(username, 'user name in public');
       const user = await this._profileUseCases.getPublicProfile(username);
        const isFollowing = user!.followers.toString()?.includes(viewerId) ?? false;
-      // console.log(isFollowing,'foollwoing')
-      // console.log(profile.followers.toString(),'follwers')
+      
       res.status(HttpStatus.OK).json({
         profile:user,
         isFollowing,
@@ -134,10 +133,8 @@ export class ProfileController {
   followUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const followingId = req.params.userId;
-      console.log(followingId, 'following id');
-      const followerId = getUserIdFromRequest(req);
-      // const followingId = req.params.userId;
-      // console.log(followingId,'following id')
+       const followerId = getUserIdFromRequest(req);
+     
 
       const result = await this._profileUseCases.followUser(followerId, followingId);
 
@@ -151,8 +148,7 @@ export class ProfileController {
     try {
       const followerId = getUserIdFromRequest(req);
       const followingId = req.params.userId;
-      console.log(followingId, 'following id');
-
+ 
       const result = await this._profileUseCases.unfollowUser(followerId, followingId);
 
       res.status(200).json({ result, message: 'Unfollowed successfully' });

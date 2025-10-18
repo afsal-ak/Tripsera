@@ -35,7 +35,7 @@ export class PackageController {
         message: 'Package fetched successfully',
         data,
       });
-    } catch (error: any) {
+    } catch (error) {
       next(error)
     }
   };
@@ -46,7 +46,7 @@ export class PackageController {
       const packages = await this._packageUseCase.getSinglePackage(id);
 
       res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
-    } catch (error: any) {
+    } catch (error) {
       next(error)
     }
   };
@@ -117,7 +117,7 @@ export class PackageController {
     try {
       const { id } = req.params;
       if (!id) {
-        res.status(400).json({ message: "Package ID is required" });
+        res.status(HttpStatus.NOT_FOUND).json({ message: "Package ID is required" });
         return;
       }
 
@@ -164,7 +164,7 @@ export class PackageController {
       const updatedPackage = await this._packageUseCase.editPackageData(id, pkgData, existingImages, newImages);
 
       res.status(HttpStatus.OK).json({ message: "Package updated successfully", package: updatedPackage });
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       next(error)
     }
@@ -173,10 +173,9 @@ export class PackageController {
   blockPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
-      //console.log(id, 'pid');
-      await this._packageUseCase.block(id);
+       await this._packageUseCase.block(id);
       res.status(HttpStatus.OK).json({ message: 'Package blocked successfully' });
-    } catch (error: any) {
+    } catch (error) {
       next(error)
     }
   };
@@ -186,7 +185,7 @@ export class PackageController {
       const { id } = req.params;
       await this._packageUseCase.unblock(id);
       res.status(HttpStatus.OK).json({ message: 'Package unblocked successfully' });
-    } catch (error: any) {
+    } catch (error) {
       next(error)
     }
   };
@@ -196,7 +195,7 @@ export class PackageController {
       const { id } = req.params;
       await this._packageUseCase.delete(id);
       res.status(HttpStatus.OK).json({ message: 'Package deleted successfully' });
-    } catch (error: any) {
+    } catch (error) {
       next(error)
     }
   };

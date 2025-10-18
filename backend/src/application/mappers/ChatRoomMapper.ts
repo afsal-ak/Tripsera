@@ -1,24 +1,3 @@
-// import { ChatRoom1to1DTO } from "@application/dtos/ChatDTO"
-
-// export abstract class ChatRoomMapper {
-//     static to1to1DTO(chatRoom: IChatRoomPopulated, currentUserId: string): ChatRoom1to1DTO {
-//   const otherUser = chatRoom.participants.find(p => p._id.toString() !== currentUserId);
-
-//   return {
-//     _id: chatRoom._id.toString(),
-//     otherUser: {
-//       _id: otherUser._id.toString(),
-//       username: otherUser.username,
-//       profileImage: otherUser.profileImage,
-//     },
-//     lastMessageContent: chatRoom.lastMessage?.content || null,
-//     unreadCounts: chatRoom.unreadCounts,
-//     createdAt: chatRoom.createdAt,
-//   };
-// }
-
-// }
-
 import { IChatRoomPopulated } from "@infrastructure/db/types.ts/IChatRoomPopulated";
 import { ChatRoom1to1ResponseDTO,ChatRoomFullResponseDTO } from "@application/dtos/ChatDTO";
 import { IChatRoom } from "@domain/entities/IChatRoom";

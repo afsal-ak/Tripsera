@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { IReferralUseCases } from '@application/useCaseInterfaces/admin/IReferralUserCases';
-import {  UpdateReferralDTO } from '@application/dtos/ReferralDTO';
+import {  UpdateReferralDTO } from '@application/dtos/ReferralDto';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class ReferralController {
