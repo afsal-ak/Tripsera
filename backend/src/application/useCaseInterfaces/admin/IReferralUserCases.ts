@@ -2,7 +2,7 @@ import { IReferral } from '@domain/entities/IReferral';
 import { UpdateReferralDTO,ReferralResponseDTO } from '@application/dtos/ReferralDTO';
 
 export interface IReferralUseCases {
-  upsertReferral(data: UpdateReferralDTO): Promise<IReferral>;
+  upsertReferral(data: UpdateReferralDTO): Promise<ReferralResponseDTO>;
 
   getReferral(): Promise<ReferralResponseDTO | null>;
   changeReferralStatus(id: string, isBlocked: boolean): Promise<ReferralResponseDTO | null>;

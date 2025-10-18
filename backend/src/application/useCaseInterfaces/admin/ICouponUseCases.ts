@@ -3,7 +3,7 @@ import { CreateCouponDTO,UpdateCouponDTO,CouponResponseDTO } from '@application/
 
 
 export interface ICouponUseCases {
-  createCoupon(coupon: CreateCouponDTO): Promise<ICoupon>;
+  createCoupon(coupon: CreateCouponDTO): Promise<CouponResponseDTO>;
 
   editCoupon(id: string, couponData:UpdateCouponDTO): Promise<CouponResponseDTO | null>;
 

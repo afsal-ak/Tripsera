@@ -13,5 +13,5 @@ export interface IUserManagementUseCases {
   toggleUserBlockStatus(userId: string): Promise<boolean>  
  searchAllUsersForAdmin(
   search: string
-): Promise<IUser[]>
+): Promise<AdminUserListResponseDTO[]>
 }

@@ -64,8 +64,9 @@ export class UserManagementUseCases implements IUserManagementUseCases {
     await this._userRepository.updateUserStatus(userId, false);
   }
 
-  async searchAllUsersForAdmin(search: string): Promise<IUser[]> {
-    return await this._userRepository.searchAllUsersForAdmin(search)
+  async searchAllUsersForAdmin(search: string): Promise<AdminUserListResponseDTO[]> {
+    const user= await this._userRepository.searchAllUsersForAdmin(search)
+    return user.map(UserMapper.toAdminUserListDTO)
   }
 
 
