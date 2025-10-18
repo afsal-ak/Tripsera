@@ -1,6 +1,5 @@
 import { PackageResponseDTO } from '@application/dtos/PackageDTO';
 import { IBanner } from '@domain/entities/IBanner';
-import { IPackage } from '@domain/entities/IPackage';
 import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 
 

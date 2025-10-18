@@ -1,9 +1,5 @@
-import { IBooking } from '@domain/entities/IBooking';
-import { IBookingInput } from '@domain/entities/IBookingInput';
-import { INotification } from '@domain/entities/INotification';
 import { CreateBookingDTO,
-  BookingDetailResponseDTO,
-  BookingTableResponseDTO ,
+  BookingDetailResponseDTO, 
   BookingUserResponseDTO
 } from '@application/dtos/BookingDTO';
 

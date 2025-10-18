@@ -28,7 +28,6 @@
 // }
  
 
-import { IBooking } from '@domain/entities/IBooking';
 import { BookingTableResponseDTO,BookingDetailResponseDTO } from '@application/dtos/BookingDTO';
 
 export interface IBookingUseCases {

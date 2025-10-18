@@ -1,6 +1,5 @@
 import { TripTypeEnum, AccommodationTypeEnum, CustomPkgStatusEnum } from "@constants/enum/customPackageEnum";
  import { Types } from "mongoose";
-import { ICustomPackage } from "@domain/entities/ICustomPackage";
 
 export interface CreateCustomPkgDTO {
   userId?: Types.ObjectId;

@@ -1,7 +1,6 @@
 import { CreateReportDTO } from "@application/dtos/ReportDTO";
 import { IReportUseCases } from "@application/useCaseInterfaces/user/IReportUseCases";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-import { IReport } from "@domain/entities/IReport";
 import { IReportRepository } from "@domain/repositories/IReportRepository";
 import { AppError } from "@shared/utils/AppError";
 import { INotificationUseCases } from "@application/useCaseInterfaces/notification/INotificationUseCases";
@@ -51,7 +50,7 @@ export class ReportUseCases implements IReportUseCases {
             role:EnumUserRole.ADMIN,
             title: "New Report",
             entityType:EnumNotificationEntityType.REPORT,
-            reportedId: report?._id!?.toString(),
+            reportedId: report?._id?.toString(),
             message,
             type:EnumNotificationType.WARNING,
             triggeredBy: report.reporterId.toString(),

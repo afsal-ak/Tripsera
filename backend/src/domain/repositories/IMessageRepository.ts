@@ -1,7 +1,6 @@
 import { IMessage } from "@domain/entities/IMessage";
 import { SendMessageDTO } from "@application/dtos/MessageDTO";
 import { IBaseRepository } from "./IBaseRepository";
-import { MessageResponseDTO } from "@application/dtos/MessageDTO";
 import { IMessagePopulated } from "@infrastructure/db/types.ts/IMessagePopulated";
 
 export interface IMessageRepository extends IBaseRepository<IMessage> {

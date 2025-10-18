@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 import { IBooking, ITraveler } from '@domain/entities/IBooking';
 import { EnumPaymentStatus, EnumPaymentMethod } from '@constants/enum/paymentEnum';
 import { EnumGender } from '@constants/enum/commonEnum';

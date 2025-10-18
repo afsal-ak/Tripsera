@@ -1,5 +1,4 @@
 import { WishlistModel } from '@infrastructure/models/Wishlist';
-import { IWishlist } from '@domain/entities/IWishlist';
 import { IWishlistRepository } from '@domain/repositories/IWishlistRepository';
 import { IWishlistPopulated } from '@infrastructure/db/types.ts/IWishlistPopulated ';
 

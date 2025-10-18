@@ -1,4 +1,3 @@
-import { ICategory } from '@domain/entities/ICategory';
 import { PaginatedResult } from '@domain/entities/IPaginatedResult';
 import { IFilter } from '@domain/entities/IFilter';
  import { CreateCategoryDTO,UpdateCategoryDTO,CategoryResponseDTO } from '@application/dtos/CategoryDTO';

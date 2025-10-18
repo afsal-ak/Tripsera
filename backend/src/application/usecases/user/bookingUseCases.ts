@@ -1,4 +1,3 @@
-import { IBooking, IBookingHistory, ITravelDateHistory } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
@@ -13,7 +12,7 @@ import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { EnumBookingHistoryAction, EnumBookingStatus, EnumDateChangeAction, EnumTravelerAction } from '@constants/enum/bookingEnum';
 import { EnumPaymentStatus } from '@constants/enum/paymentEnum';
 import { EnumUserRole } from '@constants/enum/userEnum';
-import { BookingDetailResponseDTO, BookingTableResponseDTO, BookingUserResponseDTO, CreateBookingDTO } from '@application/dtos/BookingDTO';
+import { BookingDetailResponseDTO, BookingUserResponseDTO, CreateBookingDTO } from '@application/dtos/BookingDTO';
 import { BookingMapper } from '@application/mappers/BookingMapper';
 import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
 
@@ -224,7 +223,7 @@ export class BookingUseCases implements IBookingUseCases {
     if (!pkg) {
       throw new AppError(HttpStatus.NOT_FOUND, "Package not found for this booking");
     }
-    let message = `User ${user.username} initiated a booking for package ${pkg.title}.`
+    const message = `User ${user.username} initiated a booking for package ${pkg.title}.`
 
     const notification = await this._notificationUseCases.sendNotification({
 

@@ -22,7 +22,6 @@ import { SocketService } from "@infrastructure/sockets/SocketService";
 // Notifications
 import { NotificationRepository } from "@infrastructure/repositories/NotificationRepository";
 import { NotificationUseCases } from "@application/usecases/notification/notificationUseCases";
-import { NotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
 import { UserRepository } from "@infrastructure/repositories/UserRepository";
 import { PackageRepository } from "@infrastructure/repositories/PackageRepository";
 

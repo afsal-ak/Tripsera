@@ -1,4 +1,3 @@
-import { ICategory } from '@domain/entities/ICategory';
 import { ICategoryRepository } from '@domain/repositories/ICategoryRepository';
 import { ICategoryUseCases } from '@application/useCaseInterfaces/admin/ICategoryUseCases';
 import { IFilter } from '@domain/entities/IFilter';

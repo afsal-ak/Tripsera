@@ -1,6 +1,5 @@
 import { ICategory } from '@domain/entities/ICategory';
 import { ICategoryRepository } from '@domain/repositories/ICategoryRepository';
-import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 import { categoryModel } from '@infrastructure/models/Category';
 import mongoose from 'mongoose';
 import { IFilter } from '@domain/entities/IFilter';

@@ -23,7 +23,7 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
 
         const userId = customPkg.userId?.toString()
         const user = await this._userRepo.findById(userId!)
-        let message = `User ${user?.username} requested for custom package .`
+        const message = `User ${user?.username} requested for custom package .`
 
         const notification = await this._notificationUseCases.sendNotification({
             role: EnumUserRole.ADMIN,

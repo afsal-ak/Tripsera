@@ -1,6 +1,4 @@
-import { IBlog } from '@domain/entities/IBlog';
 import { IFilter } from '@domain/entities/IFilter';
-import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { PaginatedResult } from '@domain/entities/IPaginatedResult';
 import { BlogResponseDTO } from '@application/dtos/BlogDTO';
 

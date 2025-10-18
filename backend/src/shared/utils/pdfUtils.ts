@@ -61,10 +61,10 @@ const doc = new PDFDocument({ margin: 30, size: 'A3', layout: 'landscape' });
     };
 
     // Table Styling
-    // @ts-ignore
+     
     doc.table(tableData, {
       prepareHeader: () => doc.font('Helvetica-Bold').fontSize(9),
-      prepareRow: (_row, _i) => doc.font('Helvetica').fontSize(8),
+      prepareRow: (_row, i) => doc.font('Helvetica').fontSize(8),
       columnSpacing: 5,
       columnsSize: [
         90,  // Booking Code

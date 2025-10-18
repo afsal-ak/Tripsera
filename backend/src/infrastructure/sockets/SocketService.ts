@@ -3,7 +3,7 @@ import { IMessageUseCases } from "@application/useCaseInterfaces/chat/IMessageUs
 import { SOCKET_EVENTS, SOCKET_WEBRTC_EVENTS } from "./events";
 import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatRoomUseCases";
 import { IUserRepository } from "@domain/repositories/IUserRepository";
-import { EnumCallStatus, EnumCallType, EnumMessageType } from "@constants/enum/messageEnum";
+import { EnumCallStatus, EnumMessageType } from "@constants/enum/messageEnum";
 
 export class SocketService {
   private onlineUsers: Map<string, string>;

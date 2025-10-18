@@ -1,6 +1,5 @@
 import { SalesReportResponseDTO } from "@application/dtos/salesReportDTO";
 import { FilterQueryOptions } from "@application/usecases/helpers/getSalesReportFilter"
-import { IBooking } from "@domain/entities/IBooking";
 
 export interface ISalesReportUseCase {
 

@@ -1,5 +1,4 @@
  
-import { IDateFilter } from "@application/dtos/DashboardDTO";
 
 export interface IDateRangeResult {
   startDate: Date;

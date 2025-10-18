@@ -1,7 +1,7 @@
-import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
+import { IWalletTransaction } from '@domain/entities/IWallet';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { IWalletUseCases } from '@application/useCaseInterfaces/user/IWalletUseCases';
-import { WalletResponseDTO, WalletTransactionDTO } from '@application/dtos/WalletDTO';
+import { WalletResponseDTO } from '@application/dtos/WalletDTO';
 import { WalletMapper } from '@application/mappers/WalletMapper';
  export class WalletUseCases implements IWalletUseCases {
   constructor(private _walletRepo: IWalletRepository) { }

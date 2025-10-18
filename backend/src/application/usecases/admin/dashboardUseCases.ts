@@ -2,7 +2,6 @@ import { IDashboardSummary } from "@application/dtos/DashboardDTO";
 import { IDashboardUseCases } from "@application/useCaseInterfaces/admin/IDashboardUseCases";
 import { IDashboardRepository } from "@domain/repositories/IDashboardRepository";
 import { DateUtil } from "@shared/utils/dateUtil";
-import { DateFilter } from "@application/dtos/DashboardDTO";
 import { IDateFilter, ITopCategory, ITopPackage,IBookingsChartData } from "@application/dtos/DashboardDTO";
 
 

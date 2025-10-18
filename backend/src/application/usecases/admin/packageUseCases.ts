@@ -1,6 +1,5 @@
 
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
-import { IPackage } from '@domain/entities/IPackage';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { generatePackageCode } from '@shared/utils/generatePackageCode';
 import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';

@@ -2,9 +2,6 @@ import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
 import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatRoomUseCases";
 import { CreateChatRoomDTO, UpdateChatRoomDTO, ChatRoom1to1ResponseDTO, ChatRoomFullResponseDTO } from "@application/dtos/ChatDTO";
 import { EnumChatRoomSort } from "@constants/enum/chatRoomEnum";
-import { IChatRoom } from "@domain/entities/IChatRoom";
-import { AppError } from "@shared/utils/AppError";
-import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { ChatRoomMapper } from "@application/mappers/ChatRoomMapper";
  
 export class ChatRoomUseCase implements IChatRoomUseCase {

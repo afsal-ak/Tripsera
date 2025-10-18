@@ -1,6 +1,5 @@
 import { IMessageRepository } from "@domain/repositories/IMessageRepository";
 import { IMessageUseCases } from "@application/useCaseInterfaces/chat/IMessageUseCases";
-import { IMessage } from "@domain/entities/IMessage";
 import { MessagePopulatedResponseDTO, SendMessageDTO, UpdateMessageDTO } from "@application/dtos/MessageDTO";
 import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
 import { AppError } from "@shared/utils/AppError";

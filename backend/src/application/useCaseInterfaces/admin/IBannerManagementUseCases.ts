@@ -1,4 +1,3 @@
-import { IBanner } from '@domain/entities/IBanner';
 import { CreateBannerDTO ,BannerResponseDTO} from '@application/dtos/BannerDTO';
 
 

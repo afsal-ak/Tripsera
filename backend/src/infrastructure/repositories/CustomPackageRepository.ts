@@ -5,7 +5,6 @@ import { BaseRepository } from "./BaseRepository";
 import { IFilter } from "@domain/entities/IFilter";
 import { PaginationInfo } from "@application/dtos/PaginationDto";
 import { SortOrder } from "mongoose";
-import { UpdateCustomPkgStatusDTO } from "@application/dtos/CustomPkgDTO";
 
 
 export class CustomPackageRepository extends BaseRepository<ICustomPackage> implements ICustomPackageRepository {

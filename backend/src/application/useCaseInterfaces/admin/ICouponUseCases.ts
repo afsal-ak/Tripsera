@@ -1,4 +1,3 @@
-import { ICoupon } from '@domain/entities/ICoupon';
 import { CreateCouponDTO,UpdateCouponDTO,CouponResponseDTO } from '@application/dtos/CouponDTO';
 
 

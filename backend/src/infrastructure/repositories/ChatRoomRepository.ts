@@ -45,7 +45,7 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
     userId: string,
     filter: EnumChatRoomSort 
   ): Promise<IChatRoomPopulated[]> {
-     let query: any = { participants: userId };
+     const query: any = { participants: userId };
 
     if (filter === EnumChatRoomSort.UNREAD) {
       query[`unreadCounts.${userId}`] = { $gt: 0 };

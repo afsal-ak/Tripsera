@@ -1,6 +1,4 @@
-import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
 import { WalletResponseDTO, WalletTransactionDTO } from '@application/dtos/WalletDTO';
-import { EnumSort } from '@constants/enum/sortEnum';
 
 export interface IWalletUseCases {
   createWallet(userId: string): Promise<WalletResponseDTO>;

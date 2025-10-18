@@ -1,6 +1,5 @@
 import { ICommentRepository } from '@domain/repositories/ICommentRepository';
 import { CommentResponseDTO, CreateCommentDto, ReplyCommentDto, UpdateCommentDto } from '@application/dtos/CommentDTO';
-import { IComment } from '@domain/entities/IComment';
 import { ICommentUseCases } from '@application/useCaseInterfaces/user/ICommentUseCases';
 import { CommentMapper } from '@application/mappers/commentMapper';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';

@@ -1,4 +1,3 @@
-import { IReferral } from '@domain/entities/IReferral';
 
 export interface CreateReferralDTO {
   amount: number;

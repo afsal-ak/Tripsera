@@ -1,5 +1,4 @@
 import { IBannerRepository } from '@domain/repositories/IBannerRepository';
-import { IBanner } from '@domain/entities/IBanner';
 import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/IBannerManagementUseCases';
 import { CreateBannerDTO, BannerResponseDTO } from '@application/dtos/BannerDTO';
 import { BannerMapper } from '@application/mappers/BannerMapper';

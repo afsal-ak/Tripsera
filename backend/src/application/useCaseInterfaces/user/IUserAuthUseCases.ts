@@ -1,8 +1,7 @@
-import { IUser } from '@domain/entities/IUser';
 import { EnumUserRole } from '@constants/enum/userEnum';
 
 import { LoginResponseDTO, PreRegistrationDTO } from '@application/dtos/UserAuthDTO';
-import { UserDetailsResponseDTO, UserBasicResponseDTO } from '@application/dtos/UserDTO';
+import { UserBasicResponseDTO } from '@application/dtos/UserDTO';
 export interface IUserAuthUseCases {
   preRegistration(userData: PreRegistrationDTO): Promise<void>;
   verifyOtpAndRegister(email: string, otp: string): Promise<void>;

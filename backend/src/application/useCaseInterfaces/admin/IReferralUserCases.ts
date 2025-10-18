@@ -1,4 +1,3 @@
-import { IReferral } from '@domain/entities/IReferral';
 import { UpdateReferralDTO,ReferralResponseDTO } from '@application/dtos/ReferralDTO';
 
 export interface IReferralUseCases {

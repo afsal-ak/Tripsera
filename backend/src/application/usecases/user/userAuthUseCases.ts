@@ -124,7 +124,6 @@ import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { hashPassword, comparePassword } from '@shared/utils/hash';
 import { IUser } from '../../../domain/entities/IUser';
 import { EnumUserRole } from '@constants/enum/userEnum';
-import { IOTP } from '@domain/entities/IOTP';
 import { generateOtp } from '@shared/utils/generateOtp';
 import { verifyGoogleToken } from '@infrastructure/services/googleAuth/googleAuthService';
 import { generateAccessToken, generateRefreshToken, verifyAccessToken } from '@shared/utils/jwt';

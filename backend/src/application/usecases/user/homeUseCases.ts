@@ -1,5 +1,4 @@
 import { IBannerRepository } from '@domain/repositories/IBannerRepository';
-import { IBanner } from '@domain/entities/IBanner';
 import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
  import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';

@@ -1,5 +1,3 @@
-import { IReview } from '@domain/entities/IReview';
-import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { IFilter } from '../../../domain/entities/IFilter';
 import { ReviewResponseDTO,ReviewTableDTO } from '@application/mappers/ReviewMapper';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';

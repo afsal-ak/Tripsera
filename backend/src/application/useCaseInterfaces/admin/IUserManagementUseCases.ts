@@ -1,7 +1,6 @@
 import { IFilter } from '@domain/entities/IFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 import { AdminUserListResponseDTO, UserDetailsResponseDTO } from '@application/dtos/UserDTO';
-import { IUser } from '@domain/entities/IUser';
 
 export interface IUserManagementUseCases {
   getUsers(

@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 import { IBlog } from '@domain/entities/IBlog';
 import slugify from 'slugify';
 

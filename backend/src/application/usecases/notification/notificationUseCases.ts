@@ -1,10 +1,9 @@
 
 import { INotificationUseCases } from "@application/useCaseInterfaces/notification/INotificationUseCases";
 import { INotificationRepository } from "@domain/repositories/INotificationRepository";
-import { INotification, INotificationFilter } from "@domain/entities/INotification";
-import { IFilter } from "@domain/entities/IFilter";
+import { INotificationFilter } from "@domain/entities/INotification";
 import { PaginationInfo } from "@application/dtos/PaginationDto";
-import { CreateNotificationDto, MarkAsReadDto } from "@application/dtos/NotificationDTO";
+import { CreateNotificationDto } from "@application/dtos/NotificationDTO";
 import { NotificationResponseDTO,NotificationPopulatedResponseDTO } from "@application/dtos/NotificationDTO";
  import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { getNotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";

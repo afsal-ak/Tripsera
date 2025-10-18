@@ -1,4 +1,3 @@
-import { IBlog } from '@domain/entities/IBlog';
 import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
 import { BlogResponseDTO,CreateBlogDTO, UpdateBlogDTO } from '@application/dtos/BlogDTO';
 import { PaginatedResult } from '@domain/entities/IPaginatedResult';

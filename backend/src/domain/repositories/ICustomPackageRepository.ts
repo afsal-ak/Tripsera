@@ -1,6 +1,5 @@
 import { ICustomPackage } from "@domain/entities/ICustomPackage";
 import { IBaseRepository } from "./IBaseRepository";
-import { UpdateCustomPkgStatusDTO } from "@application/dtos/CustomPkgDTO";
 import { IFilter } from "@domain/entities/IFilter";
 import { PaginationInfo } from "@application/dtos/PaginationDto";
 

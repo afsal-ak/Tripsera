@@ -1,5 +1,4 @@
 import { IUserRepository } from '@domain/repositories/IUserRepository';
-import { IUser } from '@domain/entities/IUser';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
 import { IFilter } from '@domain/entities/IFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';

@@ -1,7 +1,6 @@
 import { PaginationInfo } from "@application/dtos/PaginationDto";
 import { IReportUseCases } from "@application/useCaseInterfaces/admin/IReportUseCases";
 import { IFilter } from "@domain/entities/IFilter";
-import { IReport } from "@domain/entities/IReport";
 import { EnumReportStatus } from "@constants/enum/reportEnum";
 import { IReportRepository } from "@domain/repositories/IReportRepository";
 import { ReportSingleResponseDTO, ReportTableResponseDTO } from "@application/dtos/ReportDTO";

@@ -80,7 +80,6 @@
 
 import { EnumNotificationType, EnumNotificationEntityType } from "@constants/enum/notificationEnum";
 import { EnumUserRole } from "@constants/enum/userEnum";
-import { INotification } from "@domain/entities/INotification";
 
 // Create Notification DTO
 export interface CreateNotificationDto {

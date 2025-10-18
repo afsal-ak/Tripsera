@@ -1,6 +1,5 @@
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
-import { IBlog } from '@domain/entities/IBlog';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginatedResult } from '@domain/entities/IPaginatedResult';
 import { BlogMapper } from '@application/mappers/BlogMapper';

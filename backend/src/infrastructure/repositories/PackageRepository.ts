@@ -3,7 +3,6 @@ import { PackageModel } from '@infrastructure/models/Package';
 import { IPackage } from '@domain/entities/IPackage';
 import { Types } from 'mongoose';
 import { IFilter } from '@domain/entities/IFilter';
-import { SortOrder } from 'mongoose';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {

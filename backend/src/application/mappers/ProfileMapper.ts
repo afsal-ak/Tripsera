@@ -1,6 +1,5 @@
 import { IUser } from "@domain/entities/IUser";
 import { ProfileDTO, PublicProfileDTO } from "@application/dtos/ProfileDTO";
-
 export abstract class ProfileMapper {
   
   /**  Convert IUser → ProfileDTO (Full Profile) */

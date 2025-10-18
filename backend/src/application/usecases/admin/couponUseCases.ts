@@ -1,4 +1,3 @@
-import { ICoupon } from '@domain/entities/ICoupon';
 import { ICouponRepository } from '@domain/repositories/ICouponRepository';
 import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
 import { CreateCouponDTO, UpdateCouponDTO, CouponResponseDTO } from '@application/dtos/CouponDTO';

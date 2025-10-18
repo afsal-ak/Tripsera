@@ -1,7 +1,5 @@
-import { IReview } from '@domain/entities/IReview';
 import { CreateReviewDTO,UpdateReviewDTO } from '@application/dtos/ReviewDTO';
 import { ReviewResponseDTO,UserReviewListDTO } from '@application/mappers/ReviewMapper';
-import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { IFilter } from '@domain/entities/IFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 export interface IReviewUseCases {

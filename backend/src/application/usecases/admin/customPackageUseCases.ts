@@ -1,7 +1,5 @@
 import { UpdateCustomPkgStatusDTO, CustomPkgResponseDTO ,CustomPkgTableDTO} from "@application/dtos/CustomPkgDTO";
-import { PaginationInfo } from "@application/dtos/PaginationDto";
 import { ICustomPkgUseCases } from "@application/useCaseInterfaces/admin/ICustomPackageUseCases";
-import { ICustomPackage } from "@domain/entities/ICustomPackage";
 import { IFilter } from "@domain/entities/IFilter";
 import { ICustomPackageRepository } from "@domain/repositories/ICustomPackageRepository";
 import { CustomPkgMapper } from "@application/mappers/CustomPkgMapper";
