@@ -313,7 +313,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     console.log({ email }, 'from forgotPassword');
     const hashedPassword = await hashPassword(password);
 
-    await this._userRepository.updateUserPassword(email, hashedPassword);
+    await this._userRepository.updateUserPassword(email!, hashedPassword);
   }
 
   async loginWithGoole(token: string): Promise<{ accessToken: string; user: LoginResponseDTO }> {

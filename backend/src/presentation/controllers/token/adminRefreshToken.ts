@@ -6,11 +6,9 @@ export const adminRefreshToken = async (req: Request, res: Response,next:NextFun
   try {
     // Read refresh token from cookie
     const oldRefreshToken = req.cookies.adminRefreshToken;
-    console.log({ oldRefreshToken }, 'from refresh admin');
-
+ 
     if (!oldRefreshToken) {
-      console.log({ oldRefreshToken });
-      res.status(HttpStatus.UNAUTHORIZED).json({ message: 'No refresh token provided' });
+       res.status(HttpStatus.UNAUTHORIZED).json({ message: 'No refresh token provided' });
       return;
     }
 
@@ -27,14 +25,6 @@ export const adminRefreshToken = async (req: Request, res: Response,next:NextFun
       role: payload.role,
     });
     
-
-    // Send new refresh token as cookie
-    // res.cookie('refreshToken', newRefreshToken, {
-    //   httpOnly: true,
-    //   secure:false,
-    //   sameSite: 'strict',
-    //   maxAge: 7 * 24 * 60 * 60 * 1000,
-    // });
 
     // Send new access token in response
     res.status(HttpStatus.OK).json({ accessToken: newAccessToken });
