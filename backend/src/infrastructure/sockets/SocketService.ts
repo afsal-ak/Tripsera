@@ -1,7 +1,7 @@
 import { Socket, Server } from "socket.io";
 import { IMessageUseCases } from "@application/useCaseInterfaces/chat/IMessageUseCases";
 import { SOCKET_EVENTS, SOCKET_WEBRTC_EVENTS } from "./events";
-import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatUseCases";
+import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatRoomUseCases";
 import { IUserRepository } from "@domain/repositories/IUserRepository";
 
 export class SocketService {

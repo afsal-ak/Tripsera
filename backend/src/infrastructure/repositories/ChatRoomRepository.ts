@@ -2,8 +2,10 @@
 import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
 import { IChatRoom } from "@domain/entities/IChatRoom";
 import { ChatRoomModel } from "@infrastructure/models/ChatRoom";
-import { CreateChatRoomDTO, UpdateChatRoomDTO, IChatRoomFilter } from "@application/dtos/ChatDTO";
+import { CreateChatRoomDTO, UpdateChatRoomDTO } from "@application/dtos/ChatDTO";
+import { EnumChatRoomSort } from "@constants/enum/chatRoomEnum";
 import { BaseRepository } from "./BaseRepository";
+import { IChatRoomPopulated } from "@infrastructure/db/types.ts/IChatRoomPopulated";
 
 export class ChatRoomRepository extends BaseRepository<IChatRoom> implements IChatRoomRepository {
   constructor() {
@@ -30,10 +32,10 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
 
     return chatRoom;
   }
-  async getChatRoomById(roomId: string): Promise<IChatRoom | null> {
+  async getChatRoomById(roomId: string): Promise<IChatRoomPopulated | null> {
     const chatRoom = await ChatRoomModel.findById(roomId)
       .populate("participants", "_id username profileImage ")
-      .lean();
+      .lean<IChatRoomPopulated>();
     return chatRoom
 
   }
@@ -41,25 +43,21 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
 
   async getUserChatRooms(
     userId: string,
-    filters: IChatRoomFilter = {}
-  ): Promise<IChatRoom[]> {
-    const { filter = "all", sort = "desc", sortBy = "updatedAt" } = filters;
+    filter: EnumChatRoomSort 
+  ): Promise<IChatRoomPopulated[]> {
+     let query: any = { participants: userId };
 
-    let query: any = { participants: userId };
-
-    if (filter === "unread") {
+    if (filter === EnumChatRoomSort.UNREAD) {
       query[`unreadCounts.${userId}`] = { $gt: 0 };
-    } else if (filter === "read") {
+    } else if (filter === EnumChatRoomSort.READ) {
       query[`unreadCounts.${userId}`] = { $eq: 0 };
     }
 
-    // Sorting
-    const sortOrder = sort === "asc" ? 1 : -1;
-
+  
     const chatRooms = await ChatRoomModel.find(query)
       .populate("participants", "_id username profileImage")
-      .sort({ [sortBy]: sortOrder })
-      .lean();
+      .sort({ createdAt:-1 })
+      .lean<IChatRoomPopulated[]>();
 
     // Format response
     const formattedRooms = chatRooms.map((room) => {

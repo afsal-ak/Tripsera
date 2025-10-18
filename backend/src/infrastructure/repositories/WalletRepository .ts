@@ -31,7 +31,7 @@ export class WalletRepository implements IWalletRepository {
         userId: userId,
         balance: 0,
       });
-      throw new AppError(400, 'wallet not found');
+      throw new AppError(HttpStatus.NOT_FOUND, 'wallet not found');
     }
 
     const sorted = [...wallet.transactions].sort((a, b) =>

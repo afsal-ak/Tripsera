@@ -1,15 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatUseCases";
+import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatRoomUseCases";
 import {
   CreateChatRoomDTO,
   UpdateChatRoomDTO,
-  toChatRoomResponseDTO,
-  toChatRoom1to1DTO,
-  IChatRoomFilter
-} from "@application/dtos/ChatDTO";
+
+ } from "@application/dtos/ChatDTO";
 import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-import { ChatRoomFilter } from "@application/dtos/ChatDTO";
+import { EnumChatRoomSort } from "@constants/enum/chatRoomEnum";
 
 export class ChatRoomController {
   constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) { }
@@ -35,7 +33,7 @@ export class ChatRoomController {
       res.status(HttpStatus.CREATED).json({
         success: true,
         message: "Chat room created successfully",
-        data: toChatRoomResponseDTO(room!),
+        data:room,
       });
     } catch (error) {
       next(error);
@@ -48,7 +46,7 @@ export class ChatRoomController {
       const roomId = req.params.roomId;
       const userId = getUserIdFromRequest(req);
 
-      const room = await this._chatRoomUseCases.getChatRoomById(roomId);
+      const room = await this._chatRoomUseCases.getChatRoomById(roomId,userId);
 
       if (!room) {
         res.status(HttpStatus.NOT_FOUND).json({ success: false, message: "Chat room not found" });
@@ -57,7 +55,7 @@ export class ChatRoomController {
       //  console.log(room, 'roooooom')
       res.status(HttpStatus.OK).json({
         success: true,
-        data: toChatRoom1to1DTO(room, userId),
+        data:room,
       });
     } catch (error) {
       next(error);
@@ -68,16 +66,13 @@ export class ChatRoomController {
     try {
       const userId = getUserIdFromRequest(req);
 
-      const filters: IChatRoomFilter = {
-        filter: (req.query.filter as ChatRoomFilter) || "all",
-        sort: (req.query.sort as "asc" | "desc") || "desc",
-        sortBy: (req.query.sortBy as "createdAt" | "updatedAt") || "updatedAt",
-      };
-      const rooms = await this._chatRoomUseCases.getUserChatRooms(userId, filters);
+      const filter = req.query.filter as EnumChatRoomSort | undefined;
+        
+      const rooms = await this._chatRoomUseCases.getUserChatRooms(userId, filter);
 
       res.status(HttpStatus.OK).json({
         success: true,
-        data: rooms.map(toChatRoomResponseDTO),
+        data: rooms,
       });
     } catch (error) {
       next(error);
@@ -100,7 +95,7 @@ export class ChatRoomController {
       res.status(HttpStatus.OK).json({
         success: true,
         message: "Chat room updated successfully",
-        data: toChatRoomResponseDTO(updatedRoom),
+        data: updatedRoom,
       });
     } catch (error) {
       next(error);
