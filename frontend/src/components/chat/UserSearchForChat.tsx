@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { handleSearchUserForChat } from "@/services/user/profileService";
 import { createChatRoom } from "@/services/user/messageService";
+import { adminCreateChatRoom } from "@/services/admin/messageService";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";

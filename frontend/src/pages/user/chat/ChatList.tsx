@@ -23,8 +23,9 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
 
 
   const filteredRooms = rooms.filter((room) => {
-    const otherParticipant =
-      room.participants.find((p) => p._id !== currentUserId) || room.participants[0];
+    const otherParticipant =room.otherUser
+    console.log(otherParticipant,'other')
+    //  room.participants.find((p) => p._id !== currentUserId) || room.participants[0];
     const searchTerm = search.toLowerCase();
     return (
       otherParticipant?.username?.toLowerCase().includes(searchTerm) ||

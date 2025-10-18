@@ -27,9 +27,7 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
 
    const filteredRooms = useMemo(() => {
     return rooms.filter((room) => {
-      const otherParticipant =
-        room.participants.find((p) => p._id !== currentUserId) ||
-        room.participants[0];
+      const otherParticipant =room.otherUser
       const searchTerm = search.toLowerCase();
 
       return (

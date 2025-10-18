@@ -79,7 +79,7 @@ const chatRoomsSlice = createSlice({
   const sender: IChatParticipant = {
     _id: message.senderId._id,
     username: message.senderId.username || "Unknown",
-    profileImage: message.senderId.profileImage,
+    profileImage: message.senderId.profileImage?.url,
   };
 
   const roomIndex = state.rooms.findIndex((r) => r._id === roomId);

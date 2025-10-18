@@ -3,10 +3,8 @@ export interface IChatParticipant {
   _id: string;
   username: string;
   avatar?: string;
-  profileImage?: {
-    url: string;
-    public_id: string;
-  };
+  profileImage?:string; 
+     
   isOnline?: boolean;
   location?: string;
 }

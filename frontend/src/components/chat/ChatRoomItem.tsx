@@ -20,9 +20,11 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
   const onlineUsers = useSelector((state: RootState) => state.chatRoom.onlineUsers)
   
   // Get the other participant (not current user)
-  const otherParticipant = room.participants.find(p => p._id !== currentUserId) || room.participants[0];
+  // const otherParticipant = room.participants.find(p => p._id !== currentUserId) || room.participants[0];
+    const otherParticipant = room.otherUser
+
   //console.log(otherParticipant, 'other')
-  const isOnline = onlineUsers.includes(otherParticipant._id);
+  const isOnline = onlineUsers.includes(otherParticipant?._id!);
   // unread count for current user
   const unreadCount = room.unreadCounts?.[currentUserId] || 0;
 
@@ -49,8 +51,8 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
     >
       <div className="relative mr-3">
         <img
-          src={otherParticipant.profileImage?.url || '/profile-default.jpg'}
-          alt={otherParticipant.username}
+          src={otherParticipant?.profileImage || '/profile-default.jpg'}
+          alt={otherParticipant?.username}
           className="w-12 h-12 rounded-full object-cover"
         />
         {isOnline && (
@@ -61,14 +63,14 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
           <h3 className="font-medium text-gray-900 truncate">
-            {room.isGroup ? room.name : otherParticipant.username}
+            {room.isGroup ? room.name : otherParticipant?.username}
           </h3>
           <span className="text-xs text-gray-500 font-medium">
             {formatTime(room.updatedAt)}
           </span>
         </div>
 
-        {otherParticipant.location && !room.isGroup && (
+        {otherParticipant?.location && !room.isGroup && (
           <div className="flex items-center mb-1">
             <MapPin className="w-3 h-3 text-gray-400 mr-1" />
             <span className="text-xs text-gray-500 truncate">{otherParticipant.location}</span>
