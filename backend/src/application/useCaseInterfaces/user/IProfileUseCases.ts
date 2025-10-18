@@ -1,28 +1,28 @@
-import { IUser } from '@domain/entities/IUser';
+import {UpdateProfileDTO, ProfileDTO, PublicProfileDTO, UpdateAddressDTO } from "@application/dtos/ProfileDTO";
 
 export interface IProfileUseCases {
-  getUserProfile(userId: string): Promise<IUser | null>;
+  getUserProfile(userId: string): Promise<ProfileDTO  | null>;
 
   updateProfileImage(
     userId: string,
     profileImage: { url: string; public_id: string }
-  ): Promise<IUser | null>;
+  ): Promise<ProfileDTO  | null>;
 
   createCoverImage(
     userId: string,
     coverImage: { url: string; public_id: string }
-  ): Promise<IUser | null>;
+  ): Promise<ProfileDTO  | null>;
 
-  updateUserProfile(userId: string, profileData: Partial<IUser>): Promise<IUser | null>;
+  updateUserProfile(userId: string, profileData: UpdateProfileDTO): Promise<ProfileDTO  | null>;
 
-  updateUserAddress(userId: string, addressData: Partial<IUser>): Promise<IUser | null>;
+  updateUserAddress(userId: string, addressData:UpdateAddressDTO): Promise<ProfileDTO  | null>;
 
-  getPublicProfile(username: string): Promise<IUser | null>;
+  getPublicProfile(username: string): Promise<PublicProfileDTO | null>;
 
   followUser(followerId: string, followingId: string): Promise<void>;
 
   unfollowUser(followerId: string, followingId: string): Promise<void>;
 
-  setProfilePrivacy(userId: string, isPrivate: boolean): Promise<IUser|null>;
+  setProfilePrivacy(userId: string, isPrivate: boolean): Promise<ProfileDTO|null>;
 
 }

@@ -5,6 +5,7 @@ import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinary
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { mapToPublicProfileDTO } from '@application/dtos/PublicProfileDTO ';
 import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
+import { UpdateProfileDTO } from '@application/dtos/ProfileDTO';
 
 export class ProfileController {
   constructor(private _profileUseCases: IProfileUseCases) {}
@@ -26,7 +27,7 @@ export class ProfileController {
   updateUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-      const { profileData }: { profileData: Partial<IUser> } = req.body;
+      const  profileData:UpdateProfileDTO  = req.body;
        const updatedProfile = await this._profileUseCases.updateUserProfile(userId, profileData);
       res.status(HttpStatus.OK).json({
         success: true,
@@ -41,7 +42,9 @@ export class ProfileController {
   updateUserAddress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-      const { address } = req.body;
+      const  address = req.body.address;
+      console.log(address,'addres');
+      
        const updatedAddress = await this._profileUseCases.updateUserAddress(userId, address);
 
       res.status(HttpStatus.OK).json({
@@ -118,12 +121,11 @@ export class ProfileController {
       const { username } = req.params;
       console.log(username, 'user name in public');
       const user = await this._profileUseCases.getPublicProfile(username);
-      const profile = mapToPublicProfileDTO(user!);
-      const isFollowing = profile.followers.toString()?.includes(viewerId) ?? false;
+       const isFollowing = user!.followers.toString()?.includes(viewerId) ?? false;
       // console.log(isFollowing,'foollwoing')
       // console.log(profile.followers.toString(),'follwers')
       res.status(HttpStatus.OK).json({
-        profile,
+        profile:user,
         isFollowing,
         message: 'Profile fetched successfully',
       });

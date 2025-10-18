@@ -234,7 +234,7 @@ router.put(
   upload.single('image'),
   profileController.createCoverImage
 );
-router.get(PROFILE_ROUTES.UPDATE_ADDRESS, userAuthMiddleware, profileController.updateUserAddress);
+router.put(PROFILE_ROUTES.UPDATE_ADDRESS, userAuthMiddleware, profileController.updateUserAddress);
 
 //for public
 router.get(
