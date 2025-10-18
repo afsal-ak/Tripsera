@@ -13,11 +13,13 @@ export class AdminAuthController {
         email,
         password
       );
+      const MAX_AGE = Number(process.env.MAX_AGE)
+
       res.cookie('adminRefreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: MAX_AGE,
         path: '/',
       });
 

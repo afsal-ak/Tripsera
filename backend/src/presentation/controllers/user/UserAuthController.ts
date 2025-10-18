@@ -59,11 +59,14 @@ export class UserAuthController {
         email,
         password
       );
+      
+      const MAX_AGE = Number(process.env.MAX_AGE)  
+
       res.cookie('userRefreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: MAX_AGE,
         path: '/',
       });
       res.status(HttpStatus.OK).json({
