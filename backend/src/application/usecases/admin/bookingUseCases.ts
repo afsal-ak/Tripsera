@@ -1,6 +1,5 @@
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
-import { IBooking } from '@domain/entities/IBooking';
-import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingUseCases';
+ import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingUseCases';
 import { IWalletRepository } from '@domain/repositories/IWalletRepository';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
@@ -8,8 +7,7 @@ import { INotificationUseCases } from '@application/useCaseInterfaces/notificati
 import { EnumUserRole } from '@constants/enum/userEnum';
 import { BookingDetailResponseDTO, BookingTableResponseDTO } from '@application/dtos/BookingDTO';
 import { BookingMapper } from '@application/mappers/BookingMapper';
-import { IBookingTable } from "@domain/entities/IBookingTable";
-import { EnumDateChangeAction,EnumBookingHistoryAction } from '@constants/enum/bookingEnum';
+ import { EnumDateChangeAction,EnumBookingHistoryAction } from '@constants/enum/bookingEnum';
 import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
 export class BookingUseCases implements IBookingUseCases {
 

@@ -11,11 +11,10 @@ import { INotificationUseCases } from '@application/useCaseInterfaces/notificati
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { EnumBookingHistoryAction, EnumBookingStatus, EnumDateChangeAction, EnumTravelerAction } from '@constants/enum/bookingEnum';
-import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
+import { EnumPaymentStatus } from '@constants/enum/paymentEnum';
 import { EnumUserRole } from '@constants/enum/userEnum';
 import { BookingDetailResponseDTO, BookingTableResponseDTO, BookingUserResponseDTO, CreateBookingDTO } from '@application/dtos/BookingDTO';
 import { BookingMapper } from '@application/mappers/BookingMapper';
-import { IBookingTable } from "@domain/entities/IBookingTable";
 import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
 
 
@@ -57,6 +56,9 @@ export class BookingUseCases implements IBookingUseCases {
     if (booking.bookingStatus === EnumBookingStatus.CANCELLED) {
       throw new AppError(HttpStatus.BAD_REQUEST, "This booking is already cancelled");
     }
+    if (booking.bookingStatus === EnumBookingStatus.CONFIRMED || EnumBookingStatus.COMPLETED) {
+      throw new AppError(HttpStatus.BAD_REQUEST, "Cannot cancel confirmed booking");
+    }
 
     //  Refund if already paid
     if (booking.paymentStatus === EnumPaymentStatus.PAID && booking.amountPaid > 0) {
@@ -75,7 +77,7 @@ export class BookingUseCases implements IBookingUseCases {
         role: EnumUserRole.USER,
         userId: booking.userId.toString(),
         title: "Booking Refund",
-        entityType:EnumNotificationEntityType.WALLET,
+        entityType: EnumNotificationEntityType.WALLET,
         walletId: wallet._id!.toString(),
         message: walletMessage,
         type: EnumNotificationType.SUCCESS,
@@ -374,7 +376,7 @@ export class BookingUseCases implements IBookingUseCases {
       triggeredBy: userId,
       metadata: { bookingId: booking._id },
     });
-     
+
 
     return { booking: BookingMapper.toDetailResponseDTO(booking) };
   }
@@ -388,20 +390,19 @@ export class BookingUseCases implements IBookingUseCases {
     const bookingDoc = await this._bookingRepo.findById(bookingId);
     if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, "Booking not found");
 
+
+    // Check if booking is already cancelled
+    if (bookingDoc.bookingStatus === EnumBookingStatus.CANCELLED) {
+      throw new AppError(HttpStatus.BAD_REQUEST, "Cannot remove traveler from a cancelled booking");
+    }
+
+    if (bookingDoc.bookingStatus === EnumBookingStatus.CONFIRMED || EnumBookingStatus.COMPLETED) {
+      throw new AppError(HttpStatus.BAD_REQUEST, "Cannot remove traveler from a confirmed booking");
+    }
+
+
     const removedTraveler = bookingDoc.travelers.splice(travelerIndex, 1)[0];
 
-    // Track general booking history
-    // bookingDoc.history = bookingDoc.history || [];
-    // bookingDoc.history.push({
-    //   action: EnumBookingHistoryAction.TRAVELER_REMOVED,
-    //   oldValue: removedTraveler,
-    //   newValue: null,
-    //   changedBy: 'user',
-    //   changedAt: new Date(),
-    //   note,
-    // });
-
-    // Track traveler-specific history with reason
     bookingDoc.travelerHistory = bookingDoc.travelerHistory || [];
     bookingDoc.travelerHistory.push({
       traveler: removedTraveler,
@@ -432,7 +433,7 @@ export class BookingUseCases implements IBookingUseCases {
         role: EnumUserRole.USER,
         userId: bookingDoc.userId.toString(),
         title: "Traveler Refund",
-        entityType:EnumNotificationEntityType.WALLET,
+        entityType: EnumNotificationEntityType.WALLET,
         walletId: wallet._id!.toString(),
         message: `₹${refundAmount} refunded to your wallet for removed traveler ${removedTraveler.fullName}.`,
         type: EnumNotificationType.SUCCESS,
@@ -464,7 +465,7 @@ export class BookingUseCases implements IBookingUseCases {
     await this._notificationUseCases.sendNotification({
       role: EnumUserRole.ADMIN,
       title: "Traveler Removed",
-      entityType:EnumNotificationEntityType.BOOKING,
+      entityType: EnumNotificationEntityType.BOOKING,
       bookingId: bookingDoc._id!.toString(),
       packageId: bookingDoc.packageId.toString(),
       message: `Traveler ${removedTraveler.fullName} removed from booking ${bookingDoc.bookingCode} (${pkg?.title || ""})`,
@@ -479,54 +480,54 @@ export class BookingUseCases implements IBookingUseCases {
   }
 
   async changeTravelDate(
-  bookingId: string,
-  newDate: Date,
-  userId: string,
-  note?: string
-): Promise<BookingDetailResponseDTO> {
-  const bookingDoc = await this._bookingRepo.findById(bookingId);
-  if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
+    bookingId: string,
+    newDate: Date,
+    userId: string,
+    note?: string
+  ): Promise<BookingDetailResponseDTO> {
+    const bookingDoc = await this._bookingRepo.findById(bookingId);
+    if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
 
-  const oldDate = bookingDoc.travelDate;
-  const today = new Date();
-  const newTravelDate = new Date(newDate);
+    const oldDate = bookingDoc.travelDate;
+    const today = new Date();
+    const newTravelDate = new Date(newDate);
 
-  if (oldDate && newTravelDate.getTime() === oldDate.getTime())
-    throw new AppError(HttpStatus.BAD_REQUEST, 'New travel date cannot be the same');
-  if (newTravelDate < today)
-    throw new AppError(HttpStatus.BAD_REQUEST, 'New travel date cannot be in the past');
-  if (bookingDoc.bookingStatus === 'confirmed')
-    throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot change travel date for confirmed bookings');
+    if (oldDate && newTravelDate.getTime() === oldDate.getTime())
+      throw new AppError(HttpStatus.BAD_REQUEST, 'New travel date cannot be the same');
+    if (newTravelDate < today)
+      throw new AppError(HttpStatus.BAD_REQUEST, 'New travel date cannot be in the past');
+    if (bookingDoc.bookingStatus === 'confirmed')
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot change travel date for confirmed bookings');
 
-  const updated = await this._bookingRepo.updateById(bookingId, {
-    $set: {
-      travelDate: newTravelDate,
-    },
-    $push: {
-      previousDates: {
-        oldDate,
-        newDate: newTravelDate,
-        action:
-          oldDate && newTravelDate > oldDate
-            ? EnumDateChangeAction.POSTPONED
-            : EnumDateChangeAction.PREPONED,
-        changedBy: 'user',
-        changedAt: new Date(),
+    const updated = await this._bookingRepo.updateById(bookingId, {
+      $set: {
+        travelDate: newTravelDate,
       },
-      history: {
-        action: EnumBookingHistoryAction.DATE_CHANGED,
-        oldValue: oldDate,
-        newValue: newTravelDate,
-        changedBy: 'user',
-        changedAt: new Date(),
-        note,
+      $push: {
+        previousDates: {
+          oldDate,
+          newDate: newTravelDate,
+          action:
+            oldDate && newTravelDate > oldDate
+              ? EnumDateChangeAction.POSTPONED
+              : EnumDateChangeAction.PREPONED,
+          changedBy: 'user',
+          changedAt: new Date(),
+        },
+        history: {
+          action: EnumBookingHistoryAction.DATE_CHANGED,
+          oldValue: oldDate,
+          newValue: newTravelDate,
+          changedBy: 'user',
+          changedAt: new Date(),
+          note,
+        },
       },
-    },
-    $inc: { rescheduleCount: 1 },
-  });
+      $inc: { rescheduleCount: 1 },
+    });
 
-  return BookingMapper.toDetailResponseDTO(updated!);
-}
+    return BookingMapper.toDetailResponseDTO(updated!);
+  }
 
 
 }
