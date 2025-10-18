@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IWalletUseCases } from '@application/useCaseInterfaces/user/IWalletUseCases';
-import { EnumSort } from '@constants/enum/sortEnum';
-
+ 
 export class WalletController {
   constructor(private _walletUseCases: IWalletUseCases) {}
 

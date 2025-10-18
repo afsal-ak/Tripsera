@@ -1,5 +1,6 @@
 import { IUser } from '@domain/entities/IUser';
 import { LoginResponseDTO } from '@application/dtos/UserAuthDTO';
+
 export interface IAdminAuthUseCases {
   adminLogin(
     email: string,

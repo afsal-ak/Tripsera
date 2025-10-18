@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IPackage, ImageInfo } from '@domain/entities/IPackage';
+import { ImageInfoDTO } from '@application/dtos/PackageDTO';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { IPackageUseCases } from '@application/useCaseInterfaces/admin/IPackageUseCases';
 import { CreatePackageDTO, EditPackageDTO } from '@application/dtos/PackageDTO';
@@ -135,13 +135,13 @@ export class PackageController {
         "category"
       ]);
 
-      const existingImages: ImageInfo[] = Array.isArray(body.existingImages)
+      const existingImages: ImageInfoDTO[] = Array.isArray(body.existingImages)
         ? body.existingImages
         : body.existingImages
           ? JSON.parse(body.existingImages)
           : [];
 
-      const newImages: ImageInfo[] = files?.length
+      const newImages: ImageInfoDTO[] = files?.length
         ? await Promise.all(files.map(f => uploadCloudinary(f.path, "packages")))
         : [];
       if (pkgData.location) {

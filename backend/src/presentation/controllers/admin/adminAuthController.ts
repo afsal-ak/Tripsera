@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { IUser } from '@domain/entities/IUser';
-import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
+ import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { ForgotPasswordChangeDTO } from '@application/dtos/UserAuthDTO';
 
 export class AdminAuthController {
   constructor(private _adminAuthUseCases: IAdminAuthUseCases) { }
@@ -46,7 +46,7 @@ export class AdminAuthController {
   forgotPasswordChange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, password, otp } = req.body;
-      const adminData: IUser = { email, password };
+      const adminData:ForgotPasswordChangeDTO={ email, password };
       await this._adminAuthUseCases.forgotPasswordChange(adminData, otp);
       res.status(HttpStatus.OK).json({ message: 'Password changed successfully' });
     } catch (error) {
@@ -56,7 +56,7 @@ export class AdminAuthController {
 
   adminLogout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      res.clearCookie('refreshToken', {
+      res.clearCookie('adminRefreshToken', {
         httpOnly: true,
         secure: false,
         sameSite: 'none',

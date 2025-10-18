@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
-import { IBlog } from '@domain/entities/IBlog';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
 import { CreateBlogDTO,UpdateBlogDTO } from '@application/dtos/BlogDTO';

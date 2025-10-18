@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
-import { mapToLoginResponseDTO } from '@application/dtos/UserAuthDTO';
-import { EnumUserRole } from '@constants/enum/userEnum';
+ import { EnumUserRole } from '@constants/enum/userEnum';
+ 
 export class UserAuthController {
   constructor(private _userAuthUseCases: IUserAuthUseCases) { }
 
@@ -59,7 +59,7 @@ export class UserAuthController {
         email,
         password
       );
-      
+
       const MAX_AGE = Number(process.env.MAX_AGE)  
 
       res.cookie('userRefreshToken', refreshToken, {

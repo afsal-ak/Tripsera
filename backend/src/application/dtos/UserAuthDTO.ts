@@ -8,6 +8,11 @@ export interface PreRegistrationDTO {
   referredReferralCode?:string,
 }
 
+ export interface ForgotPasswordChangeDTO {
+  email: string;
+  password: string;
+  otp?: string;
+}
 
 
 export interface LoginResponseDTO {

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { ICoupon } from '@domain/entities/ICoupon';
-import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
+ import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { CreateCouponDTO, UpdateCouponDTO } from '@application/dtos/CouponDTO';
 
 export class CouponController {
 
@@ -9,7 +9,7 @@ export class CouponController {
 
   createCoupon = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const couponData: ICoupon = req.body;
+      const couponData: CreateCouponDTO = req.body;
       const coupon = await this._couponUseCase.createCoupon(couponData);
       res.status(HttpStatus.CREATED).json({
         coupon,
@@ -36,7 +36,7 @@ export class CouponController {
   editCoupon = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
-      const couponData: Partial<ICoupon> = req.body;
+      const couponData:UpdateCouponDTO = req.body;
       const coupon = await this._couponUseCase.editCoupon(id, couponData);
       res.status(HttpStatus.OK).json({
         coupon,

@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
-import { IUser } from '@domain/entities/IUser';
-import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+ import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
-import { mapToPublicProfileDTO } from '@application/dtos/PublicProfileDTO ';
-import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
+ import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
 import { UpdateProfileDTO } from '@application/dtos/ProfileDTO';
 
 export class ProfileController {

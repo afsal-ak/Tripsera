@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
-import { UserMapper } from '@application/mappers/UserMapper';
-import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IFilter } from '@domain/entities/IFilter';
 
 export class UserManagementController {
