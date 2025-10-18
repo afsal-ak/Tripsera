@@ -3,7 +3,7 @@ import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
-import { CreateBlogDTO,UpdateBlogDTO } from '@application/dtos/BlogDTO';
+import { CreateBlogDTO, UpdateBlogDTO } from '@application/dtos/BlogDTO';
 
 export class BlogController {
   constructor(private readonly _blogUseCases: IBlogUseCases) {}
@@ -23,7 +23,7 @@ export class BlogController {
       files.forEach((file) => {
         console.log(`File: ${file.originalname} | Size: ${(file.size / 1024).toFixed(2)} KB`);
       });
- 
+
       const imageUrls = await Promise.all(
         files.map((file) => uploadCloudinary(file.path, 'blogs'))
       );
@@ -52,8 +52,13 @@ export class BlogController {
         : [];
       console.log(newImages, 'new Images');
       console.log(existingImageUrls, 'exist Images');
-       
-      const blog = await this._blogUseCases.editBlog(blogId, blogData, existingImageUrls, newImages);
+
+      const blog = await this._blogUseCases.editBlog(
+        blogId,
+        blogData,
+        existingImageUrls,
+        newImages
+      );
       res.status(HttpStatus.OK).json({ message: 'Blog updated successfully', blog });
     } catch (err) {
       next(err);
@@ -62,9 +67,8 @@ export class BlogController {
 
   getBlogById = async (req: Request, res: Response, next: NextFunction) => {
     try {
- 
       const { blogId } = req.params;
-    
+
       const blog = await this._blogUseCases.getBlogById(blogId);
       res.status(HttpStatus.OK).json(blog);
     } catch (err) {
@@ -77,7 +81,7 @@ export class BlogController {
       const userId = getUserIdFromRequest(req);
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-       const blogs = await this._blogUseCases.getBlogByUser(userId, page, limit);
+      const blogs = await this._blogUseCases.getBlogByUser(userId, page, limit);
       res.status(HttpStatus.OK).json(blogs);
     } catch (err) {
       next(err);
@@ -90,7 +94,7 @@ export class BlogController {
       const limit = parseInt(req.query.limit as string) || 10;
 
       const { search, tags, startDate, endDate } = req.query;
-       const blogs = await this._blogUseCases.getAllPublishedBlogs(page, limit, {
+      const blogs = await this._blogUseCases.getAllPublishedBlogs(page, limit, {
         search: search?.toString(),
         tags: tags ? tags.toString().split(',') : undefined,
         startDate: startDate?.toString(),
@@ -162,19 +166,17 @@ export class BlogController {
     }
   };
 
-  getBlogLikeList=async (req: Request, res: Response, next: NextFunction) => {
+  getBlogLikeList = async (req: Request, res: Response, next: NextFunction) => {
     try {
-       const { blogId } = req.params;
+      const { blogId } = req.params;
 
-       const data=await this._blogUseCases.getBlogLikeList(blogId)
-       console.log(data,'blog like')
+      const data = await this._blogUseCases.getBlogLikeList(blogId);
+      console.log(data, 'blog like');
       res.status(HttpStatus.OK).json(data);
-
     } catch (error) {
-            next(error);
-
+      next(error);
     }
-  }
+  };
 
   blockBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,10 +1,9 @@
- import { IUser } from '@domain/entities/IUser';
+import { IUser } from '@domain/entities/IUser';
 declare global {
   namespace Express {
     interface Request {
       user?: IUser;
-      isBlockedByTarget?: boolean; 
-
+      isBlockedByTarget?: boolean;
     }
   }
 }

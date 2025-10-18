@@ -3,7 +3,7 @@ export interface IFilter {
   status?: string;
   startDate?: string;
   endDate?: string;
-  sort?:string;
-  rating?:number
-  customFilter?:string;
+  sort?: string;
+  rating?: number;
+  customFilter?: string;
 }

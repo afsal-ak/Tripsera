@@ -16,7 +16,7 @@ import {
   DASHBOARD_ROUTE,
   MESSAGE_ROUTE,
   CHAT_ROOM_ROUTE,
-  NOTIFICATION_ROUTE
+  NOTIFICATION_ROUTE,
 } from 'constants/route-constants/adminRoutes';
 
 import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
@@ -65,7 +65,7 @@ import { ReferralRepository } from '@infrastructure/repositories/ReferralReposit
 import { ReferralUseCase } from '@application/usecases/admin/referralUseCases.ts';
 import { ReferralController } from '@presentation/controllers/admin/referralController';
 import { SalesReportRepository } from '@infrastructure/repositories/salesReportRepository';
- import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
+import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
 import { SalesReportController } from '@presentation/controllers/admin/salesReportController';
 
 import { ReportRepository } from '@infrastructure/repositories/ReportRepository';
@@ -80,7 +80,6 @@ import { DashboardRepository } from '@infrastructure/repositories/DashboardRepos
 import { DashboardUseCases } from '@application/usecases/admin/dashboardUseCases';
 import { DashboardController } from '@presentation/controllers/admin/dashboardController';
 
-
 import { ChatRoomRepository } from '@infrastructure/repositories/ChatRoomRepository';
 import { ChatRoomUseCase } from '@application/usecases/chat/chatRoomUseCases';
 import { ChatRoomController } from '@presentation/controllers/chat/ChatRoomController';
@@ -89,32 +88,26 @@ import { MessageRepository } from '@infrastructure/repositories/MessageRepositor
 import { MessageUseCases } from '@application/usecases/chat/messageUseCases';
 import { MessageController } from '@presentation/controllers/chat/MessageController';
 
-
 import { NotificationUseCases } from '@application/usecases/notification/notificationUseCases';
 import { NotificationRepository } from '@infrastructure/repositories/NotificationRepository';
 import { NotificationController } from '@presentation/controllers/admin/notificationController';
- 
 
 const chatRoomRepository = new ChatRoomRepository();
 const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
 const chatRoomController = new ChatRoomController(chatRoomUseCase);
 
- 
-const messageRepository=new MessageRepository()
-const messageUseCases=new MessageUseCases(messageRepository,chatRoomRepository)
-const messageController=new MessageController(messageUseCases)
-
+const messageRepository = new MessageRepository();
+const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
+const messageController = new MessageController(messageUseCases);
 
 const adminRepository = new UserRepository();
 const otpRepository = new OtpRepository();
-
 
 const adminAuthUseCases = new AdminAuthUseCases(adminRepository, otpRepository);
 const adminAuthController = new AdminAuthController(adminAuthUseCases);
 
 const userManagementUseCases = new UserManagementUseCases(adminRepository);
 const userManagementController = new UserManagementController(userManagementUseCases);
-
 
 const bannerRepository = new BannerRepository();
 const bannerMangementUseCases = new BannerMangementUseCases(bannerRepository);
@@ -128,18 +121,22 @@ const packageRepository = new PackageRepository();
 const packageUseCase = new PackageUseCases(packageRepository);
 const packageController = new PackageController(packageUseCase);
 
-const notificationRepository=new NotificationRepository()
-const notificationUseCases=new NotificationUseCases(notificationRepository,adminRepository)
-const notificationController=new NotificationController(notificationUseCases)
+const notificationRepository = new NotificationRepository();
+const notificationUseCases = new NotificationUseCases(notificationRepository, adminRepository);
+const notificationController = new NotificationController(notificationUseCases);
 
 const couponRepository = new CouponRepository();
 const couponUseCase = new CouponUseCases(couponRepository);
 const couponController = new CouponController(couponUseCase);
 
-const walletRepository=new WalletRepository()
+const walletRepository = new WalletRepository();
 
 const bookingRepository = new BookingRepository();
-const bookingUseCase = new BookingUseCases(bookingRepository,walletRepository,notificationUseCases);
+const bookingUseCase = new BookingUseCases(
+  bookingRepository,
+  walletRepository,
+  notificationUseCases
+);
 const bookingController = new BookingController(bookingUseCase);
 
 const blogRepository = new BlogRepository();
@@ -158,21 +155,17 @@ const salesRepository = new SalesReportRepository();
 const salesuseCases = new SalesReportUseCase(salesRepository);
 const salesController = new SalesReportController(salesuseCases);
 
-const reportRepository=new ReportRepository()
-const reportUseCases=new ReportUseCases(reportRepository)
-const reportController=new ReportController(reportUseCases)
-
+const reportRepository = new ReportRepository();
+const reportUseCases = new ReportUseCases(reportRepository);
+const reportController = new ReportController(reportUseCases);
 
 const customPkgRepository = new CustomPackageRepository();
 const customPkgUseCases = new CustomPackageUseCases(customPkgRepository);
 const customPkgController = new CustomPackageController(customPkgUseCases);
 
-
 const dashboardRepository = new DashboardRepository();
 const dashboardUseCases = new DashboardUseCases(dashboardRepository);
 const dashboardController = new DashboardController(dashboardUseCases);
-
-
 
 const router = Router();
 
@@ -189,16 +182,22 @@ router.get(
   adminAuthMiddleware,
   userManagementController.getAllUser
 );
-router.get(USER_MANAGEMENT_ROUTES.SEARCH_USERS,adminAuthMiddleware, userManagementController.searchAllUsersForAdmin);
+router.get(
+  USER_MANAGEMENT_ROUTES.SEARCH_USERS,
+  adminAuthMiddleware,
+  userManagementController.searchAllUsersForAdmin
+);
 
 router.get(
   USER_MANAGEMENT_ROUTES.GET_SINGLE_USER,
   adminAuthMiddleware,
   userManagementController.getSingleUser
 );
-router.patch(USER_MANAGEMENT_ROUTES.TOGGLE_BLOCK,adminAuthMiddleware, userManagementController.toggleBlockUser);
-
-
+router.patch(
+  USER_MANAGEMENT_ROUTES.TOGGLE_BLOCK,
+  adminAuthMiddleware,
+  userManagementController.toggleBlockUser
+);
 
 //  BANNER ROUTES
 router.post(
@@ -224,9 +223,18 @@ router.patch(CATEGORY_ROUTES.UNBLOCK, adminAuthMiddleware, categoryController.un
 // PACKAGE ROUTES
 router.get(PACKAGE_ROUTES.GET_ALL, adminAuthMiddleware, packageController.getFullPackage);
 router.get(PACKAGE_ROUTES.GET_BY_ID, adminAuthMiddleware, packageController.getPackagesById);
-router.post(PACKAGE_ROUTES.ADD,adminAuthMiddleware,upload.array('images', 4),  packageController.createPackage
+router.post(
+  PACKAGE_ROUTES.ADD,
+  adminAuthMiddleware,
+  upload.array('images', 4),
+  packageController.createPackage
 );
-router.put(PACKAGE_ROUTES.EDIT,adminAuthMiddleware,upload.array('images', 4), packageController.editPackage);
+router.put(
+  PACKAGE_ROUTES.EDIT,
+  adminAuthMiddleware,
+  upload.array('images', 4),
+  packageController.editPackage
+);
 router.patch(PACKAGE_ROUTES.BLOCK, adminAuthMiddleware, packageController.blockPackage);
 router.patch(PACKAGE_ROUTES.UNBLOCK, adminAuthMiddleware, packageController.unblockPackage);
 
@@ -278,40 +286,85 @@ router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT, salesController.getReportList);
 router.get(SALES_REPORT_ROUTE.SALES_REPORT_EXCEL_DOWNLOAD, salesController.downloadExcel);
 router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD, salesController.downloadPDF);
 
-// 
+//
 //REPORT ROUTES
-router.get(REPORT_ROUTE.GET_REPORT,adminAuthMiddleware,reportController.getAllReports)
-router.get(REPORT_ROUTE.GET_REPORT_BY_ID,adminAuthMiddleware,reportController.getReportById)
- router.patch(REPORT_ROUTE.UPDATE_REPORT_STATUS,adminAuthMiddleware,reportController.updateReportStatus)
-
+router.get(REPORT_ROUTE.GET_REPORT, adminAuthMiddleware, reportController.getAllReports);
+router.get(REPORT_ROUTE.GET_REPORT_BY_ID, adminAuthMiddleware, reportController.getReportById);
+router.patch(
+  REPORT_ROUTE.UPDATE_REPORT_STATUS,
+  adminAuthMiddleware,
+  reportController.updateReportStatus
+);
 
 //CUSTOM PACAKGE ROUTES
-router.get(CUSTOM_PACKAGE_ROUTE.GET_BY_ID, adminAuthMiddleware, customPkgController.getCustomPkgById);
-router.get(CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG, adminAuthMiddleware, customPkgController.getAllCustomPkgs);
-router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS, adminAuthMiddleware, customPkgController.changeCustomPkgStatus);
-router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, adminAuthMiddleware,customPkgController.deleteCustomPkg);
+router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_BY_ID,
+  adminAuthMiddleware,
+  customPkgController.getCustomPkgById
+);
+router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG,
+  adminAuthMiddleware,
+  customPkgController.getAllCustomPkgs
+);
+router.put(
+  CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS,
+  adminAuthMiddleware,
+  customPkgController.changeCustomPkgStatus
+);
+router.delete(
+  CUSTOM_PACKAGE_ROUTE.DELETE,
+  adminAuthMiddleware,
+  customPkgController.deleteCustomPkg
+);
 
 // // DASHBOARD ROUTES
-router.get(DASHBOARD_ROUTE.GET_DASHBOARD_SUMMARY, adminAuthMiddleware, dashboardController.getDashboardSummary);
-router.get(DASHBOARD_ROUTE.GET_TOP_PACKAGES, adminAuthMiddleware, dashboardController.getTopBookedPackages);
-router.get(DASHBOARD_ROUTE.GET_TOP_CATEGORIES, adminAuthMiddleware, dashboardController.getTopBookedCategories);
-router.get(DASHBOARD_ROUTE.GET_BOOKING_CHART, adminAuthMiddleware, dashboardController.getBookingChart);
-
+router.get(
+  DASHBOARD_ROUTE.GET_DASHBOARD_SUMMARY,
+  adminAuthMiddleware,
+  dashboardController.getDashboardSummary
+);
+router.get(
+  DASHBOARD_ROUTE.GET_TOP_PACKAGES,
+  adminAuthMiddleware,
+  dashboardController.getTopBookedPackages
+);
+router.get(
+  DASHBOARD_ROUTE.GET_TOP_CATEGORIES,
+  adminAuthMiddleware,
+  dashboardController.getTopBookedCategories
+);
+router.get(
+  DASHBOARD_ROUTE.GET_BOOKING_CHART,
+  adminAuthMiddleware,
+  dashboardController.getBookingChart
+);
 
 //CHAT ROOM ROUTES
- router.post(CHAT_ROOM_ROUTE.CREATE, adminAuthMiddleware, chatRoomController.createRoom);
+router.post(CHAT_ROOM_ROUTE.CREATE, adminAuthMiddleware, chatRoomController.createRoom);
 router.put(CHAT_ROOM_ROUTE.UPDATE, adminAuthMiddleware, chatRoomController.updateRoom);
 router.get(CHAT_ROOM_ROUTE.GET_BY_ID, adminAuthMiddleware, chatRoomController.getRoomById);
 router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, adminAuthMiddleware, chatRoomController.getUserRooms);
-router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware,chatRoomController.deleteRoom);
+router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware, chatRoomController.deleteRoom);
 
 //MESSAGE ROUTES
-  router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
- router.post(MESSAGE_ROUTE.UPLOAD_MEDIA, adminAuthMiddleware,chatUpload.single('file'), messageController.uploadMediaToChat);
+router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
+router.post(
+  MESSAGE_ROUTE.UPLOAD_MEDIA,
+  adminAuthMiddleware,
+  chatUpload.single('file'),
+  messageController.uploadMediaToChat
+);
 
- router.get(NOTIFICATION_ROUTE.FETCH_NOTIFICATION,adminAuthMiddleware,notificationController.getNotifications)
- router.patch(NOTIFICATION_ROUTE.MARK_AS_READ,adminAuthMiddleware,notificationController.markAsRead)
- 
- 
+router.get(
+  NOTIFICATION_ROUTE.FETCH_NOTIFICATION,
+  adminAuthMiddleware,
+  notificationController.getNotifications
+);
+router.patch(
+  NOTIFICATION_ROUTE.MARK_AS_READ,
+  adminAuthMiddleware,
+  notificationController.markAsRead
+);
 
- export default router;
+export default router;

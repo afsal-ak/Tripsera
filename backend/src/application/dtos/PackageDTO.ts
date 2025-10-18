@@ -1,9 +1,9 @@
-import { Types } from "mongoose";
-import { EnumOfferType } from "@constants/enum/packageEnum";
+import { Types } from 'mongoose';
+import { EnumOfferType } from '@constants/enum/packageEnum';
 
 // Location DTO
 export interface GeoPointDTO {
-  type: "Point";
+  type: 'Point';
   coordinates: [number, number];
 }
 

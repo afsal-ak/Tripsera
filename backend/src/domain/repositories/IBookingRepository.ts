@@ -3,7 +3,7 @@ import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBaseRepository } from './IBaseRepository';
 import { IBookingTable } from '@domain/entities/IBookingTable';
 import { IBookingPopulatedForUser } from '@infrastructure/db/types.ts/IBookingPopulated';
-export interface IBookingRepository extends IBaseRepository<IBooking>{
+export interface IBookingRepository extends IBaseRepository<IBooking> {
   getAllBooking(filters: {
     page: number;
     limit: number;
@@ -25,13 +25,10 @@ export interface IBookingRepository extends IBaseRepository<IBooking>{
   cancelBooking(userId: string, bookingId: string, reason: string): Promise<IBooking | null>;
   cancelBookingByAdmin(bookingId: string, reason: string): Promise<IBooking | null>;
   createBooking(userId: string, data: IBookingInput): Promise<IBooking>;
-  confirmBookingByAdmin(
-  bookingId: string,
-  note?: string
-): Promise<IBooking | null> 
+  confirmBookingByAdmin(bookingId: string, note?: string): Promise<IBooking | null>;
   updateBooking(id: string, updateData: Partial<IBooking>): Promise<IBooking | null>;
 
   findByRazorpayOrderId(orderId: string): Promise<IBooking | null>;
-     save(booking: any): Promise<IBooking>  
-  updateById(id: string, update: any): Promise<IBooking|null> 
+  save(booking: any): Promise<IBooking>;
+  updateById(id: string, update: any): Promise<IBooking | null>;
 }

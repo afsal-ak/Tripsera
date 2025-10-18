@@ -5,7 +5,7 @@ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { CreateBannerDTO } from '@application/dtos/BannerDTO';
 
 export class BannerMangementController {
-  constructor(private _bannerMangementUseCases: IBannerManagementUseCases) { }
+  constructor(private _bannerMangementUseCases: IBannerManagementUseCases) {}
 
   createBanner = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -26,10 +26,10 @@ export class BannerMangementController {
       const createdBanner = await this._bannerMangementUseCases.createNewBanner(banner);
       res.status(HttpStatus.CREATED).json({
         message: 'Banner Created Successfully',
-        banner: createdBanner
+        banner: createdBanner,
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -51,7 +51,7 @@ export class BannerMangementController {
         currentPage: page,
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -61,7 +61,7 @@ export class BannerMangementController {
       await this._bannerMangementUseCases.blockBanner(bannerId);
       res.status(HttpStatus.OK).json({ message: 'Banner blocked successfully' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
   unblockBanner = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -70,7 +70,7 @@ export class BannerMangementController {
       await this._bannerMangementUseCases.unblockBanner(bannerId);
       res.status(HttpStatus.OK).json({ message: 'Banner unblocked successfully' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -80,7 +80,7 @@ export class BannerMangementController {
       await this._bannerMangementUseCases.deleteBanner(bannerId);
       res.status(HttpStatus.OK).json({ message: 'Banner deleted successfully' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 }

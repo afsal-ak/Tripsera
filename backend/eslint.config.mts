@@ -45,9 +45,8 @@ export default [
       // Others
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': ['warn'],
-     // 'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-       'no-console': 'warn',
-
+      // 'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+      'no-console': 'warn',
     },
   },
 

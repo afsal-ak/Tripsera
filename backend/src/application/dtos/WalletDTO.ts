@@ -1,4 +1,4 @@
-import { EnumWalletTransactionType } from "@constants/enum/walletEnum";
+import { EnumWalletTransactionType } from '@constants/enum/walletEnum';
 
 export interface WalletTransactionDTO {
   type: EnumWalletTransactionType;
@@ -15,4 +15,3 @@ export interface WalletResponseDTO {
   createdAt: Date;
   updatedAt: Date;
 }
- 

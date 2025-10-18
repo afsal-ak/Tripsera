@@ -1,4 +1,4 @@
- import { IReferral } from '@domain/entities/IReferral';
+import { IReferral } from '@domain/entities/IReferral';
 import { ReferralResponseDTO } from '@application/dtos/ReferralDto';
 
 export abstract class ReferralMapper {
@@ -7,7 +7,6 @@ export abstract class ReferralMapper {
       _id: referral._id!.toString(),
       amount: referral.amount,
       isBlocked: !!referral.isBlocked,
-     
     };
   }
 }

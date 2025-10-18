@@ -3,7 +3,6 @@ import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingU
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class BookingController {
-
   constructor(private _bookingUseCases: IBookingUseCases) {}
 
   getAllBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -11,8 +10,8 @@ export class BookingController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const packageSearch = req.query.package as string;  
-      const status = req.query.status as string;  
+      const packageSearch = req.query.package as string;
+      const status = req.query.status as string;
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
 
@@ -72,7 +71,11 @@ export class BookingController {
     }
   };
 
-  confirmBookingByAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  confirmBookingByAdmin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const bookingId = req.params.id;
       const { notes } = req.body;
@@ -88,16 +91,20 @@ export class BookingController {
     }
   };
 
-    changeTravelDate=async(req: Request, res: Response, next: NextFunction):Promise<void>=> {
-      try {
-              const bookingId = req.params.id;
-  
-        const {  newDate, note } = req.body;
-   
-        const updatedBooking = await this._bookingUseCases.changeTravelDate(bookingId, new Date(newDate), note);
-        res.status(HttpStatus.OK).json(updatedBooking);
-      } catch (error) {
-        next(error)
-      }
+  changeTravelDate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const bookingId = req.params.id;
+
+      const { newDate, note } = req.body;
+
+      const updatedBooking = await this._bookingUseCases.changeTravelDate(
+        bookingId,
+        new Date(newDate),
+        note
+      );
+      res.status(HttpStatus.OK).json(updatedBooking);
+    } catch (error) {
+      next(error);
     }
+  };
 }

@@ -1,6 +1,6 @@
-import { IBooking } from "@domain/entities/IBooking";
+import { IBooking } from '@domain/entities/IBooking';
 
-export interface IBookingPopulatedForUser extends Omit<IBooking, "packageId"> {
+export interface IBookingPopulatedForUser extends Omit<IBooking, 'packageId'> {
   packageId: {
     _id: string;
     title: string;

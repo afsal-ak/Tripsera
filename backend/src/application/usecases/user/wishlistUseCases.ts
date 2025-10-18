@@ -35,7 +35,7 @@ export class WishlistUseCases implements IWishlistUseCases {
 
     const totalPage = Math.ceil(totalItems / limit);
     return {
-      data:data.map(WishlistMapper.toResponseDTO),
+      data: data.map(WishlistMapper.toResponseDTO),
       currentPage: page,
       totalPage,
       totalItems,

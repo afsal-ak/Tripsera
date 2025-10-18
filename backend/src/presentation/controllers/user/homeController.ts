@@ -3,7 +3,7 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
 
 export class HomeController {
-  constructor(private _homeUseCases: IHomeUseCases) { }
+  constructor(private _homeUseCases: IHomeUseCases) {}
 
   getHome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -11,7 +11,7 @@ export class HomeController {
 
       res.status(HttpStatus.OK).json({ result });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -46,7 +46,7 @@ export class HomeController {
         ...result,
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -54,9 +54,9 @@ export class HomeController {
     try {
       const { id } = req.params;
       const packages = await this._homeUseCases.getPackageById(id);
-       res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
+      res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 }

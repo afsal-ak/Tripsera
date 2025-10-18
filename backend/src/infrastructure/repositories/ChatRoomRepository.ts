@@ -1,15 +1,14 @@
-
-import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
-import { IChatRoom } from "@domain/entities/IChatRoom";
-import { ChatRoomModel } from "@infrastructure/models/ChatRoom";
-import { CreateChatRoomDTO, UpdateChatRoomDTO } from "@application/dtos/ChatDTO";
-import { EnumChatRoomSort } from "@constants/enum/chatRoomEnum";
-import { BaseRepository } from "./BaseRepository";
-import { IChatRoomPopulated } from "@infrastructure/db/types.ts/IChatRoomPopulated";
+import { IChatRoomRepository } from '@domain/repositories/IChatRoomRepository';
+import { IChatRoom } from '@domain/entities/IChatRoom';
+import { ChatRoomModel } from '@infrastructure/models/ChatRoom';
+import { CreateChatRoomDTO, UpdateChatRoomDTO } from '@application/dtos/ChatDTO';
+import { EnumChatRoomSort } from '@constants/enum/chatRoomEnum';
+import { BaseRepository } from './BaseRepository';
+import { IChatRoomPopulated } from '@infrastructure/db/types.ts/IChatRoomPopulated';
 
 export class ChatRoomRepository extends BaseRepository<IChatRoom> implements IChatRoomRepository {
   constructor() {
-    super(ChatRoomModel)
+    super(ChatRoomModel);
   }
   async createChatRoom(data: CreateChatRoomDTO): Promise<IChatRoom> {
     return await ChatRoomModel.create(data);
@@ -34,18 +33,13 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
   }
   async getChatRoomById(roomId: string): Promise<IChatRoomPopulated | null> {
     const chatRoom = await ChatRoomModel.findById(roomId)
-      .populate("participants", "_id username profileImage ")
+      .populate('participants', '_id username profileImage ')
       .lean<IChatRoomPopulated>();
-    return chatRoom
-
+    return chatRoom;
   }
 
-
-  async getUserChatRooms(
-    userId: string,
-    filter: EnumChatRoomSort 
-  ): Promise<IChatRoomPopulated[]> {
-     const query: any = { participants: userId };
+  async getUserChatRooms(userId: string, filter: EnumChatRoomSort): Promise<IChatRoomPopulated[]> {
+    const query: any = { participants: userId };
 
     if (filter === EnumChatRoomSort.UNREAD) {
       query[`unreadCounts.${userId}`] = { $gt: 0 };
@@ -53,10 +47,9 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
       query[`unreadCounts.${userId}`] = { $eq: 0 };
     }
 
-  
     const chatRooms = await ChatRoomModel.find(query)
-      .populate("participants", "_id username profileImage")
-      .sort({ createdAt:-1 })
+      .populate('participants', '_id username profileImage')
+      .sort({ createdAt: -1 })
       .lean<IChatRoomPopulated[]>();
 
     // Format response
@@ -68,9 +61,7 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
         };
       }
 
-      const otherUser = (room.participants as any[]).find(
-        (p) => p._id.toString() !== userId
-      );
+      const otherUser = (room.participants as any[]).find((p) => p._id.toString() !== userId);
 
       return {
         ...room,
@@ -81,22 +72,24 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
     return formattedRooms;
   }
 
-
-  async findRoomByParticipants(participants: string[], isGroup: boolean): Promise<IChatRoom | null> {
+  async findRoomByParticipants(
+    participants: string[],
+    isGroup: boolean
+  ): Promise<IChatRoom | null> {
     if (isGroup) {
       // For group chat, match exact participants count and ids
       return await ChatRoomModel.findOne({
         isGroup: true,
         participants: { $all: participants },
-        $expr: { $eq: [{ $size: "$participants" }, participants.length] },
-      }).populate("participants", "username profileImage");
+        $expr: { $eq: [{ $size: '$participants' }, participants.length] },
+      }).populate('participants', 'username profileImage');
     } else {
       // For 1-on-1 chat, check if same two participants exist
       return await ChatRoomModel.findOne({
         isGroup: false,
         participants: { $all: participants },
-        $expr: { $eq: [{ $size: "$participants" }, 2] }, // Ensure only two participants
-      }).populate("participants", "username profileImage");
+        $expr: { $eq: [{ $size: '$participants' }, 2] }, // Ensure only two participants
+      }).populate('participants', 'username profileImage');
     }
   }
 

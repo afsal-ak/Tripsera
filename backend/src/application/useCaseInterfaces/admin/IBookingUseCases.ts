@@ -1,4 +1,4 @@
-import { BookingTableResponseDTO,BookingDetailResponseDTO } from '@application/dtos/BookingDTO';
+import { BookingTableResponseDTO, BookingDetailResponseDTO } from '@application/dtos/BookingDTO';
 
 export interface IBookingUseCases {
   getAllBookings(filters: {
@@ -17,10 +17,9 @@ export interface IBookingUseCases {
   cancelBookingByAdmin(bookingId: string, reason: string): Promise<BookingDetailResponseDTO | null>;
   confirmBookingByAdmin(bookingId: string, note: string): Promise<BookingDetailResponseDTO | null>;
 
-   changeTravelDate(
-      bookingId: string,
-      newDate: Date,
-       note?: string
-    ): Promise<BookingDetailResponseDTO>
+  changeTravelDate(
+    bookingId: string,
+    newDate: Date,
+    note?: string
+  ): Promise<BookingDetailResponseDTO>;
 }
- 

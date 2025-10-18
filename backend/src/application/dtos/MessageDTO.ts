@@ -1,5 +1,5 @@
- import { EnumMessageType, EnumCallType, EnumCallStatus } from "@constants/enum/messageEnum";
- 
+import { EnumMessageType, EnumCallType, EnumCallStatus } from '@constants/enum/messageEnum';
+
 export interface SendMessageDTO {
   roomId?: string;
   senderId: string;
@@ -8,8 +8,8 @@ export interface SendMessageDTO {
   type?: EnumMessageType;
   attachments?: string[];
   callInfo?: {
-    callType:EnumCallType
-    status: EnumCallStatus
+    callType: EnumCallType;
+    status: EnumCallStatus;
     startedAt?: Date;
     endedAt?: Date;
     duration?: number;
@@ -53,7 +53,6 @@ export interface MessageResponseDTO {
   createdAt: Date;
   updatedAt: Date;
 }
-
 
 export interface MessagePopulatedResponseDTO {
   _id: string;

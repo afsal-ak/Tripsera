@@ -1,12 +1,13 @@
 import { IUser } from '@domain/entities/IUser';
-import { UserDetailsResponseDTO, AdminUserListResponseDTO,
-    UserBasicResponseDTO,
- } from '@application/dtos/UserDTO';
-import { EnumUserRole ,EnumGender} from '@constants/enum/userEnum';
+import {
+  UserDetailsResponseDTO,
+  AdminUserListResponseDTO,
+  UserBasicResponseDTO,
+} from '@application/dtos/UserDTO';
+import { EnumUserRole, EnumGender } from '@constants/enum/userEnum';
 import { LoginResponseDTO } from '@application/dtos/UserAuthDTO';
 
 export abstract class UserMapper {
-
   static toUserDetailsDTO(user: IUser): UserDetailsResponseDTO {
     return {
       _id: user._id!.toString(),
@@ -32,7 +33,7 @@ export abstract class UserMapper {
     };
   }
 
-   static toBasicResponse(user: IUser): UserBasicResponseDTO {
+  static toBasicResponse(user: IUser): UserBasicResponseDTO {
     return {
       _id: user._id!.toString(),
       username: user.username || '',
@@ -44,17 +45,16 @@ export abstract class UserMapper {
       isBlocked: !!user.isBlocked,
     };
   }
-  
+
   static mapToLoginResponseDTO = (user: IUser): LoginResponseDTO => ({
     _id: user._id!.toString(),
     username: user.username || '',
     email: user.email,
-    role:  user.role || EnumUserRole.USER,
+    role: user.role || EnumUserRole.USER,
     profileImage: user.profileImage,
     fullName: user.fullName,
     phone: user.phone,
   });
-  
 
   static toAdminUserListDTO(user: IUser): AdminUserListResponseDTO {
     return {

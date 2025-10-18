@@ -6,17 +6,16 @@ export interface CreateCommentDto {
   userId: string;
   text: string;
   mentions?: string[];
- }
+}
 
- export interface ReplyCommentDto {
+export interface ReplyCommentDto {
   parentId: string;
   parentType: EnumParentType;
   userId: string;
   text: string;
   mentions?: string[];
-  parentComment?: string 
- }
-
+  parentComment?: string;
+}
 
 export interface UpdateCommentDto {
   text?: string;
@@ -30,11 +29,11 @@ export interface CommentResponseDTO {
   user?: {
     _id: string;
     username: string;
-    profileImage?: string|null;
+    profileImage?: string | null;
   };
-   replyUser?:string;
-  replyCount?:number;
-   text: string;
+  replyUser?: string;
+  replyCount?: number;
+  text: string;
   likes?: string[];
   parentCommentId?: string | null;
   createdAt: Date;

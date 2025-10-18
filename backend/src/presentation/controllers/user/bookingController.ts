@@ -6,9 +6,7 @@ import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUs
 import { generateBookingInvoice } from '@shared/utils/generateBookingInvoice';
 import { generateInvoiceCode } from '@shared/utils/generateInvoiceCode';
 export class BookingController {
-  constructor(
-    private _bookingUseCases: IBookingUseCases,
-  ) { }
+  constructor(private _bookingUseCases: IBookingUseCases) {}
 
   createBookingWithOnlinePayment = async (
     req: Request,
@@ -45,8 +43,9 @@ export class BookingController {
       );
 
       if (!isValid) {
-        res.status(HttpStatus.BAD_REQUEST).json(
-          { success: false, message: 'Invalid Razorpay signature' });
+        res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ success: false, message: 'Invalid Razorpay signature' });
         return;
       }
 
@@ -112,7 +111,7 @@ export class BookingController {
       if (!booking) {
         throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
       }
-      
+
       res.status(HttpStatus.CREATED).json({
         message: 'Booking created successfully using wallet',
         booking,
@@ -122,13 +121,17 @@ export class BookingController {
     }
   };
 
-   getUserBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getUserBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const { bookings, total } = await this._bookingUseCases.getAllUserBooking(userId, page, limit);
+      const { bookings, total } = await this._bookingUseCases.getAllUserBooking(
+        userId,
+        page,
+        limit
+      );
 
       res.status(HttpStatus.OK).json({
         bookings: bookings,
@@ -164,9 +167,8 @@ export class BookingController {
       const userId = getUserIdFromRequest(req);
 
       const bookingId = req.params.bookingId;
-      console.log(bookingId, 'from booking')
-      const booking = await this._bookingUseCases.getBookingById(userId, bookingId)
-
+      console.log(bookingId, 'from booking');
+      const booking = await this._bookingUseCases.getBookingById(userId, bookingId);
 
       if (!booking) {
         throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
@@ -177,12 +179,8 @@ export class BookingController {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename=${invoiceCode}.pdf`);
 
-      res.status(HttpStatus.OK).send(pdfBuffer)
-    } catch (error) {
-
-    }
-
-
+      res.status(HttpStatus.OK).send(pdfBuffer);
+    } catch (error) {}
   };
   // Cancel a booking
   cancelBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -205,29 +203,39 @@ export class BookingController {
 
   removeTraveler = async (req: Request, res: Response, next: NextFunction) => {
     try {
-            const bookingId = req.params.id;
+      const bookingId = req.params.id;
 
-      const {  travelerIndex, note } = req.body;
+      const { travelerIndex, note } = req.body;
       const userId = getUserIdFromRequest(req);
 
-      const updatedBooking = await this._bookingUseCases.removeTraveler(bookingId, travelerIndex, userId, note);
+      const updatedBooking = await this._bookingUseCases.removeTraveler(
+        bookingId,
+        travelerIndex,
+        userId,
+        note
+      );
       res.status(HttpStatus.OK).json(updatedBooking);
     } catch (error) {
-      next(error)
+      next(error);
     }
-  }
+  };
 
-    changeTravelDate=async(req: Request, res: Response, next: NextFunction):Promise<void>=> {
+  changeTravelDate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-            const bookingId = req.params.id;
+      const bookingId = req.params.id;
 
-      const {  newDate, note } = req.body;
+      const { newDate, note } = req.body;
       const userId = getUserIdFromRequest(req);
 
-      const updatedBooking = await this._bookingUseCases.changeTravelDate(bookingId, new Date(newDate), userId, note);
+      const updatedBooking = await this._bookingUseCases.changeTravelDate(
+        bookingId,
+        new Date(newDate),
+        userId,
+        note
+      );
       res.status(HttpStatus.OK).json(updatedBooking);
     } catch (error) {
-      next(error)
+      next(error);
     }
-  }
+  };
 }

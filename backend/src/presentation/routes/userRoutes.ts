@@ -21,7 +21,7 @@ import {
   NOTIFICATION_ROUTE,
   BLOCK_ROUTE,
   COMMENT_ROUTE,
-  CHATBOT_ROUTE
+  CHATBOT_ROUTE,
 } from 'constants/route-constants/userRoutes';
 
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
@@ -34,7 +34,7 @@ import { HomeUseCases } from '@application/usecases/user/homeUseCases';
 import { HomeController } from '@presentation/controllers/user/homeController';
 import { BannerRepository } from '@infrastructure/repositories/BannerRepository';
 import { PackageRepository } from '@infrastructure/repositories/PackageRepository';
- 
+
 import { WishlistController } from '@presentation/controllers/user/wishlistController';
 import { WishlistUseCases } from '@application/usecases/user/wishlistUseCases';
 import { WishlistRepository } from '@infrastructure/repositories/WishlistRepository';
@@ -92,13 +92,10 @@ import { NotificationUseCases } from '@application/usecases/notification/notific
 import { NotificationRepository } from '@infrastructure/repositories/NotificationRepository';
 import { NotificationController } from '@presentation/controllers/user/notificationController';
 
-
 import { BlockController } from '@presentation/controllers/user/blockController';
 import { BlockUseCase } from '@application/usecases/user/blockUseCases';
 import { BlockRepository } from '@infrastructure/repositories/BlockRepository';
 
-
- 
 const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
 const chatbotUseCase = new ChatbotUseCase(chatbotService);
 const chatController = new ChatController(chatbotUseCase);
@@ -107,11 +104,9 @@ const chatRoomRepository = new ChatRoomRepository();
 const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
 const chatRoomController = new ChatRoomController(chatRoomUseCase);
 
- 
-const messageRepository=new MessageRepository()
-const messageUseCases=new MessageUseCases(messageRepository,chatRoomRepository)
-const messageController=new MessageController(messageUseCases)
-
+const messageRepository = new MessageRepository();
+const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
+const messageController = new MessageController(messageUseCases);
 
 const walletRepository = new WalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
@@ -129,7 +124,6 @@ const userAuthUseCases = new UserAuthUsecases(
 );
 const userAuthController = new UserAuthController(userAuthUseCases);
 
-
 const bannerRepository = new BannerRepository();
 const packageRepository = new PackageRepository();
 const homeUseCases = new HomeUseCases(packageRepository, bannerRepository);
@@ -143,50 +137,64 @@ const couponRepository = new CouponRepository();
 const couponUseCases = new CouponUseCases(couponRepository);
 const couponController = new CouponController(couponUseCases);
 
-
-const notificationRepository=new NotificationRepository()
-const notificationUseCases=new NotificationUseCases(notificationRepository,userRepository)
-const notificationController=new NotificationController(notificationUseCases)
+const notificationRepository = new NotificationRepository();
+const notificationUseCases = new NotificationUseCases(notificationRepository, userRepository);
+const notificationController = new NotificationController(notificationUseCases);
 
 const profileRepository = new UserRepository();
-const profileUseCases = new ProfileUseCases(profileRepository,notificationUseCases);
+const profileUseCases = new ProfileUseCases(profileRepository, notificationUseCases);
 const profileController = new ProfileController(profileUseCases);
-
- 
 
 const bookingRepository = new BookingRepository();
 const razorpayService = new RazorpayService();
-const bookingUseCases = new BookingUseCases(bookingRepository, walletRepository,userRepository,packageRepository,razorpayService,notificationUseCases);
+const bookingUseCases = new BookingUseCases(
+  bookingRepository,
+  walletRepository,
+  userRepository,
+  packageRepository,
+  razorpayService,
+  notificationUseCases
+);
 const bookingController = new BookingController(bookingUseCases);
-
-
 
 const blogRepository = new BlogRepository();
 const blogUseCases = new BlogUseCases(blogRepository);
 const blogController = new BlogController(blogUseCases);
 
 const commentRepository = new CommentRepository();
-const commentUseCases = new CommentUseCases(commentRepository,blogRepository);
+const commentUseCases = new CommentUseCases(commentRepository, blogRepository);
 const commentController = new CommentController(commentUseCases);
 
-
 const reviewRepository = new ReviewRepository();
-const reviewUseCases = new ReviewUseCases(reviewRepository, bookingRepository,userRepository,packageRepository);
+const reviewUseCases = new ReviewUseCases(
+  reviewRepository,
+  bookingRepository,
+  userRepository,
+  packageRepository
+);
 const reviewController = new ReviewController(reviewUseCases);
 
 const reportRepository = new ReportRepository();
-const reportUseCases = new ReportUseCases(reportRepository,userRepository,reviewRepository,blogRepository,notificationUseCases);
+const reportUseCases = new ReportUseCases(
+  reportRepository,
+  userRepository,
+  reviewRepository,
+  blogRepository,
+  notificationUseCases
+);
 const reportController = new ReportController(reportUseCases);
 
 const customPkgRepository = new CustomPackageRepository();
-const customPkgUseCases = new CustomPackageUseCases(customPkgRepository,userRepository,notificationUseCases);
+const customPkgUseCases = new CustomPackageUseCases(
+  customPkgRepository,
+  userRepository,
+  notificationUseCases
+);
 const customPkgController = new CustomPackageController(customPkgUseCases);
 
 const blockRepository = new BlockRepository();
 const blockUseCases = new BlockUseCase(blockRepository);
 const blockController = new BlockController(blockUseCases);
-
-
 
 const router = Router();
 
@@ -213,8 +221,11 @@ router.post(
 );
 router.post(AUTH_ROUTES.PASSWORD_CHANGE, userAuthMiddleware, userAuthController.changePassword);
 
-
-router.get(USER_ROUTES.SEARCH_USERS_FOR_CHAT,userAuthMiddleware,userAuthController.searchUsersForChat)
+router.get(
+  USER_ROUTES.SEARCH_USERS_FOR_CHAT,
+  userAuthMiddleware,
+  userAuthController.searchUsersForChat
+);
 
 // HOME ROUTES
 router.get(HOME_ROUTES.HOME, homeController.getHome);
@@ -241,12 +252,17 @@ router.put(PROFILE_ROUTES.UPDATE_ADDRESS, userAuthMiddleware, profileController.
 //for public
 router.get(
   PROFILE_ROUTES.GET_PUBLIC_PROFILE,
-  userAuthMiddleware,checkBlockedMiddleware,
+  userAuthMiddleware,
+  checkBlockedMiddleware,
   profileController.getPublicProfile
 );
 router.post(PROFILE_ROUTES.FOLLOW, userAuthMiddleware, profileController.followUser);
 router.post(PROFILE_ROUTES.UNFOLLOW, userAuthMiddleware, profileController.unfollowUser);
-router.patch(PROFILE_ROUTES.SET_PROFILE_PRIVACY, userAuthMiddleware, profileController.setProfilePrivacy);
+router.patch(
+  PROFILE_ROUTES.SET_PROFILE_PRIVACY,
+  userAuthMiddleware,
+  profileController.setProfilePrivacy
+);
 
 // WISHLIST ROUTES
 router.get(WISHLIST_ROUTES.GET_ALL, userAuthMiddleware, wishlistController.getAllWishlist);
@@ -293,17 +309,9 @@ router.post(
   userAuthMiddleware,
   bookingController.createBookingWithWalletPayment
 );
-router.get(
-  BOOKING_ROUTES.INVOICE_DOWNLOAD,
-  userAuthMiddleware,
-  bookingController.downloadInvoice
-);
+router.get(BOOKING_ROUTES.INVOICE_DOWNLOAD, userAuthMiddleware, bookingController.downloadInvoice);
 
-router.put(
-  BOOKING_ROUTES.REMOVE_TRAVELER,
-  userAuthMiddleware,
-  bookingController.removeTraveler
-);
+router.put(BOOKING_ROUTES.REMOVE_TRAVELER, userAuthMiddleware, bookingController.removeTraveler);
 router.put(
   BOOKING_ROUTES.CHANGE_TRAVEL_DATE,
   userAuthMiddleware,
@@ -322,11 +330,17 @@ router.get(BLOG_ROUTES.GET_ALL, blogController.getAllPublishedBlogs);
 router.get(BLOG_ROUTES.GET_USER_BLOGS, userAuthMiddleware, blogController.getBlogByUser);
 router.get(
   BLOG_ROUTES.GET_PUBLIC_USER_BLOGS,
-  userAuthMiddleware,checkBlockedMiddleware,
+  userAuthMiddleware,
+  checkBlockedMiddleware,
   blogController.getPublicBlogsByUser
 );
 router.get(BLOG_ROUTES.GET_BY_ID, userAuthMiddleware, blogController.getBlogById);
-router.get(BLOG_ROUTES.GET_BY_SLUG, optionalAuthMiddleware,checkBlockedMiddleware, blogController.getBySlug);
+router.get(
+  BLOG_ROUTES.GET_BY_SLUG,
+  optionalAuthMiddleware,
+  checkBlockedMiddleware,
+  blogController.getBySlug
+);
 router.delete(BLOG_ROUTES.DELETE, userAuthMiddleware, blogController.deleteBlog);
 router.patch(BLOG_ROUTES.LIKE, userAuthMiddleware, blogController.likeBlog);
 router.patch(BLOG_ROUTES.UNLIKE, userAuthMiddleware, blogController.unLikeBlog);
@@ -344,46 +358,64 @@ router.get(REVIEW_ROUTE.GET_REVIEW_RATING, reviewController.getRatingSummary);
 
 //REPORT ROUTES
 
-router.post(REPORT_ROUTE.CREATE,userAuthMiddleware,reportController.createReport)
+router.post(REPORT_ROUTE.CREATE, userAuthMiddleware, reportController.createReport);
 
 //CUSTOM PACAKGE ROUTES
 
 router.post(CUSTOM_PACKAGE_ROUTE.CREATE, userAuthMiddleware, customPkgController.createCustomPkg);
 router.put(CUSTOM_PACKAGE_ROUTE.UPDATE, userAuthMiddleware, customPkgController.updateCustomPkg);
-router.get(CUSTOM_PACKAGE_ROUTE.GET_BY_ID, userAuthMiddleware, customPkgController.getCustomPkgById);
-router.get(CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG, userAuthMiddleware, customPkgController.getAllCustomPkgs);
-router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, userAuthMiddleware,customPkgController.deleteCustomPkg);
+router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_BY_ID,
+  userAuthMiddleware,
+  customPkgController.getCustomPkgById
+);
+router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG,
+  userAuthMiddleware,
+  customPkgController.getAllCustomPkgs
+);
+router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, userAuthMiddleware, customPkgController.deleteCustomPkg);
 
 //CHATBOT
 router.post(CHATBOT_ROUTE.CREATE, userAuthMiddleware, chatController.chatBot);
 
 //CHAT ROOM ROUTES
- router.post(CHAT_ROOM_ROUTE.CREATE, userAuthMiddleware, chatRoomController.createRoom);
+router.post(CHAT_ROOM_ROUTE.CREATE, userAuthMiddleware, chatRoomController.createRoom);
 router.put(CHAT_ROOM_ROUTE.UPDATE, userAuthMiddleware, chatRoomController.updateRoom);
 router.get(CHAT_ROOM_ROUTE.GET_BY_ID, userAuthMiddleware, chatRoomController.getRoomById);
 router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, userAuthMiddleware, chatRoomController.getUserRooms);
-router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware,chatRoomController.deleteRoom);
+router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware, chatRoomController.deleteRoom);
 
 //MESSAGE ROUTES
-  router.get(MESSAGE_ROUTE.GET_BY_ROOM, userAuthMiddleware, messageController.getMessages);
- router.post(MESSAGE_ROUTE.UPLOAD_MEDIA, userAuthMiddleware,chatUpload.single('file'), messageController.uploadMediaToChat);
-router.get(NOTIFICATION_ROUTE.FETCH_NOTIFICATION,userAuthMiddleware,notificationController.getNotifications)
- router.patch(NOTIFICATION_ROUTE.MARK_AS_READ,userAuthMiddleware,notificationController.markAsRead)
+router.get(MESSAGE_ROUTE.GET_BY_ROOM, userAuthMiddleware, messageController.getMessages);
+router.post(
+  MESSAGE_ROUTE.UPLOAD_MEDIA,
+  userAuthMiddleware,
+  chatUpload.single('file'),
+  messageController.uploadMediaToChat
+);
+router.get(
+  NOTIFICATION_ROUTE.FETCH_NOTIFICATION,
+  userAuthMiddleware,
+  notificationController.getNotifications
+);
+router.patch(
+  NOTIFICATION_ROUTE.MARK_AS_READ,
+  userAuthMiddleware,
+  notificationController.markAsRead
+);
 
- 
-
-router.get(BLOCK_ROUTE.GELL_ALL,userAuthMiddleware,blockController.listBlockedUsers)
-router.post(BLOCK_ROUTE.BLOCK,userAuthMiddleware,blockController.block)
-router.put(BLOCK_ROUTE.UNBLOCK,userAuthMiddleware,blockController.unblock)
-router.get(BLOCK_ROUTE.IS_BLOCKED,userAuthMiddleware,blockController.isBlocked)
+router.get(BLOCK_ROUTE.GELL_ALL, userAuthMiddleware, blockController.listBlockedUsers);
+router.post(BLOCK_ROUTE.BLOCK, userAuthMiddleware, blockController.block);
+router.put(BLOCK_ROUTE.UNBLOCK, userAuthMiddleware, blockController.unblock);
+router.get(BLOCK_ROUTE.IS_BLOCKED, userAuthMiddleware, blockController.isBlocked);
 
 //comment
-router.post(COMMENT_ROUTE.CREATE,userAuthMiddleware,commentController.createComment)
-router.post(COMMENT_ROUTE.REPLY,userAuthMiddleware,commentController.replyComment)
-router.get(COMMENT_ROUTE.GET_ALL,userAuthMiddleware,commentController.getComments)
-router.get(COMMENT_ROUTE.GET_REPLIES,userAuthMiddleware,commentController.getReplies)
-router.post(COMMENT_ROUTE.LIKE,userAuthMiddleware,commentController.toggleLike)
-router.delete(COMMENT_ROUTE.DELETE,userAuthMiddleware,commentController.deleteComment)
-
+router.post(COMMENT_ROUTE.CREATE, userAuthMiddleware, commentController.createComment);
+router.post(COMMENT_ROUTE.REPLY, userAuthMiddleware, commentController.replyComment);
+router.get(COMMENT_ROUTE.GET_ALL, userAuthMiddleware, commentController.getComments);
+router.get(COMMENT_ROUTE.GET_REPLIES, userAuthMiddleware, commentController.getReplies);
+router.post(COMMENT_ROUTE.LIKE, userAuthMiddleware, commentController.toggleLike);
+router.delete(COMMENT_ROUTE.DELETE, userAuthMiddleware, commentController.deleteComment);
 
 export default router;

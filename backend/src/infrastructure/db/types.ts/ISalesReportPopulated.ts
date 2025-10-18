@@ -1,7 +1,6 @@
- 
-import { Types } from "mongoose";
-import { EnumBookingStatus } from "@constants/enum/bookingEnum";
-import { EnumPaymentStatus,EnumPaymentMethod } from "@constants/enum/paymentEnum";
+import { Types } from 'mongoose';
+import { EnumBookingStatus } from '@constants/enum/bookingEnum';
+import { EnumPaymentStatus, EnumPaymentMethod } from '@constants/enum/paymentEnum';
 export interface IBookingPopulatedForReport {
   _id: Types.ObjectId | string;
   bookingCode: string;

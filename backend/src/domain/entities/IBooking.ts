@@ -5,7 +5,7 @@ import {
   EnumTravelerAction,
   EnumIdType,
   EnumDateChangeAction,
-  EnumBookingHistoryAction
+  EnumBookingHistoryAction,
 } from '@constants/enum/bookingEnum';
 import { EnumGender } from '@constants/enum/commonEnum';
 import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
@@ -13,28 +13,26 @@ import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnu
 export interface ITraveler {
   fullName: string;
   age: number;
-  gender: EnumGender
-  idType: EnumIdType
+  gender: EnumGender;
+  idType: EnumIdType;
   idNumber: string;
 }
 
 export interface ITravelerHistory {
   traveler: ITraveler;
-  action: EnumTravelerAction
+  action: EnumTravelerAction;
   changedBy?: string;
   changedAt: Date;
   note?: string;
-
 }
 
 export interface ITravelDateHistory {
   oldDate?: Date;
   newDate: Date;
-  action: EnumDateChangeAction
+  action: EnumDateChangeAction;
   changedBy?: string; // userId or "admin"
   changedAt: Date;
   note?: string;
-
 }
 
 export interface IAdjustmentHistory {
@@ -48,7 +46,7 @@ export interface IAdjustmentHistory {
 }
 
 export interface IBookingHistory {
-  action: EnumBookingHistoryAction
+  action: EnumBookingHistoryAction;
   oldValue?: any;
   newValue?: any;
   changedBy: string; // userId or "admin"
@@ -68,10 +66,10 @@ export interface IBooking {
   totalAmount: number;
   discount?: number;
   couponCode?: string;
-  paymentMethod: EnumPaymentMethod
-  paymentStatus: EnumPaymentStatus
+  paymentMethod: EnumPaymentMethod;
+  paymentStatus: EnumPaymentStatus;
 
-  bookingStatus: EnumBookingStatus
+  bookingStatus: EnumBookingStatus;
   adminNote?: string;
   cancelledBy?: string;
   cancelReason?: string;

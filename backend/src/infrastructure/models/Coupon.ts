@@ -1,7 +1,7 @@
 import { Schema, Document, model } from 'mongoose';
 import { ICoupon } from '@domain/entities/ICoupon';
 
- type CouponDocument = ICoupon & Document;
+type CouponDocument = ICoupon & Document;
 
 const couponSchema: Schema = new Schema<CouponDocument>(
   {

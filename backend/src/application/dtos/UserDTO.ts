@@ -48,4 +48,3 @@ export interface AdminUserListResponseDTO {
   isBlocked: boolean;
   profileImage?: { url: string; public_id: string };
 }
-

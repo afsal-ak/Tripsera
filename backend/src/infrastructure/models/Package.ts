@@ -1,8 +1,7 @@
-
 import mongoose, { Schema, Document } from 'mongoose';
 import { IPackage } from '@domain/entities/IPackage';
 
- const offerSchema = new Schema(
+const offerSchema = new Schema(
   {
     type: {
       type: String,
@@ -13,7 +12,7 @@ import { IPackage } from '@domain/entities/IPackage';
       type: Number,
       required: true,
     },
-     name: {
+    name: {
       type: String,
       required: true,
     },
@@ -32,9 +31,9 @@ import { IPackage } from '@domain/entities/IPackage';
 const locationSchema = new Schema(
   {
     name: { type: String, required: true }, // e.g., "Calangute Beach"
-    address: { type: String },              // full address or user-friendly name
-    city: { type: String },                 // "Goa"
-    state: { type: String },                // "Goa"
+    address: { type: String }, // full address or user-friendly name
+    city: { type: String }, // "Goa"
+    state: { type: String }, // "Goa"
     country: { type: String, default: 'India' },
 
     geo: {
@@ -49,13 +48,13 @@ const locationSchema = new Schema(
         required: true,
       },
     },
-    postalCode: { type: String },            // optional
+    postalCode: { type: String }, // optional
     mapZoomLevel: { type: Number, default: 12 }, // optional UI helper
   },
   { _id: false }
 );
 
- const itinerarySchema = new Schema(
+const itinerarySchema = new Schema(
   {
     day: { type: Number, required: true },
     title: { type: String, required: true },
@@ -63,15 +62,15 @@ const locationSchema = new Schema(
     activities: [
       {
         activity: { type: String, required: true },
-        startTime: { type: String, required: false },  
-        endTime: { type: String, required: false },   
+        startTime: { type: String, required: false },
+        endTime: { type: String, required: false },
       },
     ],
   },
   { _id: false }
 );
 
- const packageSchema = new Schema(
+const packageSchema = new Schema(
   {
     title: { type: String, required: true },
 
@@ -116,20 +115,20 @@ const locationSchema = new Schema(
     // Offer
     offer: { type: offerSchema },
 
-     isBlocked: {
+    isBlocked: {
       type: Boolean,
       default: false,
     },
 
-    startPoint:{
-      type:String,
+    startPoint: {
+      type: String,
     },
-     startDate: { type: Date },
+    startDate: { type: Date },
     endDate: { type: Date },
 
-     itinerary: [itinerarySchema],
+    itinerary: [itinerarySchema],
 
-     importantDetails: { type: String },
+    importantDetails: { type: String },
     included: [{ type: String }],
     notIncluded: [{ type: String }],
   },
@@ -139,7 +138,4 @@ const locationSchema = new Schema(
 // Add 2dsphere index for geo queries
 packageSchema.index({ 'location.geo': '2dsphere' });
 
-export const PackageModel = mongoose.model<IPackage & Document>(
-  'Package',
-  packageSchema
-);
+export const PackageModel = mongoose.model<IPackage & Document>('Package', packageSchema);

@@ -1,4 +1,4 @@
-import { CreateBlockDTO, BlockResponseDTO } from "@application/dtos/BlockDTO";
+import { CreateBlockDTO, BlockResponseDTO } from '@application/dtos/BlockDTO';
 
 export interface IBlockUseCase {
   blockUser(blockerId: string, data: CreateBlockDTO): Promise<BlockResponseDTO>;

@@ -1,6 +1,6 @@
-import { EnumBookingStatus } from "@constants/enum/bookingEnum";
-import { EnumPaymentStatus } from "@constants/enum/paymentEnum";
-import { TravelerDTO } from "@application/dtos/BookingDTO";
+import { EnumBookingStatus } from '@constants/enum/bookingEnum';
+import { EnumPaymentStatus } from '@constants/enum/paymentEnum';
+import { TravelerDTO } from '@application/dtos/BookingDTO';
 
 export interface IBookingTable {
   _id: string;

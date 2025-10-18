@@ -1,4 +1,4 @@
-import { IWishlistPopulated } from "@infrastructure/db/types.ts/IWishlistPopulated ";
+import { IWishlistPopulated } from '@infrastructure/db/types.ts/IWishlistPopulated ';
 export interface IWishlistRepository {
   getUserWishlist(userId: string, page: number, limit: number): Promise<IWishlistPopulated[]>;
   addToWishlist(userId: string, packageId: string): Promise<void>;

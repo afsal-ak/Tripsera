@@ -7,7 +7,7 @@ export const exportSalesReportPDF = async (
   summary: ISalesReportSummary
 ): Promise<Buffer> => {
   return new Promise((resolve) => {
-const doc = new PDFDocument({ margin: 30, size: 'A3', layout: 'landscape' });
+    const doc = new PDFDocument({ margin: 30, size: 'A3', layout: 'landscape' });
     const chunks: any[] = [];
 
     doc.on('data', (chunk: any) => chunks.push(chunk));
@@ -35,7 +35,7 @@ const doc = new PDFDocument({ margin: 30, size: 'A3', layout: 'landscape' });
         'Payment Status',
       ],
       rows: bookings.map((b) => {
-        const walletUsed =  b.walletAmountUsed || 0;
+        const walletUsed = b.walletAmountUsed || 0;
 
         const onlinePaid =
           b.paymentMethod === 'razorpay' || b.paymentMethod === 'wallet+razorpay'
@@ -61,23 +61,23 @@ const doc = new PDFDocument({ margin: 30, size: 'A3', layout: 'landscape' });
     };
 
     // Table Styling
-     
+
     doc.table(tableData, {
       prepareHeader: () => doc.font('Helvetica-Bold').fontSize(9),
       prepareRow: (_row, i) => doc.font('Helvetica').fontSize(8),
       columnSpacing: 5,
       columnsSize: [
-        90,  // Booking Code
+        90, // Booking Code
         120, // User Name
         100, // Package Code
-        70,  // Traveler Count
-        90,  // Booking Date
-        90,  // Travel Date
+        70, // Traveler Count
+        90, // Booking Date
+        90, // Travel Date
         100, // Payment Method
-        80,  // Online Paid
-        80,  // Wallet Used
-        80,  // Discount
-        90,  // Final Paid
+        80, // Online Paid
+        80, // Wallet Used
+        80, // Discount
+        90, // Final Paid
         100, // Booking Status
         100, // Payment Status
       ],
@@ -96,5 +96,4 @@ const doc = new PDFDocument({ margin: 30, size: 'A3', layout: 'landscape' });
   });
 };
 
-const formatDate = (date: Date) =>
-  new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD
+const formatDate = (date: Date) => new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD

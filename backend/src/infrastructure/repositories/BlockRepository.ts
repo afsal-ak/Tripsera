@@ -1,6 +1,6 @@
-import { IBlockRepository } from "@domain/repositories/IBlockRepository";
-import { IBlock } from "@domain/entities/IBlock";
-import { BlockModel } from "@infrastructure/models/Block";
+import { IBlockRepository } from '@domain/repositories/IBlockRepository';
+import { IBlock } from '@domain/entities/IBlock';
+import { BlockModel } from '@infrastructure/models/Block';
 
 export class BlockRepository implements IBlockRepository {
   async blockUser(blockerId: string, blockedId: string, reason?: string): Promise<IBlock> {
@@ -31,7 +31,7 @@ export class BlockRepository implements IBlockRepository {
 
   async getBlockedUsers(userId: string): Promise<IBlock[]> {
     return await BlockModel.find({ blocker: userId, unblockedAt: null })
-      .populate("blocked", "_id username email profileImage")
+      .populate('blocked', '_id username email profileImage')
       .exec();
   }
 }

@@ -1,5 +1,4 @@
-import { CreateBannerDTO ,BannerResponseDTO} from '@application/dtos/BannerDTO';
-
+import { CreateBannerDTO, BannerResponseDTO } from '@application/dtos/BannerDTO';
 
 export interface IBannerManagementUseCases {
   createNewBanner(banner: CreateBannerDTO): Promise<BannerResponseDTO>;

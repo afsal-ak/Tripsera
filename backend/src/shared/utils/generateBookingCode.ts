@@ -17,7 +17,7 @@ export async function generateBookingCode(): Promise<string> {
   let nextSeq = 1;
 
   if (lastBooking && lastBooking.bookingCode) {
-    const parts = lastBooking.bookingCode.split('-');  
+    const parts = lastBooking.bookingCode.split('-');
     const lastSeq = parseInt(parts[2], 10);
     nextSeq = lastSeq + 1;
   }

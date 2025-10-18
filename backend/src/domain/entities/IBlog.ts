@@ -13,8 +13,8 @@ export interface IBlog {
   images?: { url: string; public_id: string }[];
   tags?: string[];
   author: Types.ObjectId | string;
- 
-  likes?: (Types.ObjectId | string|IUser)[];
+
+  likes?: (Types.ObjectId | string | IUser)[];
   status: 'draft' | 'published' | 'archived';
   isBlocked?: boolean;
   createdAt?: Date;

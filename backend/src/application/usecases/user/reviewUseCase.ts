@@ -8,7 +8,11 @@ import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 import { IFilter } from '@domain/entities/IFilter';
-import { ReviewMapper, ReviewResponseDTO, UserReviewListDTO } from '@application/mappers/ReviewMapper';
+import {
+  ReviewMapper,
+  ReviewResponseDTO,
+  UserReviewListDTO,
+} from '@application/mappers/ReviewMapper';
 import { EnumPaymentStatus } from '@constants/enum/paymentEnum';
 
 export class ReviewUseCases implements IReviewUseCases {
@@ -23,7 +27,7 @@ export class ReviewUseCases implements IReviewUseCases {
     const { userId, packageId } = data;
 
     const userBooking = await this._bookingRepo.findOneByUserAndPackage(userId, packageId);
-    if (!userBooking || userBooking.paymentStatus !==EnumPaymentStatus.PAID) {
+    if (!userBooking || userBooking.paymentStatus !== EnumPaymentStatus.PAID) {
       throw new AppError(HttpStatus.FORBIDDEN, 'You can only review packages you have booked.');
     }
 
@@ -77,8 +81,8 @@ export class ReviewUseCases implements IReviewUseCases {
     filters?: IFilter
   ): Promise<IPaginatedResult<ReviewResponseDTO>> {
     const result = await this._reviewRepo.findPackageReviews(packageId, page, limit, filters);
-console.log(result ,'package revies');
-console.log(result.review.map(ReviewMapper.toResponseDTO) ,'after mapp package revies');
+    console.log(result, 'package revies');
+    console.log(result.review.map(ReviewMapper.toResponseDTO), 'after mapp package revies');
 
     return {
       data: result.review.map(ReviewMapper.toResponseDTO),
@@ -91,7 +95,9 @@ console.log(result.review.map(ReviewMapper.toResponseDTO) ,'after mapp package r
     return review ? ReviewMapper.toResponseDTO(review) : null;
   }
 
-  async getRatingSummary(packageId: string): Promise<{ averageRating: number; totalReviews: number }> {
+  async getRatingSummary(
+    packageId: string
+  ): Promise<{ averageRating: number; totalReviews: number }> {
     return this._reviewRepo.getPackageRatingSummary(packageId);
   }
 

@@ -33,7 +33,7 @@ export const PROFILE_ROUTES = {
   SET_PROFILE_PRIVACY: '/profile/privacy',
 };
 export const USER_ROUTES = {
-  SEARCH_USERS_FOR_CHAT: '/users/search'
+  SEARCH_USERS_FOR_CHAT: '/users/search',
 };
 
 export const WISHLIST_ROUTES = {
@@ -65,8 +65,8 @@ export const BOOKING_ROUTES = {
   RETRY_PAYMENT: '/retry-payment/:id',
   WALLET_BOOKING: '/booking/wallet',
   INVOICE_DOWNLOAD: '/booking/invoice/:bookingId/download',
-  REMOVE_TRAVELER:'/booking/:id/remove-traveler',
-  CHANGE_TRAVEL_DATE:'/booking/:id/change-travel-date'
+  REMOVE_TRAVELER: '/booking/:id/remove-traveler',
+  CHANGE_TRAVEL_DATE: '/booking/:id/change-travel-date',
 };
 
 export const BLOG_ROUTES = {
@@ -108,45 +108,40 @@ export const CUSTOM_PACKAGE_ROUTE = {
   DELETE: '/custom-package/:packageId/delete',
 };
 
-
 export const CHAT_ROOM_ROUTE = {
-  CREATE: "/chatrooms",
-  UPDATE: "/chatrooms/:roomId",
-  GET_BY_ID: "/chatrooms/:roomId",
-  GET_USER_ROOMS: "/chatrooms",
-  DELETE: "/chatrooms/:roomId",
+  CREATE: '/chatrooms',
+  UPDATE: '/chatrooms/:roomId',
+  GET_BY_ID: '/chatrooms/:roomId',
+  GET_USER_ROOMS: '/chatrooms',
+  DELETE: '/chatrooms/:roomId',
 };
 
-
 export const MESSAGE_ROUTE = {
-  SEND: "/chatrooms/messages",
-  GET_BY_ROOM: "/chatrooms/:roomId/messages",
-  MARK_AS_READ: "/messages/:messageId/read",
-  DELETE: "/messages/:messageId",
+  SEND: '/chatrooms/messages',
+  GET_BY_ROOM: '/chatrooms/:roomId/messages',
+  MARK_AS_READ: '/messages/:messageId/read',
+  DELETE: '/messages/:messageId',
   UPLOAD_MEDIA: '/messages/upload',
- };
+};
 
+export const NOTIFICATION_ROUTE = {
+  FETCH_NOTIFICATION: '/notification',
+  MARK_AS_READ: '/mark-read/:id',
+};
 
-export const NOTIFICATION_ROUTE={
-  FETCH_NOTIFICATION:'/notification',
-  MARK_AS_READ:'/mark-read/:id'
-}
-
-
-export const BLOCK_ROUTE={
-  BLOCK:'/block',
-  UNBLOCK:'/unblock',
-  IS_BLOCKED:'/blocked/:blockedId',
-  GELL_ALL:'blocked'
-}
-
+export const BLOCK_ROUTE = {
+  BLOCK: '/block',
+  UNBLOCK: '/unblock',
+  IS_BLOCKED: '/blocked/:blockedId',
+  GELL_ALL: 'blocked',
+};
 
 export const COMMENT_ROUTE = {
-  CREATE: '/comment',                       
-  REPLY: '/comment/reply',                     
-   GET_ALL: '/comment/:parentId',           
-  GET_REPLIES: '/comment/:commentId/replies',  
-  UPDATE: '/comment/:commentId',         
-  DELETE: '/comment/delete/:commentId',           
-  LIKE: '/comment/:commentId/like',      
+  CREATE: '/comment',
+  REPLY: '/comment/reply',
+  GET_ALL: '/comment/:parentId',
+  GET_REPLIES: '/comment/:commentId/replies',
+  UPDATE: '/comment/:commentId',
+  DELETE: '/comment/delete/:commentId',
+  LIKE: '/comment/:commentId/like',
 };

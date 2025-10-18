@@ -1,11 +1,7 @@
- 
-
 export interface IDateRangeResult {
   startDate: Date;
   endDate: Date;
-  groupBy: "hour" | "day" | "month" | "year";
+  groupBy: 'hour' | 'day' | 'month' | 'year';
 }
 
-export class DateUtil {
-
-}
+export class DateUtil {}

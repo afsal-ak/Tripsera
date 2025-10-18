@@ -1,10 +1,14 @@
- import { ICustomPackage } from "@domain/entities/ICustomPackage";
-import { CustomPkgResponseDTO,CustomPkgTableDTO,CustomPkgUserListDTO } from "../dtos/CustomPkgDTO";
+import { ICustomPackage } from '@domain/entities/ICustomPackage';
+import {
+  CustomPkgResponseDTO,
+  CustomPkgTableDTO,
+  CustomPkgUserListDTO,
+} from '../dtos/CustomPkgDTO';
 
 export class CustomPkgMapper {
   static toResponseDTO(pkg: ICustomPackage): CustomPkgResponseDTO {
     return {
-      id: pkg._id?.toString() ?? "",
+      id: pkg._id?.toString() ?? '',
       userId: pkg.userId as string,
       guestInfo: pkg.guestInfo,
       destination: pkg.destination,
@@ -24,10 +28,10 @@ export class CustomPkgMapper {
       updatedAt: pkg.updatedAt!,
     };
   }
-   // Mapper for table view / list
+  // Mapper for table view / list
   static toTableDTO(pkg: ICustomPackage): CustomPkgTableDTO {
     return {
-      id: pkg._id?.toString() ?? "",
+      id: pkg._id?.toString() ?? '',
       userId: pkg.userId as string,
       destination: pkg.destination,
       tripType: pkg.tripType,
@@ -38,11 +42,11 @@ export class CustomPkgMapper {
       adults: pkg.adults,
       status: pkg.status,
     };
-}
- // Table view for user (My Requests)
+  }
+  // Table view for user (My Requests)
   static toUserListDTO(pkg: ICustomPackage): CustomPkgUserListDTO {
     return {
-      id: pkg._id?.toString() ?? "",
+      id: pkg._id?.toString() ?? '',
       destination: pkg.destination,
       tripType: pkg.tripType,
       budget: pkg.budget,

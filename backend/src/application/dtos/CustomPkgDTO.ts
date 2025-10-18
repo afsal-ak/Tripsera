@@ -1,5 +1,9 @@
-import { TripTypeEnum, AccommodationTypeEnum, CustomPkgStatusEnum } from "@constants/enum/customPackageEnum";
- import { Types } from "mongoose";
+import {
+  TripTypeEnum,
+  AccommodationTypeEnum,
+  CustomPkgStatusEnum,
+} from '@constants/enum/customPackageEnum';
+import { Types } from 'mongoose';
 
 export interface CreateCustomPkgDTO {
   userId?: Types.ObjectId;
@@ -39,7 +43,6 @@ export interface UpdateCustomPkgStatusDTO {
   status?: CustomPkgStatusEnum;
   adminResponse?: string;
 }
-
 
 export interface CustomPkgTableDTO {
   id: string;

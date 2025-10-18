@@ -32,4 +32,3 @@ export interface IUser {
   googleId?: string;
   isGoogleUser?: boolean;
 }
- 

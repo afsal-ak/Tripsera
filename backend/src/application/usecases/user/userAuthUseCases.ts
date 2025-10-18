@@ -12,11 +12,14 @@ import { AppError } from '@shared/utils/AppError';
 import { generateUniqueReferralCode } from '@shared/utils/generateRefferalCode';
 import { IReferralRepository } from '@domain/repositories/IReferralRepository';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
-import { LoginResponseDTO, mapToLoginResponseDTO, PreRegistrationDTO } from '@application/dtos/UserAuthDTO';
+import {
+  LoginResponseDTO,
+  mapToLoginResponseDTO,
+  PreRegistrationDTO,
+} from '@application/dtos/UserAuthDTO';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { UserBasicResponseDTO } from '@application/dtos/UserDTO';
 import { UserMapper } from '@application/mappers/UserMapper';
-
 
 export class UserAuthUsecases implements IUserAuthUseCases {
   constructor(
@@ -24,7 +27,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     private _otpRepository: IOtpRepository,
     private _walletRepository: IWalletRepository,
     private _referraRepository: IReferralRepository
-  ) { }
+  ) {}
 
   async preRegistration(userData: PreRegistrationDTO): Promise<void> {
     const { email, username, password, referredReferralCode } = userData;
@@ -154,7 +157,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     return {
       user: UserMapper.mapToLoginResponseDTO(user),
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 
@@ -197,7 +200,6 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   }
 
   async loginWithGoole(token: string): Promise<{ accessToken: string; user: LoginResponseDTO }> {
-
     const { email, name, picture, googleId } = await verifyGoogleToken(token);
     let user = await this._userRepository.findByEmail(email);
     const referralCode = await generateUniqueReferralCode();
@@ -232,13 +234,17 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     await sendOtpMail(newEmail, otp);
   }
 
-  async verifyAndUpdateEmail(userId: string, newEmail: string, otp: string): Promise<UserBasicResponseDTO | null> {
+  async verifyAndUpdateEmail(
+    userId: string,
+    newEmail: string,
+    otp: string
+  ): Promise<UserBasicResponseDTO | null> {
     const isValidOtp = await this._otpRepository.verifyOtp(newEmail, otp);
     if (!isValidOtp) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Invalid or expired OTP');
     }
     const user = await this._userRepository.updateUserEmail(userId, newEmail);
-    return user ? UserMapper.toBasicResponse(user) : null
+    return user ? UserMapper.toBasicResponse(user) : null;
   }
 
   async changePassword(
@@ -258,10 +264,12 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     await this._userRepository.changePassword(userId, hashNewPassword);
   }
 
-  async searchUsersForChat(userId: string, search: string, role: EnumUserRole): Promise<UserBasicResponseDTO[] | null> {
-    const user = await this._userRepository.searchUsersForChat(userId, search, role)
-    return user ? user.map(UserMapper.toBasicResponse) : null
-
+  async searchUsersForChat(
+    userId: string,
+    search: string,
+    role: EnumUserRole
+  ): Promise<UserBasicResponseDTO[] | null> {
+    const user = await this._userRepository.searchUsersForChat(userId, search, role);
+    return user ? user.map(UserMapper.toBasicResponse) : null;
   }
-
 }

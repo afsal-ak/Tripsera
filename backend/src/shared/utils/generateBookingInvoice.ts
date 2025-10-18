@@ -1,4 +1,3 @@
-
 import puppeteer from 'puppeteer';
 import { IBooking } from '@domain/entities/IBooking';
 
@@ -9,13 +8,11 @@ export async function generateBookingInvoice(
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
-  const companyName = "Tripsera Travels";
-  const companyContact = "123 Main Street, Kochi, Kerala | +91-9876543210 | support@Tripsera.com";
+  const companyName = 'Tripsera Travels';
+  const companyContact = '123 Main Street, Kochi, Kerala | +91-9876543210 | support@Tripsera.com';
 
   const cancelledWatermark =
-    booking.bookingStatus === 'cancelled'
-      ? `<div class="watermark">CANCELLED</div>`
-      : '';
+    booking.bookingStatus === 'cancelled' ? `<div class="watermark">CANCELLED</div>` : '';
 
   const html = `
   <html>
@@ -133,7 +130,7 @@ export async function generateBookingInvoice(
           </tr>
           ${booking.travelers
             .map(
-              t => `
+              (t) => `
               <tr>
                 <td>${t.fullName}</td>
                 <td>${t.age}</td>
@@ -169,7 +166,7 @@ export async function generateBookingInvoice(
 
   await page.setContent(html, { waitUntil: 'networkidle0' });
 
-   const pdfBuffer = Buffer.from(await page.pdf({ format: 'A4', printBackground: true }));
+  const pdfBuffer = Buffer.from(await page.pdf({ format: 'A4', printBackground: true }));
   await browser.close();
 
   return pdfBuffer;

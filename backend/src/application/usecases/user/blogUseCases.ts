@@ -1,18 +1,17 @@
-import { IBlogRepository } from "@domain/repositories/IBlogRepository";
-import { IBlog } from "@domain/entities/IBlog";
-import { deleteImageFromCloudinary } from "@infrastructure/services/cloudinary/cloudinaryService";
-import { IBlogUseCases } from "@application/useCaseInterfaces/user/IBlogUseCases";
-import { UserBasicInfoDto } from "@application/dtos/UserBasicInfoDTO";
-import { BlogResponseDTO } from "@application/dtos/BlogDTO";
-import { BlogMapper } from "@application/mappers/BlogMapper";
-import { PaginatedResult } from "@domain/entities/IPaginatedResult";
+import { IBlogRepository } from '@domain/repositories/IBlogRepository';
+import { IBlog } from '@domain/entities/IBlog';
+import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases';
+import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
+import { BlogResponseDTO } from '@application/dtos/BlogDTO';
+import { BlogMapper } from '@application/mappers/BlogMapper';
+import { PaginatedResult } from '@domain/entities/IPaginatedResult';
 export class BlogUseCases implements IBlogUseCases {
-  constructor(private readonly blogRepo: IBlogRepository) { }
+  constructor(private readonly blogRepo: IBlogRepository) {}
 
   async createBlog(userId: string, blogData: IBlog): Promise<BlogResponseDTO> {
     const result = await this.blogRepo.createBlog(userId, blogData);
-    return BlogMapper.toResponseDTO(result)
-
+    return BlogMapper.toResponseDTO(result);
   }
 
   async editBlog(
@@ -22,7 +21,7 @@ export class BlogUseCases implements IBlogUseCases {
     newImages: { url: string; public_id: string }[]
   ): Promise<BlogResponseDTO | null> {
     const blog = await this.blogRepo.getBlogById(blogId);
-    if (!blog) throw new Error("Blog not found");
+    if (!blog) throw new Error('Blog not found');
 
     const deletedImages = (blog.images || []).filter(
       (oldImg) => !existingImages.some((img) => img.public_id === oldImg.public_id)
@@ -33,22 +32,24 @@ export class BlogUseCases implements IBlogUseCases {
     }
 
     const result = await this.blogRepo.editBlog(blogId, blogData, deletedImages, newImages);
-    return BlogMapper.toResponseDTO(result!)
-
+    return BlogMapper.toResponseDTO(result!);
   }
 
   async getBlogById(blogId: string): Promise<BlogResponseDTO | null> {
     const result = await this.blogRepo.getBlogById(blogId);
-    return BlogMapper.toResponseDTO(result!)
+    return BlogMapper.toResponseDTO(result!);
   }
 
-  async getBlogByUser(userId: string, page: number, limit: number): Promise<PaginatedResult<BlogResponseDTO>> {
-
+  async getBlogByUser(
+    userId: string,
+    page: number,
+    limit: number
+  ): Promise<PaginatedResult<BlogResponseDTO>> {
     const result = await this.blogRepo.getBlogByUser(userId, page, limit);
     return {
       pagination: result.pagination,
-      data: result.blogs.map(BlogMapper.toResponseDTO)
-    }
+      data: result.blogs.map(BlogMapper.toResponseDTO),
+    };
   }
 
   async getAllPublishedBlogs(
@@ -59,21 +60,18 @@ export class BlogUseCases implements IBlogUseCases {
     const result = await this.blogRepo.getAllPublishedBlogs(page, limit, filters);
     return {
       pagination: result.pagination,
-      data: result.blogs.map(BlogMapper.toResponseDTO)
-    }
+      data: result.blogs.map(BlogMapper.toResponseDTO),
+    };
   }
 
   async getBySlug(slug: string): Promise<BlogResponseDTO | null> {
-    const result= await this.blogRepo.getBySlug(slug);
-          return BlogMapper.toResponseDTO(result!)
-
-
+    const result = await this.blogRepo.getBySlug(slug);
+    return BlogMapper.toResponseDTO(result!);
   }
 
   async likeBlog(blogId: string, userId: string): Promise<BlogResponseDTO | null> {
     const result = await this.blogRepo.likeBlog(blogId, userId);
-    return BlogMapper.toResponseDTO(result!)
-
+    return BlogMapper.toResponseDTO(result!);
   }
 
   async getBlogLikeList(blogId: string): Promise<UserBasicInfoDto[] | null> {
@@ -82,8 +80,7 @@ export class BlogUseCases implements IBlogUseCases {
 
   async unLikeBlog(blogId: string, userId: string): Promise<BlogResponseDTO | null> {
     const result = await this.blogRepo.unLikeBlog(blogId, userId);
-    return BlogMapper.toResponseDTO(result!)
-
+    return BlogMapper.toResponseDTO(result!);
   }
 
   async blockBlog(blogId: string, block: boolean): Promise<void> {
@@ -98,12 +95,15 @@ export class BlogUseCases implements IBlogUseCases {
     return await this.blogRepo.changeBlogStatus(blogId, isActive);
   }
 
-  async getPublicBlogsByUser(userId: string, page: number, limit: number
+  async getPublicBlogsByUser(
+    userId: string,
+    page: number,
+    limit: number
   ): Promise<PaginatedResult<BlogResponseDTO>> {
     const result = await this.blogRepo.getPublicBlogsByUser(userId, page, limit);
     return {
       pagination: result.pagination,
-      data: result.blogs.map(BlogMapper.toResponseDTO)
-    }
+      data: result.blogs.map(BlogMapper.toResponseDTO),
+    };
   }
 }

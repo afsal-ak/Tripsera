@@ -1,4 +1,4 @@
-import { IBlock } from "@domain/entities/IBlock";
+import { IBlock } from '@domain/entities/IBlock';
 
 export interface IBlockRepository {
   blockUser(blockerId: string, blockedId: string, reason?: string): Promise<IBlock>;

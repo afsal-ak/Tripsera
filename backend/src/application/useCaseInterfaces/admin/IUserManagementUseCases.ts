@@ -5,12 +5,11 @@ import { AdminUserListResponseDTO, UserDetailsResponseDTO } from '@application/d
 export interface IUserManagementUseCases {
   getUsers(
     page: number,
-    limit: number,filters:IFilter
+    limit: number,
+    filters: IFilter
   ): Promise<IPaginatedResult<AdminUserListResponseDTO>>;
 
   getSingleUser(userId: string): Promise<UserDetailsResponseDTO>;
-  toggleUserBlockStatus(userId: string): Promise<boolean>  
- searchAllUsersForAdmin(
-  search: string
-): Promise<AdminUserListResponseDTO[]>
+  toggleUserBlockStatus(userId: string): Promise<boolean>;
+  searchAllUsersForAdmin(search: string): Promise<AdminUserListResponseDTO[]>;
 }

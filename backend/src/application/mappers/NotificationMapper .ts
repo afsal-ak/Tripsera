@@ -1,10 +1,10 @@
-import { INotification } from "@domain/entities/INotification";
-import { INotificationPopulated } from "@infrastructure/db/types.ts/INotificationPopulated";
+import { INotification } from '@domain/entities/INotification';
+import { INotificationPopulated } from '@infrastructure/db/types.ts/INotificationPopulated';
 import {
   NotificationResponseDTO,
   NotificationPopulatedResponseDTO,
-} from "@application/dtos/NotificationDTO";
-import { EnumNotificationType, EnumNotificationEntityType } from "@constants/enum/notificationEnum";
+} from '@application/dtos/NotificationDTO';
+import { EnumNotificationType, EnumNotificationEntityType } from '@constants/enum/notificationEnum';
 
 /**
  * NotificationMapper
@@ -33,11 +33,11 @@ export abstract class NotificationMapper {
         ? Object.fromEntries(
             Object.entries(notification.metadata).map(([key, value]) => [
               key,
-              typeof value === "object" && value?.toString ? value.toString() : value,
+              typeof value === 'object' && value?.toString ? value.toString() : value,
             ])
           )
         : undefined,
-      createdAt: notification.createdAt?.toISOString() || "",
+      createdAt: notification.createdAt?.toISOString() || '',
       updatedAt: notification.updatedAt?.toISOString(),
     };
   }
@@ -87,11 +87,11 @@ export abstract class NotificationMapper {
         ? Object.fromEntries(
             Object.entries(notification.metadata).map(([key, value]) => [
               key,
-              typeof value === "object" && value?.toString ? value.toString() : value,
+              typeof value === 'object' && value?.toString ? value.toString() : value,
             ])
           )
         : undefined,
-      createdAt: notification.createdAt?.toISOString() || "",
+      createdAt: notification.createdAt?.toISOString() || '',
       updatedAt: notification.updatedAt?.toISOString(),
     };
   }

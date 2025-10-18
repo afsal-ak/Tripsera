@@ -3,7 +3,7 @@ import { IFilter } from '@domain/entities/IFilter';
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { BlogModel } from '@infrastructure/models/Blog';
 import { SortOrder } from 'mongoose';
-import { CommentModel } from "@infrastructure/models/Comment";
+import { CommentModel } from '@infrastructure/models/Comment';
 import { FilterQuery } from 'mongoose';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { IUser } from '@domain/entities/IUser';
@@ -12,7 +12,7 @@ import { BaseRepository } from './BaseRepository';
 
 export class BlogRepository extends BaseRepository<IBlog> implements IBlogRepository {
   constructor() {
-    super(BlogModel)
+    super(BlogModel);
   }
   async createBlog(userId: string, blogData: IBlog): Promise<IBlog> {
     const { author, ...restData } = blogData;
@@ -90,7 +90,6 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
       blogs,
       pagination,
     };
-
   }
 
   async getAllBlog(
@@ -103,7 +102,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
 
     //  Filter by status
     if (filters?.status) {
-      matchStage.isBlocked = filters.status === "active" ? false : true;
+      matchStage.isBlocked = filters.status === 'active' ? false : true;
     }
 
     //  Filter by date range
@@ -116,7 +115,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
 
     // Set sorting
     const sortOption: Record<string, SortOrder> = {
-      createdAt: filters?.sort === "asc" ? 1 : -1,
+      createdAt: filters?.sort === 'asc' ? 1 : -1,
     };
 
     // Base pipeline
@@ -124,29 +123,26 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
       { $match: matchStage },
       {
         $lookup: {
-          from: "users",
-          localField: "author",
-          foreignField: "_id",
-          as: "author",
+          from: 'users',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
         },
       },
-      { $unwind: "$author" },
+      { $unwind: '$author' },
     ];
     //  Add search stage if needed
     if (filters?.search) {
-      const searchRegex = new RegExp(filters.search, "i");
+      const searchRegex = new RegExp(filters.search, 'i');
       aggregatePipeline.push({
         $match: {
-          $or: [{ title: searchRegex }, { "author.username": searchRegex }],
+          $or: [{ title: searchRegex }, { 'author.username': searchRegex }],
         },
       });
     }
 
     // Get total blogs count
-    const totalResult = await BlogModel.aggregate([
-      ...aggregatePipeline,
-      { $count: "total" },
-    ]);
+    const totalResult = await BlogModel.aggregate([...aggregatePipeline, { $count: 'total' }]);
     const total = totalResult[0]?.total || 0;
 
     aggregatePipeline.push(
@@ -161,16 +157,16 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
           createdAt: 1,
           updatedAt: 1,
           isBlocked: 1,
-          "author._id": 1,
-          "author.username": 1,
-          "author.email": 1,
+          'author._id': 1,
+          'author.username': 1,
+          'author.email': 1,
         },
       }
     );
 
     //  Fetch paginated blogs
     const blogs = await BlogModel.aggregate(aggregatePipeline);
-    console.log(blogs, 'bolg')
+    console.log(blogs, 'bolg');
     const pagination: PaginationInfo = {
       totalItems: total,
       currentPage: page,
@@ -217,7 +213,8 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
           path: 'author',
           select: 'username email profileImage.url',
         })
-        .skip(skip).limit(limit)
+        .skip(skip)
+        .limit(limit)
         .sort({ createdAt: -1 })
         .lean(),
       BlogModel.countDocuments(query),
@@ -247,10 +244,11 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
     return updatedBlog;
   }
 
-
   async getLikedList(blogId: string): Promise<UserBasicInfoDto[] | null> {
-    const blog = await BlogModel.findById(blogId)
-      .populate("likes", "_id username email profileImage.url");
+    const blog = await BlogModel.findById(blogId).populate(
+      'likes',
+      '_id username email profileImage.url'
+    );
 
     if (!blog || !blog.likes) return null;
 
@@ -258,10 +256,9 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
       _id: user._id!?.toString(),
       username: user.username,
       email: user.email,
-      profileImage: user.profileImage?.url
+      profileImage: user.profileImage?.url,
     }));
   }
-
 
   async unLikeBlog(blogId: string, userId: string): Promise<IBlog | null> {
     const updatedBlog = await BlogModel.findByIdAndUpdate(
@@ -280,7 +277,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
   }
   async deleteBlog(blogId: string): Promise<void> {
     await BlogModel.findByIdAndDelete(blogId);
-     await CommentModel.deleteMany({ blogId });
+    await CommentModel.deleteMany({ blogId });
   }
 
   async changeBlogStatus(blogId: string, isBlocked: boolean): Promise<void> {
@@ -304,12 +301,12 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
       BlogModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
       BlogModel.countDocuments(query),
     ]);
- const pagination: PaginationInfo = {
+    const pagination: PaginationInfo = {
       totalItems: totalBlogs,
       currentPage: page,
       pageSize: limit,
       totalPages: Math.ceil(totalBlogs / limit),
     };
     return { blogs, pagination };
-   }
+  }
 }

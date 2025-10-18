@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
- import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
+import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { ForgotPasswordChangeDTO } from '@application/dtos/UserAuthDTO';
 
 export class AdminAuthController {
-  constructor(private _adminAuthUseCases: IAdminAuthUseCases) { }
+  constructor(private _adminAuthUseCases: IAdminAuthUseCases) {}
 
   adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -13,7 +13,7 @@ export class AdminAuthController {
         email,
         password
       );
-      const MAX_AGE = Number(process.env.MAX_AGE)
+      const MAX_AGE = Number(process.env.MAX_AGE);
 
       res.cookie('adminRefreshToken', refreshToken, {
         httpOnly: true,
@@ -29,7 +29,7 @@ export class AdminAuthController {
         accessToken,
       });
     } catch (error: any) {
-      next(error)
+      next(error);
     }
   };
 
@@ -39,18 +39,18 @@ export class AdminAuthController {
       await this._adminAuthUseCases.forgotPasswordOtp(email);
       res.status(HttpStatus.OK).json({ message: 'OTP sent to your email' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
   forgotPasswordChange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, password, otp } = req.body;
-      const adminData:ForgotPasswordChangeDTO={ email, password };
+      const adminData: ForgotPasswordChangeDTO = { email, password };
       await this._adminAuthUseCases.forgotPasswordChange(adminData, otp);
       res.status(HttpStatus.OK).json({ message: 'Password changed successfully' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -64,7 +64,7 @@ export class AdminAuthController {
 
       res.status(HttpStatus.OK).json({ message: 'Admin logout successful' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 }

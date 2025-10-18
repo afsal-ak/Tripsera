@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
- import { EnumUserRole } from '@constants/enum/userEnum';
- 
+import { EnumUserRole } from '@constants/enum/userEnum';
+
 export class UserAuthController {
-  constructor(private _userAuthUseCases: IUserAuthUseCases) { }
+  constructor(private _userAuthUseCases: IUserAuthUseCases) {}
 
   preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -60,7 +60,7 @@ export class UserAuthController {
         password
       );
 
-      const MAX_AGE = Number(process.env.MAX_AGE)  
+      const MAX_AGE = Number(process.env.MAX_AGE);
 
       res.cookie('userRefreshToken', refreshToken, {
         httpOnly: true,
@@ -100,7 +100,7 @@ export class UserAuthController {
       const { token } = await this._userAuthUseCases.verifyOtpForForgotPassword(email, otp);
       res.status(HttpStatus.OK).json({
         message: 'OTP Verfied Successfully',
-        token
+        token,
       });
     } catch (error) {
       next(error);
@@ -184,26 +184,20 @@ export class UserAuthController {
     }
   };
 
-
   searchUsersForChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const search = (req.query.search as string) || "";
-      const userId = getUserIdFromRequest(req)
-      const role = EnumUserRole.USER
-       const users = await this._userAuthUseCases.searchUsersForChat(
-        userId,
-        search,
-        role
-      );
+      const search = (req.query.search as string) || '';
+      const userId = getUserIdFromRequest(req);
+      const role = EnumUserRole.USER;
+      const users = await this._userAuthUseCases.searchUsersForChat(userId, search, role);
 
       res.status(HttpStatus.OK).json({
         success: true,
-        message: "Users fetched successfully",
-        data: users
+        message: 'Users fetched successfully',
+        data: users,
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
-
-  }
+  };
 }

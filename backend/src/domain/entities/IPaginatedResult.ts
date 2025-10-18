@@ -1,6 +1,6 @@
-import { PaginationInfo } from "@application/dtos/PaginationDto";
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 
- export interface IPaginatedResult<T> {
+export interface IPaginatedResult<T> {
   data: T[];
   pagination: PaginationInfo;
 }

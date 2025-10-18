@@ -1,14 +1,18 @@
-import { CreatePackageDTO,PackageResponseDTO,EditPackageDTO, PackageTableResponseDTO  } from '@application/dtos/PackageDTO';
+import {
+  CreatePackageDTO,
+  PackageResponseDTO,
+  EditPackageDTO,
+  PackageTableResponseDTO,
+} from '@application/dtos/PackageDTO';
 import { IFilter } from '@domain/entities/IFilter';
- import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
- 
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
+
 export interface IPackageUseCases {
-  
- getAllPackages(
+  getAllPackages(
     page: number,
     limit: number,
-    filters?:IFilter
-  ): Promise<IPaginatedResult<PackageTableResponseDTO>> 
+    filters?: IFilter
+  ): Promise<IPaginatedResult<PackageTableResponseDTO>>;
   getSinglePackage(id: string): Promise<PackageResponseDTO | null>;
 
   createPackage(pkg: CreatePackageDTO): Promise<PackageResponseDTO>;

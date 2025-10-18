@@ -1,19 +1,16 @@
-import {  IUser } from '@domain/entities/IUser';
+import { IUser } from '@domain/entities/IUser';
 import { EnumUserRole } from '@constants/enum/userEnum';
 import { UserModel } from '@infrastructure/models/User';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { AppError } from '@shared/utils/AppError';
 import { IFilter } from '@domain/entities/IFilter';
- import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
-
 export class UserRepository implements IUserRepository {
-
   async getAllAdmins(): Promise<IUser[]> {
     return await UserModel.find({ role: 'admin', isBlocked: false });
   }
-
 
   async findByEmail(email: string): Promise<IUser | null> {
     const user = await UserModel.findOne({ email: email });
@@ -102,8 +99,8 @@ export class UserRepository implements IUserRepository {
     const matchStage: any = {};
 
     //  Search filter
-    if (filters.search && filters.search.trim() !== "") {
-      const searchRegex = { $regex: filters.search.trim(), $options: "i" };
+    if (filters.search && filters.search.trim() !== '') {
+      const searchRegex = { $regex: filters.search.trim(), $options: 'i' };
       matchStage.$or = [
         { username: searchRegex },
         { email: searchRegex },
@@ -111,19 +108,15 @@ export class UserRepository implements IUserRepository {
       ];
     }
 
-    if (filters.status === "active") {
+    if (filters.status === 'active') {
       matchStage.isBlocked = false;
-    } else if (filters.status === "blocked") {
+    } else if (filters.status === 'blocked') {
       matchStage.isBlocked = true;
     }
 
     //  Fetch data + count in parallel
     const [users, total] = await Promise.all([
-      UserModel.find(matchStage)
-        .sort({ updatedAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
+      UserModel.find(matchStage).sort({ updatedAt: -1 }).skip(skip).limit(limit).lean(),
       UserModel.countDocuments(matchStage),
     ]);
 
@@ -238,14 +231,13 @@ export class UserRepository implements IUserRepository {
     const user = await UserModel.findByIdAndUpdate(
       id,
       { isPrivate },
-      { new: true, select: "_id isPrivate" }
-    )
-    return user
+      { new: true, select: '_id isPrivate' }
+    );
+    return user;
   }
 
   async searchUsersForChat(userId: string, search: string, role: EnumUserRole): Promise<IUser[]> {
-
-    const searchRegex = { $regex: search, $options: "i" };
+    const searchRegex = { $regex: search, $options: 'i' };
 
     // If admin → search all non-blocked users
     if (role === EnumUserRole.ADMIN) {
@@ -253,18 +245,14 @@ export class UserRepository implements IUserRepository {
 
       // Apply regex only if search exists
       if (searchRegex) {
-        query.$or = [
-          { username: searchRegex },
-          { fullName: searchRegex },
-        ];
+        query.$or = [{ username: searchRegex }, { fullName: searchRegex }];
       }
 
-      return UserModel.find(query)
-        .select("_id username fullName profileImage role");
+      return UserModel.find(query).select('_id username fullName profileImage role');
     }
 
     // For normal users → fetch only followed users + admins
-    const currentUser = await UserModel.findById(userId).select("following");
+    const currentUser = await UserModel.findById(userId).select('following');
 
     const query: any = {
       isBlocked: false,
@@ -278,10 +266,7 @@ export class UserRepository implements IUserRepository {
       };
 
       if (searchRegex) {
-        followingBlock.$or = [
-          { username: searchRegex },
-          { fullName: searchRegex },
-        ];
+        followingBlock.$or = [{ username: searchRegex }, { fullName: searchRegex }];
       }
 
       query.$or.push(followingBlock);
@@ -290,39 +275,28 @@ export class UserRepository implements IUserRepository {
     // Always allow chatting with admins
     const adminBlock: any = { role: EnumUserRole.ADMIN };
     if (searchRegex) {
-      adminBlock.$or = [
-        { username: searchRegex },
-        { fullName: searchRegex },
-      ];
+      adminBlock.$or = [{ username: searchRegex }, { fullName: searchRegex }];
     }
 
     query.$or.push(adminBlock);
 
-    return UserModel.find(query)
-      .select("_id username fullName profileImage role");
+    return UserModel.find(query).select('_id username fullName profileImage role');
   }
 
-
   async searchAllUsersForAdmin(search: string): Promise<IUser[]> {
-    const searchRegex = { $regex: search, $options: "i" };
+    const searchRegex = { $regex: search, $options: 'i' };
 
     const query: any = { isBlocked: false };
 
     // Apply search condition only if a search term exists
-    if (search && search.trim() !== "") {
-      query.$or = [
-        { username: searchRegex },
-        { fullName: searchRegex },
-        { email: searchRegex },
-      ];
+    if (search && search.trim() !== '') {
+      query.$or = [{ username: searchRegex }, { fullName: searchRegex }, { email: searchRegex }];
     }
 
     // Fetch users without role restrictions
     return UserModel.find(query)
-      .select("_id username fullName profileImage email role")
+      .select('_id username fullName profileImage email role')
       .sort({ createdAt: -1 })
       .limit(20);
   }
-
-
 }

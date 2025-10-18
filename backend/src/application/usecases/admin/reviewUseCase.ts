@@ -1,11 +1,10 @@
 import { IReviewRepository } from '@domain/repositories/IReviewRepository';
- import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
-import {ReviewMapper, ReviewResponseDTO,ReviewTableDTO } from '@application/mappers/ReviewMapper';
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
+import { ReviewMapper, ReviewResponseDTO, ReviewTableDTO } from '@application/mappers/ReviewMapper';
 import { IAdminReviewUseCases } from '@application/useCaseInterfaces/admin/IReviewUseCases';
 import { IFilter } from '@domain/entities/IFilter';
 
 export class ReviewUseCases implements IAdminReviewUseCases {
-
   constructor(private _reviewRepo: IReviewRepository) {}
 
   async getAllReviews(
@@ -14,7 +13,7 @@ export class ReviewUseCases implements IAdminReviewUseCases {
     filters?: IFilter
   ): Promise<IPaginatedResult<ReviewTableDTO>> {
     const result = await this._reviewRepo.findAllReviews(page, limit, filters);
-console.log(result ,'in usecases');
+    console.log(result, 'in usecases');
 
     return {
       data: result.review.map(ReviewMapper.toTableDTO),

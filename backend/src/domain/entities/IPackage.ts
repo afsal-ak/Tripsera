@@ -1,26 +1,25 @@
-
 import { Types } from 'mongoose';
 
 export interface GeoPoint {
-  type: "Point";
+  type: 'Point';
   coordinates: [number, number]; // [longitude, latitude]
 }
 
 export interface ILocation {
-  name: string;          // e.g., "Calangute Beach"
-  address?: string;      // optional
+  name: string; // e.g., "Calangute Beach"
+  address?: string; // optional
   city?: string;
   state?: string;
   country?: string;
   postalCode?: string;
   mapZoomLevel?: number; // optional map zoom level
-  geo: GeoPoint;         // location coordinates
+  geo: GeoPoint; // location coordinates
 }
 
-export type OfferType = "percentage" | "flat";
+export type OfferType = 'percentage' | 'flat';
 
 export interface IOffer {
-  name: string,
+  name: string;
   type: OfferType;
   value: number;
   validUntil: string;
@@ -31,7 +30,6 @@ export interface ImageInfo {
   url: string;
   public_id: string;
   existing?: boolean;
-
 }
 
 export interface Activity {
@@ -54,7 +52,7 @@ export interface IPackage {
   title: string;
   description: string;
   finalPrice?: number;
-  price: number;  // base price  
+  price: number; // base price
   originalPrice?: number;
   duration: string;
   durationDays: number;

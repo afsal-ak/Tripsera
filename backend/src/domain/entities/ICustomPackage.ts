@@ -1,9 +1,13 @@
-import { Types } from "mongoose";
-import { TripTypeEnum, AccommodationTypeEnum, CustomPkgStatusEnum } from "@constants/enum/customPackageEnum";
+import { Types } from 'mongoose';
+import {
+  TripTypeEnum,
+  AccommodationTypeEnum,
+  CustomPkgStatusEnum,
+} from '@constants/enum/customPackageEnum';
 
 export interface ICustomPackage {
-   _id?: Types.ObjectId | string;
-  userId?: Types.ObjectId|string;
+  _id?: Types.ObjectId | string;
+  userId?: Types.ObjectId | string;
   guestInfo?: {
     name?: string;
     email?: string;
@@ -20,7 +24,7 @@ export interface ICustomPackage {
   children?: number;
   accommodation: AccommodationTypeEnum;
   additionalDetails?: string; // for custom requirements
-  status: CustomPkgStatusEnum
+  status: CustomPkgStatusEnum;
   adminResponse?: string;
   createdAt?: Date;
   updatedAt?: Date;

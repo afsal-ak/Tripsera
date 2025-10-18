@@ -1,6 +1,6 @@
-import { IWallet,IWalletTransaction } from "@domain/entities/IWallet";
-import { WalletResponseDTO, WalletTransactionDTO } from "@application/dtos/WalletDTO";
-import { EnumWalletTransactionType } from "@constants/enum/walletEnum";
+import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
+import { WalletResponseDTO, WalletTransactionDTO } from '@application/dtos/WalletDTO';
+import { EnumWalletTransactionType } from '@constants/enum/walletEnum';
 
 export class WalletMapper {
   static toResponseDTO(wallet: IWallet): WalletResponseDTO {

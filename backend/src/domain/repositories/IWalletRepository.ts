@@ -6,7 +6,7 @@ export interface IWalletRepository {
     options?: {
       page?: number;
       limit?: number;
-      sort?:string;
+      sort?: string;
     }
   ): Promise<{
     balance: number;

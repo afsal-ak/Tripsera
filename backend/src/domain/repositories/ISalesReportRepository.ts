@@ -17,6 +17,7 @@ export interface ISalesReportRepository {
       skip?: number;
       limit?: number;
       sort?: any;
-    }): Promise<IBooking[]>
+    }
+  ): Promise<IBooking[]>;
   calculateSummary(filter: any): Promise<any>;
 }

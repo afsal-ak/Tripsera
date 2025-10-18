@@ -1,8 +1,7 @@
-import { INotification } from "@domain/entities/INotification";
+import { INotification } from '@domain/entities/INotification';
 
-export interface INotificationPopulated extends Omit<INotification, 
-  "userId" | "packageId" | "bookingId" | "triggeredBy"
-> {
+export interface INotificationPopulated
+  extends Omit<INotification, 'userId' | 'packageId' | 'bookingId' | 'triggeredBy'> {
   userId?: {
     _id: string;
     username: string;

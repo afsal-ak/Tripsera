@@ -1,5 +1,5 @@
-import { Types } from "mongoose";
-import { EnumMessageType,EnumCallStatus,EnumCallType, } from "@constants/enum/messageEnum";
+import { Types } from 'mongoose';
+import { EnumMessageType, EnumCallStatus, EnumCallType } from '@constants/enum/messageEnum';
 
 export interface ICallInfo {
   callType: EnumCallType;

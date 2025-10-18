@@ -9,13 +9,21 @@ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { IUserRepository } from '@domain/repositories/IUserRepository';
-import { EnumBookingHistoryAction, EnumBookingStatus, EnumDateChangeAction, EnumTravelerAction } from '@constants/enum/bookingEnum';
+import {
+  EnumBookingHistoryAction,
+  EnumBookingStatus,
+  EnumDateChangeAction,
+  EnumTravelerAction,
+} from '@constants/enum/bookingEnum';
 import { EnumPaymentStatus } from '@constants/enum/paymentEnum';
 import { EnumUserRole } from '@constants/enum/userEnum';
-import { BookingDetailResponseDTO, BookingUserResponseDTO, CreateBookingDTO } from '@application/dtos/BookingDTO';
+import {
+  BookingDetailResponseDTO,
+  BookingUserResponseDTO,
+  CreateBookingDTO,
+} from '@application/dtos/BookingDTO';
 import { BookingMapper } from '@application/mappers/BookingMapper';
 import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
-
 
 export class BookingUseCases implements IBookingUseCases {
   constructor(
@@ -24,8 +32,8 @@ export class BookingUseCases implements IBookingUseCases {
     private _userRepo: IUserRepository,
     private _packageRepo: IPackageRepository,
     private _razorpayService: RazorpayService,
-    private _notificationUseCases: INotificationUseCases,
-  ) { }
+    private _notificationUseCases: INotificationUseCases
+  ) {}
 
   async getAllUserBooking(
     userId: string,
@@ -35,28 +43,33 @@ export class BookingUseCases implements IBookingUseCases {
     const result = await this._bookingRepo.getAllBookingOfUser(userId, page, limit);
     return {
       bookings: result.bookings.map(BookingMapper.toUserResponseDTO),
-      total: result.total
-    }
+      total: result.total,
+    };
   }
 
-  async getBookingById(userId: string, bookingId: string): Promise<BookingDetailResponseDTO | null> {
+  async getBookingById(
+    userId: string,
+    bookingId: string
+  ): Promise<BookingDetailResponseDTO | null> {
     const booking = await this._bookingRepo.getBookingById(userId, bookingId);
-    return booking ? BookingMapper.toDetailResponseDTO(booking) : null
+    return booking ? BookingMapper.toDetailResponseDTO(booking) : null;
   }
 
-
-
-  async cancelBooking(userId: string, bookingId: string, reason: string): Promise<BookingDetailResponseDTO | null> {
+  async cancelBooking(
+    userId: string,
+    bookingId: string,
+    reason: string
+  ): Promise<BookingDetailResponseDTO | null> {
     const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
-      throw new AppError(HttpStatus.NOT_FOUND, "Booking not found");
+      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
 
     if (booking.bookingStatus === EnumBookingStatus.CANCELLED) {
-      throw new AppError(HttpStatus.BAD_REQUEST, "This booking is already cancelled");
+      throw new AppError(HttpStatus.BAD_REQUEST, 'This booking is already cancelled');
     }
     if (booking.bookingStatus === EnumBookingStatus.CONFIRMED || EnumBookingStatus.COMPLETED) {
-      throw new AppError(HttpStatus.BAD_REQUEST, "Cannot cancel confirmed booking");
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot cancel confirmed booking');
     }
 
     //  Refund if already paid
@@ -68,14 +81,14 @@ export class BookingUseCases implements IBookingUseCases {
       );
 
       if (!wallet) {
-        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to refund wallet");
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to refund wallet');
       }
 
       const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
       await this._notificationUseCases.sendNotification({
         role: EnumUserRole.USER,
         userId: booking.userId.toString(),
-        title: "Booking Refund",
+        title: 'Booking Refund',
         entityType: EnumNotificationEntityType.WALLET,
         walletId: wallet._id!.toString(),
         message: walletMessage,
@@ -86,12 +99,12 @@ export class BookingUseCases implements IBookingUseCases {
     // Get user + package details for admin notification
     const user = await this._userRepo.findById(userId);
     if (!user) {
-      throw new AppError(HttpStatus.NOT_FOUND, "User not found");
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
     const pkg = await this._packageRepo.findById(booking.packageId.toString());
     if (!pkg) {
-      throw new AppError(HttpStatus.NOT_FOUND, "Package not found for this booking");
+      throw new AppError(HttpStatus.NOT_FOUND, 'Package not found for this booking');
     }
 
     //  Notify Admins about cancellation
@@ -99,7 +112,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     await this._notificationUseCases.sendNotification({
       role: EnumUserRole.ADMIN,
-      title: "Booking Cancelled",
+      title: 'Booking Cancelled',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking._id!.toString(),
       packageId: booking.packageId.toString(),
@@ -110,8 +123,7 @@ export class BookingUseCases implements IBookingUseCases {
     });
 
     const res = await this._bookingRepo.cancelBooking(userId, bookingId, reason);
-    return res ? BookingMapper.toDetailResponseDTO(res) : null
-
+    return res ? BookingMapper.toDetailResponseDTO(res) : null;
   }
 
   async createBookingWithOnlinePayment(
@@ -174,7 +186,6 @@ export class BookingUseCases implements IBookingUseCases {
       },
     });
 
-
     return {
       booking: BookingMapper.toDetailResponseDTO(booking),
       razorpayOrder,
@@ -213,23 +224,21 @@ export class BookingUseCases implements IBookingUseCases {
       paymentId,
       signature,
     };
-    const userId = booking.userId.toString()
+    const userId = booking.userId.toString();
     const user = await this._userRepo.findById(userId);
     if (!user) {
-      throw new AppError(HttpStatus.NOT_FOUND, "User not found");
+      throw new AppError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
     const pkg = await this._packageRepo.findById(booking.packageId.toString());
     if (!pkg) {
-      throw new AppError(HttpStatus.NOT_FOUND, "Package not found for this booking");
+      throw new AppError(HttpStatus.NOT_FOUND, 'Package not found for this booking');
     }
-    const message = `User ${user.username} initiated a booking for package ${pkg.title}.`
+    const message = `User ${user.username} initiated a booking for package ${pkg.title}.`;
 
     const notification = await this._notificationUseCases.sendNotification({
-
-
       role: EnumUserRole.ADMIN,
-      title: "New Booking",
+      title: 'New Booking',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking?._id?.toString(),
       packageId: booking?.packageId.toString(),
@@ -239,9 +248,6 @@ export class BookingUseCases implements IBookingUseCases {
       metadata: { bookingId: booking._id },
     });
     await this._bookingRepo.updateBooking(booking._id!.toString(), booking);
-
-
-
   }
 
   async cancelUnpaidBooking(userId: string, bookingId: string): Promise<void> {
@@ -338,7 +344,6 @@ export class BookingUseCases implements IBookingUseCases {
     // Wallet fully covers booking
     await this._walletRepo.debitWallet(userId, totalAmount, `Used for booking ${bookingCode}`);
 
-
     const bookingData: IBookingInput = {
       packageId: packageId.toString(),
       travelers,
@@ -359,14 +364,14 @@ export class BookingUseCases implements IBookingUseCases {
     };
 
     const booking = await this._bookingRepo.createBooking(userId, bookingData);
-    const user = await this._userRepo.findById(userId)
-    const pkg = await this._packageRepo.findById(booking.packageId.toString())
+    const user = await this._userRepo.findById(userId);
+    const pkg = await this._packageRepo.findById(booking.packageId.toString());
 
     const message = `User ${user?.username} booked package ${pkg?.title})`;
     //  Save notification in DB
     const notification = await this._notificationUseCases.sendNotification({
       role: EnumUserRole.ADMIN,
-      title: "New Booking",
+      title: 'New Booking',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking?._id?.toString(),
       packageId: booking?.packageId.toString(),
@@ -375,7 +380,6 @@ export class BookingUseCases implements IBookingUseCases {
       triggeredBy: userId,
       metadata: { bookingId: booking._id },
     });
-
 
     return { booking: BookingMapper.toDetailResponseDTO(booking) };
   }
@@ -387,18 +391,16 @@ export class BookingUseCases implements IBookingUseCases {
     note?: string
   ): Promise<BookingDetailResponseDTO | null> {
     const bookingDoc = await this._bookingRepo.findById(bookingId);
-    if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, "Booking not found");
-
+    if (!bookingDoc) throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
 
     // Check if booking is already cancelled
     if (bookingDoc.bookingStatus === EnumBookingStatus.CANCELLED) {
-      throw new AppError(HttpStatus.BAD_REQUEST, "Cannot remove traveler from a cancelled booking");
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot remove traveler from a cancelled booking');
     }
 
     if (bookingDoc.bookingStatus === EnumBookingStatus.CONFIRMED || EnumBookingStatus.COMPLETED) {
-      throw new AppError(HttpStatus.BAD_REQUEST, "Cannot remove traveler from a confirmed booking");
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot remove traveler from a confirmed booking');
     }
-
 
     const removedTraveler = bookingDoc.travelers.splice(travelerIndex, 1)[0];
 
@@ -424,14 +426,14 @@ export class BookingUseCases implements IBookingUseCases {
       );
 
       if (!wallet) {
-        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to refund wallet");
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to refund wallet');
       }
 
       // Send notification to user
       await this._notificationUseCases.sendNotification({
         role: EnumUserRole.USER,
         userId: bookingDoc.userId.toString(),
-        title: "Traveler Refund",
+        title: 'Traveler Refund',
         entityType: EnumNotificationEntityType.WALLET,
         walletId: wallet._id!.toString(),
         message: `₹${refundAmount} refunded to your wallet for removed traveler ${removedTraveler.fullName}.`,
@@ -444,7 +446,7 @@ export class BookingUseCases implements IBookingUseCases {
         oldAmount: bookingDoc.amountPaid,
         newAmount: bookingDoc.amountPaid - refundAmount,
         refundAmount,
-        reason: note || "Traveler removed",
+        reason: note || 'Traveler removed',
         processedBy: userId,
         processedAt: new Date(),
       });
@@ -455,7 +457,7 @@ export class BookingUseCases implements IBookingUseCases {
     // Cancel booking if no travelers remain
     if (bookingDoc.travelers.length === 0) {
       bookingDoc.bookingStatus = EnumBookingStatus.CANCELLED;
-      bookingDoc.cancelReason = note || "All travelers removed";
+      bookingDoc.cancelReason = note || 'All travelers removed';
       bookingDoc.cancelledBy = 'user';
     }
 
@@ -463,19 +465,18 @@ export class BookingUseCases implements IBookingUseCases {
     const pkg = await this._packageRepo.findById(bookingDoc.packageId.toString());
     await this._notificationUseCases.sendNotification({
       role: EnumUserRole.ADMIN,
-      title: "Traveler Removed",
+      title: 'Traveler Removed',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: bookingDoc._id!.toString(),
       packageId: bookingDoc.packageId.toString(),
-      message: `Traveler ${removedTraveler.fullName} removed from booking ${bookingDoc.bookingCode} (${pkg?.title || ""})`,
+      message: `Traveler ${removedTraveler.fullName} removed from booking ${bookingDoc.bookingCode} (${pkg?.title || ''})`,
       type: EnumNotificationType.WARNING,
       triggeredBy: userId,
       metadata: { removedTraveler, note },
     });
 
     const booking = await this._bookingRepo.updateBooking(bookingId, bookingDoc);
-    return booking ? BookingMapper.toDetailResponseDTO(booking) : null
-
+    return booking ? BookingMapper.toDetailResponseDTO(booking) : null;
   }
 
   async changeTravelDate(
@@ -496,7 +497,10 @@ export class BookingUseCases implements IBookingUseCases {
     if (newTravelDate < today)
       throw new AppError(HttpStatus.BAD_REQUEST, 'New travel date cannot be in the past');
     if (bookingDoc.bookingStatus === 'confirmed')
-      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot change travel date for confirmed bookings');
+      throw new AppError(
+        HttpStatus.BAD_REQUEST,
+        'Cannot change travel date for confirmed bookings'
+      );
 
     const updated = await this._bookingRepo.updateById(bookingId, {
       $set: {
@@ -527,6 +531,4 @@ export class BookingUseCases implements IBookingUseCases {
 
     return BookingMapper.toDetailResponseDTO(updated!);
   }
-
-
 }

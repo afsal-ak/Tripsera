@@ -1,10 +1,10 @@
- export interface WishlistPackageDTO {
+export interface WishlistPackageDTO {
   _id: string;
   title: string;
   price: number;
   duration: string;
   location: string;
-  imageUrls: string ;
+  imageUrls: string;
 }
 
 export interface WishlistResponseDTO {

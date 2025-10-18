@@ -1,21 +1,20 @@
-import { IBooking } from "@domain/entities/IBooking";
-import { BookingDetailResponseDTO, BookingTableResponseDTO } from "@application/dtos/BookingDTO";
-import { IBookingTable } from "@domain/entities/IBookingTable";
-import { TravelerDTO } from "@application/dtos/BookingDTO";
-import { BookingUserResponseDTO } from "@application/dtos/BookingDTO";
-import { IBookingPopulatedForUser } from "@infrastructure/db/types.ts/IBookingPopulated";
+import { IBooking } from '@domain/entities/IBooking';
+import { BookingDetailResponseDTO, BookingTableResponseDTO } from '@application/dtos/BookingDTO';
+import { IBookingTable } from '@domain/entities/IBookingTable';
+import { TravelerDTO } from '@application/dtos/BookingDTO';
+import { BookingUserResponseDTO } from '@application/dtos/BookingDTO';
+import { IBookingPopulatedForUser } from '@infrastructure/db/types.ts/IBookingPopulated';
 
 export abstract class BookingMapper {
-  
   static toAdminTableResponseDTO(booking: IBookingTable): BookingTableResponseDTO {
     return {
       _id: booking._id!.toString(),
       bookingCode: booking.bookingCode,
       userId: booking.userId as string,
       packageId: booking.packageId as string,
-      packageTitle: booking.packageTitle || "",     
-      packageImage:  booking?.packageImage, 
-         travelers: (booking.travelers as TravelerDTO[]).map((t: TravelerDTO) => ({
+      packageTitle: booking.packageTitle || '',
+      packageImage: booking?.packageImage,
+      travelers: (booking.travelers as TravelerDTO[]).map((t: TravelerDTO) => ({
         fullName: t.fullName,
         age: t.age,
         gender: t.gender,
@@ -32,7 +31,7 @@ export abstract class BookingMapper {
     };
   }
 
-   static toUserResponseDTO(booking: IBookingPopulatedForUser): BookingUserResponseDTO {
+  static toUserResponseDTO(booking: IBookingPopulatedForUser): BookingUserResponseDTO {
     return {
       _id: booking._id!.toString(),
       bookingCode: booking.bookingCode,
@@ -55,7 +54,7 @@ export abstract class BookingMapper {
       bookingCode: booking.bookingCode,
       userId: booking.userId as string,
       packageId: booking.packageId as string,
-      travelers: booking.travelers.map(t => ({
+      travelers: booking.travelers.map((t) => ({
         fullName: t.fullName,
         age: t.age,
         gender: t.gender,

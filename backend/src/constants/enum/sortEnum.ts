@@ -1,4 +1,4 @@
-export enum EnumSort{
-    NEWEST='newest',
-    OLDEST='oldest'
+export enum EnumSort {
+  NEWEST = 'newest',
+  OLDEST = 'oldest',
 }

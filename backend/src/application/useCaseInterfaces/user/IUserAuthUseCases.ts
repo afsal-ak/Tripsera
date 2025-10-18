@@ -19,8 +19,15 @@ export interface IUserAuthUseCases {
   forgotPasswordChange(token: string, password: string): Promise<void>;
   loginWithGoole(token: string): Promise<{ accessToken: string; user: LoginResponseDTO }>;
   requestEmailChange(userId: string, newEmail: string): Promise<void>;
-  verifyAndUpdateEmail(userId: string, newEmail: string, otp: string): Promise<UserBasicResponseDTO | null>;
+  verifyAndUpdateEmail(
+    userId: string,
+    newEmail: string,
+    otp: string
+  ): Promise<UserBasicResponseDTO | null>;
   changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void>;
-  searchUsersForChat(userId: string, search: string, role: EnumUserRole): Promise<UserBasicResponseDTO[] | null>
-
+  searchUsersForChat(
+    userId: string,
+    search: string,
+    role: EnumUserRole
+  ): Promise<UserBasicResponseDTO[] | null>;
 }

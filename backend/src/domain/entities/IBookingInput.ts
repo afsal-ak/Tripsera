@@ -1,4 +1,4 @@
-import { IBooking } from "./IBooking";
+import { IBooking } from './IBooking';
 
 export interface IBookingInput {
   bookingCode: string;
@@ -8,8 +8,8 @@ export interface IBookingInput {
   travelers: {
     fullName: string;
     age: number;
-    gender: "male" | "female" | "other";
-    idType: "aadhaar" | "pan" | "passport";
+    gender: 'male' | 'female' | 'other';
+    idType: 'aadhaar' | 'pan' | 'passport';
     idNumber: string;
   }[];
 
@@ -26,7 +26,7 @@ export interface IBookingInput {
   walletUsed?: boolean;
   walletAmountUsed?: number;
   amountPaid: number;
-  paymentMethod?: "wallet" | "razorpay" | "wallet+razorpay";
+  paymentMethod?: 'wallet' | 'razorpay' | 'wallet+razorpay';
 
   razorpay?: {
     orderId?: string;
@@ -40,10 +40,10 @@ export interface IBookingInput {
   updatedAt?: Date;
 }
 
-export interface IBookingData extends IBooking{
+export interface IBookingData extends IBooking {
   bookingCode: string;
   packageId: string;
   travelDate: Date;
-       packageTitle: string;
-      packageImage:{url:string}
- }
+  packageTitle: string;
+  packageImage: { url: string };
+}

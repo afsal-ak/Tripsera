@@ -1,10 +1,9 @@
-import { CreateCouponDTO,UpdateCouponDTO,CouponResponseDTO } from '@application/dtos/CouponDTO';
-
+import { CreateCouponDTO, UpdateCouponDTO, CouponResponseDTO } from '@application/dtos/CouponDTO';
 
 export interface ICouponUseCases {
   createCoupon(coupon: CreateCouponDTO): Promise<CouponResponseDTO>;
 
-  editCoupon(id: string, couponData:UpdateCouponDTO): Promise<CouponResponseDTO | null>;
+  editCoupon(id: string, couponData: UpdateCouponDTO): Promise<CouponResponseDTO | null>;
 
   getAllCoupon(
     page: number,

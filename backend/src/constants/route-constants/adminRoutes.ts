@@ -12,9 +12,8 @@ export const USER_MANAGEMENT_ROUTES = {
   GET_ALL_USERS: '/users',
   GET_SINGLE_USER: '/users/:userId',
   TOGGLE_BLOCK: '/users/:userId/toggle-block',
-    SEARCH_USERS: '/users/search-all'
-
- };
+  SEARCH_USERS: '/users/search-all',
+};
 
 // BANNER ROUTES
 export const BANNER_ROUTES = {
@@ -62,7 +61,7 @@ export const BOOKING_ROUTES = {
   GET_BY_ID: '/booking/:id',
   CANCEL: '/booking/cancel/:id',
   CONFIRM: '/booking/confirm/:id',
-  CHANGE_TRAVEL_DATE:'/booking/:id/change-travel-date'
+  CHANGE_TRAVEL_DATE: '/booking/:id/change-travel-date',
 };
 
 // BLOG ROUTES
@@ -93,52 +92,45 @@ export const SALES_REPORT_ROUTE = {
   SALES_REPORT_PDF_DOWNLOAD: '/salesReport/pdf/download',
 };
 
-
 export const REPORT_ROUTE = {
   GET_REPORT: '/reports',
   GET_REPORT_BY_ID: '/reports/:id',
   GET_REPORT_BY_TYPE: '/reports/type/:reportedId/:type',
   UPDATE_REPORT_STATUS: '/reports/:id/update',
   UPDATE_REPORTED_ITEM_STATUS: '/reports/type/:reportedId/update',
- };
+};
 
-
- export const CUSTOM_PACKAGE_ROUTE = {
+export const CUSTOM_PACKAGE_ROUTE = {
   CHANGE_STATUS: '/custom-package/:packageId/edit',
   GET_BY_ID: '/custom-package/:packageId',
   GET_ALL_PKG: '/custom-package',
   DELETE: '/custom-package/:packageId/delete',
 };
 
-
 export const DASHBOARD_ROUTE = {
-   GET_DASHBOARD_SUMMARY: '/dashboard/summary',
-   GET_TOP_PACKAGES: '/dashboard/top-packages',
-   GET_TOP_CATEGORIES: '/dashboard/top-category',
-   GET_BOOKING_CHART: '/dashboard/booking-chart',
- };
- 
-
- 
-export const CHAT_ROOM_ROUTE = {
-  CREATE: "/chatrooms",                          
-  UPDATE: "/chatrooms/:roomId",                   
-  GET_BY_ID: "/chatrooms/:roomId",              
-  GET_USER_ROOMS: "/chatrooms",      
-  DELETE: "/chatrooms/:roomId",               
+  GET_DASHBOARD_SUMMARY: '/dashboard/summary',
+  GET_TOP_PACKAGES: '/dashboard/top-packages',
+  GET_TOP_CATEGORIES: '/dashboard/top-category',
+  GET_BOOKING_CHART: '/dashboard/booking-chart',
 };
 
+export const CHAT_ROOM_ROUTE = {
+  CREATE: '/chatrooms',
+  UPDATE: '/chatrooms/:roomId',
+  GET_BY_ID: '/chatrooms/:roomId',
+  GET_USER_ROOMS: '/chatrooms',
+  DELETE: '/chatrooms/:roomId',
+};
 
 export const MESSAGE_ROUTE = {
-  SEND: "/chatrooms/messages",                
-  GET_BY_ROOM: "/chatrooms/:roomId/messages",         
-  MARK_AS_READ: "/messages/:messageId/read",          
-  DELETE: "/messages/:messageId",      
-  UPLOAD_MEDIA:'/messages/upload'              
+  SEND: '/chatrooms/messages',
+  GET_BY_ROOM: '/chatrooms/:roomId/messages',
+  MARK_AS_READ: '/messages/:messageId/read',
+  DELETE: '/messages/:messageId',
+  UPLOAD_MEDIA: '/messages/upload',
 };
 
-
-export const NOTIFICATION_ROUTE={
-  FETCH_NOTIFICATION:'/notification',
-  MARK_AS_READ:'/mark-read/:id'
-}
+export const NOTIFICATION_ROUTE = {
+  FETCH_NOTIFICATION: '/notification',
+  MARK_AS_READ: '/mark-read/:id',
+};

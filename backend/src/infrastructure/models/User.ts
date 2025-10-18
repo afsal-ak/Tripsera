@@ -12,10 +12,10 @@ const UserSchema = new Schema<IUserDocument>(
     email: { type: String, required: true, unique: true },
     phone: { type: Number },
     password: { type: String },
-    role: { 
-      type: String, 
-      enum: Object.values(EnumUserRole), 
-      default: EnumUserRole.USER 
+    role: {
+      type: String,
+      enum: Object.values(EnumUserRole),
+      default: EnumUserRole.USER,
     },
     followers: [{ type: Schema.Types.ObjectId, ref: 'Users', default: [] }],
     following: [{ type: Schema.Types.ObjectId, ref: 'Users', default: [] }],

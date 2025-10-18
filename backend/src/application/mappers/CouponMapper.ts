@@ -1,13 +1,10 @@
- import { ICoupon } from "@domain/entities/ICoupon";
-import {
-  CouponResponseDTO,
-   
-} from "@application/dtos/CouponDTO";
+import { ICoupon } from '@domain/entities/ICoupon';
+import { CouponResponseDTO } from '@application/dtos/CouponDTO';
 
 export abstract class CouponMapper {
-  static toResponseDTO(coupon: ICoupon ): CouponResponseDTO {
+  static toResponseDTO(coupon: ICoupon): CouponResponseDTO {
     return {
-      _id: coupon._id?.toString() || "",
+      _id: coupon._id?.toString() || '',
       code: coupon.code,
       type: coupon.type,
       discountValue: coupon.discountValue,
@@ -19,6 +16,4 @@ export abstract class CouponMapper {
       updatedAt: coupon.updatedAt,
     };
   }
-
-   
 }

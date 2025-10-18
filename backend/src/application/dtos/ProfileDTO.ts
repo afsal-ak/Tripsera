@@ -1,4 +1,4 @@
-import {  EnumGender } from "@constants/enum/userEnum";
+import { EnumGender } from '@constants/enum/userEnum';
 
 export interface UpdateProfileDTO {
   fullName?: string;
@@ -24,7 +24,6 @@ export interface UpdateAddressDTO {
     country?: string;
   };
 }
-
 
 /** Full Profile Response DTO (Private) */
 export interface ProfileDTO {
@@ -59,8 +58,6 @@ export interface ProfileDTO {
   createdAt?: string;
   updatedAt?: string;
 }
-
-
 
 export interface PublicProfileDTO {
   _id: string;

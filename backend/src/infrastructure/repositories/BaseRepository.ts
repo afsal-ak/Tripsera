@@ -45,24 +45,23 @@ export abstract class BaseRepository<T> {
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
     const result = await this.model
-      .findByIdAndUpdate(
-        id,
-        { $set: data } as UpdateQuery<T & Document>,
-        { new: true, runValidators: true })
+      .findByIdAndUpdate(id, { $set: data } as UpdateQuery<T & Document>, {
+        new: true,
+        runValidators: true,
+      })
       .lean();
     return result as T | null;
   }
 
-
   async updateByFilter(filter: object, data: Partial<T>): Promise<T | null> {
-    console.log(filter, 'id in db')
+    console.log(filter, 'id in db');
 
     const result = await this.model
-      .findOneAndUpdate(
-        filter,
-        { $set: data } as UpdateQuery<T & Document>,
-        { new: true, runValidators: true, lean: true }
-      )
+      .findOneAndUpdate(filter, { $set: data } as UpdateQuery<T & Document>, {
+        new: true,
+        runValidators: true,
+        lean: true,
+      })
       .exec();
 
     return result as T | null;
@@ -73,8 +72,7 @@ export abstract class BaseRepository<T> {
     return !!result;
   }
   async deleteByFilter(filter: object): Promise<boolean> {
-  const result = await this.model.findOneAndDelete(filter);
-  return !!result;
-}
-
+    const result = await this.model.findOneAndDelete(filter);
+    return !!result;
+  }
 }

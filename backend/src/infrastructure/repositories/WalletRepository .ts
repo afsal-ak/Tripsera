@@ -6,7 +6,6 @@ import { WalletModel } from '@infrastructure/models/Wallet';
 import { AppError } from '@shared/utils/AppError';
 
 export class WalletRepository implements IWalletRepository {
-  
   async walletBalance(userId: string): Promise<{ balance: number }> {
     const wallet = await WalletModel.findOne({ userId }).lean();
     return { balance: wallet?.balance || 0 };
@@ -92,7 +91,7 @@ export class WalletRepository implements IWalletRepository {
     wallet.balance -= amount;
 
     wallet.transactions.push({
-      type:EnumWalletTransactionType.DEBIT,
+      type: EnumWalletTransactionType.DEBIT,
       amount,
       description,
       createdAt: new Date(),

@@ -6,11 +6,9 @@ import { BaseRepository } from './BaseRepository';
 import { IBookingTable } from '@domain/entities/IBookingTable';
 import { IBookingPopulatedForUser } from '@infrastructure/db/types.ts/IBookingPopulated';
 
-
 export class BookingRepository extends BaseRepository<IBooking> implements IBookingRepository {
-
-  constructor(){
-    super(BookingModel)
+  constructor() {
+    super(BookingModel);
   }
 
   async getAllBooking({
@@ -117,7 +115,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
-       .lean<IBookingPopulatedForUser[]>(),
+        .lean<IBookingPopulatedForUser[]>(),
 
       BookingModel.countDocuments({ userId }),
     ]);
@@ -130,7 +128,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
       userId: userId,
     })
       .populate('packageId', 'title imageUrls price travelDate packageCode')
-       .populate('userId')
+      .populate('userId')
       .lean();
 
     return booking ? booking : null;
@@ -157,7 +155,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
       { _id: bookingId, userId },
       {
         bookingStatus: 'cancelled',
-        cancelledBy:'user',
+        cancelledBy: 'user',
         cancelReason: reason,
         cancelledAt: new Date(),
       },
@@ -172,7 +170,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
       { _id: bookingId },
       {
         bookingStatus: 'cancelled',
-         cancelledBy:'admin',
+        cancelledBy: 'admin',
         cancelReason: reason,
         cancelledAt: new Date(),
       },
@@ -181,26 +179,22 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
 
     return booking ? booking : null;
   }
-async confirmBookingByAdmin(
-  bookingId: string,
-  note?: string
-): Promise<IBooking | null> {
-  const booking = await BookingModel.findOneAndUpdate(
-    { _id: bookingId },
-    {
-      bookingStatus: 'confirmed',
-      confirmedBy: 'admin',
-      confirmedAt: new Date(),
-      adminNote: note || null,
-    },
-    { new: true, lean: true }
-  );
+  async confirmBookingByAdmin(bookingId: string, note?: string): Promise<IBooking | null> {
+    const booking = await BookingModel.findOneAndUpdate(
+      { _id: bookingId },
+      {
+        bookingStatus: 'confirmed',
+        confirmedBy: 'admin',
+        confirmedAt: new Date(),
+        adminNote: note || null,
+      },
+      { new: true, lean: true }
+    );
 
-  return booking ? booking : null;
-}
+    return booking ? booking : null;
+  }
 
   async createBooking(userId: string, data: IBookingInput): Promise<IBooking> {
-   
     const newBooking = await BookingModel.create({ userId, ...data });
     return newBooking.toObject();
   }
@@ -211,15 +205,13 @@ async confirmBookingByAdmin(
 
   async findByRazorpayOrderId(orderId: string): Promise<IBooking | null> {
     return BookingModel.findOne({ 'razorpay.orderId': orderId });
-  } 
+  }
   async save(booking: any): Promise<IBooking> {
-    console.log(booking,'booking');
-    
+    console.log(booking, 'booking');
+
     return booking.save();
   }
-async updateById(id: string, update: any): Promise<IBooking|null> {
+  async updateById(id: string, update: any): Promise<IBooking | null> {
     return await BookingModel.findByIdAndUpdate(id, update, { new: true });
-
-}
-
+  }
 }

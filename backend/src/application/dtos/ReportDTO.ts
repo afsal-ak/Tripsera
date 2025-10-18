@@ -1,9 +1,9 @@
-import { 
+import {
   EnumAdminAction,
   EnumReportStatus,
-  EnumReportedType ,
-  EnumReportBlockStatus
-} from "@constants/enum/reportEnum";
+  EnumReportedType,
+  EnumReportBlockStatus,
+} from '@constants/enum/reportEnum';
 
 export interface CreateReportDTO {
   reportedId: string;
@@ -13,16 +13,14 @@ export interface CreateReportDTO {
   description?: string;
 }
 
-
 export interface UpdateReportDTO {
   reportId: string;
   reportedId: string;
   reportedType: EnumReportedType;
   adminAction: EnumAdminAction;
   status: EnumReportStatus;
-  isBlocked: EnumReportBlockStatus
+  isBlocked: EnumReportBlockStatus;
 }
-
 
 export interface ReportSingleResponseDTO {
   _id: string;

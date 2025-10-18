@@ -9,7 +9,7 @@ interface FindOptions {
   sort?: any;
 }
 
-export class SalesReportRepository implements ISalesReportRepository{
+export class SalesReportRepository implements ISalesReportRepository {
   async count(filter: FilterQuery<IBooking>): Promise<number> {
     const baseFilter = {
       bookingStatus: 'confirmed',
@@ -27,7 +27,7 @@ export class SalesReportRepository implements ISalesReportRepository{
       paymentStatus: 'paid',
     };
 
-      const booking=BookingModel.find({ ...filter, ...baseFilter })
+    const booking = BookingModel.find({ ...filter, ...baseFilter })
       .skip(options.skip || 0)
       .limit(options.limit || 0)
       .sort(options.sort || {})
@@ -40,10 +40,10 @@ export class SalesReportRepository implements ISalesReportRepository{
         select: 'title packageCode',
       })
       //.lean();
-       .lean<IBookingPopulatedForReport[]>();
-       return booking
+      .lean<IBookingPopulatedForReport[]>();
+    return booking;
   }
-async findForReport(
+  async findForReport(
     filter: FilterQuery<IBooking>,
     options: FindOptions = {}
   ): Promise<IBooking[]> {
@@ -52,7 +52,7 @@ async findForReport(
       paymentStatus: 'paid',
     };
 
-       return BookingModel.find({ ...filter, ...baseFilter })
+    return BookingModel.find({ ...filter, ...baseFilter })
       .skip(options.skip || 0)
       .limit(options.limit || 0)
       .sort(options.sort || {})
@@ -65,7 +65,6 @@ async findForReport(
         select: 'title packageCode',
       })
       .lean();
-        
   }
 
   async calculateSummary(filter: any) {
@@ -85,10 +84,7 @@ async findForReport(
           totalDiscount: { $sum: '$discount' },
           totalRevenue: {
             $sum: {
-              $add: [
-                { $ifNull: ['$amountPaid', 0] },
-                { $ifNull: ['$walletAmountUsed', 0] },
-              ],
+              $add: [{ $ifNull: ['$amountPaid', 0] }, { $ifNull: ['$walletAmountUsed', 0] }],
             },
           },
         },

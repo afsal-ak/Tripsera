@@ -2,7 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 import { verifyRefreshToken, generateAccessToken } from '@shared/utils/jwt';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
-export const userRefreshToken = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+export const userRefreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     // Read refresh token from cookie
     const oldRefreshToken = req.cookies.userRefreshToken;
@@ -29,6 +33,6 @@ export const userRefreshToken = async (req: Request, res: Response,next:NextFunc
     // Send new access token in response
     res.status(HttpStatus.OK).json({ accessToken: newAccessToken });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };

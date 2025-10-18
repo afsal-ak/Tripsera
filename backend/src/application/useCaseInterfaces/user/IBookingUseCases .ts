@@ -1,6 +1,7 @@
-import { CreateBookingDTO,
-  BookingDetailResponseDTO, 
-  BookingUserResponseDTO
+import {
+  CreateBookingDTO,
+  BookingDetailResponseDTO,
+  BookingUserResponseDTO,
 } from '@application/dtos/BookingDTO';
 
 export interface IBookingUseCases {
@@ -12,7 +13,11 @@ export interface IBookingUseCases {
 
   getBookingById(userId: string, bookingId: string): Promise<BookingDetailResponseDTO | null>;
 
-  cancelBooking(userId: string, bookingId: string, reason: string): Promise<BookingDetailResponseDTO | null>;
+  cancelBooking(
+    userId: string,
+    bookingId: string,
+    reason: string
+  ): Promise<BookingDetailResponseDTO | null>;
 
   createBookingWithOnlinePayment(
     userId: string,
@@ -55,6 +60,16 @@ export interface IBookingUseCases {
     data: CreateBookingDTO & { useWallet?: boolean }
   ): Promise<{ booking?: BookingDetailResponseDTO }>;
 
-  removeTraveler(bookingId: string, travelerIndex: number, userId: string, note?: string): Promise<BookingDetailResponseDTO|null>
-  changeTravelDate(bookingId: string, newDate: Date, userId: string, note?: string): Promise<BookingDetailResponseDTO>
+  removeTraveler(
+    bookingId: string,
+    travelerIndex: number,
+    userId: string,
+    note?: string
+  ): Promise<BookingDetailResponseDTO | null>;
+  changeTravelDate(
+    bookingId: string,
+    newDate: Date,
+    userId: string,
+    note?: string
+  ): Promise<BookingDetailResponseDTO>;
 }

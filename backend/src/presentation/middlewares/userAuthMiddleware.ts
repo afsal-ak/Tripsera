@@ -21,7 +21,9 @@ export const userAuthMiddleware = async (
     const token = authHeader.split(' ')[1];
     if (!JWT_ACCESS_SECRET) {
       console.log(' JWT_SECRET not loaded!');
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Server error: Missing JWT secret' });
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Server error: Missing JWT secret' });
       return;
     }
 

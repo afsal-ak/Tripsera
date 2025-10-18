@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
-import { IChatbotUseCase } from "@application/useCaseInterfaces/user/IChatbotUseCase";
-import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
+import { NextFunction, Request, Response } from 'express';
+import { IChatbotUseCase } from '@application/useCaseInterfaces/user/IChatbotUseCase';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class ChatController {
   constructor(private readonly _chatUseCase: IChatbotUseCase) {}
@@ -11,7 +11,7 @@ export class ChatController {
       const reply = await this._chatUseCase.chatBotResponse(message);
       res.status(HttpStatus.OK).json({ reply });
     } catch (error) {
-      console.error("ChatController Error:", error);
+      console.error('ChatController Error:', error);
       next(error);
     }
   };

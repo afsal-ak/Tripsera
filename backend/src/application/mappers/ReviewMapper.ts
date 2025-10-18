@@ -1,5 +1,5 @@
-import { IReview } from "@domain/entities/IReview";
- 
+import { IReview } from '@domain/entities/IReview';
+
 export interface ReviewResponseDTO {
   _id: string;
   userId: string;
@@ -36,7 +36,7 @@ export abstract class ReviewMapper {
   // Full detailed DTO (admin / detail view)
   static toResponseDTO(review: IReview): ReviewResponseDTO {
     return {
-      _id: review._id?.toString() ?? "",
+      _id: review._id?.toString() ?? '',
       userId: review.userId as string,
       packageId: review.packageId as string,
       username: review.username,
@@ -53,7 +53,7 @@ export abstract class ReviewMapper {
   // For admin table (list view)
   static toTableDTO(review: IReview): ReviewTableDTO {
     return {
-      _id: review._id?.toString() ?? "",
+      _id: review._id?.toString() ?? '',
       username: review.username,
       packageTitle: review.packageTitle,
       rating: review.rating,
@@ -66,7 +66,7 @@ export abstract class ReviewMapper {
   // For user’s "My Reviews" list
   static toUserListDTO(review: IReview): UserReviewListDTO {
     return {
-      _id: review._id?.toString() ?? "",
+      _id: review._id?.toString() ?? '',
       packageTitle: review.packageTitle,
       rating: review.rating,
       title: review.title,

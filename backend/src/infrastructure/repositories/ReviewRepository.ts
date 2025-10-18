@@ -21,19 +21,17 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
     const query: any = {};
 
     if (filters.search) {
-      query.$or = [
-        { title: { $regex: filters.search, $options: "i" } },
-      ];
+      query.$or = [{ title: { $regex: filters.search, $options: 'i' } }];
     }
 
     if (filters.rating) {
-      query.rating = filters.rating
+      query.rating = filters.rating;
     }
 
     if (filters.startDate && filters.endDate) {
       query.createdAt = {
         $gte: new Date(filters.startDate),
-        $lte: new Date(filters.endDate)
+        $lte: new Date(filters.endDate),
       };
     }
 
@@ -69,7 +67,6 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
         .lean(),
       ReviewModel.countDocuments({ packageId, isBlocked: false, ...query }),
     ]);
- 
 
     const pagination: PaginationInfo = {
       totalItems: total,
@@ -100,29 +97,29 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
 
     if (filters.search) {
       query.$or = [
-        { title: { $regex: filters.search, $options: "i" } },
-        { comment: { $regex: filters.search, $options: "i" } },
-        { username: { $regex: filters.search, $options: "i" } },
-        { packageTitle: { $regex: filters.search, $options: "i" } }
+        { title: { $regex: filters.search, $options: 'i' } },
+        { comment: { $regex: filters.search, $options: 'i' } },
+        { username: { $regex: filters.search, $options: 'i' } },
+        { packageTitle: { $regex: filters.search, $options: 'i' } },
       ];
     }
 
     if (filters.status) {
       if (filters.status == 'active') {
-        query.isBlocked = false
+        query.isBlocked = false;
       } else {
-        query.isBlocked = true
+        query.isBlocked = true;
       }
     }
 
     if (filters.rating) {
-      query.rating = filters.rating
+      query.rating = filters.rating;
     }
 
     if (filters.startDate && filters.endDate) {
       query.createdAt = {
         $gte: new Date(filters.startDate),
-        $lte: new Date(filters.endDate)
+        $lte: new Date(filters.endDate),
       };
     }
 
@@ -169,8 +166,6 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
     return { review, pagination };
   }
 
-
-
   async findReviewById(reviewId: string): Promise<IReview | null> {
     const review = await ReviewModel.findById(reviewId)
       .populate('userId', 'username email')
@@ -200,20 +195,20 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
           averageRating: { $avg: '$rating' },
           totalReviews: { $sum: 1 },
           fiveStar: {
-            $sum: { $cond: [{ $eq: ['$rating', 5] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$rating', 5] }, 1, 0] },
           },
           fourStar: {
-            $sum: { $cond: [{ $eq: ['$rating', 4] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$rating', 4] }, 1, 0] },
           },
           threeStar: {
-            $sum: { $cond: [{ $eq: ['$rating', 3] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$rating', 3] }, 1, 0] },
           },
           twoStar: {
-            $sum: { $cond: [{ $eq: ['$rating', 2] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$rating', 2] }, 1, 0] },
           },
           oneStar: {
-            $sum: { $cond: [{ $eq: ['$rating', 1] }, 1, 0] }
-          }
+            $sum: { $cond: [{ $eq: ['$rating', 1] }, 1, 0] },
+          },
         },
       },
       {
@@ -225,9 +220,9 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
           fourStar: 1,
           threeStar: 1,
           twoStar: 1,
-          oneStar: 1
-        }
-      }
+          oneStar: 1,
+        },
+      },
     ]);
 
     return (
@@ -238,9 +233,8 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
         fourStar: 0,
         threeStar: 0,
         twoStar: 0,
-        oneStar: 0
+        oneStar: 0,
       }
     );
   }
-
 }

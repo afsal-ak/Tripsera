@@ -16,7 +16,7 @@ export interface IComment {
 }
 
 export interface ICommentWithReplyCount extends IComment {
-  user?: {  
+  user?: {
     _id: string;
     username: string;
     profileImage: { url: string };

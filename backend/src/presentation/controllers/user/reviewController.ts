@@ -6,7 +6,7 @@ import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { IFilter } from '@domain/entities/IFilter';
 
 export class ReviewController {
-  constructor(private _reviewUseCases: IReviewUseCases) { }
+  constructor(private _reviewUseCases: IReviewUseCases) {}
 
   createReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -31,13 +31,12 @@ export class ReviewController {
   updateReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-      const reviewId = req.params.reviewId
-      console.log(userId, 'userid')
-      console.log(reviewId, 'reviewId')
-      const data: UpdateReviewDTO = req.body
+      const reviewId = req.params.reviewId;
+      console.log(userId, 'userid');
+      console.log(reviewId, 'reviewId');
+      const data: UpdateReviewDTO = req.body;
 
-      const review = await this._reviewUseCases.editReview(reviewId, userId, data)
-
+      const review = await this._reviewUseCases.editReview(reviewId, userId, data);
 
       res.status(HttpStatus.OK).json({
         review,
@@ -48,7 +47,6 @@ export class ReviewController {
     }
   };
 
-
   getUserReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
@@ -56,8 +54,8 @@ export class ReviewController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
       const data = await this._reviewUseCases.getUserReview(userId, page, limit);
-      console.log(data,'use review');
-      
+      console.log(data, 'use review');
+
       res.status(HttpStatus.OK).json({
         data,
         message: 'Review fetched successfully',
@@ -74,20 +72,14 @@ export class ReviewController {
       const limit = parseInt(req.query.limit as string) || 10;
 
       const filters: IFilter = {
-        search: (req.query.search as string) || "",
-        sort: (req.query.sort as string) || "",
-        startDate: (req.query.startDate as string) || "",
-        endDate: (req.query.endDate as string) || "",
+        search: (req.query.search as string) || '',
+        sort: (req.query.sort as string) || '',
+        startDate: (req.query.startDate as string) || '',
+        endDate: (req.query.endDate as string) || '',
         rating: req.query.rating ? parseInt(req.query.rating as string, 10) : undefined,
-
       };
 
-      const review = await this._reviewUseCases.getPackageReviews(
-        packageId,
-        page,
-        limit,
-        filters
-      );
+      const review = await this._reviewUseCases.getPackageReviews(packageId, page, limit, filters);
 
       res.status(HttpStatus.OK).json({
         review,
@@ -118,12 +110,11 @@ export class ReviewController {
       console.log(summary, 'review');
       res.status(HttpStatus.OK).json({
         summary,
-        message:'Summary fetched successfully'
+        message: 'Summary fetched successfully',
       });
     } catch (error) {
       next(error);
     }
-
   };
   deleteReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

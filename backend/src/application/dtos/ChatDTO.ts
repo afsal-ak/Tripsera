@@ -1,5 +1,3 @@
-
-
 export interface CreateChatRoomDTO {
   name?: string; // For group chats
   participants: string[]; // User/Admin IDs
@@ -10,10 +8,10 @@ export interface CreateChatRoomDTO {
 export interface UpdateChatRoomDTO {
   name?: string;
   participants?: string[];
-  lastMessage?:string;
-  lastMessageContent?:string;
+  lastMessage?: string;
+  lastMessageContent?: string;
   unreadCounts?: Record<string, number>; // track unread for each user
- }
+}
 
 export interface ChatRoomParticipantDTO {
   _id: string;
@@ -38,7 +36,6 @@ export interface ChatRoomGroupResponseDTO {
   createdAt: Date;
   updatedAt: Date;
 }
-
 
 export interface ChatRoomFullResponseDTO {
   _id: string;

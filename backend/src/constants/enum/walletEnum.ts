@@ -1,4 +1,4 @@
- export enum EnumWalletTransactionType {
-  CREDIT = "credit",
-  DEBIT = "debit",
+export enum EnumWalletTransactionType {
+  CREDIT = 'credit',
+  DEBIT = 'debit',
 }

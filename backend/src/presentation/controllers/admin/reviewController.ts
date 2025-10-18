@@ -4,8 +4,7 @@ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IFilter } from '@domain/entities/IFilter';
 
 export class ReviewController {
-
-  constructor(private _reviewUsecases: IAdminReviewUseCases) { }
+  constructor(private _reviewUsecases: IAdminReviewUseCases) {}
 
   getAllReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -13,17 +12,15 @@ export class ReviewController {
       const limit = parseInt(req.query.limit as string) || 10;
 
       const filters: IFilter = {
-        search: (req.query.search as string) || "",
-        status: (req.query.status as string) || "",
-        sort: (req.query.sort as string) || "",
-        startDate: (req.query.startDate as string) || "",
-        endDate: (req.query.endDate as string) || "",
+        search: (req.query.search as string) || '',
+        status: (req.query.status as string) || '',
+        sort: (req.query.sort as string) || '',
+        startDate: (req.query.startDate as string) || '',
+        endDate: (req.query.endDate as string) || '',
         rating: req.query.rating ? parseInt(req.query.rating as string, 10) : undefined,
-
       };
       const review = await this._reviewUsecases.getAllReviews(page, limit, filters);
 
- 
       res.status(HttpStatus.OK).json({
         data: review,
         message: 'Review fetched successfully',

@@ -1,6 +1,6 @@
-import { Types } from "mongoose";
-import { EnumUserRole } from "@constants/enum/userEnum";
-import { EnumNotificationType, EnumNotificationEntityType } from "@constants/enum/notificationEnum";
+import { Types } from 'mongoose';
+import { EnumUserRole } from '@constants/enum/userEnum';
+import { EnumNotificationType, EnumNotificationEntityType } from '@constants/enum/notificationEnum';
 
 export interface INotification {
   _id: string;

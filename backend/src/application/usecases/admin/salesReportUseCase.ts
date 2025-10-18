@@ -8,16 +8,19 @@ import { SalesReportResponseDTO } from '@application/dtos/salesReportDTO';
 import { SalesReportMapper } from '@application/mappers/SalesReportMapper';
 
 export class SalesReportUseCase implements ISalesReportUseCase {
-
   constructor(private _salesRepo: ISalesReportRepository) {}
 
-  async getReportList(query: FilterQueryOptions, page: number, limit: number):Promise<{
+  async getReportList(
+    query: FilterQueryOptions,
+    page: number,
+    limit: number
+  ): Promise<{
     data: SalesReportResponseDTO[];
     total: number;
     summary: any;
     page: number;
     totalPages: number;
-}> {
+  }> {
     const filter = getSalesReportFilter(query);
     const skip = (page - 1) * limit;
 
@@ -30,7 +33,7 @@ export class SalesReportUseCase implements ISalesReportUseCase {
     const summary = await this._salesRepo.calculateSummary(filter);
 
     return {
-      data:data.map(SalesReportMapper.toResponseDTO),
+      data: data.map(SalesReportMapper.toResponseDTO),
       total,
       summary,
       page,
@@ -50,7 +53,7 @@ export class SalesReportUseCase implements ISalesReportUseCase {
     return buffer;
   }
 
-    async downloadPDF(query: FilterQueryOptions): Promise<Buffer> {
+  async downloadPDF(query: FilterQueryOptions): Promise<Buffer> {
     const filter = getSalesReportFilter(query);
     const bookings: IBooking[] = await this._salesRepo.findForReport(filter, {
       sort: { createdAt: -1 },

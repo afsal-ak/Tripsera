@@ -1,12 +1,10 @@
-
-export enum  EnumPaymentStatus {
-  PAID = "paid",
-  PENDING = "pending",
-  FAILED = "failed",
-   
+export enum EnumPaymentStatus {
+  PAID = 'paid',
+  PENDING = 'pending',
+  FAILED = 'failed',
 }
-export  enum  EnumPaymentMethod {
-  RAZORPAY = "razorpay",
-  WALLET = "wallet",
-  WALLET_RAZORPAY = "wallet+razorpay",
+export enum EnumPaymentMethod {
+  RAZORPAY = 'razorpay',
+  WALLET = 'wallet',
+  WALLET_RAZORPAY = 'wallet+razorpay',
 }

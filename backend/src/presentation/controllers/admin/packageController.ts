@@ -8,8 +8,7 @@ import { parseJsonFields } from '@shared/utils/parseJsonFields';
 import { IFilter } from '@domain/entities/IFilter';
 
 export class PackageController {
-
-  constructor(private _packageUseCase: IPackageUseCases) { }
+  constructor(private _packageUseCase: IPackageUseCases) {}
 
   getFullPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -17,26 +16,21 @@ export class PackageController {
       const limit = parseInt(req.query.limit as string) || 10;
 
       const filters: IFilter = {
-        search: (req.query.search as string) || "",
-        status: (req.query.status as string) || "",
-        sort: (req.query.sort as string) || "",
-        startDate: (req.query.startDate as string) || "",
-        endDate: (req.query.endDate as string) || "",
- 
+        search: (req.query.search as string) || '',
+        status: (req.query.status as string) || '',
+        sort: (req.query.sort as string) || '',
+        startDate: (req.query.startDate as string) || '',
+        endDate: (req.query.endDate as string) || '',
       };
-      const data = await this._packageUseCase.getAllPackages(
-        page,
-        limit,
-        filters
-      );
-      console.log(data,'in controller');
-      
+      const data = await this._packageUseCase.getAllPackages(page, limit, filters);
+      console.log(data, 'in controller');
+
       res.status(HttpStatus.OK).json({
         message: 'Package fetched successfully',
         data,
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -47,7 +41,7 @@ export class PackageController {
 
       res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -57,19 +51,19 @@ export class PackageController {
 
       // Parse fields that are sent as JSON strings
       pkgData = parseJsonFields(pkgData, [
-        "location",
-        "itinerary",
-        "offer",
-        "included",
-        "notIncluded",
-        "category"
+        'location',
+        'itinerary',
+        'offer',
+        'included',
+        'notIncluded',
+        'category',
       ]);
 
       // console.log("Parsed package data:", pkgData);
 
       const files = req.files as Express.Multer.File[];
       if (!files || files.length === 0) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: "No images uploaded" });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: 'No images uploaded' });
         return;
       }
 
@@ -79,7 +73,7 @@ export class PackageController {
 
       // Upload to cloudinary
       const imageUrls = await Promise.all(
-        files.map((file) => uploadCloudinary(file.path, "packages"))
+        files.map((file) => uploadCloudinary(file.path, 'packages'))
       );
 
       // Add images to package DTO
@@ -87,7 +81,7 @@ export class PackageController {
       if (pkgData.itinerary) {
         pkgData.itinerary = pkgData.itinerary.map((d: any, idx: number) => ({
           ...d,
-          day: idx + 1,  // auto-assign day
+          day: idx + 1, // auto-assign day
         }));
       }
       // Fix location geo: convert lat/lng strings -> numbers
@@ -95,7 +89,7 @@ export class PackageController {
         pkgData.location = pkgData.location.map((loc: any) => ({
           name: loc.name,
           geo: {
-            type: "Point",
+            type: 'Point',
             coordinates: [parseFloat(loc.lng), parseFloat(loc.lat)], // lng first, lat second
           },
         }));
@@ -105,7 +99,7 @@ export class PackageController {
       const createdPackage = await this._packageUseCase.createPackage(pkgData);
 
       res.status(HttpStatus.CREATED).json({
-        message: "Package created successfully",
+        message: 'Package created successfully',
         package: createdPackage,
       });
     } catch (err) {
@@ -117,7 +111,7 @@ export class PackageController {
     try {
       const { id } = req.params;
       if (!id) {
-        res.status(HttpStatus.NOT_FOUND).json({ message: "Package ID is required" });
+        res.status(HttpStatus.NOT_FOUND).json({ message: 'Package ID is required' });
         return;
       }
 
@@ -127,12 +121,12 @@ export class PackageController {
       let pkgData: EditPackageDTO = body;
 
       pkgData = parseJsonFields(pkgData, [
-        "location",
-        "itinerary",
-        "offer",
-        "included",
-        "notIncluded",
-        "category"
+        'location',
+        'itinerary',
+        'offer',
+        'included',
+        'notIncluded',
+        'category',
       ]);
 
       const existingImages: ImageInfoDTO[] = Array.isArray(body.existingImages)
@@ -142,13 +136,13 @@ export class PackageController {
           : [];
 
       const newImages: ImageInfoDTO[] = files?.length
-        ? await Promise.all(files.map(f => uploadCloudinary(f.path, "packages")))
+        ? await Promise.all(files.map((f) => uploadCloudinary(f.path, 'packages')))
         : [];
       if (pkgData.location) {
         pkgData.location = pkgData.location.map((loc: any) => ({
           name: loc.name,
           geo: {
-            type: "Point",
+            type: 'Point',
             coordinates: [parseFloat(loc.lng), parseFloat(loc.lat)],
           },
         }));
@@ -161,22 +155,29 @@ export class PackageController {
         }));
       }
 
-      const updatedPackage = await this._packageUseCase.editPackageData(id, pkgData, existingImages, newImages);
+      const updatedPackage = await this._packageUseCase.editPackageData(
+        id,
+        pkgData,
+        existingImages,
+        newImages
+      );
 
-      res.status(HttpStatus.OK).json({ message: "Package updated successfully", package: updatedPackage });
+      res
+        .status(HttpStatus.OK)
+        .json({ message: 'Package updated successfully', package: updatedPackage });
     } catch (error) {
       console.error(error);
-      next(error)
+      next(error);
     }
   };
 
   blockPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
-       await this._packageUseCase.block(id);
+      await this._packageUseCase.block(id);
       res.status(HttpStatus.OK).json({ message: 'Package blocked successfully' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -186,7 +187,7 @@ export class PackageController {
       await this._packageUseCase.unblock(id);
       res.status(HttpStatus.OK).json({ message: 'Package unblocked successfully' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -196,7 +197,7 @@ export class PackageController {
       await this._packageUseCase.delete(id);
       res.status(HttpStatus.OK).json({ message: 'Package deleted successfully' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 }

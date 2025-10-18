@@ -6,9 +6,8 @@ export interface IBlogUseCases {
   getAllBlogs(
     page: number,
     limit: number,
-    filters?:IFilter
-   ): Promise<PaginatedResult<BlogResponseDTO>>  
-
+    filters?: IFilter
+  ): Promise<PaginatedResult<BlogResponseDTO>>;
 
   deleteBlog(blogId: string): Promise<void>;
 

@@ -1,5 +1,4 @@
-
-import { EnumBlogStatus } from "@constants/enum/blogEnum";
+import { EnumBlogStatus } from '@constants/enum/blogEnum';
 
 export interface CreateBlogDTO {
   title: string;

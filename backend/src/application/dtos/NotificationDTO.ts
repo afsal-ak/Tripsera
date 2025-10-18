@@ -1,5 +1,5 @@
-import { EnumNotificationType, EnumNotificationEntityType } from "@constants/enum/notificationEnum";
-import { EnumUserRole } from "@constants/enum/userEnum";
+import { EnumNotificationType, EnumNotificationEntityType } from '@constants/enum/notificationEnum';
+import { EnumUserRole } from '@constants/enum/userEnum';
 
 // Create Notification DTO
 export interface CreateNotificationDto {
@@ -44,8 +44,7 @@ export interface MarkAsReadDto {
 //   updatedAt?: string;
 // }
 
-
- export interface NotificationResponseDTO {
+export interface NotificationResponseDTO {
   _id: string;
   userId?: string;
   title: string;
@@ -64,9 +63,9 @@ export interface MarkAsReadDto {
   updatedAt?: string;
 }
 
-
 // Populated Response DTO
-export interface NotificationPopulatedResponseDTO extends Omit<NotificationResponseDTO, "userId" | "packageId" | "bookingId" | "triggeredBy"> {
+export interface NotificationPopulatedResponseDTO
+  extends Omit<NotificationResponseDTO, 'userId' | 'packageId' | 'bookingId' | 'triggeredBy'> {
   userId?: {
     _id: string;
     username: string;
@@ -87,4 +86,3 @@ export interface NotificationPopulatedResponseDTO extends Omit<NotificationRespo
     username: string;
   };
 }
-

@@ -1,4 +1,4 @@
-import { IBlock } from "@domain/entities/IBlock";
+import { IBlock } from '@domain/entities/IBlock';
 
 export interface CreateBlockDTO {
   blockedId: string;
@@ -13,7 +13,7 @@ export interface BlockResponseDTO {
   createdAt: Date;
   unblockedAt?: Date | null;
 }
- 
+
 export const toBlockResponseDTO = (block: IBlock): BlockResponseDTO => ({
   _id: block._id!.toString(),
   blockerId: block.blocker.toString(),

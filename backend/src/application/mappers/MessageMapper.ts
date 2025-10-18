@@ -1,11 +1,10 @@
-import { IMessage } from "@domain/entities/IMessage";
-import { IMessagePopulated } from "@infrastructure/db/types.ts/IMessagePopulated";
-import { MessagePopulatedResponseDTO, MessageResponseDTO } from "@application/dtos/MessageDTO";
-import { EnumMessageType } from "@constants/enum/messageEnum";
+import { IMessage } from '@domain/entities/IMessage';
+import { IMessagePopulated } from '@infrastructure/db/types.ts/IMessagePopulated';
+import { MessagePopulatedResponseDTO, MessageResponseDTO } from '@application/dtos/MessageDTO';
+import { EnumMessageType } from '@constants/enum/messageEnum';
 
 export abstract class MessageMapper {
-
-    static toResponseDTO(message: IMessage): MessageResponseDTO {
+  static toResponseDTO(message: IMessage): MessageResponseDTO {
     return {
       _id: message._id!.toString(),
       roomId: message.roomId.toString(),
@@ -27,11 +26,11 @@ export abstract class MessageMapper {
       senderId: {
         _id: message.senderId._id.toString(),
         username: message.senderId.username,
-        profileImage: message.senderId.profileImage?.url || "",
+        profileImage: message.senderId.profileImage?.url || '',
       },
       content: message.content,
       type: message.type || EnumMessageType.TEXT,
-      mediaUrl: message.mediaUrl || "",
+      mediaUrl: message.mediaUrl || '',
       isRead: message.isRead ?? false,
       readBy: message.readBy?.map((id) => id.toString()) || [],
       callInfo: message.callInfo || undefined,

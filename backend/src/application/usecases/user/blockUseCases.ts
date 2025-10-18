@@ -1,6 +1,6 @@
-import { IBlockUseCase } from "@application/useCaseInterfaces/user/IBlockUseCases";
-import { IBlockRepository } from "@domain/repositories/IBlockRepository";
-import { CreateBlockDTO, BlockResponseDTO,toBlockResponseDTO } from "@application/dtos/BlockDTO";
+import { IBlockUseCase } from '@application/useCaseInterfaces/user/IBlockUseCases';
+import { IBlockRepository } from '@domain/repositories/IBlockRepository';
+import { CreateBlockDTO, BlockResponseDTO, toBlockResponseDTO } from '@application/dtos/BlockDTO';
 
 export class BlockUseCase implements IBlockUseCase {
   constructor(private _blockRepo: IBlockRepository) {}

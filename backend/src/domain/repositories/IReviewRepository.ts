@@ -7,13 +7,13 @@ export interface IReviewRepository extends IBaseRepository<IReview> {
   findAllReviews(
     page: number,
     limit: number,
-    filters?:IFilter
-   ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
+    filters?: IFilter
+  ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
   findPackageReviews(
     packageId: string,
     page?: number,
     limit?: number,
-    filters?:IFilter
+    filters?: IFilter
   ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
   findUserReviewedAlready(userId: string, packageId: string): Promise<IReview | null>;
 

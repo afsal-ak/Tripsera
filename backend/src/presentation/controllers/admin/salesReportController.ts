@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
- import { ISalesReportUseCase } from '@application/useCaseInterfaces/admin/ISalesReportUseCses';
+import { ISalesReportUseCase } from '@application/useCaseInterfaces/admin/ISalesReportUseCses';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class SalesReportController {
-
-  constructor(private _salesReportUseCase: ISalesReportUseCase) { }
+  constructor(private _salesReportUseCase: ISalesReportUseCase) {}
 
   getReportList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -23,7 +22,7 @@ export class SalesReportController {
       };
 
       const result = await this._salesReportUseCase.getReportList(filters, page, limit);
-console.log(result,'salesreport');
+      console.log(result, 'salesreport');
 
       res.status(HttpStatus.OK).json({
         success: true,
@@ -75,7 +74,7 @@ console.log(result,'salesreport');
       };
 
       const buffer = await this._salesReportUseCase.downloadPDF(filters);
-      console.log(buffer, 'buffer')
+      console.log(buffer, 'buffer');
       res.setHeader('Content-Disposition', 'attachment; filename="sales-report.pdf"');
       res.setHeader('Content-Type', 'application/pdf');
       res.status(HttpStatus.OK).send(buffer);
@@ -83,5 +82,4 @@ console.log(result,'salesreport');
       next(error);
     }
   };
-
 }

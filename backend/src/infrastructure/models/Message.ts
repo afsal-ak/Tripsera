@@ -1,6 +1,6 @@
-import { Schema, model, Document } from "mongoose";
-import { IMessage } from "@domain/entities/IMessage";
-import { EnumCallStatus, EnumCallType, EnumMessageType } from "@constants/enum/messageEnum";
+import { Schema, model, Document } from 'mongoose';
+import { IMessage } from '@domain/entities/IMessage';
+import { EnumCallStatus, EnumCallType, EnumMessageType } from '@constants/enum/messageEnum';
 
 type MessageDocument = IMessage & Document;
 
@@ -20,11 +20,11 @@ const callInfoSchema = new Schema(
     duration: { type: Number },
     callerId: {
       type: Schema.Types.ObjectId,
-      ref: "Users",
+      ref: 'Users',
     },
     receiverId: {
       type: Schema.Types.ObjectId,
-      ref: "Users",
+      ref: 'Users',
     },
   },
   { _id: false }
@@ -34,30 +34,30 @@ const messageSchema = new Schema<MessageDocument>(
   {
     roomId: {
       type: Schema.Types.ObjectId,
-      ref: "ChatRoom",
+      ref: 'ChatRoom',
       required: true,
     },
 
     senderId: {
       type: Schema.Types.ObjectId,
-      ref: "Users",
+      ref: 'Users',
       required: true,
     },
 
     content: {
       type: String,
-      default: "",
+      default: '',
     },
 
     type: {
       type: String,
-      enum: Object.values(EnumMessageType),  
+      enum: Object.values(EnumMessageType),
       default: EnumMessageType.TEXT,
     },
 
     mediaUrl: {
       type: String,
-      default: "",
+      default: '',
     },
 
     isRead: {
@@ -68,7 +68,7 @@ const messageSchema = new Schema<MessageDocument>(
     readBy: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Users",
+        ref: 'Users',
       },
     ],
 
@@ -85,4 +85,4 @@ const messageSchema = new Schema<MessageDocument>(
   }
 );
 
-export const MessageModel = model<MessageDocument>("Message", messageSchema);
+export const MessageModel = model<MessageDocument>('Message', messageSchema);

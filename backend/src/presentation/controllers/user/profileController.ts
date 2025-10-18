@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
- import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
- import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
+import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUseCases';
 import { UpdateProfileDTO } from '@application/dtos/ProfileDTO';
 
 export class ProfileController {
@@ -25,8 +25,8 @@ export class ProfileController {
   updateUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-      const  profileData:UpdateProfileDTO  = req.body;
-       const updatedProfile = await this._profileUseCases.updateUserProfile(userId, profileData);
+      const profileData: UpdateProfileDTO = req.body;
+      const updatedProfile = await this._profileUseCases.updateUserProfile(userId, profileData);
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'User profile updated successfully',
@@ -40,10 +40,10 @@ export class ProfileController {
   updateUserAddress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-      const  address = req.body.address;
-      console.log(address,'addres');
-      
-       const updatedAddress = await this._profileUseCases.updateUserAddress(userId, address);
+      const address = req.body.address;
+      console.log(address, 'addres');
+
+      const updatedAddress = await this._profileUseCases.updateUserAddress(userId, address);
 
       res.status(HttpStatus.OK).json({
         success: true,
@@ -119,10 +119,10 @@ export class ProfileController {
       const { username } = req.params;
       console.log(username, 'user name in public');
       const user = await this._profileUseCases.getPublicProfile(username);
-       const isFollowing = user!.followers.toString()?.includes(viewerId) ?? false;
-      
+      const isFollowing = user!.followers.toString()?.includes(viewerId) ?? false;
+
       res.status(HttpStatus.OK).json({
-        profile:user,
+        profile: user,
         isFollowing,
         message: 'Profile fetched successfully',
       });
@@ -133,8 +133,7 @@ export class ProfileController {
   followUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const followingId = req.params.userId;
-       const followerId = getUserIdFromRequest(req);
-     
+      const followerId = getUserIdFromRequest(req);
 
       const result = await this._profileUseCases.followUser(followerId, followingId);
 
@@ -148,7 +147,7 @@ export class ProfileController {
     try {
       const followerId = getUserIdFromRequest(req);
       const followingId = req.params.userId;
- 
+
       const result = await this._profileUseCases.unfollowUser(followerId, followingId);
 
       res.status(200).json({ result, message: 'Unfollowed successfully' });
@@ -157,18 +156,17 @@ export class ProfileController {
     }
   };
 
-  setProfilePrivacy=async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
+  setProfilePrivacy = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId=getUserIdFromRequest(req)
-      const {isPrivate}=req.body
-      const user=await this._profileUseCases.setProfilePrivacy(userId,isPrivate)
+      const userId = getUserIdFromRequest(req);
+      const { isPrivate } = req.body;
+      const user = await this._profileUseCases.setProfilePrivacy(userId, isPrivate);
       res.status(HttpStatus.OK).json({
-        profile:user,
-        message:'Profile privacy status changed successfully'
-      })
+        profile: user,
+        message: 'Profile privacy status changed successfully',
+      });
     } catch (error) {
-      next(error)
+      next(error);
     }
-  }
-
+  };
 }

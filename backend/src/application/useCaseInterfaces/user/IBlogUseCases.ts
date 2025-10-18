@@ -1,5 +1,5 @@
 import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
-import { BlogResponseDTO,CreateBlogDTO, UpdateBlogDTO } from '@application/dtos/BlogDTO';
+import { BlogResponseDTO, CreateBlogDTO, UpdateBlogDTO } from '@application/dtos/BlogDTO';
 import { PaginatedResult } from '@domain/entities/IPaginatedResult';
 
 export interface IBlogUseCases {
@@ -18,9 +18,8 @@ export interface IBlogUseCases {
     userId: string,
     page: number,
     limit: number
-  ): Promise<PaginatedResult<BlogResponseDTO>>  
+  ): Promise<PaginatedResult<BlogResponseDTO>>;
 
- 
   getAllPublishedBlogs(
     page: number,
     limit: number,
@@ -30,8 +29,7 @@ export interface IBlogUseCases {
       startDate?: string;
       endDate?: string;
     }
-  ): Promise<PaginatedResult<BlogResponseDTO>>  
-
+  ): Promise<PaginatedResult<BlogResponseDTO>>;
 
   getBySlug(slug: string): Promise<BlogResponseDTO | null>;
 
@@ -39,8 +37,7 @@ export interface IBlogUseCases {
 
   unLikeBlog(blogId: string, userId: string): Promise<BlogResponseDTO | null>;
 
-   getBlogLikeList(blogId:string):Promise<UserBasicInfoDto[]|null>
-  
+  getBlogLikeList(blogId: string): Promise<UserBasicInfoDto[] | null>;
 
   blockBlog(blogId: string, block: boolean): Promise<void>;
 
@@ -51,6 +48,5 @@ export interface IBlogUseCases {
     userId: string,
     page: number,
     limit: number
-   ): Promise<PaginatedResult<BlogResponseDTO>>  
-
+  ): Promise<PaginatedResult<BlogResponseDTO>>;
 }

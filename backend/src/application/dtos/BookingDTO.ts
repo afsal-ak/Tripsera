@@ -1,9 +1,14 @@
- import { EnumBookingStatus, EnumTravelerAction, EnumIdType, EnumDateChangeAction, EnumBookingHistoryAction } from "@constants/enum/bookingEnum";
-import { EnumGender } from "@constants/enum/commonEnum";
-import { EnumPaymentMethod, EnumPaymentStatus } from "@constants/enum/paymentEnum";
+import {
+  EnumBookingStatus,
+  EnumTravelerAction,
+  EnumIdType,
+  EnumDateChangeAction,
+  EnumBookingHistoryAction,
+} from '@constants/enum/bookingEnum';
+import { EnumGender } from '@constants/enum/commonEnum';
+import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
 
- 
- export interface CreateBookingDTO {
+export interface CreateBookingDTO {
   bookingCode: string;
   packageId: string;
   travelDate: Date;
@@ -11,7 +16,7 @@ import { EnumPaymentMethod, EnumPaymentStatus } from "@constants/enum/paymentEnu
   travelers: {
     fullName: string;
     age: number;
-    gender:EnumGender;
+    gender: EnumGender;
     idType: EnumIdType;
     idNumber: string;
   }[];
@@ -43,8 +48,6 @@ import { EnumPaymentMethod, EnumPaymentStatus } from "@constants/enum/paymentEnu
   updatedAt?: Date;
 }
 
-
- 
 export interface UpdateBookingDTO extends Partial<CreateBookingDTO> {
   bookingId: string;
   adminNote?: string;
@@ -52,8 +55,6 @@ export interface UpdateBookingDTO extends Partial<CreateBookingDTO> {
   cancelledBy?: string;
   bookingStatus?: EnumBookingStatus;
 }
-
-
 
 // Traveler DTO
 export interface TravelerDTO {
@@ -111,18 +112,17 @@ export interface BookingTableResponseDTO {
   bookingCode: string;
   userId: string;
   packageId: string;
-  packageTitle: string;              
+  packageTitle: string;
   packageImage?: string;
   totalAmount: number;
- travelers: TravelerDTO[];
-   discount: number;
+  travelers: TravelerDTO[];
+  discount: number;
   amountPaid: number;
   bookingStatus: EnumBookingStatus;
   paymentStatus: EnumPaymentStatus;
   travelDate?: Date;
   createdAt: Date;
 }
-
 
 //for user
 export interface BookingUserResponseDTO {

@@ -1,10 +1,6 @@
-import { Schema, model, Document } from "mongoose";
-import { IReport } from "@domain/entities/IReport";
-import {
-  EnumReportStatus,
-  EnumAdminAction,
-  EnumReportedType,
-} from "@constants/enum/reportEnum";
+import { Schema, model, Document } from 'mongoose';
+import { IReport } from '@domain/entities/IReport';
+import { EnumReportStatus, EnumAdminAction, EnumReportedType } from '@constants/enum/reportEnum';
 
 type ReportDocument = IReport & Document;
 
@@ -17,7 +13,7 @@ const ReportSchema = new Schema<ReportDocument>(
     reporterId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "Users",
+      ref: 'Users',
     },
     reportedType: {
       type: String,
@@ -30,7 +26,7 @@ const ReportSchema = new Schema<ReportDocument>(
     },
     description: {
       type: String,
-      default: "",
+      default: '',
     },
     status: {
       type: String,
@@ -48,4 +44,4 @@ const ReportSchema = new Schema<ReportDocument>(
   }
 );
 
-export const ReportModel = model<ReportDocument>("Report", ReportSchema);
+export const ReportModel = model<ReportDocument>('Report', ReportSchema);

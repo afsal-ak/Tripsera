@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
- import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IFilter } from '@domain/entities/IFilter';
 
 export class UserManagementController {
-
-  constructor(private _userManagementUseCases: IUserManagementUseCases) { }
+  constructor(private _userManagementUseCases: IUserManagementUseCases) {}
 
   getAllUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -13,20 +12,16 @@ export class UserManagementController {
       const limit = parseInt(req.query.limit as string) || 10;
 
       const filters: IFilter = {
-        search: (req.query.search as string) || "",
-        status: (req.query.status as string) || "",
-
+        search: (req.query.search as string) || '',
+        status: (req.query.status as string) || '',
       };
-      const data = await this._userManagementUseCases.getUsers(
-        page,
-        limit, filters
-      );
+      const data = await this._userManagementUseCases.getUsers(page, limit, filters);
       res.status(HttpStatus.OK).json({
         message: 'Users fetched successfully',
-        data
+        data,
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -34,9 +29,9 @@ export class UserManagementController {
     try {
       const { userId } = req.params;
       const data = await this._userManagementUseCases.getSingleUser(userId);
-       res.status(HttpStatus.OK).json({ message: 'User fetched successfully', user:data });
+      res.status(HttpStatus.OK).json({ message: 'User fetched successfully', user: data });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
@@ -47,28 +42,29 @@ export class UserManagementController {
 
       res.status(HttpStatus.OK).json({
         message: newStatus ? 'User blocked successfully' : 'User unblocked successfully',
-        isBlocked: newStatus
+        isBlocked: newStatus,
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 
-
-  searchAllUsersForAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  searchAllUsersForAdmin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
-      const search = (req.query.search as string) || "";
+      const search = (req.query.search as string) || '';
       const users = await this._userManagementUseCases.searchAllUsersForAdmin(search);
 
       res.status(HttpStatus.OK).json({
         success: true,
-        message: "Users fetched successfully",
+        message: 'Users fetched successfully',
         data: users,
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
-
-
 }

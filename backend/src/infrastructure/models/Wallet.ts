@@ -1,8 +1,8 @@
 import { Schema, model, Document } from 'mongoose';
 import { IWallet, IWalletTransaction } from '@domain/entities/IWallet';
 
-type IWalletDocument = IWallet & Document
-type IWalletTransactionDocument = IWalletTransaction & Document
+type IWalletDocument = IWallet & Document;
+type IWalletTransactionDocument = IWalletTransaction & Document;
 
 const WalletTransactionSchema = new Schema<IWalletTransactionDocument>(
   {

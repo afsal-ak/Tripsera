@@ -5,7 +5,7 @@ import { ICouponUseCases } from '@application/useCaseInterfaces/user/ICouponUseC
 export class CouponController {
   constructor(private _couponUseCase: ICouponUseCases) {}
 
-  getActiveCoupons = async (req: Request, res: Response,next:NextFunction): Promise<void> => {
+  getActiveCoupons = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
@@ -18,7 +18,7 @@ export class CouponController {
         message: 'Coupons fetched successfully',
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
   };
 

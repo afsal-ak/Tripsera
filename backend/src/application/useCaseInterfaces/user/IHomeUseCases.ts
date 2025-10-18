@@ -2,8 +2,7 @@ import { PackageResponseDTO } from '@application/dtos/PackageDTO';
 import { IBanner } from '@domain/entities/IBanner';
 import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 
-
- export interface IHomeUseCases {
+export interface IHomeUseCases {
   getHome(): Promise<{
     banners: IBanner[];
     packages: PackageResponseDTO[];

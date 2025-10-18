@@ -2,7 +2,13 @@ import { Schema, model, Document } from 'mongoose';
 import { IBooking, ITraveler } from '@domain/entities/IBooking';
 import { EnumPaymentStatus, EnumPaymentMethod } from '@constants/enum/paymentEnum';
 import { EnumGender } from '@constants/enum/commonEnum';
-import { EnumBookingStatus, EnumDateChangeAction, EnumBookingHistoryAction, EnumIdType, EnumTravelerAction } from '@constants/enum/bookingEnum';
+import {
+  EnumBookingStatus,
+  EnumDateChangeAction,
+  EnumBookingHistoryAction,
+  EnumIdType,
+  EnumTravelerAction,
+} from '@constants/enum/bookingEnum';
 type IBookingDocument = IBooking & Document;
 
 // Traveler schema
@@ -13,13 +19,12 @@ const TravelerSchema = new Schema<ITraveler>(
     gender: {
       type: String,
       enum: Object.values(EnumGender),
-      required: true
+      required: true,
     },
     idType: {
       type: String,
-      enum: Object.values(EnumIdType)
-      ,
-      required: true
+      enum: Object.values(EnumIdType),
+      required: true,
     },
     idNumber: { type: String, required: true },
   },
@@ -33,12 +38,11 @@ const TravelerHistorySchema = new Schema(
     action: {
       type: String,
       enum: Object.values(EnumTravelerAction),
-      required: true
+      required: true,
     },
     changedBy: { type: String, required: false },
     changedAt: { type: Date, required: false },
     note: { type: String },
-
   },
   { _id: false }
 );
@@ -50,15 +54,14 @@ const TravelDateHistorySchema = new Schema(
     action: {
       type: String,
       enum: Object.values(EnumDateChangeAction),
-      required: true
+      required: true,
     },
     changedBy: {
       type: String,
-      required: false
+      required: false,
     },
     changedAt: { type: Date, required: true },
     note: { type: String },
-
   },
   { _id: false }
 );
@@ -81,7 +84,7 @@ const BookingHistorySchema = new Schema(
     action: {
       type: String,
       enum: Object.values(EnumBookingHistoryAction),
-      required: true
+      required: true,
     },
     oldValue: { type: Schema.Types.Mixed },
     newValue: { type: Schema.Types.Mixed },
@@ -108,18 +111,18 @@ const BookingSchema = new Schema<IBookingDocument>(
     paymentMethod: {
       type: String,
       enum: Object.values(EnumPaymentMethod),
-      required: true
+      required: true,
     },
     paymentStatus: {
       type: String,
       enum: Object.values(EnumPaymentStatus),
-      default: EnumPaymentStatus.PENDING
+      default: EnumPaymentStatus.PENDING,
     },
 
     bookingStatus: {
       type: String,
       enum: Object.values(EnumBookingStatus),
-      default: EnumBookingStatus.PENDING
+      default: EnumBookingStatus.PENDING,
     },
     adminNote: { type: String, default: null },
     cancelledBy: { type: String },

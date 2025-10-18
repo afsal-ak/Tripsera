@@ -28,16 +28,11 @@ export interface IUserRepository {
     coverImageImage: { url: string; public_id: string }
   ): Promise<IUser | null>;
   getUserProfile(id: string): Promise<IUser | null>;
-  setProfilePrivacy(id: string, isPrivate: boolean): Promise<IUser | null>
-  searchUsersForChat(
-    userId: string,
-    search: string,
-    role: EnumUserRole
-  ): Promise<IUser[]>
-  searchAllUsersForAdmin(search: string): Promise<IUser[]>
+  setProfilePrivacy(id: string, isPrivate: boolean): Promise<IUser | null>;
+  searchUsersForChat(userId: string, search: string, role: EnumUserRole): Promise<IUser[]>;
+  searchAllUsersForAdmin(search: string): Promise<IUser[]>;
 
-  updateUserAddress(userId: string, addressData: Partial<IUser>): Promise<IUser | null>
-  addFollowerAndFollowing(followerId: string, followingId: string): Promise<void>
-  unFollowAndFollowing(followerId: string, followingId: string): Promise<void>
-
+  updateUserAddress(userId: string, addressData: Partial<IUser>): Promise<IUser | null>;
+  addFollowerAndFollowing(followerId: string, followingId: string): Promise<void>;
+  unFollowAndFollowing(followerId: string, followingId: string): Promise<void>;
 }

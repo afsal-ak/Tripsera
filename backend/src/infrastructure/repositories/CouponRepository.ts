@@ -35,10 +35,7 @@ export class CouponRepository implements ICouponRepository {
     const [coupons, total] = await Promise.all([
       CouponModel.find({
         isActive: true,
-        $or: [
-          { expiryDate: { $gte: now } },
-          { expiryDate: { $exists: false } },
-        ],
+        $or: [{ expiryDate: { $gte: now } }, { expiryDate: { $exists: false } }],
       })
         .skip(skip)
         .limit(limit)
@@ -46,10 +43,7 @@ export class CouponRepository implements ICouponRepository {
         .lean(),
       CouponModel.countDocuments({
         isActive: true,
-        $or: [
-          { expiryDate: { $gte: now } },
-          { expiryDate: { $exists: false } },
-        ],
+        $or: [{ expiryDate: { $gte: now } }, { expiryDate: { $exists: false } }],
       }),
     ]);
 

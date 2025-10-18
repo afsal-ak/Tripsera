@@ -1,9 +1,9 @@
 import { Types } from 'mongoose';
 
-import { EnumCouponType } from "@constants/enum/couponEnum";
+import { EnumCouponType } from '@constants/enum/couponEnum';
 
 export interface ICoupon {
-   _id?: Types.ObjectId | string;
+  _id?: Types.ObjectId | string;
   code: string;
   type: EnumCouponType;
   discountValue: number;

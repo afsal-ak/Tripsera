@@ -1,10 +1,8 @@
-
-import { Schema, model,Document } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 import { IComment } from '@domain/entities/IComment';
 import { EnumParentType } from '@constants/enum/commentEnum';
 
 type CommentDocument = IComment & Document;
-
 
 const CommentSchema = new Schema<CommentDocument>(
   {
@@ -51,4 +49,3 @@ const CommentSchema = new Schema<CommentDocument>(
 );
 
 export const CommentModel = model<CommentDocument>('Comment', CommentSchema);
- 

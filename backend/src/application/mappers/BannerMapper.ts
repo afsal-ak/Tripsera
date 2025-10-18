@@ -1,10 +1,10 @@
- import { IBanner } from "@domain/entities/IBanner";
-import { BannerResponseDTO } from "@application/dtos/BannerDTO";
+import { IBanner } from '@domain/entities/IBanner';
+import { BannerResponseDTO } from '@application/dtos/BannerDTO';
 
 export abstract class BannerMapper {
   static toResponseDTO(banner: IBanner): BannerResponseDTO {
     return {
-      _id: banner._id?.toString() || "",
+      _id: banner._id?.toString() || '',
       title: banner.title,
       description: banner.description,
       image: {

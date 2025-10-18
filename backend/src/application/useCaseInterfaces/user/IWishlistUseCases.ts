@@ -1,6 +1,4 @@
- import {
-  WishlistResponseDTO,
- } from "@application/dtos/WishlistDTO";
+import { WishlistResponseDTO } from '@application/dtos/WishlistDTO';
 
 export interface IWishlistUseCases {
   addToWishlist(userId: string, packageId: string): Promise<void>;
@@ -19,6 +17,4 @@ export interface IWishlistUseCases {
     totalPage: number;
     totalItems: number;
   }>;
-
-
 }

@@ -1,11 +1,14 @@
 import { IPackage } from '@domain/entities/IPackage';
-import { PackageResponseDTO, PackageTableResponseDTO,PackageCardDTO } from '@application/dtos/PackageDTO';
+import {
+  PackageResponseDTO,
+  PackageTableResponseDTO,
+  PackageCardDTO,
+} from '@application/dtos/PackageDTO';
 import { EnumOfferType } from '@constants/enum/packageEnum';
 
 export abstract class PackageMapper {
-
   static toResponseDTO(pkg: IPackage): PackageResponseDTO {
-    const finalPrice = PackageMapper.calculateFinalPrice(pkg); 
+    const finalPrice = PackageMapper.calculateFinalPrice(pkg);
 
     return {
       _id: pkg._id?.toString() || '',
@@ -43,17 +46,17 @@ export abstract class PackageMapper {
       updatedAt: pkg.updatedAt,
     };
   }
- static toCardDTO(pkg: IPackage): PackageCardDTO {
+  static toCardDTO(pkg: IPackage): PackageCardDTO {
     const finalPrice = this.calculateFinalPrice(pkg);
-    const categoryNames =
-      (pkg as any).categoryDetails?.map((cat: any) => cat.name) || [];
+    const categoryNames = (pkg as any).categoryDetails?.map((cat: any) => cat.name) || [];
 
     return {
-      _id: pkg._id?.toString() || "",
+      _id: pkg._id?.toString() || '',
       title: pkg.title,
       categoryNames,
- durationDays: pkg.durationDays,
-      durationNights: pkg.durationNights,      price: pkg.price,
+      durationDays: pkg.durationDays,
+      durationNights: pkg.durationNights,
+      price: pkg.price,
       finalPrice,
       imageUrl: pkg.imageUrls?.[0]?.url || null,
       offerName: pkg.offer?.isActive ? pkg.offer.name : undefined,
@@ -70,7 +73,7 @@ export abstract class PackageMapper {
       price: pkg.price,
       finalPrice,
       duration: pkg.duration,
-            category: pkg.category,
+      category: pkg.category,
 
       isBlocked: pkg.isBlocked,
       offerName: pkg.offer?.name,
@@ -80,7 +83,7 @@ export abstract class PackageMapper {
   }
 
   /**
-   * Calculates final discounted price 
+   * Calculates final discounted price
    */
   private static calculateFinalPrice(pkg: IPackage): number {
     let finalPrice = pkg.price;

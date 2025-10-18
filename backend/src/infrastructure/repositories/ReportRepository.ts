@@ -1,58 +1,53 @@
-import { IReport } from "@domain/entities/IReport";
-import { EnumReportStatus } from "@constants/enum/reportEnum";
-import { IReportRepository } from "@domain/repositories/IReportRepository";
-import { IFilter } from "@domain/entities/IFilter";
+import { IReport } from '@domain/entities/IReport';
+import { EnumReportStatus } from '@constants/enum/reportEnum';
+import { IReportRepository } from '@domain/repositories/IReportRepository';
+import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
-import  { SortOrder } from 'mongoose';
-import { BaseRepository } from "./BaseRepository";
-import { ReportModel } from "@infrastructure/models/Report";
- import { IReportTableAggregate } from "@infrastructure/db/types.ts/IReportTableAggregate";
+import { SortOrder } from 'mongoose';
+import { BaseRepository } from './BaseRepository';
+import { ReportModel } from '@infrastructure/models/Report';
+import { IReportTableAggregate } from '@infrastructure/db/types.ts/IReportTableAggregate';
 
-
-
- export class ReportRepository extends BaseRepository<IReport> implements IReportRepository {
+export class ReportRepository extends BaseRepository<IReport> implements IReportRepository {
   constructor() {
-    super(ReportModel)
+    super(ReportModel);
   }
   async existingReport(reportedId: string, reporterId: string): Promise<boolean> {
-    const existingReport = await ReportModel.findOne({ reportedId, reporterId })
-    return !!existingReport
+    const existingReport = await ReportModel.findOne({ reportedId, reporterId });
+    return !!existingReport;
   }
 
   async findAllReports(
     page: number,
     limit: number,
     filters: IFilter
-  ): Promise<{ report: IReportTableAggregate[]; pagination: PaginationInfo; }> {
+  ): Promise<{ report: IReportTableAggregate[]; pagination: PaginationInfo }> {
+    const skip = (page - 1) * limit;
 
-    const skip = (page - 1) * limit
-
-    const matchStage: any = {}
+    const matchStage: any = {};
 
     if (filters.status) {
-      matchStage.status = filters.status
+      matchStage.status = filters.status;
     }
 
     if (filters.startDate && filters.endDate) {
       matchStage.createdAt = {
         $gte: new Date(filters.startDate),
-        $lte: new Date(filters.endDate)
-      }
+        $lte: new Date(filters.endDate),
+      };
     }
     const sortOption: Record<string, SortOrder> = {};
 
     if (filters.sort === 'asc') {
-      sortOption.createdAt = 1
+      sortOption.createdAt = 1;
     } else if (filters.sort === 'desc') {
-      sortOption.createdAt = -1
-
+      sortOption.createdAt = -1;
     } else {
-      sortOption.createdAt = -1
+      sortOption.createdAt = -1;
     }
 
-   
-     if (filters.customFilter) {
-      matchStage.reportedType = filters.customFilter
+    if (filters.customFilter) {
+      matchStage.reportedType = filters.customFilter;
     }
 
     const aggregatePipeline: any[] = [
@@ -64,8 +59,8 @@ import { ReportModel } from "@infrastructure/models/Report";
           from: 'users',
           localField: 'reporterId',
           foreignField: '_id',
-          as: 'reporterUser'
-        }
+          as: 'reporterUser',
+        },
       },
       { $unwind: { path: '$reporterUser', preserveNullAndEmptyArrays: true } },
 
@@ -75,8 +70,8 @@ import { ReportModel } from "@infrastructure/models/Report";
           from: 'users',
           localField: 'reportedId',
           foreignField: '_id',
-          as: 'reportedUser'
-        }
+          as: 'reportedUser',
+        },
       },
       { $unwind: { path: '$reportedUser', preserveNullAndEmptyArrays: true } },
 
@@ -86,8 +81,8 @@ import { ReportModel } from "@infrastructure/models/Report";
           from: 'blogs',
           localField: 'reportedId',
           foreignField: '_id',
-          as: 'reportedBlog'
-        }
+          as: 'reportedBlog',
+        },
       },
       { $unwind: { path: '$reportedBlog', preserveNullAndEmptyArrays: true } },
       {
@@ -95,8 +90,8 @@ import { ReportModel } from "@infrastructure/models/Report";
           from: 'users',
           localField: 'reportedBlog.author',
           foreignField: '_id',
-          as: 'reportedBlogOwner'
-        }
+          as: 'reportedBlogOwner',
+        },
       },
       { $unwind: { path: '$reportedBlogOwner', preserveNullAndEmptyArrays: true } },
 
@@ -106,8 +101,8 @@ import { ReportModel } from "@infrastructure/models/Report";
           from: 'reviews',
           localField: 'reportedId',
           foreignField: '_id',
-          as: 'reportedReview'
-        }
+          as: 'reportedReview',
+        },
       },
       { $unwind: { path: '$reportedReview', preserveNullAndEmptyArrays: true } },
       {
@@ -115,10 +110,10 @@ import { ReportModel } from "@infrastructure/models/Report";
           from: 'users',
           localField: 'reportedReview.userId',
           foreignField: '_id',
-          as: 'reportedReviewOwner'
-        }
+          as: 'reportedReviewOwner',
+        },
       },
-      { $unwind: { path: '$reportedReviewOwner', preserveNullAndEmptyArrays: true } }
+      { $unwind: { path: '$reportedReviewOwner', preserveNullAndEmptyArrays: true } },
     ];
 
     //  search
@@ -130,9 +125,9 @@ import { ReportModel } from "@infrastructure/models/Report";
             { 'reporterUser.username': searchRegex },
             { 'reportedUser.username': searchRegex },
             { 'reportedBlogOwner.username': searchRegex },
-            { 'reportedReviewOwner.username': searchRegex }
-          ]
-        }
+            { 'reportedReviewOwner.username': searchRegex },
+          ],
+        },
       });
     }
 
@@ -159,8 +154,8 @@ import { ReportModel } from "@infrastructure/models/Report";
           blogTitle: '$reportedBlog.title',
           blogOwner: '$reportedBlogOwner.username',
           reviewTitle: '$reportedReview.title',
-          reviewOwner: '$reportedReviewOwner.username'
-        }
+          reviewOwner: '$reportedReviewOwner.username',
+        },
       }
     );
 
@@ -173,14 +168,10 @@ import { ReportModel } from "@infrastructure/models/Report";
       totalPages: Math.ceil(total / limit),
     };
     return { report, pagination };
-
   }
 
   async updateReportStatus(id: string, status: EnumReportStatus): Promise<boolean> {
-    const report =await ReportModel.findById(id,status)
-    return !!report
+    const report = await ReportModel.findById(id, status);
+    return !!report;
   }
-
-
-
 }

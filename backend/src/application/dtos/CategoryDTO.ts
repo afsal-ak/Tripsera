@@ -1,7 +1,6 @@
 export interface CreateCategoryDTO {
   name: string;
-    isBlocked: boolean;
-
+  isBlocked: boolean;
 }
 
 export interface UpdateCategoryDTO {

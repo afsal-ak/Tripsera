@@ -7,7 +7,7 @@ export class ReferralUseCase implements IReferralUseCases {
   constructor(private _referralRepo: IReferralRepository) {}
 
   async getReferral(): Promise<ReferralResponseDTO | null> {
-    const referral= await this._referralRepo.getReferral();
-    return referral?ReferralMapper.toResponseDTO(referral):null
+    const referral = await this._referralRepo.getReferral();
+    return referral ? ReferralMapper.toResponseDTO(referral) : null;
   }
 }

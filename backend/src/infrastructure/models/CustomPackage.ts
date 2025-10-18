@@ -1,6 +1,10 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { ICustomPackage } from "@domain/entities/ICustomPackage";
-import { TripTypeEnum, AccommodationTypeEnum, CustomPkgStatusEnum } from "@constants/enum/customPackageEnum";
+import mongoose, { Schema, Document } from 'mongoose';
+import { ICustomPackage } from '@domain/entities/ICustomPackage';
+import {
+  TripTypeEnum,
+  AccommodationTypeEnum,
+  CustomPkgStatusEnum,
+} from '@constants/enum/customPackageEnum';
 
 type CustomPackageDocument = ICustomPackage & Document;
 
@@ -8,7 +12,7 @@ const CustomPackageSchema = new Schema<CustomPackageDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "Users",
+      ref: 'Users',
     },
     guestInfo: {
       name: { type: String },
@@ -44,9 +48,6 @@ const CustomPackageSchema = new Schema<CustomPackageDocument>(
   { timestamps: true }
 );
 
-const CustomPackage = mongoose.model<CustomPackageDocument>(
-  "CustomPackage",
-  CustomPackageSchema
-);
+const CustomPackage = mongoose.model<CustomPackageDocument>('CustomPackage', CustomPackageSchema);
 
 export default CustomPackage;

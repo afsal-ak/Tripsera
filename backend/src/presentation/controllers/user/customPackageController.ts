@@ -1,23 +1,22 @@
-import { Request, Response, NextFunction } from "express";
-import { ICustomPkgUseCases } from "@application/useCaseInterfaces/user/ICustomPackageUseCases";
-import { CreateCustomPkgDTO, UpdateCustomPkgDTO } from "@application/dtos/CustomPkgDTO";
-import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
-import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-import { AppError } from "@shared/utils/AppError";
-
+import { Request, Response, NextFunction } from 'express';
+import { ICustomPkgUseCases } from '@application/useCaseInterfaces/user/ICustomPackageUseCases';
+import { CreateCustomPkgDTO, UpdateCustomPkgDTO } from '@application/dtos/CustomPkgDTO';
+import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { AppError } from '@shared/utils/AppError';
 
 export class CustomPackageController {
-  constructor(private readonly _customPkgUseCases: ICustomPkgUseCases) { }
+  constructor(private readonly _customPkgUseCases: ICustomPkgUseCases) {}
 
   createCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = getUserIdFromRequest(req)
+      const userId = getUserIdFromRequest(req);
 
       const data: CreateCustomPkgDTO = {
         ...req.body,
         userId,
       };
-      const pkg = await this._customPkgUseCases.createCutomPkg(data)
+      const pkg = await this._customPkgUseCases.createCutomPkg(data);
 
       res.status(HttpStatus.CREATED).json({
         success: true,
@@ -25,20 +24,20 @@ export class CustomPackageController {
         message: 'Package created successfully',
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
-  }
+  };
 
   updateCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = getUserIdFromRequest(req)
-      const pkgId = req.params.packageId
-      const data: UpdateCustomPkgDTO = req.body
+      const userId = getUserIdFromRequest(req);
+      const pkgId = req.params.packageId;
+      const data: UpdateCustomPkgDTO = req.body;
 
-      const pkg = await this._customPkgUseCases.updateCutomPkg(pkgId, userId, data)
+      const pkg = await this._customPkgUseCases.updateCutomPkg(pkgId, userId, data);
       console.log(data, 'data from pkg');
       if (!pkg) {
-        throw new AppError(HttpStatus.NOT_FOUND, 'not found')
+        throw new AppError(HttpStatus.NOT_FOUND, 'not found');
       }
       res.status(HttpStatus.CREATED).json({
         success: true,
@@ -46,9 +45,9 @@ export class CustomPackageController {
         message: 'Package updated successfully',
       });
     } catch (error) {
-      next(error)
+      next(error);
     }
-  }
+  };
 
   getAllCustomPkgs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -67,7 +66,6 @@ export class CustomPackageController {
     }
   };
 
-
   getCustomPkgById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const pkgId = req.params.packageId;
@@ -84,7 +82,6 @@ export class CustomPackageController {
 
   deleteCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-
       const userId = getUserIdFromRequest(req);
       const pkgId = req.params.packageId;
       const result = await this._customPkgUseCases.deleteCustomPkg(pkgId, userId);
@@ -96,5 +93,4 @@ export class CustomPackageController {
       next(error);
     }
   };
-
 }

@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { IReferralUseCases } from '@application/useCaseInterfaces/admin/IReferralUserCases';
-import {  UpdateReferralDTO } from '@application/dtos/ReferralDto';
+import { UpdateReferralDTO } from '@application/dtos/ReferralDto';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class ReferralController {
-
   constructor(private _referralUseCase: IReferralUseCases) {}
 
   saveReferralSettings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -24,9 +23,8 @@ export class ReferralController {
     try {
       const data = await this._referralUseCase.getReferral();
 
- 
       res.status(HttpStatus.OK).json({
-        referral:data,
+        referral: data,
         message: 'Referral fetched successfully',
       });
     } catch (error) {

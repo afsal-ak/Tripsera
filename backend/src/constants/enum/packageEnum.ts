@@ -8,10 +8,10 @@ export enum EnumPackageStatus {
   BLOCKED = 'blocked',
 }
 export enum OfferTypeEnum {
-  PERCENTAGE = "percentage",
-  FLAT = "flat",
+  PERCENTAGE = 'percentage',
+  FLAT = 'flat',
 }
 
 export enum LocationTypeEnum {
-  POINT = "Point",
+  POINT = 'Point',
 }

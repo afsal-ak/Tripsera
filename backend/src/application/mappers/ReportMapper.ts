@@ -1,8 +1,8 @@
- import { IReport } from "@domain/entities/IReport";
-import { EnumAdminAction,EnumReportStatus } from "@constants/enum/reportEnum";
-import { ReportSingleResponseDTO ,ReportTableResponseDTO} from "@application/dtos/ReportDTO";
-import { IReportTableAggregate } from "@infrastructure/db/types.ts/IReportTableAggregate";
- 
+import { IReport } from '@domain/entities/IReport';
+import { EnumAdminAction, EnumReportStatus } from '@constants/enum/reportEnum';
+import { ReportSingleResponseDTO, ReportTableResponseDTO } from '@application/dtos/ReportDTO';
+import { IReportTableAggregate } from '@infrastructure/db/types.ts/IReportTableAggregate';
+
 export abstract class ReportMapper {
   static toSingleResponseDTO(report: IReport): ReportSingleResponseDTO {
     return {
@@ -19,23 +19,23 @@ export abstract class ReportMapper {
     };
   }
 
-   static toResponseTableDTO(report: IReportTableAggregate): ReportTableResponseDTO {
+  static toResponseTableDTO(report: IReportTableAggregate): ReportTableResponseDTO {
     return {
-      _id: report._id?.toString() || "",
+      _id: report._id?.toString() || '',
       reportedType: report.reportedType,
       reason: report.reason,
-      description: report.description || "",
+      description: report.description || '',
       status: report.status,
       adminAction: report.adminAction,
       createdAt: report.createdAt,
 
-      reporterUserName: report.reporterUserName || "",
+      reporterUserName: report.reporterUserName || '',
 
-      reportedUserName: report.reportedUserName || "",
-      blogTitle: report.blogTitle || "",
-      blogOwner: report.blogOwner || "",
-      reviewTitle: report.reviewTitle || "",
-      reviewOwner: report.reviewOwner || "",
+      reportedUserName: report.reportedUserName || '',
+      blogTitle: report.blogTitle || '',
+      blogOwner: report.blogOwner || '',
+      reviewTitle: report.reviewTitle || '',
+      reviewOwner: report.reviewOwner || '',
     };
   }
 }

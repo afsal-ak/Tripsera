@@ -1,4 +1,4 @@
- export interface CreateReviewDTO {
+export interface CreateReviewDTO {
   userId: string;
   username: string;
   packageTitle: string;
@@ -14,5 +14,3 @@ export interface UpdateReviewDTO {
   comment?: string;
   isBlocked?: boolean;
 }
-
- 

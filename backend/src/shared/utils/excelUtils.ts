@@ -1,4 +1,3 @@
-
 import ExcelJS from 'exceljs';
 import { IBooking } from '@domain/entities/IBooking';
 import { ISalesReportSummary } from '@domain/entities/ISalesReportSummary';
@@ -29,7 +28,7 @@ export const exportSalesReportExcel = async (
 
   // Add booking rows
   bookings.forEach((booking) => {
-    const walletUsed =  booking.walletAmountUsed || 0;
+    const walletUsed = booking.walletAmountUsed || 0;
 
     // if razorpay or wallet+razorpay then amountPaid = online portion
     const onlinePaid =
@@ -40,12 +39,10 @@ export const exportSalesReportExcel = async (
     worksheet.addRow({
       bookingCode: booking.bookingCode,
       username: booking.contactDetails?.name || (booking.userId as any)?.username || '',
-       packageCode: (booking.packageId as any)?.packageCode || '',
-           travelerCount: booking.travelers?.length || 0,
+      packageCode: (booking.packageId as any)?.packageCode || '',
+      travelerCount: booking.travelers?.length || 0,
 
-      bookedAt: booking.bookedAt
-        ? formatDate(booking.bookedAt)
-        : formatDate(booking.createdAt),
+      bookedAt: booking.bookedAt ? formatDate(booking.bookedAt) : formatDate(booking.createdAt),
       travelDate: booking.travelDate ? formatDate(booking.travelDate) : '',
       paymentMethod: booking.paymentMethod,
       onlinePaid,

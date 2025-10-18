@@ -1,16 +1,12 @@
-import { Request, Response, NextFunction } from "express";
-import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatRoomUseCases";
-import {
-  CreateChatRoomDTO,
-  UpdateChatRoomDTO,
-
- } from "@application/dtos/ChatDTO";
-import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
-import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-import { EnumChatRoomSort } from "@constants/enum/chatRoomEnum";
+import { Request, Response, NextFunction } from 'express';
+import { IChatRoomUseCase } from '@application/useCaseInterfaces/chat/IChatRoomUseCases';
+import { CreateChatRoomDTO, UpdateChatRoomDTO } from '@application/dtos/ChatDTO';
+import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { EnumChatRoomSort } from '@constants/enum/chatRoomEnum';
 
 export class ChatRoomController {
-  constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) { }
+  constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) {}
 
   // Create a new chat room
   createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -32,8 +28,8 @@ export class ChatRoomController {
 
       res.status(HttpStatus.CREATED).json({
         success: true,
-        message: "Chat room created successfully",
-        data:room,
+        message: 'Chat room created successfully',
+        data: room,
       });
     } catch (error) {
       next(error);
@@ -46,16 +42,16 @@ export class ChatRoomController {
       const roomId = req.params.roomId;
       const userId = getUserIdFromRequest(req);
 
-      const room = await this._chatRoomUseCases.getChatRoomById(roomId,userId);
+      const room = await this._chatRoomUseCases.getChatRoomById(roomId, userId);
 
       if (!room) {
-        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: "Chat room not found" });
+        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: 'Chat room not found' });
         return;
       }
       //  console.log(room, 'roooooom')
       res.status(HttpStatus.OK).json({
         success: true,
-        data:room,
+        data: room,
       });
     } catch (error) {
       next(error);
@@ -67,7 +63,7 @@ export class ChatRoomController {
       const userId = getUserIdFromRequest(req);
 
       const filter = req.query.filter as EnumChatRoomSort | undefined;
-        
+
       const rooms = await this._chatRoomUseCases.getUserChatRooms(userId, filter);
 
       res.status(HttpStatus.OK).json({
@@ -88,13 +84,13 @@ export class ChatRoomController {
       const updatedRoom = await this._chatRoomUseCases.updateChatRoom(roomId, data);
 
       if (!updatedRoom) {
-        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: "Chat room not found" });
+        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: 'Chat room not found' });
         return;
       }
 
       res.status(HttpStatus.OK).json({
         success: true,
-        message: "Chat room updated successfully",
+        message: 'Chat room updated successfully',
         data: updatedRoom,
       });
     } catch (error) {
@@ -110,13 +106,13 @@ export class ChatRoomController {
       const deleted = await this._chatRoomUseCases.deleteChatRoom(roomId);
 
       if (!deleted) {
-        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: "Chat room not found" });
+        res.status(HttpStatus.NOT_FOUND).json({ success: false, message: 'Chat room not found' });
         return;
       }
 
       res.status(HttpStatus.OK).json({
         success: true,
-        message: "Chat room deleted successfully",
+        message: 'Chat room deleted successfully',
       });
     } catch (error) {
       next(error);

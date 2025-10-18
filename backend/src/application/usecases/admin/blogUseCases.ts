@@ -6,7 +6,7 @@ import { BlogMapper } from '@application/mappers/BlogMapper';
 import { BlogResponseDTO } from '@application/dtos/BlogDTO';
 
 export class BlogUseCases implements IBlogUseCases {
-  constructor(private _blogRepository: IBlogRepository) { }
+  constructor(private _blogRepository: IBlogRepository) {}
 
   async getAllBlogs(
     page: number,
@@ -16,8 +16,8 @@ export class BlogUseCases implements IBlogUseCases {
     const result = await this._blogRepository.getAllBlog(page, limit, filters);
     return {
       pagination: result.pagination,
-      data: result.blogs.map(BlogMapper.toResponseDTO)
-    }
+      data: result.blogs.map(BlogMapper.toResponseDTO),
+    };
   }
 
   async deleteBlog(blogId: string): Promise<void> {
@@ -30,8 +30,6 @@ export class BlogUseCases implements IBlogUseCases {
 
   async getBlogById(blogId: string): Promise<BlogResponseDTO | null> {
     const result = await this._blogRepository.getBlogById(blogId);
-    return BlogMapper.toResponseDTO(result!)
-
+    return BlogMapper.toResponseDTO(result!);
   }
-
 }

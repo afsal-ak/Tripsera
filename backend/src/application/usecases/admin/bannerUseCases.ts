@@ -3,10 +3,8 @@ import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/
 import { CreateBannerDTO, BannerResponseDTO } from '@application/dtos/BannerDTO';
 import { BannerMapper } from '@application/mappers/BannerMapper';
 
-
 export class BannerMangementUseCases implements IBannerManagementUseCases {
-
-  constructor(private _bannerRepository: IBannerRepository) { }
+  constructor(private _bannerRepository: IBannerRepository) {}
 
   async createNewBanner(bannerData: CreateBannerDTO): Promise<BannerResponseDTO> {
     const newBanner = await this._bannerRepository.createBanner(bannerData);

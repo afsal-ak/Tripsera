@@ -1,14 +1,10 @@
-import { Types } from "mongoose";
-import { 
-  EnumAdminAction,
-  EnumReportStatus,
-  EnumReportedType
- } from "@constants/enum/reportEnum";
- 
+import { Types } from 'mongoose';
+import { EnumAdminAction, EnumReportStatus, EnumReportedType } from '@constants/enum/reportEnum';
+
 export interface IReport {
   _id?: string;
   reportedId: Types.ObjectId | string;
-  reporterId:Types.ObjectId | string;
+  reporterId: Types.ObjectId | string;
   reportedType: EnumReportedType;
   reason: string;
   description?: string;

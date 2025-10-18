@@ -1,4 +1,3 @@
-
 export interface CreateReferralDTO {
   amount: number;
 }
@@ -13,5 +12,4 @@ export interface ReferralResponseDTO {
   _id: string;
   amount: number;
   isBlocked: boolean;
-  
 }

@@ -1,5 +1,4 @@
-import { ITopPackage, ITopCategory,IBookingsChartData } from "@application/dtos/DashboardDTO";
-
+import { ITopPackage, ITopCategory, IBookingsChartData } from '@application/dtos/DashboardDTO';
 
 export interface IDashboardRepository {
   getTotalUsers(startDate?: Date, endDate?: Date): Promise<number>;
@@ -8,11 +7,10 @@ export interface IDashboardRepository {
   getTotalCustomPlans(startDate?: Date, endDate?: Date): Promise<number>;
   getTotalBlogs(startDate?: Date, endDate?: Date): Promise<number>;
   getTopBookedPackages(startDate?: Date, endDate?: Date): Promise<ITopPackage[]>;
-   getTopBookedCategories(startDate?: Date, endDate?: Date): Promise<ITopCategory[]>;
+  getTopBookedCategories(startDate?: Date, endDate?: Date): Promise<ITopCategory[]>;
   getBookingsChartData(
     startDate?: Date,
     endDate?: Date,
-    groupBy?: "hour"|"day" | "month" | "year"
+    groupBy?: 'hour' | 'day' | 'month' | 'year'
   ): Promise<IBookingsChartData[]>;
- 
 }
