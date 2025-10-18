@@ -23,8 +23,7 @@ const AdminNavbar = ({ onSidebarToggle, title }: AdminNavbarProps) => {
   const adminId = useSelector(
     (state: RootState) => state.adminAuth.admin?._id
   );
- // dispatch(fetchNotifications({isAdmin:true}))
- const notificationUnread = useSelector(
+  const notificationUnread = useSelector(
     (state: RootState) => state.notifications.unreadCount
   )
    const totalUnread = useTotalUnreadCount(adminId!);

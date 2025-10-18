@@ -15,8 +15,7 @@ import { fetchNotifications } from '@/redux/slices/notificationSlice';
     (state: RootState) => state.userAuth
   );
 
-  //dispatch(fetchNotifications({isAdmin:false}))
-
+ 
  const notificationUnread = useSelector(
     (state: RootState) => state.notifications.unreadCount
   )
