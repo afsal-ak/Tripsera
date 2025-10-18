@@ -54,6 +54,10 @@ import { BookingUseCases } from '@application/usecases/user/bookingUseCases';
 import { BookingController } from '@presentation/controllers/user/bookingController';
 import { RazorpayService } from '@infrastructure/services/razorpay/razorpayService';
 
+import { CommentRepository } from '@infrastructure/repositories/CommentRepository';
+import { CommentUseCases } from '@application/usecases/user/commentUseCases';
+import { CommentController } from '@presentation/controllers/user/commentController';
+
 import { BlogRepository } from '@infrastructure/repositories/BlogRepository';
 import { BlogUseCases } from '@application/usecases/user/blogUseCases';
 import { BlogController } from '@presentation/controllers/user/blogControllers';
@@ -87,16 +91,12 @@ import { MessageController } from '@presentation/controllers/chat/MessageControl
 import { NotificationUseCases } from '@application/usecases/notification/notificationUseCases';
 import { NotificationRepository } from '@infrastructure/repositories/NotificationRepository';
 import { NotificationController } from '@presentation/controllers/user/notificationController';
-import { NotificationSocketService } from '@infrastructure/sockets/NotificationSocketService';
-import { io } from 'app';
+
 
 import { BlockController } from '@presentation/controllers/user/blockController';
 import { BlockUseCase } from '@application/usecases/user/blockUseCases';
 import { BlockRepository } from '@infrastructure/repositories/BlockRepository';
 
-import { CommentRepository } from '@infrastructure/repositories/CommentRepository';
-import { CommentUseCases } from '@application/usecases/user/commentUseCases';
-import { CommentController } from '@presentation/controllers/user/commentController';
 
  
 const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
@@ -152,17 +152,23 @@ const profileRepository = new UserRepository();
 const profileUseCases = new ProfileUseCases(profileRepository,notificationUseCases);
 const profileController = new ProfileController(profileUseCases);
 
- const notificationSocketService=new NotificationSocketService(io,notificationUseCases)
-
+ 
 
 const bookingRepository = new BookingRepository();
 const razorpayService = new RazorpayService();
 const bookingUseCases = new BookingUseCases(bookingRepository, walletRepository,userRepository,packageRepository,razorpayService,notificationUseCases);
 const bookingController = new BookingController(bookingUseCases);
 
+
+
 const blogRepository = new BlogRepository();
 const blogUseCases = new BlogUseCases(blogRepository);
 const blogController = new BlogController(blogUseCases);
+
+const commentRepository = new CommentRepository();
+const commentUseCases = new CommentUseCases(commentRepository,blogRepository);
+const commentController = new CommentController(commentUseCases);
+
 
 const reviewRepository = new ReviewRepository();
 const reviewUseCases = new ReviewUseCases(reviewRepository, bookingRepository,userRepository,packageRepository);
@@ -180,10 +186,6 @@ const blockRepository = new BlockRepository();
 const blockUseCases = new BlockUseCase(blockRepository);
 const blockController = new BlockController(blockUseCases);
 
-
-const commentRepository = new CommentRepository();
-const commentUseCases = new CommentUseCases(commentRepository);
-const commentController = new CommentController(commentUseCases);
 
 
 const router = Router();

@@ -1,10 +1,9 @@
 import { IBlog } from '@domain/entities/IBlog';
 import { IFilter } from '@domain/entities/IFilter';
-
 import { IBlogRepository } from '@domain/repositories/IBlogRepository';
 import { BlogModel } from '@infrastructure/models/Blog';
 import { SortOrder } from 'mongoose';
-//import { CommentModel } from "@infrastructure/models/Comment";
+import { CommentModel } from "@infrastructure/models/Comment";
 import { FilterQuery } from 'mongoose';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { IUser } from '@domain/entities/IUser';
@@ -281,7 +280,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
   }
   async deleteBlog(blogId: string): Promise<void> {
     await BlogModel.findByIdAndDelete(blogId);
-    //  await CommentModel.deleteMany({ blogId });
+     await CommentModel.deleteMany({ blogId });
   }
 
   async changeBlogStatus(blogId: string, isBlocked: boolean): Promise<void> {

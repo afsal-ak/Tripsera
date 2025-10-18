@@ -4,15 +4,30 @@ import { IComment } from '@domain/entities/IComment';
 import { ICommentUseCases } from '@application/useCaseInterfaces/user/ICommentUseCases';
 import { CommentMapper } from '@application/mappers/commentMapper';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
+import { IBlogRepository } from '@domain/repositories/IBlogRepository';
+import { AppError } from '@shared/utils/AppError';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class CommentUseCases implements ICommentUseCases {
-    constructor(private _commentRepo: ICommentRepository) { }
+    constructor(
+        private _commentRepo: ICommentRepository,
+        private _blogRepo: IBlogRepository
+    ) { }
 
     async createComment(data: CreateCommentDto): Promise<CommentResponseDTO> {
+        const blog = await this._blogRepo.findById(data.parentId)
+        if (!blog) {
+            throw new AppError(HttpStatus.NOT_FOUND, 'Not Found')
+        }
         const comment = await this._commentRepo.create(data);
         return CommentMapper.toResponseDTO(comment)
     }
     async replyComment(data: ReplyCommentDto): Promise<CommentResponseDTO> {
+        const blog = await this._blogRepo.findById(data.parentId)
+
+        if (!blog) {
+            throw new AppError(HttpStatus.NOT_FOUND, 'Not Found')
+        }
         const comment = await this._commentRepo.create(data);
         return CommentMapper.toResponseDTO(comment)
     }
