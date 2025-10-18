@@ -16,6 +16,7 @@ import { EnumUserRole } from '@constants/enum/userEnum';
 import { BookingDetailResponseDTO, BookingTableResponseDTO, BookingUserResponseDTO, CreateBookingDTO } from '@application/dtos/BookingDTO';
 import { BookingMapper } from '@application/mappers/BookingMapper';
 import { IBookingTable } from "@domain/entities/IBookingTable";
+import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
 
 
 export class BookingUseCases implements IBookingUseCases {
@@ -74,10 +75,10 @@ export class BookingUseCases implements IBookingUseCases {
         role: EnumUserRole.USER,
         userId: booking.userId.toString(),
         title: "Booking Refund",
-        entityType: "wallet",
+        entityType:EnumNotificationEntityType.WALLET,
         walletId: wallet._id!.toString(),
         message: walletMessage,
-        type: "success",
+        type: EnumNotificationType.SUCCESS,
       });
     }
 
@@ -98,11 +99,11 @@ export class BookingUseCases implements IBookingUseCases {
     await this._notificationUseCases.sendNotification({
       role: EnumUserRole.ADMIN,
       title: "Booking Cancelled",
-      entityType: "booking",
+      entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking._id!.toString(),
       packageId: booking.packageId.toString(),
       message: bookingMessage,
-      type: "warning",
+      type: EnumNotificationType.WARNING,
       triggeredBy: userId,
       metadata: { bookingId: booking._id, reason },
     });
@@ -225,13 +226,14 @@ export class BookingUseCases implements IBookingUseCases {
 
     const notification = await this._notificationUseCases.sendNotification({
 
+
       role: EnumUserRole.ADMIN,
       title: "New Booking",
-      entityType: 'booking',
+      entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking?._id?.toString(),
       packageId: booking?.packageId.toString(),
       message,
-      type: "success",
+      type: EnumNotificationType.SUCCESS,
       triggeredBy: userId,
       metadata: { bookingId: booking._id },
     });
@@ -364,15 +366,15 @@ export class BookingUseCases implements IBookingUseCases {
     const notification = await this._notificationUseCases.sendNotification({
       role: EnumUserRole.ADMIN,
       title: "New Booking",
-      entityType: 'booking',
+      entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking?._id?.toString(),
       packageId: booking?.packageId.toString(),
       message,
-      type: "success",
+      type: EnumNotificationType.SUCCESS,
       triggeredBy: userId,
       metadata: { bookingId: booking._id },
     });
-
+     
 
     return { booking: BookingMapper.toDetailResponseDTO(booking) };
   }
@@ -430,10 +432,10 @@ export class BookingUseCases implements IBookingUseCases {
         role: EnumUserRole.USER,
         userId: bookingDoc.userId.toString(),
         title: "Traveler Refund",
-        entityType: "wallet",
+        entityType:EnumNotificationEntityType.WALLET,
         walletId: wallet._id!.toString(),
         message: `₹${refundAmount} refunded to your wallet for removed traveler ${removedTraveler.fullName}.`,
-        type: "success",
+        type: EnumNotificationType.SUCCESS,
       });
 
       // Track adjustment history
@@ -462,11 +464,11 @@ export class BookingUseCases implements IBookingUseCases {
     await this._notificationUseCases.sendNotification({
       role: EnumUserRole.ADMIN,
       title: "Traveler Removed",
-      entityType: "booking",
+      entityType:EnumNotificationEntityType.BOOKING,
       bookingId: bookingDoc._id!.toString(),
       packageId: bookingDoc.packageId.toString(),
       message: `Traveler ${removedTraveler.fullName} removed from booking ${bookingDoc.bookingCode} (${pkg?.title || ""})`,
-      type: "warning",
+      type: EnumNotificationType.WARNING,
       triggeredBy: userId,
       metadata: { removedTraveler, note },
     });

@@ -11,6 +11,7 @@ import { IBlogRepository } from "@domain/repositories/IBlogRepository";
 import { EnumUserRole } from "@constants/enum/userEnum";
 import { ReportSingleResponseDTO } from "@application/dtos/ReportDTO";
 import { ReportMapper } from "@application/mappers/ReportMapper";
+import { EnumNotificationEntityType, EnumNotificationType } from "@constants/enum/notificationEnum";
 
 export class ReportUseCases implements IReportUseCases {
     constructor(
@@ -49,10 +50,10 @@ export class ReportUseCases implements IReportUseCases {
         const notification = await this._notificationUseCases.sendNotification({
             role:EnumUserRole.ADMIN,
             title: "New Report",
-            entityType: 'report',
+            entityType:EnumNotificationEntityType.REPORT,
             reportedId: report?._id!?.toString(),
             message,
-            type: "warning",
+            type:EnumNotificationType.WARNING,
             triggeredBy: report.reporterId.toString(),
         });
 

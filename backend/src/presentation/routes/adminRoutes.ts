@@ -129,7 +129,7 @@ const packageUseCase = new PackageUseCases(packageRepository);
 const packageController = new PackageController(packageUseCase);
 
 const notificationRepository=new NotificationRepository()
-const notificationUseCases=new NotificationUseCases(notificationRepository,adminRepository,packageRepository)
+const notificationUseCases=new NotificationUseCases(notificationRepository,adminRepository)
 const notificationController=new NotificationController(notificationUseCases)
 
 const couponRepository = new CouponRepository();

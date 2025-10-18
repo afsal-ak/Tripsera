@@ -10,6 +10,7 @@ import { BookingDetailResponseDTO, BookingTableResponseDTO } from '@application/
 import { BookingMapper } from '@application/mappers/BookingMapper';
 import { IBookingTable } from "@domain/entities/IBookingTable";
 import { EnumDateChangeAction,EnumBookingHistoryAction } from '@constants/enum/bookingEnum';
+import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
 export class BookingUseCases implements IBookingUseCases {
 
   constructor(
@@ -76,10 +77,10 @@ export class BookingUseCases implements IBookingUseCases {
         role: EnumUserRole.USER,
         userId,
         title: "Booking Refund",
-        entityType: "wallet",
+        entityType:EnumNotificationEntityType.WALLET,
         walletId: wallet._id!.toString(),
         message: walletMessage,
-        type: "success",
+        type: EnumNotificationType.SUCCESS,
       });
     }
 
@@ -90,11 +91,11 @@ export class BookingUseCases implements IBookingUseCases {
       role: EnumUserRole.USER,
       userId: userId.toString(),
       title: "Booking Cancelled",
-      entityType: 'booking',
+      entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking?._id!.toString(),
       packageId: booking.packageId.toString(),
       message: bookingMessage,
-      type: "warning",
+      type: EnumNotificationType.WARNING,
       metadata: { bookingId: booking._id, reason },
     });
 
@@ -124,11 +125,11 @@ export class BookingUseCases implements IBookingUseCases {
       role: EnumUserRole.USER,
       userId: userId.toString(),
       title: "Booking Confirmed",
-      entityType: 'booking',
+      entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking?._id!.toString(),
       packageId: booking.packageId.toString(),
       message: bookingMessage,
-      type: "success",
+      type: EnumNotificationType.SUCCESS,
       metadata: { bookingId: booking._id },
     });
     return bkg ? BookingMapper.toDetailResponseDTO(bkg) : null

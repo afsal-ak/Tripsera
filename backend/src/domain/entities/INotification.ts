@@ -1,31 +1,61 @@
 
+// import { Types } from "mongoose";
+// import { EnumUserRole } from "@constants/enum/userEnum";
+// export type IType = "info" | "warning" | "success" | "error"|"request"|"alert";
+// export type IEntityType = "booking" | "package" |"customPacakage"| "review" | "wallet" | 'report'|'follow';
+// export interface INotification {
+//   _id: string;
+//   userId?: Types.ObjectId;
+//   role: EnumUserRole,
+//   title: string;
+//   message: string;
+//   entityType: IEntityType,
+//   type: IType,
+//   isRead: boolean;
+//   packageId?: Types.ObjectId;
+//   bookingId?: Types.ObjectId;
+//   reportedId?: Types.ObjectId;
+//   customPackageId?:Types.ObjectId;
+//   walletId?: Types.ObjectId;
+//   metadata?: Record<string, any>;
+//   triggeredBy?: Types.ObjectId;
+//   createdAt: Date;
+//   updatedAt: Date;
+
+// }
+
+// export interface INotificationFilter {
+//   status?: string;       
+//   type?: IType;          
+//   entityType?: IEntityType;  
+// }
+
 import { Types } from "mongoose";
-import { IRole } from "./IUser";
-export type IType = "info" | "warning" | "success" | "error"|"request"|"alert";
-export type IEntityType = "booking" | "package" |"customPacakage"| "review" | "wallet" | 'report'|'follow';
+import { EnumUserRole } from "@constants/enum/userEnum";
+import { EnumNotificationType, EnumNotificationEntityType } from "@constants/enum/notificationEnum";
+
 export interface INotification {
   _id: string;
   userId?: Types.ObjectId;
-  role: IRole,
+  role: EnumUserRole;
   title: string;
   message: string;
-  entityType: IEntityType,
-  type: IType,
+  entityType: EnumNotificationEntityType;
+  type: EnumNotificationType;
   isRead: boolean;
   packageId?: Types.ObjectId;
   bookingId?: Types.ObjectId;
   reportedId?: Types.ObjectId;
-  customPackageId?:Types.ObjectId;
+  customPackageId?: Types.ObjectId;
   walletId?: Types.ObjectId;
   metadata?: Record<string, any>;
   triggeredBy?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
-
 }
 
 export interface INotificationFilter {
-  status?: string;       
-  type?: IType;          
-  entityType?: IEntityType;  
+  status?: string;
+  type?: EnumNotificationType;
+  entityType?: EnumNotificationEntityType;
 }

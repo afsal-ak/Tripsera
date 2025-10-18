@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { INotificationUseCases } from "@application/useCaseInterfaces/notification/INotificationUseCases";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { IFilter } from "@domain/entities/IFilter";
-import { mapToNotificationDTO } from "@application/dtos/NotificationDTO";
-
+ 
 export class NotificationController {
     constructor(private _notificationUseCases: INotificationUseCases) { }
 
@@ -22,9 +21,8 @@ export class NotificationController {
                 filters
             );
 
-            const data = notification.map(mapToNotificationDTO)
-            res.status(HttpStatus.OK).json({
-                data,
+             res.status(HttpStatus.OK).json({
+                data:notification,
                 pagination,
                 message: 'succes'
             });

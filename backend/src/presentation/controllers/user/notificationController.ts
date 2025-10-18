@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { INotificationUseCases } from "@application/useCaseInterfaces/notification/INotificationUseCases";
-import { mapToNotificationDTO } from "@application/dtos/NotificationDTO";
-import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
+ import { getUserIdFromRequest } from "@shared/utils/getUserIdFromRequest";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-import { IEntityType, INotificationFilter, IType } from "@domain/entities/INotification";
+import {  INotificationFilter } from "@domain/entities/INotification";
+
 export class NotificationController {
     constructor(private _notificationUseCases: INotificationUseCases) { }
 
@@ -26,9 +26,9 @@ export class NotificationController {
                 limit,
                 filters
             );
-            const data = notification.map(mapToNotificationDTO)
+             
              res.status(HttpStatus.OK).json({
-                data,
+                data:notification,
                 pagination,
                 message: 'succes'
             });

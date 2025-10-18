@@ -1,19 +1,18 @@
-import { INotificationRepository } from "@domain/repositories/INotificationRepository";
-import { INotification, INotificationFilter } from "@domain/entities/INotification";
+ import {  INotificationFilter } from "@domain/entities/INotification";
 import { PaginationInfo } from "@application/dtos/PaginationDto";
-import { CreateNotificationDto, MarkAsReadDto, NotificationResponseDto } from "@application/dtos/NotificationDTO";
-
+import { CreateNotificationDto } from "@application/dtos/NotificationDTO";
+import { NotificationResponseDTO,NotificationPopulatedResponseDTO } from "@application/dtos/NotificationDTO";
 
 export interface INotificationUseCases {
 
 
-    sendNotification(data: CreateNotificationDto): Promise<INotification>
+    sendNotification(data: CreateNotificationDto): Promise<NotificationPopulatedResponseDTO>
     getNotifications(userId: string, page: number, limit: number, filters: INotificationFilter
-    ): Promise<{ notification: INotification[], pagination: PaginationInfo }>
+    ): Promise<{ notification: NotificationPopulatedResponseDTO[], pagination: PaginationInfo }>
 
     getAdminNotifications(page: number, limit: number, filters: INotificationFilter
-    ): Promise<{ notification: INotification[], pagination: PaginationInfo }>
+    ): Promise<{ notification: NotificationPopulatedResponseDTO[], pagination: PaginationInfo }>
 
-    markAsRead(notificationId: string): Promise<INotification | null>
+    markAsRead(notificationId: string): Promise<NotificationResponseDTO | null>
     deleteNotification(notificationId: string): Promise<boolean>
 }

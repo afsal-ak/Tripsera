@@ -5,6 +5,7 @@ import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUs
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
 import { EnumUserRole } from '@constants/enum/userEnum';
+import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
 
 
 export class ProfileUseCases implements IProfileUseCases {
@@ -60,9 +61,9 @@ export class ProfileUseCases implements IProfileUseCases {
       userId: followingId,
       role: EnumUserRole.USER,
       title: "New Follower",
-      entityType: 'follow',
+      entityType: EnumNotificationEntityType.FOLLOW,
       message: `  ${user?.username} started following you`,
-      type: "success",
+      type: EnumNotificationType.SUCCESS,
       triggeredBy: followerId,
 
     });

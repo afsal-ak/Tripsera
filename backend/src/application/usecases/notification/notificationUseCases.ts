@@ -4,21 +4,22 @@ import { INotificationRepository } from "@domain/repositories/INotificationRepos
 import { INotification, INotificationFilter } from "@domain/entities/INotification";
 import { IFilter } from "@domain/entities/IFilter";
 import { PaginationInfo } from "@application/dtos/PaginationDto";
-import { CreateNotificationDto, MarkAsReadDto, NotificationResponseDto } from "@application/dtos/NotificationDTO";
-import { NotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
-import { IUserRepository } from "@domain/repositories/IUserRepository";
+import { CreateNotificationDto, MarkAsReadDto } from "@application/dtos/NotificationDTO";
+import { NotificationResponseDTO,NotificationPopulatedResponseDTO } from "@application/dtos/NotificationDTO";
+ import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { getNotificationSocketService } from "@infrastructure/sockets/NotificationSocketService";
-import { IPackageRepository } from "@domain/repositories/IPackageRepository";
+ import { EnumUserRole } from "@constants/enum/userEnum";
+import { NotificationMapper } from "@application/mappers/NotificationMapper ";
 
 export class NotificationUseCases implements INotificationUseCases {
   constructor(
     private readonly _notificationRepo: INotificationRepository,
     private readonly _userRepo: IUserRepository,
-    private readonly _packageRepo: IPackageRepository,
-  ) { }
+   ) { }
 
 
-  async sendNotification(data: CreateNotificationDto): Promise<INotification> {
+  async sendNotification(data: CreateNotificationDto):
+   Promise<NotificationPopulatedResponseDTO> {
 
   
     const notification = await this._notificationRepo.create(data);
@@ -26,7 +27,7 @@ export class NotificationUseCases implements INotificationUseCases {
   // console.log(notification, 'payload notification')
     const socketService = getNotificationSocketService();
 
-    if (notification.role === "admin") {
+    if (notification.role === EnumUserRole.ADMIN) {
       //console.log('jjjjjjjjjjjj')
       const admins = await this._userRepo.getAllAdmins();
       for (const admin of admins) {
@@ -39,19 +40,28 @@ export class NotificationUseCases implements INotificationUseCases {
       socketService.emitNotificationToUser(data.userId!.toString(), notification);
     }
 
-    return notification;
+    return NotificationMapper.toPopulatedResponseDTO(notification);
   }
 
-  async getNotifications(userId: string, page: number, limit: number, filters: INotificationFilter): Promise<{ notification: INotification[], pagination: PaginationInfo }> {
-    return this._notificationRepo.findByUserId(userId, page, limit, filters)
+  async getNotifications(userId: string, page: number, limit: number, filters: INotificationFilter): Promise<{ notification: NotificationPopulatedResponseDTO[], pagination: PaginationInfo }> {
+      const result=  await this._notificationRepo.findByUserId(userId, page, limit, filters)
+      return{
+        notification:result.notification.map(NotificationMapper.toPopulatedResponseDTO),
+        pagination:result.pagination
+      }
   }
 
-  async getAdminNotifications(page: number, limit: number, filters: INotificationFilter): Promise<{ notification: INotification[], pagination: PaginationInfo }> {
-    return this._notificationRepo.findAdminNotifications(page, limit, filters)
+  async getAdminNotifications(page: number, limit: number, filters: INotificationFilter): Promise<{ notification: NotificationPopulatedResponseDTO[], pagination: PaginationInfo }> {
+    const result= await this._notificationRepo.findAdminNotifications(page, limit, filters)
+    return{
+        notification:result.notification.map(NotificationMapper.toPopulatedResponseDTO),
+        pagination:result.pagination
+      }
   }
 
-  async markAsRead(notificationId: string): Promise<INotification | null> {
-    return await this._notificationRepo.markAsRead(notificationId);
+  async markAsRead(notificationId: string): Promise<NotificationResponseDTO | null> {
+    const notification= await this._notificationRepo.markAsRead(notificationId);
+    return notification? NotificationMapper.toResponseDTO(notification):null
 
   }
 

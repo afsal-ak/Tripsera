@@ -7,6 +7,7 @@ import { ICustomPackageRepository } from "@domain/repositories/ICustomPackageRep
 import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { CustomPkgMapper } from "@application/mappers/CustomPkgMapper";
 import { EnumUserRole } from "@constants/enum/userEnum";
+import { EnumNotificationEntityType, EnumNotificationType } from "@constants/enum/notificationEnum";
 
 export class CustomPackageUseCases implements ICustomPkgUseCases {
     constructor(
@@ -27,10 +28,10 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
         const notification = await this._notificationUseCases.sendNotification({
             role: EnumUserRole.ADMIN,
             title: "Custom Package",
-            entityType: 'customPacakage',
+            entityType: EnumNotificationEntityType.CUSTOM_PACKAGE,
             customPackageId: customPkg._id?.toString(),
             message,
-            type: "request",
+            type: EnumNotificationType.REQUEST,
             triggeredBy: userId,
         });
 

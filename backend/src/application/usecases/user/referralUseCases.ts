@@ -1,3 +1,5 @@
+import { ReferralResponseDTO } from '@application/dtos/ReferralDTO';
+import { ReferralMapper } from '@application/mappers/ReferralMapper';
 import { IReferralUseCases } from '@application/useCaseInterfaces/user/IReferralUseCases';
 import { IReferral } from '@domain/entities/IReferral';
 import { IReferralRepository } from '@domain/repositories/IReferralRepository';
@@ -5,7 +7,8 @@ import { IReferralRepository } from '@domain/repositories/IReferralRepository';
 export class ReferralUseCase implements IReferralUseCases {
   constructor(private _referralRepo: IReferralRepository) {}
 
-  async getReferral(): Promise<IReferral | null> {
-    return await this._referralRepo.getReferral();
+  async getReferral(): Promise<ReferralResponseDTO | null> {
+    const referral= await this._referralRepo.getReferral();
+    return referral?ReferralMapper.toResponseDTO(referral):null
   }
 }

@@ -1,13 +1,13 @@
 import { INotification, INotificationFilter } from "@domain/entities/INotification";
 import { CreateNotificationDto } from "@application/dtos/NotificationDTO";
  import { PaginationInfo } from "@application/dtos/PaginationDto";
-
+import { INotificationPopulated } from "@infrastructure/db/types.ts/INotificationPopulated";
 
 export interface INotificationRepository {
-  create(notification: CreateNotificationDto): Promise<INotification>;
+  create(notification: CreateNotificationDto): Promise<INotificationPopulated>;
   
   findByUserId(userId: string, page: number,limit: number,  filters?: INotificationFilter
-  ): Promise<{notification:INotification[],pagination: PaginationInfo}>;
+  ): Promise<{notification:INotificationPopulated[],pagination: PaginationInfo}>;
 
   markAsRead(notificationId: string): Promise<INotification | null>;
 
@@ -17,6 +17,6 @@ export interface INotificationRepository {
   page: number,
   limit: number,
   filters?: INotificationFilter
-): Promise<{ notification: INotification[]; pagination: PaginationInfo }> 
+): Promise<{ notification: INotificationPopulated[]; pagination: PaginationInfo }> 
 
 }

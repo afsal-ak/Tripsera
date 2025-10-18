@@ -64,7 +64,7 @@ socketService.initialize();
 // create repo + useCases
 const notificationRepository = new NotificationRepository();
 const packageRepository = new PackageRepository()
-const notificationUseCases = new NotificationUseCases(notificationRepository, userRepository, packageRepository);
+const notificationUseCases = new NotificationUseCases(notificationRepository, userRepository);
 
 // initialize singleton
 initNotificationSocketService(io, notificationUseCases);

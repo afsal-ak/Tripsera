@@ -145,7 +145,7 @@ const couponController = new CouponController(couponUseCases);
 
 
 const notificationRepository=new NotificationRepository()
-const notificationUseCases=new NotificationUseCases(notificationRepository,userRepository,packageRepository)
+const notificationUseCases=new NotificationUseCases(notificationRepository,userRepository)
 const notificationController=new NotificationController(notificationUseCases)
 
 const profileRepository = new UserRepository();
