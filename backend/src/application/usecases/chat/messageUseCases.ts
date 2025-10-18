@@ -1,12 +1,12 @@
 import { IMessageRepository } from "@domain/repositories/IMessageRepository";
 import { IMessageUseCases } from "@application/useCaseInterfaces/chat/IMessageUseCases";
 import { IMessage } from "@domain/entities/IMessage";
-import { SendMessageDTO, UpdateMessageDTO } from "@application/dtos/MessageDTO";
+import { MessagePopulatedResponseDTO, SendMessageDTO, UpdateMessageDTO } from "@application/dtos/MessageDTO";
 import { IChatRoomRepository } from "@domain/repositories/IChatRoomRepository";
 import { AppError } from "@shared/utils/AppError";
 import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
-  
-
+ import { MessageResponseDTO } from "@application/dtos/MessageDTO";
+import { MessageMapper } from "@application/mappers/MessageMapper";
 export type ChatItemType = "message" | "call";
 
  
@@ -18,28 +18,7 @@ export class MessageUseCases implements IMessageUseCases {
 
 
 
-  // async sendMessage(data: SendMessageDTO): Promise<IMessage> {
-
-  //   const message = await this._messageRepo.sendMessage(data);
-
-  //   const room = await this._chatRoomRepo.findById(message.roomId.toString())
-  //   if (!room) {
-  //     throw new AppError(HttpStatus.NOT_FOUND, 'Room not found')
-  //   }
-
-  //   const recipientId = room.participants.filter((id) => id.toString() !== data.senderId);
-
-  //   const updatedRoom = await this._chatRoomRepo.updateChatRoom(message.roomId.toString(), {
-  //     lastMessageContent: data.content,
-  //     unreadCounts: {
-  //       ...room.unreadCounts,
-  //       [recipientId!.toString()]: (room.unreadCounts?.[recipientId!.toString()] || 0) + 1,
-  //     },
-  //   });
-  //   return message;
-  // }
-
-  async sendMessage(data: SendMessageDTO): Promise<IMessage> {
+  async sendMessage(data: SendMessageDTO): Promise<MessagePopulatedResponseDTO> {
     const message = await this._messageRepo.sendMessage(data);
 
     const room = await this._chatRoomRepo.findById(message.roomId.toString());
@@ -74,35 +53,31 @@ export class MessageUseCases implements IMessageUseCases {
       }
     );
 
-    return message;
+    return MessageMapper.toPopulatedResponseDTO(message);
   }
 
 
-  async getMessagesByRoom(roomId: string, limit: number, skip: number): Promise<IMessage[]> {
-    const msg = await this._messageRepo.getMessagesByRoom(roomId, limit, skip)
+  async getMessagesByRoom(roomId: string, limit: number, skip: number): Promise<MessagePopulatedResponseDTO[]> {
+    const message = await this._messageRepo.getMessagesByRoom(roomId, limit, skip)
 
-    return msg
+    return message.map(MessageMapper.toPopulatedResponseDTO);
   }
 
-  async markMessageAsRead(messageId: string, userId: string): Promise<IMessage | null> {
+  async markMessageAsRead(messageId: string, userId: string): Promise<MessageResponseDTO | null> {
     const message = await this._messageRepo.markMessageAsRead(messageId, userId)
     const roomId = message?.roomId.toString()
     const room = await this._chatRoomRepo.findById(roomId!);
     if (!room) throw new AppError(HttpStatus.NOT_FOUND, "Room not found");
 
-    // const currentCount = room.unreadCounts?.[userId] || 0;
     await this._chatRoomRepo.updateChatRoom(roomId!, {
       unreadCounts: {
         ...room.unreadCounts,
         [userId]: 0,
       },
     });
-    return message
+    return message?MessageMapper.toResponseDTO(message):null
   }
 
-  // async deleteMessage(messageId: string): Promise<boolean> {
-  //   return await this._messageRepo.deleteMessage(messageId)
-  // }
 
   async deleteMessage(messageId: string): Promise<boolean> {
 
@@ -129,7 +104,7 @@ export class MessageUseCases implements IMessageUseCases {
   }
 
 
-  async updateMessage(messageId: string, updates: UpdateMessageDTO): Promise<IMessage | null> {
+  async updateMessage(messageId: string, updates: UpdateMessageDTO): Promise<MessagePopulatedResponseDTO | null> {
     try {
       const message = await this._messageRepo.findById(messageId);
       if (!message) throw new Error("Message not found");
@@ -166,16 +141,16 @@ export class MessageUseCases implements IMessageUseCases {
         callInfo: newCallInfo,
       });
 
-      return updated;
+      return updated?MessageMapper.toPopulatedResponseDTO(updated):null;
+
     } catch (error) {
-      console.error("Error updating message:", error);
       throw new Error("Failed to update message");
     }
   }
 
-  async getMessageById(id: string): Promise<IMessage | null> {
+  async getMessageById(id: string): Promise<MessageResponseDTO | null> {
     const msg = await this._messageRepo.findById(id)
-    return msg ? msg : null
+    return msg ? MessageMapper.toResponseDTO(msg) : null
   }
   
 

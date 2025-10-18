@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IMessageUseCases } from "@application/useCaseInterfaces/chat/IMessageUseCases";
-import { toMessageResponseDTO } from "@application/dtos/MessageDTO";
-import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
+ import { HttpStatus } from "@constants/HttpStatus/HttpStatus";
 import { uploadChatToCloudinary } from "@infrastructure/services/cloudinary/uploadChatToCloudinary ";
 
 export class MessageController {
@@ -16,10 +15,9 @@ export class MessageController {
       const skip = parseInt(req.query.skip as string) || 0;
 
       const messages = await this._messageUseCases.getMessagesByRoom(roomId.toString(), limit, skip);
-      console.log(messages.map(toMessageResponseDTO), 'messages')
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         success: true,
-        data: messages.map(toMessageResponseDTO),
+        data: messages,
       });
     } catch (error) {
       next(error);

@@ -3,6 +3,7 @@ import { IMessageUseCases } from "@application/useCaseInterfaces/chat/IMessageUs
 import { SOCKET_EVENTS, SOCKET_WEBRTC_EVENTS } from "./events";
 import { IChatRoomUseCase } from "@application/useCaseInterfaces/chat/IChatRoomUseCases";
 import { IUserRepository } from "@domain/repositories/IUserRepository";
+import { EnumCallStatus, EnumCallType, EnumMessageType } from "@constants/enum/messageEnum";
 
 export class SocketService {
   private onlineUsers: Map<string, string>;
@@ -116,11 +117,11 @@ export class SocketService {
           const callMessage = await this._messageUseCases.sendMessage({
             roomId,
             senderId: fromUserId,
-            type: "call",
+            type: EnumMessageType.VIDEO,
             content: `${callType} call initiated`,
             callInfo: {
               callType,
-              status: "initiated",
+              status: EnumCallStatus.INITIATED,
               startedAt: new Date(),
               callerId: fromUserId,
               receiverId: to,
@@ -143,7 +144,7 @@ export class SocketService {
           } else {
 
             const message = await this._messageUseCases.updateMessage(callMessage._id!.toString(), {
-              callInfo: { status: "missed" },
+              callInfo: { status: EnumCallStatus.MISSED },
             });
             this._io.to(roomId).emit(SOCKET_EVENTS.NEW_MESSAGE, message);
 
@@ -170,7 +171,7 @@ export class SocketService {
             }, 'anser console')
             await this._messageUseCases.updateMessage(callId, {
               callInfo: {
-                status: "answered",
+                status: EnumCallStatus.ANSWERED,
                 startedAt: new Date(),
               },
             });
@@ -200,10 +201,10 @@ export class SocketService {
         const existingMsg = callId ? await this._messageUseCases.getMessageById(callId) : null;
         const currentStatus = existingMsg?.callInfo?.status;
 
-        let newStatus: "missed" | "initiated" | "answered" | "ended" | "rejected" | "cancelled" = "ended";
+        let newStatus= EnumCallStatus.ENDED
 
-        if (currentStatus === "initiated") {
-          newStatus = "cancelled";
+        if (currentStatus === EnumCallStatus.INITIATED) {
+          newStatus = EnumCallStatus.CANCELLED
         }
 
         const updatedMsg = await this._messageUseCases.updateMessage(callId, {
