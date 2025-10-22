@@ -48,11 +48,16 @@ export class ChatRoomUseCase implements IChatRoomUseCase {
     const room = await this._chatRoomRepo.getChatRoomById(roomId);
     return room ? ChatRoomMapper.to1to1ResponseDTO(room, userId) : null;
   }
+   async  totalChatUnread(userId: string): Promise<number> {
+   return await this._chatRoomRepo.totalChatUnread(userId)
+   }
+
   async getUserChatRooms(
     userId: string,
     filters?: EnumChatRoomSort
   ): Promise<ChatRoom1to1ResponseDTO[]> {
     const rooms = await this._chatRoomRepo.getUserChatRooms(userId, filters);
+console.log(rooms.map((room) => ChatRoomMapper.to1to1ResponseDTO(room, userId),'rroom'));
 
     return rooms.map((room) => ChatRoomMapper.to1to1ResponseDTO(room, userId));
   }

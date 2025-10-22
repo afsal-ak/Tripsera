@@ -23,7 +23,10 @@ export interface ChatRoom1to1ResponseDTO {
   _id: string;
   otherUser: ChatRoomParticipantDTO;
   lastMessageContent?: string | '';
-  unreadCount?: number;
+  //unreadCount?: number;
+  unreadCounts?: {
+    [userId: string]: number;
+  };
   createdAt: Date;
   updatedAt: Date;
 }

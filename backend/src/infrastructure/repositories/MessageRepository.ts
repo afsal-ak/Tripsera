@@ -4,6 +4,7 @@ import { IMessage } from '@domain/entities/IMessage';
 import { SendMessageDTO } from '@application/dtos/MessageDTO';
 import { BaseRepository } from './BaseRepository';
 import { IMessagePopulated } from '@infrastructure/db/types.ts/IMessagePopulated';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
 
 export class MessageRepository extends BaseRepository<IMessage> implements IMessageRepository {
   constructor() {
@@ -19,20 +20,44 @@ export class MessageRepository extends BaseRepository<IMessage> implements IMess
 
     return populatedMessage!;
   }
+async getMessagesByRoom(
+  roomId: string,
+  page: number,
+  limit: number
+): Promise<{ data: IMessagePopulated[]; pagination: PaginationInfo }> {
+  const skip = (page - 1) * limit;
 
-  async getMessagesByRoom(
-    roomId: string,
-    limit: number,
-    skip: number
-  ): Promise<IMessagePopulated[]> {
-    return await MessageModel.find({ roomId })
+  const [data, total] = await Promise.all([
+    MessageModel.find({ roomId })
       .populate('senderId', '_id username profileImage')
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 }) //  newest first
       .skip(skip)
       .limit(limit)
-      .lean<IMessagePopulated[]>();
-  }
+      .lean<IMessagePopulated[]>(),
+    MessageModel.countDocuments({ roomId })  
+  ]);
 
+  const pagination: PaginationInfo = {
+    totalItems: total,
+    currentPage: page,
+    pageSize: limit,
+    totalPages: Math.ceil(total / limit),
+  };
+
+  // Reverse so messages show oldest → newest in frontend
+  return {
+    data: data.reverse(),
+    pagination,
+  };
+}
+
+  // const [coupons, total] = await Promise.all([
+  //     CouponModel.find().skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+
+  //     CouponModel.countDocuments(),
+  //   ]);
+
+  //   return { coupons, total };
   async markMessageAsRead(messageId: string, userId: string): Promise<IMessage | null> {
     return await MessageModel.findByIdAndUpdate(messageId, { isRead: true }).lean();
   }

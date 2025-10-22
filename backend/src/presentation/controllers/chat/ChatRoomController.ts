@@ -6,7 +6,7 @@ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { EnumChatRoomSort } from '@constants/enum/chatRoomEnum';
 
 export class ChatRoomController {
-  constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) {}
+  constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) { }
 
   // Create a new chat room
   createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -58,6 +58,21 @@ export class ChatRoomController {
     }
   };
 
+  totalChatUnread = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
+ 
+      const data=await this._chatRoomUseCases.totalChatUnread(userId)
+       
+      res.status(HttpStatus.OK).json({
+        success: true,
+        data,
+        message:'Chat total unread count send successfully'
+      });
+    } catch (error) {
+      next(error)
+    }
+  }
   getUserRooms = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);

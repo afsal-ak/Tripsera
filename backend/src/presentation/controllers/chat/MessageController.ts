@@ -11,14 +11,16 @@ export class MessageController {
     try {
       const roomId = req.params.roomId;
       console.log(roomId, 'room id');
-      const limit = parseInt(req.query.limit as string) || 40;
-      const skip = parseInt(req.query.skip as string) || 0;
+     const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 9;
+console.log(limit,page,'pagiantion in mesage');
 
       const messages = await this._messageUseCases.getMessagesByRoom(
         roomId.toString(),
-        limit,
-        skip
+        page,
+        limit
       );
+      console.log(messages,'dds')
       res.status(HttpStatus.OK).json({
         success: true,
         data: messages,

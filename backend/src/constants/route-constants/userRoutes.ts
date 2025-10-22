@@ -111,6 +111,8 @@ export const CUSTOM_PACKAGE_ROUTE = {
 export const CHAT_ROOM_ROUTE = {
   CREATE: '/chatrooms',
   UPDATE: '/chatrooms/:roomId',
+    TOATAL_UNREAD_COUNT:'/count/chatrooms',
+// `/user/count/chatrooms
   GET_BY_ID: '/chatrooms/:roomId',
   GET_USER_ROOMS: '/chatrooms',
   DELETE: '/chatrooms/:roomId',

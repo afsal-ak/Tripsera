@@ -38,6 +38,84 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
     return chatRoom;
   }
 
+  async chatUnreadCountForCurrentUser(roomId: string, currentUserId: string): Promise<number> {
+  const room = await ChatRoomModel.findById(roomId)
+    .select("unreadCounts")
+    .lean();
+
+  if (!room) return 0;
+
+  const key = currentUserId.toString();
+  const count = room.unreadCounts?.[key] || 0;
+
+  return count;
+}
+
+  
+  async totalChatUnread(userId: string): Promise<number> {
+    const rooms = await ChatRoomModel.find({
+      participants: userId,
+    })
+      .select("unreadCounts")
+      .lean();
+
+    let total = 0;
+
+    for (const room of rooms) {
+      const key = userId.toString();
+      total += room.unreadCounts?.[key] || 0;
+    }
+console.log(total,'coutnin repos');
+
+    return total;
+  }
+
+
+// async getUserChatRooms(
+//   userId: string,
+//   filter: EnumChatRoomSort
+// ): Promise<IChatRoomPopulated[]> {
+//   const query: any = { participants: userId };
+
+//   if (filter === EnumChatRoomSort.UNREAD) {
+//     query[`unreadCounts.${userId}`] = { $gt: 0 };
+//   } else if (filter === EnumChatRoomSort.READ) {
+//     query[`unreadCounts.${userId}`] = { $eq: 0 };
+//   }
+
+//   const chatRooms = await ChatRoomModel.find(query)
+//     .populate('participants', '_id username profileImage')
+//     .sort({ updatedAt: -1 }) // ✅ sort by latest message activity
+//     .lean<IChatRoomPopulated[]>();
+
+//   // ✅ Format response with per-room unread count
+//   const formattedRooms = chatRooms.map((room) => {
+//     const unreadCount = room.unreadCounts?.[userId.toString()] || 0;
+
+//     if (room.isGroup) {
+//       return {
+//         ...room,
+//         participants: room.participants,
+//         unreadCount, // ✅ Add here
+//       };
+//     }
+
+//     // For one-to-one chat, include only the "other" participant
+//     const otherUser = (room.participants as any[]).find(
+//       (p) => p._id.toString() !== userId
+//     );
+
+//     return {
+//       ...room,
+//       participants: [otherUser],
+//       unreadCount,  
+//     };
+//   });
+
+//   return formattedRooms;
+// }
+
+
   async getUserChatRooms(userId: string, filter: EnumChatRoomSort): Promise<IChatRoomPopulated[]> {
     const query: any = { participants: userId };
 
@@ -49,7 +127,7 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
 
     const chatRooms = await ChatRoomModel.find(query)
       .populate('participants', '_id username profileImage')
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .lean<IChatRoomPopulated[]>();
 
     // Format response

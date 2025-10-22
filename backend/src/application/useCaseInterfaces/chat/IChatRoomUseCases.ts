@@ -11,6 +11,7 @@ export interface IChatRoomUseCase {
   updateChatRoom(roomId: string, data: UpdateChatRoomDTO): Promise<ChatRoomFullResponseDTO | null>;
   findById(roomId: string): Promise<ChatRoomFullResponseDTO | null>;
   deleteChatRoom(roomId: string): Promise<boolean>;
+   totalChatUnread(userId: string): Promise<number>
   getChatRoomById(roomId: string, userId: string): Promise<ChatRoom1to1ResponseDTO | null>;
   getUserChatRooms(userId: string, filters?: EnumChatRoomSort): Promise<ChatRoom1to1ResponseDTO[]>;
 }

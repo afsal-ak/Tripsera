@@ -10,6 +10,8 @@ import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { MessageResponseDTO } from '@application/dtos/MessageDTO';
 import { MessageMapper } from '@application/mappers/MessageMapper';
+import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
+
 export type ChatItemType = 'message' | 'call';
 
 export class MessageUseCases implements IMessageUseCases {
@@ -51,12 +53,15 @@ export class MessageUseCases implements IMessageUseCases {
 
   async getMessagesByRoom(
     roomId: string,
-    limit: number,
-    skip: number
-  ): Promise<MessagePopulatedResponseDTO[]> {
-    const message = await this._messageRepo.getMessagesByRoom(roomId, limit, skip);
+    page: number,
+    limit: number
+  ):  Promise<IPaginatedResult<MessagePopulatedResponseDTO>> {
+    const message = await this._messageRepo.getMessagesByRoom(roomId, page, limit);
 
-    return message.map(MessageMapper.toPopulatedResponseDTO);
+    return{
+      data:message.data.map(MessageMapper.toPopulatedResponseDTO),
+      pagination:message.pagination
+    } 
   }
 
   async markMessageAsRead(messageId: string, userId: string): Promise<MessageResponseDTO | null> {

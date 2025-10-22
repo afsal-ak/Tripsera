@@ -344,6 +344,8 @@ router.get(
 router.post(CHAT_ROOM_ROUTE.CREATE, adminAuthMiddleware, chatRoomController.createRoom);
 router.put(CHAT_ROOM_ROUTE.UPDATE, adminAuthMiddleware, chatRoomController.updateRoom);
 router.get(CHAT_ROOM_ROUTE.GET_BY_ID, adminAuthMiddleware, chatRoomController.getRoomById);
+router.get(CHAT_ROOM_ROUTE.TOATAL_UNREAD_COUNT, adminAuthMiddleware, chatRoomController.totalChatUnread);
+
 router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, adminAuthMiddleware, chatRoomController.getUserRooms);
 router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware, chatRoomController.deleteRoom);
 

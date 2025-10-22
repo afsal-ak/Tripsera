@@ -383,6 +383,7 @@ router.post(CHATBOT_ROUTE.CREATE, userAuthMiddleware, chatController.chatBot);
 router.post(CHAT_ROOM_ROUTE.CREATE, userAuthMiddleware, chatRoomController.createRoom);
 router.put(CHAT_ROOM_ROUTE.UPDATE, userAuthMiddleware, chatRoomController.updateRoom);
 router.get(CHAT_ROOM_ROUTE.GET_BY_ID, userAuthMiddleware, chatRoomController.getRoomById);
+router.get(CHAT_ROOM_ROUTE.TOATAL_UNREAD_COUNT, userAuthMiddleware, chatRoomController.totalChatUnread);
 router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, userAuthMiddleware, chatRoomController.getUserRooms);
 router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware, chatRoomController.deleteRoom);
 

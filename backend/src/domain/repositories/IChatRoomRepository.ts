@@ -8,7 +8,7 @@ export interface IChatRoomRepository extends IBaseRepository<IChatRoom> {
   createChatRoom(data: CreateChatRoomDTO): Promise<IChatRoom>;
   findOneByParticipants(senderId: string, receiverId: string): Promise<IChatRoom | null>;
   findRoomByParticipants(participants: string[], isGroup: boolean): Promise<IChatRoom | null>;
-
+   totalChatUnread(userId: string): Promise<number> 
   getChatRoomById(roomId: string): Promise<IChatRoomPopulated | null>;
   getUserChatRooms(userId: string, filters?: EnumChatRoomSort): Promise<IChatRoomPopulated[]>;
   updateChatRoom(roomId: string, data: UpdateChatRoomDTO): Promise<IChatRoom | null>;

@@ -16,15 +16,11 @@ export class ChatRoomMapper {
         username: otherUser?.username || '',
         profileImage: otherUser?.profileImage?.url,
       },
-      //   lastMessage: chatRoom.lastMessage
-      //     ? {
-      //         content: chatRoom.lastMessage.content,
-      //         sender: chatRoom.lastMessage.sender.toString(),
-      //         createdAt: chatRoom.lastMessage.createdAt,
-      //       }
-      //     : null,
+
       lastMessageContent: chatRoom.lastMessageContent || '',
-      unreadCount: chatRoom.unreadCounts?.[currentUserId] || 0,
+      // unreadCount: chatRoom.unreadCounts?.[currentUserId] || 0,
+            unreadCounts: chatRoom.unreadCounts || {},
+
       createdAt: chatRoom.createdAt,
       updatedAt: chatRoom.updatedAt,
     };
