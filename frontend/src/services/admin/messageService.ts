@@ -17,6 +17,16 @@ export const adminDeleteUserRoom = async (roomId: string) => {
   return response.data;
 };
 
+
+export const adminTotalChatUnreadCount= async () => {
+  const response = await api.get(`/admin/count/chatrooms`);
+  return response.data;
+};
+
+// export const userTotalChatUnreadCount= async () => {
+//   const response = await api.get(`/user/count/chatrooms`);
+//   return response.data;
+// };
 export const adminGetChatRoomById = async (roomId: string) => {
   const response = await api.get(`/admin/chatrooms/${roomId}`);
   return response.data;
@@ -29,7 +39,12 @@ export const adminGetUserRoom = async (filters?: IChatRoomFilter) => {
   return response.data;
 };
 
-export const adminGetMessagesByRoom = async (roomId: string) => {
-  const response = await api.get(`/admin/chatrooms/${roomId}/messages`);
+
+export const adminGetMessagesByRoom = async (roomId: string,page:number,limit:number) => {
+  const params = {
+    page,
+    limit,
+   };
+  const response = await api.get(`/admin/chatrooms/${roomId}/messages`,{params});
   return response.data;
 };

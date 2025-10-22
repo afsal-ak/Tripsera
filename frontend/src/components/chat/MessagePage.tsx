@@ -16,10 +16,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addMessageToRoom,
   deleteMessageFromRoom,
-  markMessageAsReadInRoom,
+  //markMessageAsReadInRoom,
 } from '@/redux/slices/chatRoomSlice';
 import type { RootState } from '@/redux/store';
-import { setActiveRoom } from '@/redux/slices/chatRoomSlice';
+import {
+  setActiveRoom, setTotalUnread,
+  decrementTotalUnread, incrementTotalUnread
+} from '@/redux/slices/chatRoomSlice';
+import { useLoadMore } from '@/hooks/useLoadMore';
+
 interface Props {
   roomId: string;
   user: IMessageUserInfo;
@@ -41,8 +46,11 @@ const MessagePage = ({ roomId, user }: Props) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const readMessagesRef = useRef<Set<string>>(new Set());
   const isPartnerOnline = room?.otherUser?._id ? onlineUsers.includes(room.otherUser._id) : false;
-  // console.log({ isPartnerOnline })
-  // --- Fetch room ---
+
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit] = useState(20); // You can adjust
+  const [loading, setLoading] = useState(false);
+   // --- Fetch room ---
   useEffect(() => {
     const fetchRoom = async () => {
       if (!roomId) return;
@@ -58,22 +66,39 @@ const MessagePage = ({ roomId, user }: Props) => {
     fetchRoom();
   }, [roomId, user.role]);
 
-  // --- Fetch messages ---
-  useEffect(() => {
+   
+  const fetchMessages = async (page: number) => {
     if (!roomId) return;
+    setLoading(true);
 
-    const fetchMessages = async () => {
-      let response;
+    try {
+      let response: any;
       if (user.role === 'user') {
-        response = await getMessagesByRoom(roomId);
+        response = await getMessagesByRoom(roomId, page, limit);
       } else if (user.role === 'admin') {
-        response = await adminGetMessagesByRoom(roomId);
+        response = await adminGetMessagesByRoom(roomId, page, limit);
       }
-      setMessages(response.data);
-      scrollToBottom();
-    };
-    fetchMessages();
-  }, [roomId, user.role]);
+
+      // response.data should have { data, pagination }
+      console.log(response.data.data,'repsones');
+      
+      if (page === 1) {
+        setMessages(response.data.data);
+      } else {
+        // prepend older messages
+        setMessages((prev) => [...response.data.data, ...prev]);
+      }
+
+      setTotalPages(response.data.pagination.totalPages);
+    } catch (err) {
+      console.error('Failed to load messages', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+  fetchMessages(1);
+}, [roomId, user.role]);
 
   const handleMessageReceived = useCallback(
     (newMessage: IMessage) => {
@@ -87,6 +112,9 @@ const MessagePage = ({ roomId, user }: Props) => {
           currentUserId: user._id!,
         })
       );
+      //    if (newMessage.senderId._id !== user._id) {
+      //   dispatch(incrementTotalUnread());
+      // }
     },
     [dispatch, user._id]
   );
@@ -105,7 +133,9 @@ const MessagePage = ({ roomId, user }: Props) => {
         prev.map((msg) => (msg._id === messageId ? { ...msg, isRead: true } : msg))
       );
       //   console.log('kkkkkkkkkkkkk')
-      dispatch(markMessageAsReadInRoom({ roomId, userId }));
+      // dispatch(markMessageAsReadInRoom({ roomId, userId }));
+      dispatch(decrementTotalUnread());
+
     },
     [dispatch, roomId]
   );
@@ -127,7 +157,12 @@ const MessagePage = ({ roomId, user }: Props) => {
   });
 
   const currentUserId = user?._id!;
-
+  const { page, loadMore, hasMore, loadingPage } = useLoadMore({
+    totalPages,
+    onLoad: async (nextPage) => {
+      await fetchMessages(nextPage);
+    },
+  });
   useEffect(() => {
     if (roomId && currentUserId) {
       // mark the room as active once
@@ -136,9 +171,7 @@ const MessagePage = ({ roomId, user }: Props) => {
     messages.forEach((msg) => {
       if (!msg.isRead && msg.senderId._id !== user._id && !readMessagesRef.current.has(msg._id)) {
         markAsRead(msg._id);
-        //dispatch(markMessageAsReadInRoom({ roomId, userId:currentUserId }));
-        //  handleMessageRead(msg._id, currentUserId)
-
+         
         readMessagesRef.current.add(msg._id);
       }
     });
@@ -209,6 +242,18 @@ const MessagePage = ({ roomId, user }: Props) => {
 
       {/* Messages Section */}
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4 flex flex-col">
+        <div className="flex justify-center mt-2">
+          {hasMore && (
+            <button
+              onClick={loadMore}
+              disabled={loadingPage}
+              className="text-blue-500 text-sm underline disabled:text-gray-400"
+            >
+              {loadingPage ? 'Loading...' : 'Load older messages'}
+            </button>
+          )}
+        </div>
+
         {Object.keys(groupedMessages).length > 0 ? (
           Object.keys(groupedMessages).map((date) => (
             <div key={date}>

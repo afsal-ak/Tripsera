@@ -7,6 +7,8 @@ import { handleAdminLogout } from '@/services/admin/adminService';
 import { logoutAdmin } from '@/redux/slices/adminAuthSlice';
 import type { AppDispatch, RootState } from '@/redux/store';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
+
 interface AdminNavbarProps {
   onSidebarToggle: () => void;
   title: string;
@@ -18,9 +20,11 @@ const AdminNavbar = ({ onSidebarToggle, title }: AdminNavbarProps) => {
 
   const adminId = useSelector((state: RootState) => state.adminAuth.admin?._id);
   const notificationUnread = useSelector((state: RootState) => state.notifications.unreadCount);
-  const totalUnread = useTotalUnreadCount(adminId!);
+  const totalChatUnread = useTotalUnreadCount(EnumUserRole.ADMIN);
   console.log(notificationUnread, 'notifica');
 
+  // const totalChatUnread = useTotalUnreadCount(user?._id!);
+  console.log(totalChatUnread,'totalChatUnread');
   const handleLogout = async () => {
     try {
       await handleAdminLogout();
@@ -81,9 +85,9 @@ const AdminNavbar = ({ onSidebarToggle, title }: AdminNavbarProps) => {
               onClick={() => navigate('/admin/chat')}
             >
               <MessageCircle className="h-5 w-5 text-gray-600" />
-              {totalUnread > 0 && (
+              {totalChatUnread > 0 && (
                 <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                  {totalUnread}
+                  {totalChatUnread}
                 </span>
               )}
             </Button>

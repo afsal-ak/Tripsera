@@ -19,13 +19,14 @@ export const ChatRoomItem: React.FC<ChatRoomItemProps> = ({
   const onlineUsers = useSelector((state: RootState) => state.chatRoom.onlineUsers);
 
   // Get the other participant (not current user)
-  // const otherParticipant = room.participants.find(p => p._id !== currentUserId) || room.participants[0];
+
   const otherParticipant = room.otherUser;
 
   //console.log(otherParticipant, 'other')
   const isOnline = onlineUsers.includes(otherParticipant?._id!);
   // unread count for current user
   const unreadCount = room.unreadCounts?.[currentUserId] || 0;
+console.log(room,'chat romm');
 
   // format last updated time
   const formatTime = (date: Date) => {

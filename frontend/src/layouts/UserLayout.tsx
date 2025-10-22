@@ -10,8 +10,8 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
 import { useGlobalSocket } from '@/hooks/useGlobalSocket';
 import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
-
-import { VideoCallUI } from '@/components/chat/VideoCallUI';
+ import { VideoCallUI } from '@/components/chat/VideoCallUI';
+  
 const UserLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
@@ -41,7 +41,7 @@ const UserLayout = () => {
     },
   });
 
-  useChatRoomsSocket({ currentUserId: userId! });
+ // useChatRoomsSocket({ currentUserId: userId! });
   useNotificationSocket(userId!);
 
   const location = useLocation();
@@ -49,9 +49,9 @@ const UserLayout = () => {
   const isCheckOutPage = location.pathname.startsWith('/checkout');
   const adminPhone = import.meta.env.VITE_ADMIN_PHONE_NUMBER!;
 
-  useEffect(() => {
-    dispatch(fetchUserRooms({ isAdmin: false }));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchUserRooms({ isAdmin: false }));
+  // }, [dispatch]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background font-poppins text-foreground">

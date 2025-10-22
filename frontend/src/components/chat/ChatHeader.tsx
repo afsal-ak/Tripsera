@@ -23,7 +23,7 @@ export const ChatHeader: React.FC<Props> = ({ room, onBack, isMobile, isPartnerO
   const displayName = room.isGroup ? room.name : otherUser?.username;
   const displayAvatar = room.isGroup
     ? '/group-default.jpg'
-    : otherUser?.profileImage?.url || otherUser?.avatar || '/profile-default.jpg';
+    : otherUser?.profileImage || otherUser?.avatar || '/profile-default.jpg';
   return (
     <>
       <div className="flex items-center justify-between px-4 py-2 bg-white border-b shadow-sm">
@@ -80,7 +80,7 @@ export const ChatHeader: React.FC<Props> = ({ room, onBack, isMobile, isPartnerO
           remoteUserId={otherUser?._id!}
           roomId={room._id}
           onClose={() => setShowVideoCall(false)}
-          remoteUserAvatar={otherUser?.profileImage?.url}
+          remoteUserAvatar={otherUser?.profileImage}
           remoteUserName={otherUser?.username}
         />
       )}

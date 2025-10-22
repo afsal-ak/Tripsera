@@ -10,6 +10,8 @@ interface ChatRoomsState {
   error?: string;
   onlineStatus: Record<string, boolean>;
   onlineUsers: string[];
+  totalUnread: number;
+
 }
 
 const initialState: ChatRoomsState = {
@@ -19,6 +21,7 @@ const initialState: ChatRoomsState = {
   error: undefined,
   onlineStatus: {},
   onlineUsers: [] as string[],
+  totalUnread: 0
 };
 
 export const fetchUserRooms = createAsyncThunk(
@@ -29,6 +32,7 @@ export const fetchUserRooms = createAsyncThunk(
   ) => {
     try {
       const res = isAdmin ? await adminGetUserRoom(filters) : await getUserRoom(filters);
+      console.log(res, 'caht room');
 
       return res.data as IChatRoom[];
     } catch (err: any) {
@@ -46,15 +50,30 @@ const chatRoomsSlice = createSlice({
       if (!exists) state.rooms.unshift(action.payload);
     },
 
-    setActiveRoom: (state, action: PayloadAction<{ roomId: string; currentUserId: string }>) => {
-      state.activeRoomId = action.payload.roomId;
+    // setActiveRoom: (state, action: PayloadAction<{ roomId: string; currentUserId: string }>) => {
+    //   state.activeRoomId = action.payload.roomId;
 
-      const room = state.rooms.find((r) => r._id === action.payload.roomId);
-      if (room && room.unreadCounts) {
-        //     console.log(room, 'from setacive')
-        room.unreadCounts[action.payload.currentUserId] = 0;
-      }
-    },
+    //   const room = state.rooms.find((r) => r._id === action.payload.roomId);
+    //   if (room && room.unreadCounts) {
+    //     //     console.log(room, 'from setacive')
+    //     room.unreadCounts[action.payload.currentUserId] = 0;
+    //   }
+    // },
+setActiveRoom: (state, action: PayloadAction<{ roomId: string; currentUserId: string }>) => {
+  state.activeRoomId = action.payload.roomId;
+  const { roomId, currentUserId } = action.payload;
+
+  const room = state.rooms.find((r) => r._id === roomId);
+  if (room && room.unreadCounts) {
+    const unreadCount = room.unreadCounts[currentUserId] || 0;
+
+    // 🟢 Subtract from total unread
+    state.totalUnread = Math.max(state.totalUnread - unreadCount, 0);
+
+    // 🟢 Clear unread for this user in this room
+    room.unreadCounts[currentUserId] = 0;
+  }
+},
 
     addMessageToRoom: (
       state,
@@ -96,29 +115,51 @@ const chatRoomsSlice = createSlice({
       }
     },
 
-    updateRoomOnNewMessage: (
-      state,
-      action: PayloadAction<{ roomId: string; message: IMessage; currentUserId: string }>
-    ) => {
-      const { roomId, message, currentUserId } = action.payload;
-      const room = state.rooms.find((r) => r._id === roomId);
-      console.log(message, 'redux');
-      if (room) {
-        //  update last message info for chat list
-        room.lastMessageContent = message.content || message.mediaUrl;
-        //room.lastMessageAt = message.createdAt;
+    // updateRoomOnNewMessage: (
+    //   state,
+    //   action: PayloadAction<{ roomId: string; message: IMessage; currentUserId: string }>
+    // ) => {
+    //   const { roomId, message, currentUserId } = action.payload;
+    //   const room = state.rooms.find((r) => r._id === roomId);
+    //   console.log(message, 'redux');
+    //   if (room) {
+    //     //  update last message info for chat list
+    //     room.lastMessageContent = message.content || message.mediaUrl;
+    //     //room.lastMessageAt = message.createdAt;
 
-        //  if not sender, increase unread count
-        if (message.senderId._id !== currentUserId) {
-          if (!room.unreadCounts) {
-            room.unreadCounts = { [currentUserId]: 1 };
-            console.log(room.unreadCounts, 'if');
-          } else {
-            room.unreadCounts[currentUserId] = (room.unreadCounts[currentUserId] || 0) + 1;
-          }
-        }
-      }
-    },
+    //     //  if not sender, increase unread count
+    //     if (message.senderId._id !== currentUserId) {
+    //       if (!room.unreadCounts) {
+    //         room.unreadCounts = { [currentUserId]: 1 };
+    //         console.log(room.unreadCounts, 'if');
+    //       } else {
+    //         room.unreadCounts[currentUserId] = (room.unreadCounts[currentUserId] || 0) + 1;
+    //       }
+    //     }
+    //   }
+    // },
+updateRoomOnNewMessage: (
+  state,
+  action: PayloadAction<{ roomId: string; message: IMessage; currentUserId: string }>
+) => {
+  const { roomId, message, currentUserId } = action.payload;
+  const room = state.rooms.find((r) => r._id === roomId);
+
+  if (room) {
+    room.lastMessageContent = message.content || message.mediaUrl;
+    room.updatedAt = new Date();
+
+    // 🟢 If not sender, increase unread
+    if (message.senderId._id !== currentUserId) {
+      if (!room.unreadCounts) room.unreadCounts = {};
+      const prev = room.unreadCounts[currentUserId] || 0;
+      room.unreadCounts[currentUserId] = prev + 1;
+
+      // 🟢 Also increase totalUnread
+      state.totalUnread += 1;
+    }
+  }
+},
 
     deleteMessageFromRoom: (
       state,
@@ -147,6 +188,18 @@ const chatRoomsSlice = createSlice({
       const { roomId, userId } = action.payload;
       const room = state.rooms.find((r) => r._id === roomId);
     },
+    setTotalUnread: (state, action: PayloadAction<number>) => {
+      state.totalUnread = action.payload;
+    },
+
+    incrementTotalUnread: (state) => {
+      state.totalUnread += 1;
+    },
+
+    decrementTotalUnread: (state) => {
+      if (state.totalUnread > 0) state.totalUnread -= 1;
+    },
+
   },
 
   extraReducers: (builder) => {
@@ -179,6 +232,236 @@ export const {
   setCurrentOnlineUsers,
   setUserOffline,
   setUserOnline,
+   setTotalUnread,           
+  incrementTotalUnread,    
+  decrementTotalUnread, 
 } = chatRoomsSlice.actions;
 
 export default chatRoomsSlice.reducer;
+
+// import { createSlice, createAsyncThunk,type PayloadAction } from '@reduxjs/toolkit';
+// import type { IMessage, IChatRoom, IChatParticipant } from '@/types/IMessage';
+// import { getUserRoom, userTotalChatUnreadCount } from '@/services/user/messageService';
+// import { adminGetUserRoom } from '@/services/admin/messageService';
+// import type { IChatRoomFilter } from '@/types/IChatRoom';
+
+// interface ChatRoomsState {
+//   rooms: IChatRoom[];
+//   activeRoomId?: string;
+//   loading: boolean;
+//   error?: string;
+//   onlineStatus: Record<string, boolean>;
+//   onlineUsers: string[];
+//   totalUnread: number;
+// }
+
+// const initialState: ChatRoomsState = {
+//   rooms: [],
+//   activeRoomId: undefined,
+//   loading: false,
+//   error: undefined,
+//   onlineStatus: {},
+//   onlineUsers: [],
+//   totalUnread: 0,
+// };
+
+// // ✅ Fetch all rooms (user or admin)
+// export const fetchUserRooms = createAsyncThunk(
+//   'chatRooms/fetchRooms',
+//   async (
+//     { isAdmin, filters }: { isAdmin?: boolean; filters?: IChatRoomFilter },
+//     { rejectWithValue }
+//   ) => {
+//     try {
+//       const res = isAdmin ? await adminGetUserRoom(filters) : await getUserRoom(filters);
+//       return res.data as IChatRoom[];
+//     } catch (err: any) {
+//       return rejectWithValue(err.message || 'Failed to fetch rooms');
+//     }
+//   }
+// );
+
+// // Fetch total unread count for the user
+// export const fetchTotalUnreadCount = createAsyncThunk(
+//   'chatRooms/fetchTotalUnreadCount',
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const res = await userTotalChatUnreadCount();
+//       console.log(res.data,'redux count');
+      
+//       return res.data as number; // Adjust key if different
+//     } catch (err: any) {
+//       return rejectWithValue(err.message || 'Failed to fetch unread count');
+//     }
+//   }
+// );
+
+// const chatRoomsSlice = createSlice({
+//   name: 'chatRooms',
+//   initialState,
+//   reducers: {
+//     addRoom: (state, action: PayloadAction<IChatRoom>) => {
+//       const exists = state.rooms.some((r) => r._id === action.payload._id);
+//       if (!exists) state.rooms.unshift(action.payload);
+//     },
+
+//     setActiveRoom: (state, action: PayloadAction<{ roomId: string; currentUserId: string }>) => {
+//       state.activeRoomId = action.payload.roomId;
+//       const room = state.rooms.find((r) => r._id === action.payload.roomId);
+
+//       if (room && room.unreadCounts) {
+//         const prevUnread = room.unreadCounts[action.payload.currentUserId] || 0;
+//         state.totalUnread = Math.max(state.totalUnread - prevUnread, 0);
+//         room.unreadCounts[action.payload.currentUserId] = 0;
+//       }
+//     },
+
+//     addMessageToRoom: (
+//       state,
+//       action: PayloadAction<{ roomId: string; message: IMessage; currentUserId: string }>
+//     ) => {
+//       const { roomId, message, currentUserId } = action.payload;
+//       const sender: IChatParticipant = {
+//         _id: message.senderId._id,
+//         username: message.senderId.username || 'Unknown',
+//         profileImage: message.senderId.profileImage?.url,
+//       };
+
+//       const roomIndex = state.rooms.findIndex((r) => r._id === roomId);
+
+//       if (roomIndex !== -1) {
+//         const room = state.rooms[roomIndex];
+//         room.lastMessageContent = message.content || message.mediaUrl;
+//         room.updatedAt = new Date();
+
+//         // Move room to top
+//         state.rooms.splice(roomIndex, 1);
+//         state.rooms.unshift(room);
+//       } else {
+//         const newRoom: IChatRoom = {
+//           _id: roomId,
+//           participants: [sender],
+//           createdBy: sender._id,
+//           isGroup: false,
+//           lastMessageContent: message.content ?? '',
+//           unreadCounts: { [currentUserId]: 0 },
+//           totalUnread: 0,
+//           createdAt: new Date(),
+//           updatedAt: new Date(),
+//         };
+//         state.rooms.unshift(newRoom);
+//       }
+//     },
+//   markMessageAsReadInRoom: (state, action: PayloadAction<{ roomId: string; userId: string }>) => {
+//       const { roomId, userId } = action.payload;
+//       const room = state.rooms.find((r) => r._id === roomId);
+//     },
+//     // setTotalUnread: (state, action: PayloadAction<number>) => {
+//     //   state.totalUnread = action.payload;
+//     // },
+//     updateRoomOnNewMessage: (
+//       state,
+//       action: PayloadAction<{ roomId: string; message: IMessage; currentUserId: string }>
+//     ) => {
+//       const { roomId, message, currentUserId } = action.payload;
+//       const room = state.rooms.find((r) => r._id === roomId);
+
+//       if (room) {
+//         room.lastMessageContent = message.content || message.mediaUrl;
+//         room.updatedAt = new Date();
+
+//         // Only increment unread if current user is NOT sender
+//         if (message.senderId._id !== currentUserId) {
+//           if (!room.unreadCounts) room.unreadCounts = {};
+//           room.unreadCounts[currentUserId] = (room.unreadCounts[currentUserId] || 0) + 1;
+//           state.totalUnread += 1; // ✅ Increment global unread count
+//         }
+//       }
+//     },
+
+//     deleteMessageFromRoom: (
+//       state,
+//       action: PayloadAction<{ roomId: string; messageId: string; lastMessageContent?: string }>
+//     ) => {
+//       const { roomId } = action.payload;
+//       const room = state.rooms.find((r) => r._id === roomId);
+//       if (room) room.lastMessageContent = 'Message deleted';
+//     },
+
+//     // Online user management
+//     setUserOnline: (state, action: PayloadAction<string>) => {
+//       if (!state.onlineUsers.includes(action.payload)) {
+//         state.onlineUsers.push(action.payload);
+//       }
+//     },
+//     setUserOffline: (state, action: PayloadAction<string>) => {
+//       state.onlineUsers = state.onlineUsers.filter((id) => id !== action.payload);
+//     },
+//     setCurrentOnlineUsers: (state, action: PayloadAction<string[]>) => {
+//       state.onlineUsers = action.payload;
+//     },
+
+//     // ✅ Manual unread updates
+//     setTotalUnread: (state, action: PayloadAction<number>) => {
+//       state.totalUnread = action.payload;
+//     },
+//     incrementTotalUnread: (state) => {
+//       state.totalUnread += 1;
+//     },
+//     decrementTotalUnread: (state) => {
+//       if (state.totalUnread > 0) state.totalUnread -= 1;
+//     },
+//   },
+
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchUserRooms.pending, (state) => {
+//         state.loading = true;
+//         state.error = undefined;
+//       })
+//       .addCase(fetchUserRooms.fulfilled, (state, action: PayloadAction<IChatRoom[]>) => {
+//         state.loading = false;
+//         state.rooms = action.payload.map((room) => {
+//           const totalUnread = Object.values(room.unreadCounts || {}).reduce(
+//             (sum, v) => sum + v,
+//             0
+//           );
+//           return { ...room, totalUnread };
+//         });
+
+//         // ✅ Automatically update totalUnread
+//         state.totalUnread = state.rooms.reduce((sum, room) => {
+//           return (
+//             sum +
+//             Object.values(room.unreadCounts || {}).reduce((sub, val) => sub + val, 0)
+//           );
+//         }, 0);
+//       })
+//       .addCase(fetchUserRooms.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload as string;
+//       })
+
+//       // ✅ Handle total unread async thunk
+//       .addCase(fetchTotalUnreadCount.fulfilled, (state, action: PayloadAction<number>) => {
+//         state.totalUnread = action.payload;
+//       });
+//   },
+// });
+
+// export const {
+//   addRoom,
+//   setActiveRoom,
+//   addMessageToRoom,
+//   deleteMessageFromRoom,
+//   updateRoomOnNewMessage,
+//   setCurrentOnlineUsers,
+//   markMessageAsReadInRoom,
+//   setUserOffline,
+//   setUserOnline,
+//   setTotalUnread,
+//   incrementTotalUnread,
+//   decrementTotalUnread,
+// } = chatRoomsSlice.actions;
+
+// export default chatRoomsSlice.reducer;

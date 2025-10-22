@@ -34,10 +34,9 @@ const AddressTab = ({ user, loading, refetchUser }: Props) => {
     console.log('d');
     try {
       const response = await updateUserAddress(data);
-      //toast.success("Profile updated successfully");
-
-      console.log({ response });
-      toast.success(response.message);
+ 
+       toast.success(response.message);
+       refetchUser()
     } catch (error: any) {
       console.log(error, 'error');
       toast.error(error?.response?.data?.message || 'Failed to update coupon');

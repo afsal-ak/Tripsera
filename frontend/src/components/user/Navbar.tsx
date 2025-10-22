@@ -7,13 +7,17 @@ import { logoutUser } from '@/redux/slices/userAuthSlice';
 import type { AppDispatch, RootState } from '@/redux/store';
 import { toast } from 'sonner';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { isAuthenticated, accessToken, user } = useSelector((state: RootState) => state.userAuth);
 
   const notificationUnread = useSelector((state: RootState) => state.notifications.unreadCount);
-  const totalChatUnread = useTotalUnreadCount(user?._id!);
+  console.log(notificationUnread,'notificationunread');
+  
+  const totalChatUnread = useTotalUnreadCount(EnumUserRole.USER);
+  console.log(totalChatUnread,'totalChatUnread');
 
   useEffect(() => {
     if (!accessToken) {

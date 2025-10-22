@@ -9,6 +9,7 @@ import {
   setUserOnline,
   setUserOffline,
   setCurrentOnlineUsers,
+  incrementTotalUnread,
 } from '@/redux/slices/chatRoomSlice';
 import type { AppDispatch } from '@/redux/store';
 import type { IMessage } from '@/types/IMessage';
@@ -27,7 +28,7 @@ export const useChatRoomsSocket = ({ currentUserId }: UseChatRoomsSocketProps) =
 
     const handleNewMessage = (message: IMessage) => {
       dispatch(updateRoomOnNewMessage({ roomId: message.roomId, message, currentUserId }));
-    };
+     };
 
     const handleMessageDeleted = ({ roomId, messageId }: { roomId: string; messageId: string }) => {
       dispatch(deleteMessageFromRoom({ roomId, messageId }));

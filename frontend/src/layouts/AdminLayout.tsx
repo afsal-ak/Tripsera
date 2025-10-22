@@ -7,8 +7,7 @@ import type { RootState, AppDispatch } from '@/redux/store';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
 import { useGlobalSocket } from '@/hooks/useGlobalSocket';
-import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
-import { VideoCallUI } from '@/components/chat/VideoCallUI';
+ import { VideoCallUI } from '@/components/chat/VideoCallUI';
 
 const AdminLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,12 +40,9 @@ const AdminLayout = () => {
     },
   });
 
-  useChatRoomsSocket({ currentUserId: adminId });
+  //useChatRoomsSocket({ currentUserId: adminId });
   useNotificationSocket(adminId);
 
-  useEffect(() => {
-    dispatch(fetchUserRooms({ isAdmin: true }));
-  }, [dispatch]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
