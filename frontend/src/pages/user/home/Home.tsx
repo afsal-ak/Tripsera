@@ -1,21 +1,27 @@
 import { useEffect, useState } from 'react';
-import type { IPackage, IBanner } from '@/types/homeTypes';
-
-import Hero from '../../../components/user/Hero';
-import { Button } from '../../../components/Button';
+import { useNavigate } from 'react-router-dom';
+import Hero from '@/components/user/Hero';
 import PackageCard from '@/components/user/PackageCard';
+import { Button } from '@/components/Button';
 import { fetchHomeData } from '@/services/user/HomeService';
+import { fetchAllPublishedBlog } from '@/services/user/blogService';
+import BlogCard from '@/components/user/BlogCard';
+import type { IPackage, IBanner } from '@/types/homeTypes';
+import type { IBlog } from '@/types/IBlog';
+
 const Home = () => {
+  const navigate = useNavigate();
   const [packages, setPackages] = useState<IPackage[]>([]);
   const [banners, setBanners] = useState<IBanner[]>([]);
+  const [blogs, setBlogs] = useState<IBlog[]>([]);
 
+  // === Load home data (banners + packages) ===
   useEffect(() => {
     const loadData = async () => {
       try {
         const { result } = await fetchHomeData();
         const { banners, packages } = result;
-        console.log('Banners:', banners);
-        //         console.log("Packages:", packages);
+        console.log(banners,'bannere')
         setBanners(banners);
         setPackages(packages);
       } catch (error) {
@@ -25,23 +31,43 @@ const Home = () => {
     loadData();
   }, []);
 
+  // === Load published blogs ===
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetchAllPublishedBlog(1, 4, '');
+        setBlogs(response.data);
+      } catch (error) {
+        console.error('Failed to fetch blogs:', error);
+      }
+    };
+    fetchBlogs();
+  }, []);
+
   return (
     <>
-      <Hero banners={banners} />
+      {/* === Hero Section === */}
+     <Hero
+  banners={banners.map((b) => ({
+    ...b,
+     
+  }))}
+/>
 
-      <section className="py-16 bg-background">
+
+      {/* === Featured Packages Section === */}
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Featured <span className="text-orange">Packages</span>
+            <h2 className="text-4xl font-bold text-gray-800 mb-3">
+              Featured <span className="text-orange-600">Packages</span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover our handpicked selection of extraordinary travel experiences designed to
-              create memories that last a lifetime.
+            <p className="text-gray-500 max-w-2xl mx-auto">
+              Handpicked experiences designed to create unforgettable journeys.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {packages.map((pkg) => (
               <PackageCard key={pkg._id} pkg={pkg} />
             ))}
@@ -51,13 +77,53 @@ const Home = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-orange text-orange hover:bg-orange hover:text-white"
+              className="border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white"
+              onClick={() => navigate('/packages')}
             >
               View All Packages
             </Button>
           </div>
         </div>
       </section>
+
+      {/* === Blog Section === */}
+      {blogs.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-800 mb-3">
+                Latest <span className="text-orange-600">Travel Stories</span>
+              </h2>
+              <p className="text-gray-500 max-w-2xl mx-auto">
+                Get inspired by stories from explorers and travelers around the globe.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {blogs.map((blog, index) => (
+                <div
+                  key={blog._id}
+                  className="animate-fadeIn"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <BlogCard blog={blog} linkPrefix="/blog" />
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white"
+                onClick={() => navigate('/blog')}
+              >
+                View All Blogs
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 };

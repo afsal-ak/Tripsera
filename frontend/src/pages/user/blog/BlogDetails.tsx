@@ -242,7 +242,7 @@ const BlogDetail = () => {
           <CommentModal
             isOpen={showCommentModal}
             onClose={() => setShowCommentModal(false)}
-            imageUrl={blogData.images?.[0]?.url}
+            imageUrl={blogData.images?.[0]?.url!}
             parentId={blogData._id!}
             parentType="blog"
           />

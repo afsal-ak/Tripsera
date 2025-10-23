@@ -1,47 +1,164 @@
+// import { Button } from '../Button';
+// import { ArrowRight, Play, MapPin } from 'lucide-react';
+// import type { IBanner } from '../../types/homeTypes';
+// import { useNavigate } from 'react-router-dom';
+
+// interface Props {
+//   banners: IBanner[];
+// }
+
+// const Hero = ({ banners }: Props) => {
+//   const navigate = useNavigate();
+
+//   const bannerImage =
+//     banners && banners.length > 0
+//       ? banners[0].image.url
+//       : 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
+
+//   return (
+//     <section className="relative h-[600px] w-full flex items-center justify-center overflow-hidden">
+//       {/* Full image as main visual */}
+//       <img
+//         src={bannerImage}
+//         alt={banners[0]?.title || 'Travel Banner'}
+//         className="absolute inset-0 w-full h-full object-cover brightness-100"
+//       />
+
+//       {/* Subtle overlay only to enhance text readability */}
+//       <div className="absolute inset-0 bg-black/30" />
+
+//       {/* Text content */}
+//       <div className="relative z-10 container mx-auto px-4 text-center text-white">
+//         <div className="max-w-2xl mx-auto animate-fade-in">
+//           <div className="flex justify-center items-center space-x-2 mb-4">
+//             <MapPin className="w-5 h-5 text-orange" />
+//             <span className="text-gray-200">Explore the World</span>
+//           </div>
+
+//           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+//             Discover Your Next
+//             <span className="text-orange block">Adventure</span>
+//           </h1>
+
+//           <p className="text-lg md:text-xl mb-8 text-gray-200">
+//             Explore breathtaking destinations, create unforgettable memories, and embark on journeys
+//             that will change your perspective forever.
+//           </p>
+
+//           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+//             <Button
+//               size="lg"
+//               className="bg-orange hover:bg-orange-dark text-white px-8 py-3"
+//               onClick={() => navigate('/packages')}
+//             >
+//               Explore Packages
+//               <ArrowRight className="w-4 h-4 ml-2" />
+//             </Button>
+
+           
+//           </div>
+
+//           <div className="flex justify-center items-center space-x-6 mt-10">
+//             <div className="flex items-center space-x-2">
+//               <div className="w-8 h-8 bg-orange rounded-full flex items-center justify-center text-white text-sm font-bold">
+//                 50+
+//               </div>
+//               <span className="text-gray-200">Destinations</span>
+//             </div>
+
+//             <div className="flex items-center space-x-2">
+//               <div className="w-8 h-8 bg-orange rounded-full flex items-center justify-center text-white text-sm font-bold">
+//                 5K+
+//               </div>
+//               <span className="text-gray-200">Happy Travelers</span>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default Hero;
+import { useEffect, useState } from 'react';
 import { Button } from '../Button';
 import { ArrowRight, Play, MapPin } from 'lucide-react';
 import type { IBanner } from '../../types/homeTypes';
+import { useNavigate } from 'react-router-dom';
+
 interface Props {
   banners: IBanner[];
 }
 
 const Hero = ({ banners }: Props) => {
-  // console.log(banners,'banner')
-  console.log('First Banner:', banners[0]); // Safe access
+  const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const bannerImage =
-    banners && banners.length > 0
-      ? banners[0].image.url
-      : 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
+  // Fallback if no banners
+  const fallbackImage =
+    'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
+
+  // Auto-slide every 10 seconds
+  useEffect(() => {
+    if (!banners.length) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % banners.length);
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, [banners.length]);
+
+  const currentBanner = banners[currentIndex] || {
+    title: 'Discover Your Next Adventure',
+    description: 'Find unforgettable destinations and curated travel experiences.',
+    image: { url: fallbackImage },
+  };
 
   return (
-    <section className="relative h-[600px] bg-gradient-to-r from-orange/10 to-orange/5 flex items-center">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-        style={{
-          //    backgroundImage: "url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')"
-          backgroundImage: `url('${bannerImage}')`,
-        }}
-      />
-      <div className="container mx-auto px-4 relative z-10">
+    <section className="relative h-[600px] w-full overflow-hidden">
+      {/* Background images with smooth fade */}
+      <div className="absolute inset-0">
+        {banners.map((banner, index) => (
+          <img
+            key={index}
+            src={banner.image?.url || fallbackImage}
+            alt={banner.title}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              index === currentIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        ))}
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
+
+      {/* Text content */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
         <div className="max-w-2xl animate-fade-in">
-          <div className="flex items-center space-x-2 mb-4">
+          <div className="flex justify-center items-center space-x-2 mb-4">
             <MapPin className="w-5 h-5 text-orange" />
-            <span className="text-muted-foreground">Explore the World</span>
+            <span className="text-gray-200">Explore the World</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-            Discover Your Next
+
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            {currentBanner.title || 'Discover Your Next'}
             <span className="text-orange block">Adventure</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Explore breathtaking destinations, create unforgettable memories, and embark on journeys
-            that will change your perspective forever.
+
+          <p className="text-lg md:text-xl mb-8 text-gray-200">
+            {currentBanner.description ||
+              'Explore breathtaking destinations and unforgettable journeys.'}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="bg-orange hover:bg-orange-dark text-white px-8 py-3">
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              size="lg"
+              className="bg-orange hover:bg-orange-dark text-white px-8 py-3"
+              onClick={() => navigate('/packages')}
+            >
               Explore Packages
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
+
             <Button
               size="lg"
               variant="outline"
@@ -51,21 +168,22 @@ const Hero = ({ banners }: Props) => {
               Watch Video
             </Button>
           </div>
-          <div className="flex items-center space-x-6 mt-8">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-orange rounded-full flex items-center justify-center text-white text-sm font-bold">
-                50+
-              </div>
-              <span className="text-muted-foreground">Destinations</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-orange rounded-full flex items-center justify-center text-white text-sm font-bold">
-                5K+
-              </div>
-              <span className="text-muted-foreground">Happy Travelers</span>
-            </div>
-          </div>
         </div>
+
+        {/* Dots for manual navigation */}
+        {banners.length > 1 && (
+          <div className="flex justify-center mt-10 space-x-3">
+            {banners.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentIndex(i)}
+                className={`w-3 h-3 rounded-full transition-all ${
+                  i === currentIndex ? 'bg-orange scale-125' : 'bg-white/50 hover:bg-white/80'
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
