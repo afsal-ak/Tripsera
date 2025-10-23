@@ -34,12 +34,12 @@ export class UserAuthUsecases implements IUserAuthUseCases {
 
     const existingEmail = await this._userRepository.findByEmail(email);
     if (existingEmail) {
-      throw new Error('Email already taken');
+      throw new AppError(HttpStatus.CONFLICT, 'Email already taken');
     }
 
     const existingUsername = await this._userRepository.findByUsername(username!);
     if (existingUsername) {
-      throw new Error('Username already taken');
+      throw new AppError(HttpStatus.CONFLICT, 'Username already taken');
     }
 
     const hashedPassword = await hashPassword(password!);
@@ -48,10 +48,9 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     if (!email || !username || !password) {
-      throw new Error('Missing required fields');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Missing required fields');
     }
-    console.log(referredReferralCode, 'referal code in usecase');
-    await this._otpRepository.saveOtp({
+     await this._otpRepository.saveOtp({
       email,
       username,
       referredReferralCode: referredReferralCode || '',
@@ -67,16 +66,16 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   async verifyOtpAndRegister(email: string, otp: string): Promise<void> {
     const isValidOtp = await this._otpRepository.verifyOtp(email, otp);
     if (!isValidOtp) {
-      throw new Error('Invalid OTP');
+      throw new AppError(HttpStatus.UNAUTHORIZED, 'Invalid OTP');
     }
     const otpDoc = await this._otpRepository.getOtpByEmail(email);
      if (!otpDoc || !otpDoc.username || !otpDoc.password) {
-      throw new Error('Incomplete registration data');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Incomplete registration data');
     }
     const existing = await this._userRepository.findByEmail(email);
 
     if (existing) {
-      throw new Error('User already registered');
+      throw new AppError(HttpStatus.CONFLICT, 'User already registered');
     }
 
     const referredReferralCode = otpDoc?.referredReferralCode;
@@ -92,7 +91,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
 
     const user = await this._userRepository.createUser(newUser);
     if (!user || !user._id) {
-      throw new Error('User creation failed: missing user ID');
+      throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'User creation failed');
     }
     await this._otpRepository.deleteOtp(email);
     await this._walletRepository.createWallet(user._id.toString());
@@ -130,19 +129,19 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   ): Promise<{ user: LoginResponseDTO; accessToken: string; refreshToken: string }> {
     const user = await this._userRepository.findByEmail(email);
     if (!user) {
-      throw new Error('Incorrect email or password');
+      throw new AppError(HttpStatus.UNAUTHORIZED,'Incorrect email or password');
     }
     if (user.isBlocked == true) {
-      throw new Error('user is blocked please contact support');
+      throw new AppError(HttpStatus.UNAUTHORIZED,'user is blocked please contact support');
     }
 
     if (!user.password) {
-      throw new Error('Incorrect email or password');
+      throw new AppError(HttpStatus.BAD_REQUEST,'Incorrect email or password');
     }
 
     const isPasswordMatch = await comparePassword(password, user?.password);
     if (!isPasswordMatch) {
-      throw new Error('Incorrect email or password');
+      throw new AppError(HttpStatus.BAD_REQUEST,'Incorrect email or password');
     }
     const payload = {
       id: user._id,
@@ -161,7 +160,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   async forgotPasswordOtp(email: string): Promise<void> {
     const existingEmail = await this._userRepository.findByEmail(email);
     if (!existingEmail) {
-      throw new Error('User with this email does not exist');
+      throw new AppError(HttpStatus.NOT_FOUND,'User with this email does not exist');
     }
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
@@ -173,7 +172,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   async verifyOtpForForgotPassword(email: string, otp: string): Promise<{ token: string }> {
     const isValidOtp = await this._otpRepository.verifyOtp(email, otp);
      if (!isValidOtp) {
-      throw new Error('Invalid OTP');
+      throw new AppError(HttpStatus.BAD_REQUEST,'Invalid OTP');
     }
     const payload = {
       email: email,
@@ -185,7 +184,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
   async forgotPasswordChange(token: string, password: string): Promise<void> {
     const verifyToken = verifyAccessToken(token);
     if (!verifyToken) {
-      throw new Error('Expired or Invalid Token');
+      throw new AppError(HttpStatus.UNAUTHORIZED,'Expired or Invalid Token');
     }
 
     const email = verifyToken.email;
@@ -194,21 +193,43 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     await this._userRepository.updateUserPassword(email!, hashedPassword);
   }
 
+
   async loginWithGoole(token: string): Promise<{ accessToken: string; user: LoginResponseDTO }> {
     const { email, name, picture, googleId } = await verifyGoogleToken(token);
+
+    if (!email) {
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Google account email not found');
+    }
+
+    // Check if the user already exists
     let user = await this._userRepository.findByEmail(email);
     const referralCode = await generateUniqueReferralCode();
 
     if (!user) {
+      //  Ensure unique username
+      let baseUsername = name?.replace(/\s+/g, '').toLowerCase(); // remove spaces
+      let finalUsername = baseUsername;
+
+      // check if username exists and create a unique one
+      let count = 0;
+      while (await this._userRepository.findByUsername(finalUsername!)) {
+        count++;
+        const randomNum = Math.floor(1000 + Math.random() * 9000); // random 4-digit number
+        finalUsername = `${baseUsername}_${randomNum}_${count}`;
+      }
+
+      //  Create new Google user
       user = await this._userRepository.createUser({
         email,
-        username: name,
-        referralCode: referralCode,
+        username: finalUsername,
+        referralCode,
         profileImage: picture ? { url: picture, public_id: 'google-oauth' } : undefined,
-        googleId: googleId,
+        googleId,
         isGoogleUser: true,
       });
     }
+
+    //  Generate JWT access token
     const accessToken = generateAccessToken({
       id: user._id,
       email: user.email,
@@ -216,6 +237,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
 
     return { accessToken, user: mapToLoginResponseDTO(user) };
   }
+
 
   async requestEmailChange(userId: string, newEmail: string): Promise<void> {
     const existingUser = await this._userRepository.findByEmail(newEmail);
