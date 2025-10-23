@@ -33,8 +33,7 @@ export class ReviewController {
   getReviewById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const reviewId = req.params.reviewId;
-      console.log(reviewId, 'reviewId');
-
+ 
       const review = await this._reviewUsecases.getReviewById(reviewId);
       res.status(HttpStatus.OK).json({
         review: review,

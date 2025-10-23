@@ -25,9 +25,7 @@ export class BookingUseCases implements IBookingUseCases {
     endDate?: string;
   }): Promise<{ bookings: BookingTableResponseDTO[]; total: number }> {
     const result = await this._bookingRepo.getAllBooking(filters);
-    console.log(result, 'resutl');
-    console.log(result.bookings.map(BookingMapper.toAdminTableResponseDTO), 'resutl map');
-
+ 
     return {
       bookings: result.bookings.map(BookingMapper.toAdminTableResponseDTO),
       total: result.total,

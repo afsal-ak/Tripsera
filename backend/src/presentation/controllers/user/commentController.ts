@@ -10,8 +10,7 @@ export class CommentController {
   createComment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-      console.log(req.body, 'commet body');
-
+ 
       const data: CreateCommentDto = {
         ...req.body,
         userId: userId,

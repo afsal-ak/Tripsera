@@ -4,7 +4,7 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IWishlistUseCases } from '@application/useCaseInterfaces/user/IWishlistUseCases';
 
 export class WishlistController {
-  constructor(private _wishlistUseCases: IWishlistUseCases) {}
+  constructor(private _wishlistUseCases: IWishlistUseCases) { }
 
   addToWishlist = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -29,14 +29,12 @@ export class WishlistController {
     try {
       const userId = getUserIdFromRequest(req);
       const packageId = req.query.packageId as string;
-      console.log(packageId, 'packge id in wishlist');
       if (!packageId) {
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'packageId is required' });
         return;
       }
 
       const result = await this._wishlistUseCases.checkPackageInWishlist(userId, packageId);
-      console.log(result, 'result');
       res.status(HttpStatus.OK).json({ result, message: 'Package check successful' });
     } catch (error: any) {
       next(error);
@@ -68,7 +66,6 @@ export class WishlistController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
 
-      console.log(page, limit, 'page and limit');
       const result = await this._wishlistUseCases.getUserWishlist(userId, page, limit);
 
       res.status(HttpStatus.OK).json({

@@ -81,9 +81,7 @@ export class ReviewUseCases implements IReviewUseCases {
     filters?: IFilter
   ): Promise<IPaginatedResult<ReviewResponseDTO>> {
     const result = await this._reviewRepo.findPackageReviews(packageId, page, limit, filters);
-    console.log(result, 'package revies');
-    console.log(result.review.map(ReviewMapper.toResponseDTO), 'after mapp package revies');
-
+    
     return {
       data: result.review.map(ReviewMapper.toResponseDTO),
       pagination: result.pagination,

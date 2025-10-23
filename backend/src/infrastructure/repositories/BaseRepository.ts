@@ -54,8 +54,7 @@ export abstract class BaseRepository<T> {
   }
 
   async updateByFilter(filter: object, data: Partial<T>): Promise<T | null> {
-    console.log(filter, 'id in db');
-
+ 
     const result = await this.model
       .findOneAndUpdate(filter, { $set: data } as UpdateQuery<T & Document>, {
         new: true,

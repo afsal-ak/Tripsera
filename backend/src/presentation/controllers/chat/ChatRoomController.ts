@@ -48,8 +48,7 @@ export class ChatRoomController {
         res.status(HttpStatus.NOT_FOUND).json({ success: false, message: 'Chat room not found' });
         return;
       }
-      //  console.log(room, 'roooooom')
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         success: true,
         data: room,
       });

@@ -21,7 +21,7 @@ export const sendOtpMail = async (to: string, otp: string): Promise<void> => {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
+     await transporter.sendMail(mailOptions);
   } catch (error) {
     console.log('s');
 

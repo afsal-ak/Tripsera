@@ -35,8 +35,7 @@ export class CustomPackageController {
       const data: UpdateCustomPkgDTO = req.body;
 
       const pkg = await this._customPkgUseCases.updateCutomPkg(pkgId, userId, data);
-      console.log(data, 'data from pkg');
-      if (!pkg) {
+       if (!pkg) {
         throw new AppError(HttpStatus.NOT_FOUND, 'not found');
       }
       res.status(HttpStatus.CREATED).json({

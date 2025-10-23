@@ -41,8 +41,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
         },
       });
     }
-    console.log(deletedImages, 'from momgo');
-
+ 
     // Step 2: Push new images
     if (newImages.length > 0) {
       updateOps.$push = {
@@ -166,8 +165,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
 
     //  Fetch paginated blogs
     const blogs = await BlogModel.aggregate(aggregatePipeline);
-    console.log(blogs, 'bolg');
-    const pagination: PaginationInfo = {
+     const pagination: PaginationInfo = {
       totalItems: total,
       currentPage: page,
       pageSize: limit,

@@ -20,8 +20,7 @@ export const optionalAuthMiddleware = async (
 
     const token = authHeader.split(' ')[1];
     if (!JWT_ACCESS_SECRET) {
-      console.error('JWT_ACCESS_SECRET is not set in environment');
-      return next();
+       return next();
     }
 
     const decoded = jwt.verify(token, JWT_ACCESS_SECRET);

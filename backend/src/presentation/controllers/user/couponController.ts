@@ -25,8 +25,7 @@ export class CouponController {
   applyCoupon = async (req: Request, res: Response): Promise<void> => {
     try {
       const { code, totalAmount }: { code: string; totalAmount: number } = req.body;
-      console.log(req.body, 'coupon apply');
-      const discount = await this._couponUseCase.applyCoupon(code, totalAmount);
+       const discount = await this._couponUseCase.applyCoupon(code, totalAmount);
 
       res.status(HttpStatus.OK).json({
         success: true,
@@ -34,8 +33,7 @@ export class CouponController {
         message: 'Coupon applied successfully',
       });
     } catch (error: any) {
-      console.log(error.message, 'coupon error');
-      res.status(HttpStatus.BAD_REQUEST).json({
+       res.status(HttpStatus.BAD_REQUEST).json({
         success: false,
         discount: 0,
         message: error.message,

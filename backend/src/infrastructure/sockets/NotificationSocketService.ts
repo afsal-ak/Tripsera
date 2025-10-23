@@ -9,12 +9,10 @@ export class NotificationSocketService {
   ) {}
   public initialize() {
     this._io.on('connection', (socket: Socket) => {
-      console.log(` User connected to notification socket: ${socket.id}`);
-
+ 
       socket.on(SOCKET_NOTIFICATION_EVENTS.JOIN, (userId: string) => {
         socket.join(userId);
-        console.log(`User ${socket.id} joined notifications for ${userId}`);
-      });
+       });
 
       socket.on(SOCKET_NOTIFICATION_EVENTS.MARK_AS_READ, async ({ notificationId, userId }) => {
         try {
@@ -48,8 +46,7 @@ export class NotificationSocketService {
       });
 
       socket.on('disconnect', () => {
-        console.log(` User disconnected from notification socket: ${socket.id}`);
-      });
+       });
     });
   }
 
@@ -57,8 +54,7 @@ export class NotificationSocketService {
    * Emit a new notification to a user (e.g. booking confirmed, new booking)
    */
   public emitNotificationToUser(userId: string, notification: any) {
-    console.log(' Sending notification:', notification, 'to user:', userId);
-    this._io.to(userId).emit(SOCKET_NOTIFICATION_EVENTS.NEW, notification);
+     this._io.to(userId).emit(SOCKET_NOTIFICATION_EVENTS.NEW, notification);
   }
 }
 

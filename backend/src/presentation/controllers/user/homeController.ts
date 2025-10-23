@@ -18,8 +18,7 @@ export class HomeController {
   getActivePackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { page, limit, sort, search, ...restFilters } = req.query;
-      console.log('Query received:', req.query);
-
+ 
       const pageNum = parseInt(page as string) || 1;
       const limitNum = parseInt(limit as string) || 9;
       const sortBy = (sort as string) || 'newest';

@@ -16,8 +16,7 @@ export class ReportController {
         reportedId,
         ...req.body,
       };
-      console.log(data, 'report data');
-      const report = await this._reportUseCases.createReport(data);
+       const report = await this._reportUseCases.createReport(data);
 
       res.status(HttpStatus.CREATED).json({
         succes: true,

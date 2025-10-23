@@ -12,8 +12,7 @@ export const userRefreshToken = async (
     const oldRefreshToken = req.cookies.userRefreshToken;
 
     if (!oldRefreshToken) {
-      console.log({ oldRefreshToken });
-      res.status(HttpStatus.UNAUTHORIZED).json({ message: 'No refresh token provided' });
+       res.status(HttpStatus.UNAUTHORIZED).json({ message: 'No refresh token provided' });
       return;
     }
 

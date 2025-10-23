@@ -35,8 +35,7 @@ export class BookingController {
   ): Promise<void> => {
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-      console.log(req.body, 'verify raxorpay');
-      const isValid = await this._bookingUseCases.verifyRazorpaySignature(
+       const isValid = await this._bookingUseCases.verifyRazorpaySignature(
         razorpay_order_id,
         razorpay_payment_id,
         razorpay_signature
@@ -82,8 +81,7 @@ export class BookingController {
     try {
       const userId = getUserIdFromRequest(req);
       const bookingId = req.params.id;
-      console.log(bookingId, 'retyr payment');
-
+ 
       const result = await this._bookingUseCases.retryBookingPayment(userId, bookingId);
 
       res.status(HttpStatus.OK).json({
@@ -104,8 +102,7 @@ export class BookingController {
     try {
       const userId = getUserIdFromRequest(req);
       const data = req.body;
-      console.log(data, 'wallet payment');
-
+ 
       const { booking } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
 
       if (!booking) {
@@ -162,13 +159,12 @@ export class BookingController {
     }
   };
 
-  downloadInvoice = async (req: Request, res: Response): Promise<void> => {
+  downloadInvoice = async (req: Request, res: Response,next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
 
       const bookingId = req.params.bookingId;
-      console.log(bookingId, 'from booking');
-      const booking = await this._bookingUseCases.getBookingById(userId, bookingId);
+       const booking = await this._bookingUseCases.getBookingById(userId, bookingId);
 
       if (!booking) {
         throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
@@ -180,15 +176,16 @@ export class BookingController {
       res.setHeader('Content-Disposition', `attachment; filename=${invoiceCode}.pdf`);
 
       res.status(HttpStatus.OK).send(pdfBuffer);
-    } catch (error) {}
+    } catch (error) {
+      next(error)
+    }
   };
   // Cancel a booking
   cancelBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
       const bookingId = req.params.id;
-      console.log(req.body, 'cancel reason');
-      const { reason } = req.body;
+       const { reason } = req.body;
 
       const booking = await this._bookingUseCases.cancelBooking(userId, bookingId, reason);
 

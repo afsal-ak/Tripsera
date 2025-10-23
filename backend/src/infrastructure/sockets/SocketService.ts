@@ -19,8 +19,7 @@ export class SocketService {
 
   public initialize() {
     this._io.on('connection', (socket: Socket) => {
-      console.log(`User connected: ${socket.id}`);
-
+ 
       //   User Connect
       socket.on(SOCKET_EVENTS.USER_CONNECTED, ({ userId }) => {
         this.onlineUsers.set(userId, socket.id);
@@ -43,8 +42,7 @@ export class SocketService {
         socket.emit(SOCKET_EVENTS.CURRENT_ONLINE_USERS, {
           users: Array.from(this.onlineUsers.keys()),
         });
-        console.log(`User ${userId} joined room ${roomId}`);
-      });
+       });
 
       socket.on(SOCKET_EVENTS.LEAVE_ROOM, ({ roomId, userId }) => {
         socket.leave(roomId);
@@ -137,8 +135,7 @@ export class SocketService {
           });
 
           socket.emit(SOCKET_EVENTS.MESSAGE_SEND, callMessage);
-          // socket.to(roomId).emit(SOCKET_EVENTS.NEW_MESSAGE, callMessage);
-        } else {
+         } else {
           const message = await this._messageUseCases.updateMessage(callMessage._id!.toString(), {
             callInfo: { status: EnumCallStatus.MISSED },
           });
@@ -156,14 +153,7 @@ export class SocketService {
             callId,
           });
 
-          console.log(
-            {
-              from: fromUserId,
-              answer,
-              callId,
-            },
-            'anser console'
-          );
+           
           await this._messageUseCases.updateMessage(callId, {
             callInfo: {
               status: EnumCallStatus.ANSWERED,
@@ -186,8 +176,7 @@ export class SocketService {
 
       // END CALL
       socket.on(SOCKET_WEBRTC_EVENTS.END, async ({ callId, to, fromUserId, roomId }) => {
-        console.log({ callId, to, fromUserId, roomId }, 'call ended or cancelled');
-
+ 
         const targetSocket = this.onlineUsers.get(to);
 
         const existingMsg = callId ? await this._messageUseCases.getMessageById(callId) : null;
@@ -214,8 +203,7 @@ export class SocketService {
         this._io.to(roomId).emit(SOCKET_EVENTS.NEW_MESSAGE, updatedMsg);
         socket.emit(SOCKET_EVENTS.MESSAGE_SEND, updatedMsg);
 
-        console.log(` Call ${callId} ${newStatus} by ${fromUserId}`);
-      });
+       });
 
       //   Disconnect
       socket.on('disconnect', () => {
@@ -227,8 +215,7 @@ export class SocketService {
           this.onlineUsers.delete(userId);
           this._io.emit(SOCKET_EVENTS.USER_OFFLINE, { userId });
         }
-        console.log(`Socket disconnected: ${socket.id}`);
-      });
+       });
     });
   }
 }

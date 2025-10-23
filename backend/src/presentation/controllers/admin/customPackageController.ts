@@ -17,8 +17,7 @@ export class CustomPackageController {
       const data: UpdateCustomPkgStatusDTO = req.body;
 
       const pkg = await this._customPkgUseCases.changeCustomPkgStatus(pkgId, data);
-      console.log(data, 'data from pkg');
-
+ 
       res.status(HttpStatus.CREATED).json({
         success: true,
         data: pkg,

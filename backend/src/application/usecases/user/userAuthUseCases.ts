@@ -70,8 +70,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
       throw new Error('Invalid OTP');
     }
     const otpDoc = await this._otpRepository.getOtpByEmail(email);
-    console.log(otpDoc, 'otp doc');
-    if (!otpDoc || !otpDoc.username || !otpDoc.password) {
+     if (!otpDoc || !otpDoc.username || !otpDoc.password) {
       throw new Error('Incomplete registration data');
     }
     const existing = await this._userRepository.findByEmail(email);
@@ -81,10 +80,8 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     }
 
     const referredReferralCode = otpDoc?.referredReferralCode;
-    console.log(referredReferralCode, 'from otp');
-    const referredBy = await this._userRepository.findUserByReferralCode(referredReferralCode!);
-    console.log(referredBy, 'check reffered by');
-    const referralCode = await generateUniqueReferralCode();
+     const referredBy = await this._userRepository.findUserByReferralCode(referredReferralCode!);
+     const referralCode = await generateUniqueReferralCode();
     const newUser: IUser = {
       email,
       username: otpDoc.username,
@@ -175,8 +172,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
 
   async verifyOtpForForgotPassword(email: string, otp: string): Promise<{ token: string }> {
     const isValidOtp = await this._otpRepository.verifyOtp(email, otp);
-    console.log({ email, otp }, 'y');
-    if (!isValidOtp) {
+     if (!isValidOtp) {
       throw new Error('Invalid OTP');
     }
     const payload = {
@@ -193,8 +189,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     }
 
     const email = verifyToken.email;
-    console.log({ email }, 'from forgotPassword');
-    const hashedPassword = await hashPassword(password);
+     const hashedPassword = await hashPassword(password);
 
     await this._userRepository.updateUserPassword(email!, hashedPassword);
   }

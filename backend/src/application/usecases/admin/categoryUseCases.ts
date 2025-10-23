@@ -22,9 +22,7 @@ export class CategoryUseCases implements ICategoryUseCases {
       pagination: result.pagination,
     };
   }
-  //   // async getAllCategory({ page, limit }: { page: number; limit: number },filters:IFilter):Promise {
-  //   //   return await this._categoryRepo.getAllCategories(page, limit,filters);
-  //   }
+   
   async getActiveCategory(): Promise<CategoryResponseDTO[]> {
     const cat = await this._categoryRepo.getActiveCategory();
     return cat.map(CategoryMapper.toResponseDTO);

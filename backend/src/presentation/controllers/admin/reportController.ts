@@ -20,8 +20,7 @@ export class ReportController {
         customFilter: (req.query.customFilter as string) || '',
       };
       const { report, pagination } = await this._reportUseCases.getAllReports(page, limit, filters);
-      //     const reports = report.map(toReportResponseDTO)
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         reports: report,
         pagination,
         message: 'Report fetched successfully',

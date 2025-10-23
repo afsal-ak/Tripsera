@@ -20,8 +20,7 @@ export class PackageRepository implements IPackageRepository {
     const updateOps: any = {
       $set: { ...data },
     };
-    console.log(updateOps, 'mogogngaonga');
-
+ 
     if (deletedImages.length > 0) {
       await PackageModel.findByIdAndUpdate(id, {
         $pull: {

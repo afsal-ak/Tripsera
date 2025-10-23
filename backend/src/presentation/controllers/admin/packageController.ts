@@ -23,8 +23,7 @@ export class PackageController {
         endDate: (req.query.endDate as string) || '',
       };
       const data = await this._packageUseCase.getAllPackages(page, limit, filters);
-      console.log(data, 'in controller');
-
+ 
       res.status(HttpStatus.OK).json({
         message: 'Package fetched successfully',
         data,
@@ -67,9 +66,7 @@ export class PackageController {
         return;
       }
 
-      files.forEach((file) => {
-        console.log(`File: ${file.originalname} | Size: ${(file.size / 1024).toFixed(2)} KB`);
-      });
+       
 
       // Upload to cloudinary
       const imageUrls = await Promise.all(
@@ -166,8 +163,7 @@ export class PackageController {
         .status(HttpStatus.OK)
         .json({ message: 'Package updated successfully', package: updatedPackage });
     } catch (error) {
-      console.error(error);
-      next(error);
+       next(error);
     }
   };
 

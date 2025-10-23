@@ -13,16 +13,13 @@ export class BlogController {
       const userId = getUserIdFromRequest(req);
 
       const blogData: CreateBlogDTO = req.body;
-      console.log(blogData, 'blog data');
-
+ 
       const files = req.files as Express.Multer.File[];
       if (!files || files.length === 0) {
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'No file uploaded' });
         return;
       }
-      files.forEach((file) => {
-        console.log(`File: ${file.originalname} | Size: ${(file.size / 1024).toFixed(2)} KB`);
-      });
+      
 
       const imageUrls = await Promise.all(
         files.map((file) => uploadCloudinary(file.path, 'blogs'))
@@ -39,20 +36,15 @@ export class BlogController {
     try {
       const { blogId } = req.params;
       const blogData: UpdateBlogDTO = req.body;
-      console.log(blogData, 'from blog edit');
-      const files = req.files as Express.Multer.File[];
-      console.log(files, 'from blog images');
-
+       const files = req.files as Express.Multer.File[];
+ 
       const existingImageUrls: { public_id: string }[] = req.body.existingImages || [];
 
-      console.log('EXISTING IMAGES TO KEEP:', existingImageUrls);
-      //  Upload new images
+       //  Upload new images
       const newImages = files?.length
         ? await Promise.all(files.map((file) => uploadCloudinary(file.path, 'blogs')))
         : [];
-      console.log(newImages, 'new Images');
-      console.log(existingImageUrls, 'exist Images');
-
+     
       const blog = await this._blogUseCases.editBlog(
         blogId,
         blogData,
@@ -118,8 +110,7 @@ export class BlogController {
       } catch (err) {
         userId = undefined; // No token or invalid token
       }
-      console.log(userId, 'userid from slug');
-      const blog = await this._blogUseCases.getBySlug(slug);
+       const blog = await this._blogUseCases.getBySlug(slug);
 
       if (!blog) {
         res.status(HttpStatus.NOT_FOUND).json({ message: 'Blog not found' });
@@ -171,8 +162,7 @@ export class BlogController {
       const { blogId } = req.params;
 
       const data = await this._blogUseCases.getBlogLikeList(blogId);
-      console.log(data, 'blog like');
-      res.status(HttpStatus.OK).json(data);
+       res.status(HttpStatus.OK).json(data);
     } catch (error) {
       next(error);
     }

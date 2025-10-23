@@ -25,8 +25,7 @@ export const uploadChatToCloudinary = async (
         ? { transformation: [{ width: 1080, height: 1080, crop: 'limit' }] }
         : {}),
     });
-    console.log(result, 'result');
-    // Delete temp file
+     // Delete temp file
     fs.unlink(filePath, (err) => {
       if (err) console.error('Failed to delete local file:', err);
     });

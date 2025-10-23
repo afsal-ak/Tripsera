@@ -10,18 +10,15 @@ export class MessageController {
   getMessages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const roomId = req.params.roomId;
-      console.log(roomId, 'room id');
-     const page = parseInt(req.query.page as string) || 1;
+      const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
-console.log(limit,page,'pagiantion in mesage');
-
+ 
       const messages = await this._messageUseCases.getMessagesByRoom(
         roomId.toString(),
         page,
         limit
       );
-      console.log(messages,'dds')
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         success: true,
         data: messages,
       });
@@ -32,12 +29,10 @@ console.log(limit,page,'pagiantion in mesage');
 
   uploadMediaToChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      console.log(req.body, 'body');
-      const { type } = req.body;
+       const { type } = req.body;
 
       const filePath = req.file?.path;
-      console.log(filePath, 'body');
-
+ 
       if (!filePath) {
         res.status(HttpStatus.BAD_REQUEST).json({
           success: false,
@@ -46,8 +41,7 @@ console.log(limit,page,'pagiantion in mesage');
       }
 
       const result = await uploadChatToCloudinary(filePath!, 'chat', type);
-      console.log(result, 'caht result for uplaokd ');
-
+ 
       res.json({
         success: true,
         url: result.url,

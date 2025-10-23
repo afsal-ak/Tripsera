@@ -11,8 +11,7 @@ export class UserAuthController {
     try {
       const { email, username, password } = req.body;
       const referredReferralCode = req.query.referralCode as string;
-      console.log(referredReferralCode, 'referralcode');
-      await this._userAuthUseCases.preRegistration({
+       await this._userAuthUseCases.preRegistration({
         email,
         username,
         password,

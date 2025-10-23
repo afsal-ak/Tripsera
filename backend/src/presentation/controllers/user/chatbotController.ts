@@ -11,8 +11,7 @@ export class ChatController {
       const reply = await this._chatUseCase.chatBotResponse(message);
       res.status(HttpStatus.OK).json({ reply });
     } catch (error) {
-      console.error('ChatController Error:', error);
-      next(error);
+       next(error);
     }
   };
 }

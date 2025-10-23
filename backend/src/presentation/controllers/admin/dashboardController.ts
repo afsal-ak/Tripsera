@@ -14,16 +14,14 @@ export class DashboardController {
   getDashboardSummary = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { filter, startDate, endDate } = req.query;
-      console.log(req.query, 'qq');
-      const dateRange: IDateFilter = {
+       const dateRange: IDateFilter = {
         filter: filter as DateFilter,
         startDate: startDate as string,
         endDate: endDate as string,
       };
 
       const data = await this._dashboardUseCases.getDashboardSummary(dateRange);
-      console.log(data, 'dashboaard');
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         success: true,
         data,
         message: 'Dashboard summary fetched successfully',
@@ -36,8 +34,7 @@ export class DashboardController {
   getTopBookedPackages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { filter, startDate, endDate } = req.query;
-      console.log(req.query, 'qq');
-      const dateRange: IDateFilter = {
+       const dateRange: IDateFilter = {
         filter: filter as DateFilter,
         startDate: startDate as string,
         endDate: endDate as string,
@@ -61,8 +58,7 @@ export class DashboardController {
   ): Promise<void> => {
     try {
       const { filter, startDate, endDate } = req.query;
-      console.log(req.query, 'qq');
-      const dateRange: IDateFilter = {
+       const dateRange: IDateFilter = {
         filter: filter as DateFilter,
         startDate: startDate as string,
         endDate: endDate as string,
@@ -83,16 +79,14 @@ export class DashboardController {
   getBookingChart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { filter, startDate, endDate } = req.query;
-      console.log(req.query, 'qq');
-
+ 
       const dateRange: IDateFilter = {
         filter: filter as DateFilter,
         startDate: startDate as string,
         endDate: endDate as string,
       };
       const chart = await this._dashboardUseCases.getBookingsChartData(dateRange);
-      console.log(chart, 'chart');
-      const data = chart.map(mapToBookingChartResponseDTO);
+       const data = chart.map(mapToBookingChartResponseDTO);
 
       res.status(HttpStatus.OK).json({
         success: true,

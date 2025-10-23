@@ -85,8 +85,7 @@ export class DashboardRepository implements IDashboardRepository {
         },
       },
     ]);
-    console.log(topPkg, 'top pkg');
-    return topPkg;
+     return topPkg;
   }
 
   async getTopBookedCategories(startDate?: Date, endDate?: Date): Promise<ITopCategory[]> {

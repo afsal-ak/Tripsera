@@ -22,8 +22,7 @@ export class PackageUseCases implements IPackageUseCases {
     filters?: IFilter
   ): Promise<IPaginatedResult<PackageTableResponseDTO>> {
     const result = await this._packageRepo.findAll(page, limit, filters);
-    console.log(result, 'in usecase');
-
+ 
     return {
       data: result.packages.map(PackageMapper.toTableResponseDTO),
       pagination: result.pagination,
@@ -33,9 +32,7 @@ export class PackageUseCases implements IPackageUseCases {
   async getSinglePackage(id: string): Promise<PackageResponseDTO | null> {
     const pkg = await this._packageRepo.findById(id);
     if (!pkg) return null;
-    console.log(pkg, 'pcakge in usedcase');
-    // Map to DTO before returning
-    return PackageMapper.toResponseDTO(pkg);
+     return PackageMapper.toResponseDTO(pkg);
   }
 
   async createPackage(pkg: CreatePackageDTO): Promise<PackageResponseDTO> {
@@ -63,8 +60,7 @@ export class PackageUseCases implements IPackageUseCases {
       const result = await this._packageRepo.create(packageData);
       return PackageMapper.toResponseDTO(result);
     } catch (error) {
-      console.error('UseCase Error:', error);
-      throw error;
+       throw error;
     }
   }
 
@@ -74,8 +70,7 @@ export class PackageUseCases implements IPackageUseCases {
     existingImages: { public_id: string }[],
     newImages: { url: string; public_id: string }[]
   ): Promise<void> {
-    console.log(data, 'kd edit fata');
-    const packageData = await this._packageRepo.findById(id);
+     const packageData = await this._packageRepo.findById(id);
     if (!packageData) throw new AppError(HttpStatus.NOT_FOUND, 'Package not found');
 
     const oldImages = packageData.imageUrls || [];

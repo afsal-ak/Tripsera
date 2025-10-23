@@ -41,8 +41,7 @@ export class ProfileController {
     try {
       const userId = getUserIdFromRequest(req);
       const address = req.body.address;
-      console.log(address, 'addres');
-
+ 
       const updatedAddress = await this._profileUseCases.updateUserAddress(userId, address);
 
       res.status(HttpStatus.OK).json({
@@ -114,11 +113,9 @@ export class ProfileController {
   getPublicProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const viewerId = getUserIdFromRequest(req);
-      console.log(viewerId, 'user name in public');
-
+ 
       const { username } = req.params;
-      console.log(username, 'user name in public');
-      const user = await this._profileUseCases.getPublicProfile(username);
+       const user = await this._profileUseCases.getPublicProfile(username);
       const isFollowing = user!.followers.toString()?.includes(viewerId) ?? false;
 
       res.status(HttpStatus.OK).json({
@@ -137,7 +134,7 @@ export class ProfileController {
 
       const result = await this._profileUseCases.followUser(followerId, followingId);
 
-      res.status(200).json({ result, message: 'Followed successfully' });
+      res.status(HttpStatus.OK).json({ result, message: 'Followed successfully' });
     } catch (error) {
       next(error);
     }
@@ -150,7 +147,7 @@ export class ProfileController {
 
       const result = await this._profileUseCases.unfollowUser(followerId, followingId);
 
-      res.status(200).json({ result, message: 'Unfollowed successfully' });
+      res.status(HttpStatus.OK).json({ result, message: 'Unfollowed successfully' });
     } catch (error) {
       next(error);
     }

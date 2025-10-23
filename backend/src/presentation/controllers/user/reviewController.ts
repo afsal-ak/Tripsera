@@ -12,8 +12,7 @@ export class ReviewController {
     try {
       const userId = getUserIdFromRequest(req);
       const packageId = req.params.packageId;
-      console.log(packageId, 'packageId from review');
-      const data: CreateReviewDTO = {
+       const data: CreateReviewDTO = {
         ...req.body,
         packageId,
         userId,
@@ -32,8 +31,7 @@ export class ReviewController {
     try {
       const userId = getUserIdFromRequest(req);
       const reviewId = req.params.reviewId;
-      console.log(userId, 'userid');
-      console.log(reviewId, 'reviewId');
+   
       const data: UpdateReviewDTO = req.body;
 
       const review = await this._reviewUseCases.editReview(reviewId, userId, data);
@@ -54,8 +52,7 @@ export class ReviewController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
       const data = await this._reviewUseCases.getUserReview(userId, page, limit);
-      console.log(data, 'use review');
-
+ 
       res.status(HttpStatus.OK).json({
         data,
         message: 'Review fetched successfully',
@@ -107,8 +104,7 @@ export class ReviewController {
     try {
       const { packageId } = req.params;
       const summary = await this._reviewUseCases.getRatingSummary(packageId);
-      console.log(summary, 'review');
-      res.status(HttpStatus.OK).json({
+       res.status(HttpStatus.OK).json({
         summary,
         message: 'Summary fetched successfully',
       });

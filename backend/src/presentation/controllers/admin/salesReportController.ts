@@ -22,8 +22,7 @@ export class SalesReportController {
       };
 
       const result = await this._salesReportUseCase.getReportList(filters, page, limit);
-      console.log(result, 'salesreport');
-
+ 
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'Sales report fetched successfully',
@@ -74,8 +73,7 @@ export class SalesReportController {
       };
 
       const buffer = await this._salesReportUseCase.downloadPDF(filters);
-      console.log(buffer, 'buffer');
-      res.setHeader('Content-Disposition', 'attachment; filename="sales-report.pdf"');
+       res.setHeader('Content-Disposition', 'attachment; filename="sales-report.pdf"');
       res.setHeader('Content-Type', 'application/pdf');
       res.status(HttpStatus.OK).send(buffer);
     } catch (error) {

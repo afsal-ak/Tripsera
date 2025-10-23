@@ -43,8 +43,7 @@ export const checkBlockedMiddleware = async (req: Request, res: Response, next: 
     });
 
     if (isBlocked) {
-      console.log(isBlocked, 'lkj');
-      req.isBlockedByTarget = true;
+       req.isBlockedByTarget = true;
 
       throw new AppError(HttpStatus.FORBIDDEN, 'This profile is not available');
     } else {

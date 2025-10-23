@@ -120,8 +120,7 @@ export class CommentRepository extends BaseRepository<IComment> implements IComm
         .lean(),
       CommentModel.countDocuments({ parentCommentId: commentId }),
     ]);
-    console.log(data, 'kggggggggggg');
-
+ 
     const pagination: PaginationInfo = {
       totalItems: total,
       currentPage: page,

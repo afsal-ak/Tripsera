@@ -51,13 +51,7 @@ async getMessagesByRoom(
   };
 }
 
-  // const [coupons, total] = await Promise.all([
-  //     CouponModel.find().skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
-
-  //     CouponModel.countDocuments(),
-  //   ]);
-
-  //   return { coupons, total };
+  
   async markMessageAsRead(messageId: string, userId: string): Promise<IMessage | null> {
     return await MessageModel.findByIdAndUpdate(messageId, { isRead: true }).lean();
   }

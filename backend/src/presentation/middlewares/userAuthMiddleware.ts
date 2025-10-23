@@ -20,8 +20,7 @@ export const userAuthMiddleware = async (
 
     const token = authHeader.split(' ')[1];
     if (!JWT_ACCESS_SECRET) {
-      console.log(' JWT_SECRET not loaded!');
-      res
+       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: 'Server error: Missing JWT secret' });
       return;
@@ -31,23 +30,20 @@ export const userAuthMiddleware = async (
 
     //  Type narrowing check
     if (typeof decoded !== 'object' || !('id' in decoded)) {
-      console.log('hhh');
-      res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Invalid token payload' });
+       res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Invalid token payload' });
       return;
     }
 
     const user = await UserModel.findById((decoded as { id: string }).id);
 
     if (!user) {
-      console.log('blocked ');
-
+ 
       res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Unauthorized: User not found' });
       return;
     }
 
     if (user.isBlocked) {
-      console.log('blocked middleware');
-      res.status(HttpStatus.FORBIDDEN).json({ message: 'Access Denied: User is blocked' });
+       res.status(HttpStatus.FORBIDDEN).json({ message: 'Access Denied: User is blocked' });
       return;
     }
 

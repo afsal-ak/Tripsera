@@ -21,20 +21,16 @@ export class NotificationUseCases implements INotificationUseCases {
   async sendNotification(data: CreateNotificationDto): Promise<NotificationPopulatedResponseDTO> {
     const notification = await this._notificationRepo.create(data);
 
-    // console.log(notification, 'payload notification')
-    const socketService = getNotificationSocketService();
+     const socketService = getNotificationSocketService();
 
     if (notification.role === EnumUserRole.ADMIN) {
-      //console.log('jjjjjjjjjjjj')
-      const admins = await this._userRepo.getAllAdmins();
+       const admins = await this._userRepo.getAllAdmins();
       for (const admin of admins) {
-        console.log(admin._id, 'asdmin');
-
+ 
         socketService.emitNotificationToUser(admin._id!.toString(), notification);
       }
     } else {
-      console.log(data.userId, 'emieets');
-      socketService.emitNotificationToUser(data.userId!.toString(), notification);
+       socketService.emitNotificationToUser(data.userId!.toString(), notification);
     }
 
     return NotificationMapper.toPopulatedResponseDTO(notification);

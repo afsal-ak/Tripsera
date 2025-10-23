@@ -35,8 +35,7 @@ export class ReferralController {
   getReferralById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const referralId = req.params.referralId;
-      console.log(referralId, 'referralId');
-
+ 
       const referral = await this._referralUseCase.getReferralById(referralId);
       console.log(referral, 'referral');
       res.status(HttpStatus.OK).json({
@@ -65,8 +64,7 @@ export class ReferralController {
     try {
       const referralId = req.params.referralId;
       const { status } = req.body;
-      console.log({ status }, 'status');
-      const result = await this._referralUseCase.changeReferralStatus(referralId, status);
+       const result = await this._referralUseCase.changeReferralStatus(referralId, status);
       res.status(HttpStatus.OK).json({
         result,
         message: 'referral status successfully',
