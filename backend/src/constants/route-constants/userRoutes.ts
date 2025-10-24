@@ -105,6 +105,7 @@ export const CUSTOM_PACKAGE_ROUTE = {
   UPDATE: '/custom-package/:packageId/edit',
   GET_BY_ID: '/custom-package/:packageId',
   GET_ALL_PKG: '/custom-package',
+  GET_CUSTOM_PKG_FOR_USER:'/custom-packages/user',
   DELETE: '/custom-package/:packageId/delete',
 };
 

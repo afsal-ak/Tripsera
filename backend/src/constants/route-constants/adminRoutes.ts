@@ -105,7 +105,9 @@ export const CUSTOM_PACKAGE_ROUTE = {
   GET_BY_ID: '/custom-package/:packageId',
   GET_ALL_PKG: '/custom-package',
   DELETE: '/custom-package/:packageId/delete',
-};
+  CREATE:'/custom-package/create',
+  UPDATE:'/custom-package/edit/:id'
+ };
 
 export const DASHBOARD_ROUTE = {
   GET_DASHBOARD_SUMMARY: '/dashboard/summary',

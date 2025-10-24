@@ -160,7 +160,7 @@ const reportUseCases = new ReportUseCases(reportRepository);
 const reportController = new ReportController(reportUseCases);
 
 const customPkgRepository = new CustomPackageRepository();
-const customPkgUseCases = new CustomPackageUseCases(customPkgRepository);
+const customPkgUseCases = new CustomPackageUseCases(customPkgRepository,packageRepository);
 const customPkgController = new CustomPackageController(customPkgUseCases);
 
 const dashboardRepository = new DashboardRepository();
@@ -307,16 +307,12 @@ router.get(
   adminAuthMiddleware,
   customPkgController.getAllCustomPkgs
 );
-router.put(
-  CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS,
-  adminAuthMiddleware,
-  customPkgController.changeCustomPkgStatus
-);
-router.delete(
-  CUSTOM_PACKAGE_ROUTE.DELETE,
-  adminAuthMiddleware,
-  customPkgController.deleteCustomPkg
-);
+
+router.post(CUSTOM_PACKAGE_ROUTE.CREATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.createCustomPackage)
+router.put(CUSTOM_PACKAGE_ROUTE.UPDATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.editCustomPackage)
+
+router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS,adminAuthMiddleware,customPkgController.changeCustomPkgStatus);
+router.delete(  CUSTOM_PACKAGE_ROUTE.DELETE, adminAuthMiddleware,customPkgController.deleteCustomPkg);
 
 // // DASHBOARD ROUTES
 router.get(

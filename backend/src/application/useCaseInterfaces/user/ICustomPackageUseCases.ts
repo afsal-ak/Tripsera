@@ -6,6 +6,7 @@ import {
   CustomPkgUserListDTO,
 } from '@application/dtos/CustomPkgDTO';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
+import { PackageResponseDTO } from '@application/dtos/PackageDTO';
 
 export interface ICustomPkgUseCases {
   createCutomPkg(data: CreateCustomPkgDTO): Promise<CustomPkgResponseDTO>;
@@ -21,6 +22,10 @@ export interface ICustomPkgUseCases {
     limit: number,
     filters?: IFilter
   ): Promise<IPaginatedResult<CustomPkgUserListDTO>>;
+  
+  getCustomPackagesForUser(userId: string,page:number,limit:number
+  ):Promise <IPaginatedResult<PackageResponseDTO>>
+   
 
   getCustomPkgById(customPkgId: string): Promise<CustomPkgResponseDTO | null>;
 }

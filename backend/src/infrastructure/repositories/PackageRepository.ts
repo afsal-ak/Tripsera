@@ -20,7 +20,7 @@ export class PackageRepository implements IPackageRepository {
     const updateOps: any = {
       $set: { ...data },
     };
- 
+
     if (deletedImages.length > 0) {
       await PackageModel.findByIdAndUpdate(id, {
         $pull: {
@@ -55,6 +55,14 @@ export class PackageRepository implements IPackageRepository {
     if (filters.status === 'active') matchStage.isBlocked = false;
     else if (filters.status === 'blocked') matchStage.isBlocked = true;
 
+    if (filters.customFilter === 'custom') {
+      matchStage.isCustom = true;
+    } else if (filters.customFilter === 'normal') {
+      //matchStage.isCustom = false;
+      matchStage.$or = [{ isCustom: false }, { isCustom: { $exists: false } }];
+
+    }
+
     if (filters.startDate && filters.endDate) {
       matchStage.createdAt = {
         $gte: new Date(filters.startDate),
@@ -81,14 +89,14 @@ export class PackageRepository implements IPackageRepository {
       // 3️ Search filter (title, description, category name)
       filters.search
         ? {
-            $match: {
-              $or: [
-                { title: { $regex: filters.search, $options: 'i' } },
-                { description: { $regex: filters.search, $options: 'i' } },
-                { 'categoryDetails.name': { $regex: filters.search, $options: 'i' } },
-              ],
-            },
-          }
+          $match: {
+            $or: [
+              { title: { $regex: filters.search, $options: 'i' } },
+              { description: { $regex: filters.search, $options: 'i' } },
+              { 'categoryDetails.name': { $regex: filters.search, $options: 'i' } },
+            ],
+          },
+        }
         : undefined,
 
       { $sort: sortOption },
@@ -104,6 +112,7 @@ export class PackageRepository implements IPackageRepository {
           durationDays: 1,
           durationNights: 1,
           'categoryDetails.name': 1,
+          isCustom: 1,
           isBlocked: 1,
           createdAt: 1,
         },
@@ -142,10 +151,10 @@ export class PackageRepository implements IPackageRepository {
   async getHomeData(): Promise<IPackage[]> {
     const pkg = await PackageModel.find({
       isBlocked: false,
+      isCustom: false
     })
       .limit(4)
       .lean();
-    console.log(pkg, 'pkg home');
     return pkg;
   }
 
@@ -156,11 +165,11 @@ export class PackageRepository implements IPackageRepository {
     sortBy: string
   ): Promise<IPackage[]> {
     const pipeline: any[] = [
-      { $match: { ...filters, isBlocked: false } },
+      { $match: { ...filters, isBlocked: false, isCustom: false } },
 
       {
         $lookup: {
-          from: 'categories', // must match the actual MongoDB collection name
+          from: 'categories',
           localField: 'category',
           foreignField: '_id',
           as: 'categoryDetails',
@@ -187,6 +196,8 @@ export class PackageRepository implements IPackageRepository {
           durationDays: 1,
           durationNights: 1,
           imageUrls: 1,
+          isCustom: 1
+
         },
       },
     ];
@@ -196,10 +207,48 @@ export class PackageRepository implements IPackageRepository {
   }
 
   async countActivePackages(filters: any): Promise<number> {
-    const query = { ...filters, isBlocked: false };
+    const query = { ...filters, isBlocked: false, isCustom: false };
     return await PackageModel.countDocuments(query);
   }
 
+
+  // getCustomPackagesForUser(userId: string, page: number, limit: number
+  // ): Promise<{ packages: IPackage[]; pagination: PaginationInfo; }> {
+  //        const skip = (page - 1) * limit;
+
+  //   const pkg=await PackageModel.
+
+  // }
+ async getCustomPackagesForUser(
+    userId: string,
+    page: number,
+    limit: number
+  ): Promise<{ packages: IPackage[]; pagination: PaginationInfo; }> {
+    const skip = (page - 1) * limit;
+
+    // Query for custom packages created for this user
+    const query = { isCustom: true, createdFor: new Types.ObjectId(userId), isBlocked: false };
+
+    const [packages, total] = await Promise.all([
+      PackageModel.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      PackageModel.countDocuments(query),
+    ]);
+
+ const pagination: PaginationInfo = {
+      totalItems: total,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(total / limit),
+    };
+    return {
+      packages: packages,
+      pagination:pagination
+    };
+  }
   async block(id: string): Promise<void> {
     const updatedPkg = await PackageModel.findByIdAndUpdate(id, {
       isBlocked: true,

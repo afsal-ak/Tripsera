@@ -131,6 +131,17 @@ const packageSchema = new Schema(
     importantDetails: { type: String },
     included: [{ type: String }],
     notIncluded: [{ type: String }],
+
+    isCustom: {
+      type: Boolean,
+      default: false,
+    },
+
+    createdFor: {
+      type: Schema.Types.ObjectId,
+      required: false,
+      ref: 'Users',
+    }
   },
   { timestamps: true }
 );

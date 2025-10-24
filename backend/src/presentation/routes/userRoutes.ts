@@ -188,6 +188,7 @@ const customPkgRepository = new CustomPackageRepository();
 const customPkgUseCases = new CustomPackageUseCases(
   customPkgRepository,
   userRepository,
+  packageRepository,
   notificationUseCases
 );
 const customPkgController = new CustomPackageController(customPkgUseCases);
@@ -228,9 +229,9 @@ router.get(
 );
 
 // HOME ROUTES
-router.get(HOME_ROUTES.HOME, homeController.getHome);
-router.get(HOME_ROUTES.PACKAGES, homeController.getActivePackage);
-router.get(HOME_ROUTES.PACKAGE_BY_ID, homeController.getPackagesById);
+router.get(HOME_ROUTES.HOME, optionalAuthMiddleware,homeController.getHome);
+router.get(HOME_ROUTES.PACKAGES, optionalAuthMiddleware,homeController.getActivePackage);
+router.get(HOME_ROUTES.PACKAGE_BY_ID, optionalAuthMiddleware,homeController.getPackagesById);
 
 // PROFILE ROUTES
 router.get(PROFILE_ROUTES.GET_PROFILE, userAuthMiddleware, profileController.getUserProfile);
@@ -374,6 +375,7 @@ router.get(
   userAuthMiddleware,
   customPkgController.getAllCustomPkgs
 );
+router.get(CUSTOM_PACKAGE_ROUTE.GET_CUSTOM_PKG_FOR_USER, userAuthMiddleware, customPkgController.getCustomPackagesForUser);
 router.delete(CUSTOM_PACKAGE_ROUTE.DELETE, userAuthMiddleware, customPkgController.deleteCustomPkg);
 
 //CHATBOT

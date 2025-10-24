@@ -4,9 +4,10 @@ import { CreateCustomPkgDTO, UpdateCustomPkgDTO } from '@application/dtos/Custom
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { AppError } from '@shared/utils/AppError';
+import { error } from 'console';
 
 export class CustomPackageController {
-  constructor(private readonly _customPkgUseCases: ICustomPkgUseCases) {}
+  constructor(private readonly _customPkgUseCases: ICustomPkgUseCases) { }
 
   createCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -35,7 +36,7 @@ export class CustomPackageController {
       const data: UpdateCustomPkgDTO = req.body;
 
       const pkg = await this._customPkgUseCases.updateCutomPkg(pkgId, userId, data);
-       if (!pkg) {
+      if (!pkg) {
         throw new AppError(HttpStatus.NOT_FOUND, 'not found');
       }
       res.status(HttpStatus.CREATED).json({
@@ -92,4 +93,28 @@ export class CustomPackageController {
       next(error);
     }
   };
+
+  getCustomPackagesForUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const { data, pagination } = await this._customPkgUseCases.getCustomPackagesForUser(userId,page,limit);
+
+      res.status(HttpStatus.OK).json({
+        data,
+        pagination,
+         message: 'Custom packages sent successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
 }

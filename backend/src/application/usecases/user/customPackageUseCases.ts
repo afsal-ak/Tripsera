@@ -13,13 +13,18 @@ import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { CustomPkgMapper } from '@application/mappers/CustomPkgMapper';
 import { EnumUserRole } from '@constants/enum/userEnum';
 import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
+import { PackageResponseDTO } from '@application/dtos/PackageDTO';
+import { IPackageRepository } from '@domain/repositories/IPackageRepository';
+import { PackageMapper } from '@application/mappers/PackageMapper';
 
 export class CustomPackageUseCases implements ICustomPkgUseCases {
   constructor(
     private readonly _customPkgRepo: ICustomPackageRepository,
     private readonly _userRepo: IUserRepository,
+    private readonly _packageRepo: IPackageRepository,
+    
     private readonly _notificationUseCases: INotificationUseCases
-  ) {}
+  ) { }
 
   async createCutomPkg(data: CreateCustomPkgDTO): Promise<CustomPkgResponseDTO> {
     const customPkg = await this._customPkgRepo.create(data);
@@ -71,4 +76,14 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
   async deleteCustomPkg(customPkgId: string, userId: string): Promise<boolean> {
     return await this._customPkgRepo.deleteByFilter({ _id: customPkgId, userId });
   }
+
+  async getCustomPackagesForUser(userId: string, page: number, limit: number
+  ): Promise<IPaginatedResult<PackageResponseDTO>> {
+    const result=await this._packageRepo.getCustomPackagesForUser(userId,page,limit)
+    return {
+      data:result.packages.map(PackageMapper.toResponseDTO),
+      pagination:result.pagination
+    }
+  }
+
 }

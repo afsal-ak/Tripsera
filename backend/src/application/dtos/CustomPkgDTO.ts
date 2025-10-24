@@ -90,3 +90,16 @@ export interface CustomPkgResponseDTO {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+
+
+
+//for admin to create packages for user
+import { CreatePackageDTO, EditPackageDTO} from '@application/dtos/PackageDTO';
+
+export interface AdminCreateCustomPackageDTO extends CreatePackageDTO {
+  createdFor: Types.ObjectId;  // link to user
+  isCustom: boolean;
+}
+
+export interface AdminEditCustomPackageDTO extends Partial<AdminCreateCustomPackageDTO> {}

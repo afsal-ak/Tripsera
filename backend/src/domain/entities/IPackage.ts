@@ -85,6 +85,10 @@ export interface IPackage {
   importantDetails?: string;
   isBlocked: boolean;
 
+  //for custom package
+  isCustom?: boolean;
+  createdFor?: Types.ObjectId;
+
   createdAt?: Date;
   updatedAt?: Date;
 }

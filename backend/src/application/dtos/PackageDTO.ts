@@ -97,6 +97,7 @@ export interface PackageResponseDTO {
   imageUrls: ImageInfoDTO[];
   offer?: OfferDTO;
   importantDetails?: string;
+  isCustom?: boolean;
   isBlocked: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -113,6 +114,8 @@ export interface PackageTableResponseDTO {
   durationNights?: number;
   isBlocked: boolean;
   offerName?: string;
+  isCustom?: boolean;
+  // createdFor?:string;
   categoryCount: number;
   createdAt?: Date;
 }
@@ -128,4 +131,6 @@ export interface PackageCardDTO {
   offerName?: string;
   offerType?: string;
   offerValue?: number;
+  isCustom?:boolean,
+
 }

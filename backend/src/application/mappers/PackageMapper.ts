@@ -30,18 +30,19 @@ export abstract class PackageMapper {
       imageUrls: pkg.imageUrls || [],
       offer: pkg.offer
         ? {
-            name: pkg.offer.name,
-            type:
-              pkg.offer.type === EnumOfferType.PERCENTAGE
-                ? EnumOfferType.PERCENTAGE
-                : EnumOfferType.FLAT,
-            value: pkg.offer.value,
-            validUntil: pkg.offer.validUntil,
-            isActive: pkg.offer.isActive,
-          }
+          name: pkg.offer.name,
+          type:
+            pkg.offer.type === EnumOfferType.PERCENTAGE
+              ? EnumOfferType.PERCENTAGE
+              : EnumOfferType.FLAT,
+          value: pkg.offer.value,
+          validUntil: pkg.offer.validUntil,
+          isActive: pkg.offer.isActive,
+        }
         : undefined,
       importantDetails: pkg.importantDetails,
       isBlocked: pkg.isBlocked,
+      isCustom:pkg?.isCustom,
       createdAt: pkg.createdAt,
       updatedAt: pkg.updatedAt,
     };
@@ -59,6 +60,8 @@ export abstract class PackageMapper {
       price: pkg.price,
       finalPrice,
       imageUrl: pkg.imageUrls?.[0]?.url || null,
+      isCustom: pkg.isCustom,
+
       offerName: pkg.offer?.isActive ? pkg.offer.name : undefined,
       offerType: pkg.offer?.isActive ? pkg.offer.type : undefined,
       offerValue: pkg.offer?.isActive ? pkg.offer.value : undefined,
@@ -77,6 +80,7 @@ export abstract class PackageMapper {
 
       isBlocked: pkg.isBlocked,
       offerName: pkg.offer?.name,
+      isCustom: pkg.isCustom,
       categoryCount: pkg.category?.length || 0,
       createdAt: pkg.createdAt,
     };

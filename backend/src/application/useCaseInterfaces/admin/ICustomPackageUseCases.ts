@@ -4,7 +4,10 @@ import {
   UpdateCustomPkgStatusDTO,
   CustomPkgResponseDTO,
   CustomPkgTableDTO,
+  AdminCreateCustomPackageDTO,
+  AdminEditCustomPackageDTO
 } from '@application/dtos/CustomPkgDTO';
+import { PackageResponseDTO } from '@application/dtos/PackageDTO';
 
 export interface ICustomPkgUseCases {
   changeCustomPkgStatus(
@@ -18,4 +21,14 @@ export interface ICustomPkgUseCases {
     filters?: IFilter
   ): Promise<IPaginatedResult<CustomPkgTableDTO>>;
   getCustomPkgById(customPkgId: string): Promise<CustomPkgResponseDTO | null>;
+
+   createCustomPackage(pkg: AdminCreateCustomPackageDTO): Promise<PackageResponseDTO>  
+     
+  editCustomPackageData(
+    id: string,
+    data: AdminEditCustomPackageDTO,
+    existingImages: { public_id: string }[],
+    newImages: { url: string; public_id: string }[]
+  ): Promise<void>;
+
 }

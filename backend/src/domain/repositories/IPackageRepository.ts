@@ -18,11 +18,17 @@ export interface IPackageRepository {
     filters?: IFilter
   ): Promise<{ packages: IPackage[]; pagination: PaginationInfo }>;
   countDocument(): Promise<number>;
-  getActivePackages(filters: any, skip: number, limit: number, sort: any): Promise<IPackage[]>;
+  getActivePackages(filters: any, skip: number, limit: number, sort: any, userId?: string ): Promise<IPackage[]>;
   countActivePackages(filters: any): Promise<number>;
 
   delete(id: string): Promise<void>;
   block(id: string): Promise<void>;
   unblock(id: string): Promise<void>;
   getHomeData(): Promise<IPackage[]>;
+
+  getCustomPackagesForUser(
+    userId:string,
+    page:number,
+    limit:number
+  ):Promise<{ packages: IPackage[]; pagination: PaginationInfo }>
 }

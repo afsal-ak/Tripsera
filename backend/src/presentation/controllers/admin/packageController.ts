@@ -21,8 +21,10 @@ export class PackageController {
         sort: (req.query.sort as string) || '',
         startDate: (req.query.startDate as string) || '',
         endDate: (req.query.endDate as string) || '',
+        customFilter:( req.query.custom as string) || ''
       };
       const data = await this._packageUseCase.getAllPackages(page, limit, filters);
+ console.log(data,'pkg data');
  
       res.status(HttpStatus.OK).json({
         message: 'Package fetched successfully',
