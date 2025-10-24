@@ -26,6 +26,7 @@ export interface BlogAuthorDTO {
   _id: string;
   username: string;
   email: string;
+  profileImage?:string
 }
 
 export interface BlogResponseDTO {

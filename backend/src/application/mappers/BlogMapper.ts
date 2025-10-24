@@ -17,6 +17,7 @@ export class BlogMapper {
         _id: author._id?.toString?.() || author.toString?.() || '',
         username: author.username || 'Unknown',
         email: author.email || '',
+        profileImage:author.profileImage||''
       },
       likes: blog.likes?.map((id) => id.toString()) ?? [],
       status: blog.status,
