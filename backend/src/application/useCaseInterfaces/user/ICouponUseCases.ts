@@ -6,5 +6,5 @@ export interface ICouponUseCases {
     limit: number
   ): Promise<{ coupons: CouponResponseDTO[]; total: number }>;
 
-  applyCoupon(code: string, totalAmount: number): Promise<number>;
+  applyCoupon(userId:string,code: string, totalAmount: number): Promise<number>;
 }

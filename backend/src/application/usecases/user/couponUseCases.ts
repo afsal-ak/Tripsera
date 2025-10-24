@@ -4,9 +4,15 @@ import { CouponResponseDTO } from '@application/dtos/CouponDTO';
 import { CouponMapper } from '@application/mappers/CouponMapper';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { IBookingRepository } from '@domain/repositories/IBookingRepository';
+import { EnumCouponType } from '@constants/enum/couponEnum';
 
 export class CouponUseCases implements ICouponUseCases {
-  constructor(private _couponRepo: ICouponRepository) {}
+  constructor(
+    private _couponRepo: ICouponRepository,
+    private _bookingRepo:IBookingRepository
+
+  ) {}
 
   async getActiveCoupons(
     page: number,
@@ -19,7 +25,7 @@ export class CouponUseCases implements ICouponUseCases {
     };
   }
 
-  async applyCoupon(code: string, totalAmount: number): Promise<number> {
+  async applyCoupon(userId:string,code: string, totalAmount: number): Promise<number> {
     const coupon = await this._couponRepo.getCouponByCode(code);
 
     if (!coupon) {
@@ -40,15 +46,22 @@ export class CouponUseCases implements ICouponUseCases {
         `Minimum total amount should be ₹${coupon.minAmount}`
       );
     }
+ const previousBooking = await this._bookingRepo.findOne({
+    userId,
+    couponCode: code,
+  });
 
+  if (previousBooking) {
+    throw new AppError(HttpStatus.BAD_REQUEST, 'You have already used this coupon');
+  }
     let discount = 0;
 
-    if (coupon.type === 'percentage') {
+    if (coupon.type === EnumCouponType.PERCENTAGE) {
       discount = (coupon.discountValue / 100) * totalAmount;
       if (coupon.maxDiscountAmount) {
         discount = Math.min(discount, coupon.maxDiscountAmount);
       }
-    } else if (coupon.type === 'flat') {
+    } else if (coupon.type ===EnumCouponType.FLAT) {
       discount = coupon.discountValue;
     }
 

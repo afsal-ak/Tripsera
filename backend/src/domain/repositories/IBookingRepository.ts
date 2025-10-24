@@ -18,6 +18,8 @@ export interface IBookingRepository extends IBaseRepository<IBooking> {
     limit: number
   ): Promise<{ bookings: IBookingPopulatedForUser[]; total: number }>;
   getBookingById(userId: string, bookingId: string): Promise<IBooking | null>;
+     findOne(query: Partial<IBooking>): Promise<IBooking | null> 
+   
   findOneByUserAndPackage(userId: string, packageId: string): Promise<IBooking | null>;
 
   getBookingByIdForAdmin(bookingId: string): Promise<IBooking | null>;

@@ -133,10 +133,6 @@ const wishlistRepository = new WishlistRepository();
 const wishlistUseCases = new WishlistUseCases(wishlistRepository);
 const wishlistController = new WishlistController(wishlistUseCases);
 
-const couponRepository = new CouponRepository();
-const couponUseCases = new CouponUseCases(couponRepository);
-const couponController = new CouponController(couponUseCases);
-
 const notificationRepository = new NotificationRepository();
 const notificationUseCases = new NotificationUseCases(notificationRepository, userRepository);
 const notificationController = new NotificationController(notificationUseCases);
@@ -156,6 +152,12 @@ const bookingUseCases = new BookingUseCases(
   notificationUseCases
 );
 const bookingController = new BookingController(bookingUseCases);
+
+
+const couponRepository = new CouponRepository();
+const couponUseCases = new CouponUseCases(couponRepository,bookingRepository);
+const couponController = new CouponController(couponUseCases);
+
 
 const blogRepository = new BlogRepository();
 const blogUseCases = new BlogUseCases(blogRepository);

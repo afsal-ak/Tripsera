@@ -133,6 +133,10 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
 
     return booking ? booking : null;
   }
+
+   async findOne(data: Partial<IBooking>): Promise<IBooking | null> {
+    return await BookingModel.findOne(data).lean().exec();
+  }
   async findOneByUserAndPackage(userId: string, packageId: string): Promise<IBooking | null> {
     return await BookingModel.findOne({
       userId: userId,

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { ICouponUseCases } from '@application/useCaseInterfaces/user/ICouponUseCases';
+import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 
 export class CouponController {
   constructor(private _couponUseCase: ICouponUseCases) {}
@@ -24,8 +25,11 @@ export class CouponController {
 
   applyCoupon = async (req: Request, res: Response): Promise<void> => {
     try {
+      
+      const userId=getUserIdFromRequest(req)
+
       const { code, totalAmount }: { code: string; totalAmount: number } = req.body;
-       const discount = await this._couponUseCase.applyCoupon(code, totalAmount);
+       const discount = await this._couponUseCase.applyCoupon(userId,code, totalAmount);
 
       res.status(HttpStatus.OK).json({
         success: true,
