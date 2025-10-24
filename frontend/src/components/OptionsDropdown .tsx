@@ -10,7 +10,7 @@ interface Option {
 interface OptionsDropdownProps {
   options: Option[];
   onSelect: (value: string) => void;
-triggerElement: React.ReactNode;
+triggerElement?: React.ReactNode;
 }
 
 export const OptionsDropdown = ({ options, onSelect, triggerElement }: OptionsDropdownProps) => {

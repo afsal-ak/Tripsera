@@ -136,12 +136,7 @@ const UserBlogDetails = () => {
                   </span>
                   <Verified className="w-4 h-4 text-orange" />
                 </div>
-                {/* {blogData.location && (
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    <MapPin className="w-3 h-3 mr-1" />
-                    {blogData.location}
-                  </div>
-                )} */}
+                
               </div>
             </div>
             <OptionsDropdown
