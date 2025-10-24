@@ -29,3 +29,15 @@ export const deleteCustomPkg = async (packageId: string) => {
   const response = await api.delete(`/user/custom-package/${packageId}/delete`);
   return response.data;
 };
+
+
+export const fetchUserCustomPackages = async (
+  page: number ,
+  limit: number 
+)=> {
+  const res = await api.get('/user/custom-packages/user', {
+    params: { page, limit },
+  });
+
+  return res.data;
+};

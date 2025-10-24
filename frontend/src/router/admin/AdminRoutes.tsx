@@ -34,6 +34,7 @@ import CustomPackageDetails from '@/pages/admin/cutomPackage/CustomPackageDetail
 import MessageMainPage from '@/pages/admin/chat/MessageMainPage';
 import ChatAdminLayout from '@/layouts/ChatAdminLayout';
 import NotificationPage from '@/pages/admin/notification/Notifications';
+import CreateCustomPackagePage from '@/pages/admin/cutomPackage/CreateCustomPackagePage';
 const AdminRoutes = () => {
   return (
     <Routes>
@@ -75,6 +76,7 @@ const AdminRoutes = () => {
           <Route path="reports/:reportId" element={<ReportDetails />} />
           <Route path="custom-packages" element={<CustomPackagePage />} />
           <Route path="custom-packages/:pkgId" element={<CustomPackageDetails />} />
+<Route path="custom-package/create/:userId" element={<CreateCustomPackagePage />} />
           <Route path="notification" element={<NotificationPage />} />
 
           <Route path="/chat" element={<ChatAdminLayout />}>

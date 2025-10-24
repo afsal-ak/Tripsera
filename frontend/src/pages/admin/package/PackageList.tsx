@@ -44,6 +44,8 @@ const PackageList = () => {
     rating,
     setRating,
     setSort,
+    customFilter,
+    setCustomFilter,
     applyFilters,
   } = useSearchFilters();
   const [debouncedSearch] = useDebounce(searchQuery, 500);
@@ -58,6 +60,7 @@ const PackageList = () => {
         const rawFilters = {
           search: debouncedSearch,
           status: statusFilter,
+          custom: customFilter, 
           sort,
           startDate,
           endDate,
@@ -104,7 +107,7 @@ const PackageList = () => {
   const handleSearchChange = (val: string) => setSearchQuery(val);
   const handleStatusChange = (val: string) => setStatusFilter(val);
   const handleSortChange = (val: string) => setSort(val);
-  const handleRatingChange = (val: string) => setRating(val);
+  const handleCustomFilterChange = (val: string) => setCustomFilter(val);
 
   const handleApplyFilters = () => {
     applyFilters();
@@ -117,6 +120,7 @@ const PackageList = () => {
     setEndDate('');
     setSort('');
     setRating('');
+    setCustomFilter('')
     setSearchParams({ page: '1' });
   };
 
@@ -160,6 +164,8 @@ const PackageList = () => {
           onStartDateChange={setStartDate}
           onEndDateChange={setEndDate}
           onSortChange={handleSortChange}
+          customFilterValue={customFilter}
+          onCustomFilterChange={handleCustomFilterChange}
           onApply={handleApplyFilters}
           onClear={handleClearFilters}
           statusOptions={[
@@ -170,12 +176,19 @@ const PackageList = () => {
             { value: 'asc', label: 'Newest' },
             { value: 'desc', label: 'Oldest' },
           ]}
-        />
+
+          customOption={[
+            { value: 'all', label: 'All Packages' },
+            { value: 'normal', label: 'Normal Packages' },
+            { value: 'custom', label: 'Custom Packages' },
+          ]} 
+          />
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Final Price</TableHead>
               <TableHead>Status</TableHead>
@@ -187,6 +200,13 @@ const PackageList = () => {
               <TableRow key={pkg._id}>
                 <TableCell>{(currentPage - 1) * 3 + index + 1}</TableCell>
                 <TableCell>{pkg.title}</TableCell>
+                <TableCell> 
+                    {pkg.isCustom ? (
+                    <span className="text-blue-500">Custom pkg</span>
+                  ) : (
+                    <span className="text-green-500">Normal</span>
+                  )}
+                </TableCell>
                 <TableCell>{pkg.price}</TableCell>
                 <TableCell>{pkg.finalPrice}</TableCell>
                 <TableCell>

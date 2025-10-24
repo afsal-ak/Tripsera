@@ -11,8 +11,14 @@ import ImageCropper from '@/components/ImageCropper';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/ui/button';
+import { addPackageForUser } from '@/services/admin/customPkgService';
+interface AddPackageFormProps {
+  isCustom?: boolean;
+  createdFor?: string; // user ID (if custom)
+}
 
-export default function AddPackageForm() {
+
+export default function  AddPackageForm({ isCustom = false, createdFor }: AddPackageFormProps) {
   const {
     croppedImages,
     setCroppedImages,
@@ -107,39 +113,84 @@ export default function AddPackageForm() {
   // images & crop state
   const images = watch('images');
 
-  // Submit
-  const onSubmit = async (data: AddPackageFormSchema) => {
-    try {
-      setIsSubmittingPkg(true);
+  // // Submit
+  // const onSubmit = async (data: AddPackageFormSchema) => {
+  //   try {
+  //     setIsSubmittingPkg(true);
 
-      const form = new FormData();
+  //     const form = new FormData();
 
-      croppedImages.forEach((file) => form.append('images', file));
+  //     croppedImages.forEach((file) => form.append('images', file));
 
-      Object.entries(data).forEach(([key, value]) => {
-        if (key === 'images') return;
+  //     Object.entries(data).forEach(([key, value]) => {
+  //       if (key === 'images') return;
 
-        if (Array.isArray(value) || typeof value === 'object') {
-          // stringify arrays and objects
-          form.append(key, JSON.stringify(value));
-        } else {
-          form.append(key, String(value ?? ''));
-        }
-      });
+  //       if (Array.isArray(value) || typeof value === 'object') {
+  //         // stringify arrays and objects
+  //         form.append(key, JSON.stringify(value));
+  //       } else {
+  //         form.append(key, String(value ?? ''));
+  //       }
+  //     });
 
-      // send
-      await addPackage(form);
-      navigate('/admin/packages');
-      toast.success('Package saved successfullly');
-      reset();
-      setCroppedImages([]);
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to save');
-    } finally {
-      setIsSubmittingPkg(false);
+  //     // send
+  //     await addPackage(form);
+  //     navigate('/admin/packages');
+  //     toast.success('Package saved successfullly');
+  //     reset();
+  //     setCroppedImages([]);
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error('Failed to save');
+  //   } finally {
+  //     setIsSubmittingPkg(false);
+  //   }
+  // };
+const onSubmit = async (data: AddPackageFormSchema) => {
+  try {
+    setIsSubmittingPkg(true);
+
+    const form = new FormData();
+
+    // 1️ Add images
+    croppedImages.forEach((file) => form.append('images', file));
+
+    // 2Add all fields
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === 'images') return;
+      if (Array.isArray(value) || typeof value === 'object') {
+        form.append(key, JSON.stringify(value));
+      } else {
+        form.append(key, String(value ?? ''));
+      }
+    });
+
+    // 3Add extra fields for custom packages
+    if (isCustom) {
+      form.append('isCustom', 'true');
+      if (createdFor) form.append('createdFor', createdFor);
     }
-  };
+
+    // 4
+    if (isCustom) {
+      await addPackageForUser(form); // new API call
+      toast.success('Custom package created successfully');
+      navigate('/admin/custom-packages');
+    } else {
+      await addPackage(form);
+      toast.success('Package saved successfully');
+      navigate('/admin/packages');
+    }
+
+    reset();
+    setCroppedImages([]);
+  } catch (err) {
+    console.error(err);
+    toast.error('Failed to save');
+  } finally {
+    setIsSubmittingPkg(false);
+  }
+};
 
   const addDay = () => {
     itineraryArray.append({

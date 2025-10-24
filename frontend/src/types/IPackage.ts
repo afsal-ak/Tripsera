@@ -71,7 +71,8 @@ export interface IPackage {
 
   importantDetails?: string;
   isBlocked: boolean;
-
+  isCustom?:boolean;
+  createdFor:string;
   createdAt?: string;
   updatedAt?: string;
 }

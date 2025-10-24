@@ -143,25 +143,7 @@ const Packages = () => {
                 <p className="text-muted-foreground">No packages found.</p>
               )}
             </div>
-            {/* <div className="flex justify-center mt-6">
-              <button
-                onClick={() => handlePageChange(page - 1)}
-                disabled={page === 1}
-                className="mx-2 px-4 py-2 bg-gray-300 dark:bg-border text-black dark:text-white rounded"
-              >
-                Prev
-              </button>
-              <span className="text-foreground">
-                Page {page} of {totalPages}
-              </span>
-              <button
-                onClick={() => handlePageChange(page + 1)}
-                disabled={page === totalPages}
-                className="mx-2 px-4 py-2 bg-gray-300 dark:bg-border text-black dark:text-white rounded"
-              >
-                Next
-              </button>
-            </div> */}
+            
 
             <div className="flex justify-center mt-6 items-center gap-2">
               <button

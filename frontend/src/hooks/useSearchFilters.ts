@@ -45,7 +45,7 @@ export function useSearchFilters() {
     setEndDate(searchParams.get('endDate') || '');
     setSort(searchParams.get('sort') || '');
     setRating(searchParams.get('rating') || '');
-    setCustomFilter(searchParams.get('customFilter') || '');
+    setCustomFilter(searchParams.get('customFilter') || 'all');
   }, [searchParams]);
 
   return {

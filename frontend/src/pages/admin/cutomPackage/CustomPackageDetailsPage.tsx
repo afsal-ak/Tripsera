@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, Trash2, RefreshCw } from 'lucide-react';
+import { Loader2, Trash2, RefreshCw, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   getCustomPkgById,
@@ -27,6 +27,8 @@ import {
   SelectItem,
 } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/textarea';
+
+import AddPackageForm from '../package/AddPackageForm';
 
 const CustomPackageDetails = () => {
   const { pkgId } = useParams();
@@ -91,6 +93,10 @@ const CustomPackageDetails = () => {
     }
   };
 
+  const handleCreateCustomPackage = () => {
+    navigate(`/admin/custom-package/create/${pkg?.userId}`);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -142,6 +148,17 @@ const CustomPackageDetails = () => {
               <RefreshCw size={16} />
               Update Status
             </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50"
+              onClick={handleCreateCustomPackage}
+            >
+              <Package size={16} />
+              Create Custom Package
+            </Button>
+
 
             {/* Delete confirmation dialog */}
             <ConfirmDialog title="Delete Package?" actionLabel="Delete" onConfirm={handleDelete}>
