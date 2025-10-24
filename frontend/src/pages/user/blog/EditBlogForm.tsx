@@ -1,4 +1,3 @@
-//  export default EditBlogForm
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type EditBlogFormSchema, editBlogSchema } from '@/schemas/editBlogSchema';
@@ -12,6 +11,7 @@ import { toast } from 'sonner';
 import ImageCropper from '@/components/ImageCropper';
 import { handleBlogEdit, fetchBlogById } from '@/services/user/blogService';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { ImagePlus } from 'lucide-react';
 
 type ExistingImage = {
   url: string;
@@ -25,16 +25,14 @@ const EditBlogForm = () => {
   const { blogId } = useParams();
   const navigate = useNavigate();
 
-  // existing images coming from DB
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
 
-  // hook for NEW images (crop/compress/remove)
   const {
-    croppedImages, // new images (File[])
-    setCroppedImages, // to reset after submit
-    currentImage, // image being cropped (string)
+    croppedImages,
+    setCroppedImages,
+    currentImage,
     fileInputRef,
-    handleImageChange, // original handler from hook
+    handleImageChange,
     handleCropComplete,
     handleCropCancel,
     handleRemoveImage,
@@ -57,7 +55,7 @@ const EditBlogForm = () => {
     },
   });
 
-  // Load existing blog
+  // Load existing blog data
   useEffect(() => {
     const loadBlog = async () => {
       try {
@@ -74,12 +72,12 @@ const EditBlogForm = () => {
     if (blogId) loadBlog();
   }, [blogId, setValue]);
 
-  // keep RHF synced with ONLY new images (cropped ones)
+  // Sync cropped images to form
   useEffect(() => {
     setValue('images', croppedImages, { shouldValidate: true });
   }, [croppedImages, setValue]);
 
-  // wrapper to respect MAX_IMAGES = existing + new
+  // Limit total images (existing + new)
   const onImageChangeWithLimit = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
@@ -91,12 +89,10 @@ const EditBlogForm = () => {
         return;
       }
 
-      // Manually clip the FileList to remaining count (if needed)
       const arr = Array.from(files).slice(0, remaining);
       const dt = new DataTransfer();
       arr.forEach((f) => dt.items.add(f));
 
-      // create a synthetic event using the clipped files
       const syntheticEvent = {
         ...e,
         target: { ...e.target, files: dt.files },
@@ -115,14 +111,10 @@ const EditBlogForm = () => {
       formData.append('status', data.status!);
       formData.append('tags', data.tags?.join(',') || '');
 
-      // append NEW images (hook)
       croppedImages.forEach((file) => {
-        if (file instanceof File) {
-          formData.append('images', file);
-        }
+        if (file instanceof File) formData.append('images', file);
       });
 
-      // append remaining EXISTING images (so backend knows which ones stayed)
       existingImages.forEach((img, index) => {
         formData.append(`existingImages[${index}][url]`, img.url);
         formData.append(`existingImages[${index}][public_id]`, img.public_id);
@@ -130,7 +122,7 @@ const EditBlogForm = () => {
       });
 
       await handleBlogEdit(blogId!, formData);
-      toast.success('Blog updated');
+      toast.success('Blog updated successfully!');
       navigate('/account/my-blogs');
       reset();
       setCroppedImages([]);
@@ -146,10 +138,11 @@ const EditBlogForm = () => {
 
   return (
     <>
+      {/* Crop Modal */}
       {currentImage && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center px-4">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-4">
-            <h2 className="text-lg font-semibold mb-4">Crop Image</h2>
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">Crop Image</h2>
             <ImageCropper
               image={currentImage}
               onCropComplete={handleCropComplete}
@@ -159,102 +152,157 @@ const EditBlogForm = () => {
         </div>
       )}
 
+      {/* Main Form */}
       {!currentImage && (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-xl mx-auto">
-          <div>
-            <label>Title</label>
-            <Input {...register('title')} />
-            {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
-          </div>
+        <section className="min-h-screen flex justify-center items-center bg-gray-50 py-10">
+          <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-2xl border border-gray-100">
+            <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+              📝 Edit Blog
+            </h1>
 
-          <div>
-            <label>Content</label>
-            <Textarea {...register('content')} rows={5} />
-            {errors.content && <p className="text-red-500 text-sm">{errors.content.message}</p>}
-          </div>
-
-          <div>
-            <label>Tags (comma separated)</label>
-            <Controller
-              control={control}
-              name="tags"
-              render={({ field }) => (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Title */}
+              <div>
+                <Label>Title</Label>
                 <Input
-                  placeholder="e.g., travel, beach"
-                  onChange={(e) =>
-                    field.onChange(e.target.value.split(',').map((tag) => tag.trim()))
-                  }
-                  value={field.value?.join(', ') || ''}
+                  {...register('title')}
+                  placeholder="Enter blog title"
+                  className="mt-1"
                 />
-              )}
-            />
-            {errors.tags && <p className="text-red-500 text-sm">{errors.tags.message}</p>}
-          </div>
+                {errors.title && (
+                  <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+                )}
+              </div>
 
-          <div>
-            <label>Status</label>
-            <select {...register('status')} className="p-2 border rounded w-full">
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-              <option value="archived">Archived</option>
-            </select>
-            {errors.status && <p className="text-red-500 text-sm">{errors.status.message}</p>}
-          </div>
+              {/* Content */}
+              <div>
+                <Label>Content</Label>
+                <Textarea
+                  {...register('content')}
+                  rows={6}
+                  placeholder="Update your blog content..."
+                  className="mt-1"
+                />
+                {errors.content && (
+                  <p className="text-red-500 text-sm mt-1">{errors.content.message}</p>
+                )}
+              </div>
 
-          <div>
-            <Label>Upload Images (Total Max {MAX_IMAGES})</Label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              ref={fileInputRef}
-              onChange={onImageChangeWithLimit}
-              className="hidden"
-            />
-            <Button type="button" onClick={() => fileInputRef.current?.click()}>
-              Upload Images
-            </Button>
+              {/* Tags */}
+              <div>
+                <Label>Tags (comma separated)</Label>
+                <Controller
+                  control={control}
+                  name="tags"
+                  render={({ field }) => (
+                    <Input
+                      placeholder="e.g. travel, nature"
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value.split(',').map((tag) => tag.trim())
+                        )
+                      }
+                      value={field.value?.join(', ') || ''}
+                      className="mt-1"
+                    />
+                  )}
+                />
+                {errors.tags && (
+                  <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
+                )}
+              </div>
 
-            {/* Previews */}
-            <div className="grid grid-cols-4 gap-2 mt-2">
-              {/* Existing images */}
-              {existingImages.map((img) => (
-                <div key={img.public_id} className="relative group">
-                  <img src={img.url} alt="existing" className="w-full h-24 object-cover rounded" />
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteExistingImage(img.public_id)}
-                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
+              {/* Status */}
+              <div>
+                <Label>Status</Label>
+                <select
+                  {...register('status')}
+                  className="p-2 border rounded-lg w-full mt-1 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                  <option value="archived">Archived</option>
+                </select>
+                {errors.status && (
+                  <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                )}
+              </div>
 
-              {/* Newly cropped images */}
-              {croppedImages.map((file, index) => (
-                <div key={index} className="relative group">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt="new"
-                    className="w-full h-24 object-cover rounded"
+              {/* Image Upload */}
+              <div>
+                <Label>Upload Images (Total Max {MAX_IMAGES})</Label>
+                <div className="mt-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    ref={fileInputRef}
+                    onChange={onImageChangeWithLimit}
+                    className="hidden"
                   />
-                  <button
+                  <Button
                     type="button"
-                    onClick={() => handleRemoveImage(index)}
-                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-2 bg-gray-900 hover:bg-black text-white"
                   >
-                    ✕
-                  </button>
+                    <ImagePlus size={18} />
+                    Upload Images
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Updating...' : 'Update Blog'}
-          </Button>
-        </form>
+                {/* Previews */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
+                  {/* Existing images */}
+                  {existingImages.map((img) => (
+                    <div key={img.public_id} className="relative group">
+                      <img
+                        src={img.url}
+                        alt="existing"
+                        className="w-full h-28 object-cover rounded-lg border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteExistingImage(img.public_id)}
+                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* New images */}
+                  {croppedImages.map((file, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="new"
+                        className="w-full h-28 object-cover rounded-lg border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100 transition"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <div className="pt-4">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition"
+                >
+                  {isSubmitting ? 'Updating...' : 'Update Blog'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </section>
       )}
     </>
   );

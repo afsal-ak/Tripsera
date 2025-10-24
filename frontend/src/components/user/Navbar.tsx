@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/component/ui/button';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { Menu, User, X, Bell, MessageCircle } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '@/redux/slices/userAuthSlice';
@@ -8,16 +8,15 @@ import type { AppDispatch, RootState } from '@/redux/store';
 import { toast } from 'sonner';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
 import { EnumUserRole } from '@/Constants/enums/userEnum';
+import { OptionsDropdown } from '../OptionsDropdown ';
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
-
+  const navigate = useNavigate();
+ 
   const { isAuthenticated, accessToken, user } = useSelector((state: RootState) => state.userAuth);
-
   const notificationUnread = useSelector((state: RootState) => state.notifications.unreadCount);
-  console.log(notificationUnread,'notificationunread');
-  
+
   const totalChatUnread = useTotalUnreadCount(EnumUserRole.USER);
-  console.log(totalChatUnread,'totalChatUnread');
 
   useEffect(() => {
     if (!accessToken) {
@@ -60,12 +59,6 @@ const Navbar = () => {
               <Link to="/chatbot" className="text-foreground hover:text-orange transition-colors">
                 Chat Bot
               </Link>
-              {/* <Link to="/about" className="text-foreground hover:text-orange transition-colors">
-                About Us
-              </Link>
-              <Link to="/contact" className="text-foreground hover:text-orange transition-colors">
-                Contact
-              </Link> */}
             </nav>
           </div>
 
@@ -92,42 +85,32 @@ const Navbar = () => {
             </Link>
 
             {isAuthenticated ? (
-              <div className="relative hidden sm:flex items-center group">
-                {/* Profile Dropdown */}
-                <button className="flex items-center space-x-2 focus:outline-none">
-                  <div className="flex items-center justify-center">
-                    <img
-                      src={profileImage}
-                      alt="Profile"
-                      className="w-10 h-10 rounded-full object-cover border"
-                    />
-                  </div>
-                </button>
-
-                <div className="absolute top-full right-0 mt-2 w-44 bg-white shadow-md rounded-md border opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-all duration-200 z-50">
-                  <Link
-                    to="/account/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    My Account
-                  </Link>
-                  <Link
-                    to="/account/wishlist"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Wishlist
-                  </Link>
-                  <button
-                    onClick={() => {
-                      dispatch(logoutUser());
-                      toast.success('Logout successful');
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
+        <div className="relative hidden sm:flex items-center">
+          <OptionsDropdown
+            options={[
+              { label: 'My Account', value: 'profile' },
+              { label: 'Wishlist', value: 'wishlist' },
+              { label: 'Logout', value: 'logout', className: 'text-red-500' },
+            ]}
+            onSelect={(value) => {
+              if (value === 'profile') {
+                navigate('/account/profile'); // ✅ React Router navigation
+              } else if (value === 'wishlist') {
+                navigate('/account/wishlist'); // ✅
+              } else if (value === 'logout') {
+                dispatch(logoutUser());
+                toast.success('Logout successful');
+              }
+            }}
+            triggerElement={
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-10 h-10 rounded-full object-cover border cursor-pointer hover:ring-2 hover:ring-orange transition"
+              />
+            }
+          />
+        </div>
             ) : (
               <>
                 <Link to="/login">
@@ -196,20 +179,6 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Notification {notificationUnread > 0 && `(${notificationUnread})`}
-            </Link>
-            <Link
-              to="/about"
-              className="block text-foreground hover:text-orange"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              About Us
-            </Link>
-            <Link
-              to="/contact"
-              className="block text-foreground hover:text-orange"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Contact
             </Link>
             <Link
               to="/account/profile"

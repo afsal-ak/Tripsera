@@ -17,10 +17,9 @@ const Dashboard = ({ user, loading, refetchUser }: Props) => {
   const profilePic = user?.profileImage?.url
     ? user.profileImage.url.replace('/upload/', '/upload/f_webp,q_auto/')
     : '/profile-default.jpg';
-
   const coverPic = user?.coverImage?.url
     ? user.coverImage.url.replace('/upload/', '/upload/f_webp,q_auto/')
-    : '/profile-default.jpg';
+    : null;
 
   const handleProfilePrivacyToggle = async () => {
     try {
@@ -61,9 +60,17 @@ const Dashboard = ({ user, loading, refetchUser }: Props) => {
         {/* Hero Profile Card */}
         <div className="relative w-full bg-white rounded-3xl shadow-lg">
           {/* Cover */}
-          <div className="w-full h-48 sm:h-56 md:h-64 relative">
-            <img src={coverPic} alt="Cover" className="w-full h-full object-contain" />
-          </div>
+          <div
+            className="w-full h-56 rounded-2xl overflow-hidden"
+            style={{
+              backgroundImage: coverPic
+                ? `url(${coverPic})`
+                : 'linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          ></div>
+
 
           {/* Profile Image */}
           <div className="absolute inset-x-0 -bottom-16 flex justify-center">
@@ -114,11 +121,10 @@ const Dashboard = ({ user, loading, refetchUser }: Props) => {
                   >
                     <Button
                       className={`px-6 py-2 rounded-full flex items-center gap-2 transition-all duration-300
-                      ${
-                        user?.isPrivate
+                      ${user?.isPrivate
                           ? 'bg-red-600 text-white hover:bg-red-700'
                           : 'bg-green-600 text-white hover:bg-green-700'
-                      }`}
+                        }`}
                     >
                       {user?.isPrivate ? (
                         <>

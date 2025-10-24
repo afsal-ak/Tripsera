@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
 import { getAllActiveCoupon } from '@/services/user/couponService';
 import type { ICoupon } from '@/types/ICoupon';
+import { toast } from 'sonner';
 
 const CouponList = () => {
   const [coupons, setCoupons] = useState<ICoupon[]>([]);
@@ -13,16 +14,17 @@ const CouponList = () => {
   const limit = 6;
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchCoupons = async () => {
       try {
         const res = await getAllActiveCoupon(currentPage, limit);
         setCoupons(res.coupons);
         setTotalPages(res.totalPages);
       } catch (error) {
         console.error('Coupon fetch error', error);
+        toast.error('Failed to fetch coupons');
       }
     };
-    fetch();
+    fetchCoupons();
   }, [searchParams]);
 
   const handlePageChange = (page: number) => {
@@ -35,55 +37,76 @@ const CouponList = () => {
     onPageChange: handlePageChange,
   });
 
+  const handleCopy = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast.success(`Copied "${code}" to clipboard!`);
+  };
+
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold text-orange-600 mb-6"> Grab Your Coupons</h2>
+      <h2 className="text-3xl font-extrabold text-orange text-center mb-8">
+        🎁 Grab Your Coupons
+      </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {coupons.map((coupon) => (
           <div
             key={coupon._id}
-            className="relative rounded-xl shadow-md bg-gradient-to-br from-orange-50 to-white border border-orange-200 hover:shadow-lg transition-all p-5"
+            className="relative rounded-2xl shadow-md bg-gradient-to-br from-orange/10 to-white border border-orange/20 hover:shadow-lg transition-all duration-300 group overflow-hidden"
           >
-            {/* Discount Badge */}
-            <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs px-3 py-1 rounded-bl-xl font-bold">
+            {/* Discount Tag */}
+            <div className="absolute top-0 right-0 bg-orange text-white text-xs px-3 py-1 rounded-bl-xl font-bold shadow-sm">
               {coupon.type === 'percentage'
                 ? `${coupon.discountValue}% OFF`
                 : `₹${coupon.discountValue} OFF`}
             </div>
 
-            {/* Coupon Code */}
-            <div className="mb-4">
-              <p className="text-sm text-gray-500">Coupon Code</p>
-              <h3 className="text-xl font-bold text-orange-600 tracking-wider">{coupon.code}</h3>
+            {/* Coupon Content */}
+            <div className="p-5">
+              <div className="mb-4">
+                <p className="text-sm text-gray-500">Coupon Code</p>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-orange tracking-wide">
+                    {coupon.code}
+                  </h3>
+                  <button
+                    onClick={() => handleCopy(coupon.code)}
+                    className="bg-orange text-white text-xs px-3 py-1 rounded-md hover:bg-orange-dark transition-all shadow-sm active:scale-95"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-1 text-sm text-gray-700">
+                <p>
+                  Min Purchase:{' '}
+                  <span className="font-semibold">₹{coupon.minAmount || 0}</span>
+                </p>
+                <p>
+                  Max Discount:{' '}
+                  <span className="font-semibold">
+                    ₹{coupon.maxDiscountAmount || '-'}
+                  </span>
+                </p>
+                <p>
+                  Valid Till:{' '}
+                  <span className="font-semibold text-orange-dark">
+                    {new Date(coupon.expiryDate).toLocaleDateString()}
+                  </span>
+                </p>
+              </div>
             </div>
 
-            {/* Details */}
-            <div className="space-y-1 text-sm text-gray-700">
-              <p>
-                Min Purchase: <span className="font-semibold">₹{coupon.minAmount || 0}</span>
-              </p>
-              <p>
-                Max Discount:{' '}
-                <span className="font-semibold">₹{coupon.maxDiscountAmount || '-'}</span>
-              </p>
-              <p>
-                Valid Till:{' '}
-                <span className="font-semibold">
-                  {new Date(coupon.expiryDate).toLocaleDateString()}
-                </span>
-              </p>
-            </div>
-
-            {/* Apply Button (Optional) */}
-            {/* <button className="mt-4 w-full bg-orange-500 text-white rounded-md py-1 text-sm font-medium hover:bg-orange-600">
-              Apply
-            </button> */}
+            {/* Animated Bottom Border */}
+            <div className="absolute bottom-0 left-0 w-0 h-1 bg-orange transition-all duration-500 group-hover:w-full" />
           </div>
         ))}
       </div>
 
-      <div className="flex justify-center items-center gap-2 mt-8">{paginationButtons}</div>
+      <div className="flex justify-center items-center gap-2 mt-8">
+        {paginationButtons}
+      </div>
     </div>
   );
 };

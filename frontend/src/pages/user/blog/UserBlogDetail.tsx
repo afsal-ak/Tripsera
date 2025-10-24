@@ -25,10 +25,8 @@ import CommentModal from '@/components/CommentModal';
 const UserBlogDetails = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-  //console.log(slug, 'from param');
-  const [liked, setLiked] = useState(false);
-  // const [savedPosts, setSavedPosts] = useState();
-  const [blogData, setBlogData] = useState<IBlog | null>(null);
+   const [liked, setLiked] = useState(false);
+   const [blogData, setBlogData] = useState<IBlog | null>(null);
   const [likesCount, setLikesCount] = useState(0);
   const [likedUsers, setLikedUsers] = useState<UserBasicInfo[]>([]);
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
@@ -48,14 +46,12 @@ const UserBlogDetails = () => {
         setLiked(response.blog?.isLiked || false);
         setLikesCount(response.blog?.likes?.length || 0);
         if (response.blog?._id) {
-          console.log(response.blog._id, 'llllll');
-
+ 
           const likesResponse = await fetchBlogLikeList(response.blog._id);
           setLikedUsers(likesResponse);
-          console.log(likesResponse, 'blog likes');
-        }
+         }
       } catch (error: any) {
-        console.error('Failed to fetch blog details', error);
+        toast.error('Failed to fetch blog details');
       }
     };
 
@@ -106,8 +102,7 @@ const UserBlogDetails = () => {
   const options = [
     { label: 'Edit', value: 'edit', className: 'text-black-500' },
     { label: 'Delete', value: 'delete', className: 'text-red-500' },
-    // { label: "Delete", value: "delete" },
-    // { label: "Block User", value: "block" },
+    
   ];
 
   function handleOptionSelect(value: string, _id: string, reportedType: IReportedType) {
@@ -151,8 +146,7 @@ const UserBlogDetails = () => {
             </div>
             <OptionsDropdown
               options={options}
-              onSelect={(value) => handleOptionSelect(value, blogData?._id!, 'blog')}
-            />
+              onSelect={(value) => handleOptionSelect(value, blogData?._id!, 'blog')} triggerElement={undefined}            />
           </div>
 
           {/* Images */}
@@ -263,7 +257,7 @@ const UserBlogDetails = () => {
           <CommentModal
             isOpen={showCommentModal}
             onClose={() => setShowCommentModal(false)}
-            imageUrl={blogData.images?.[0]?.url}
+            imageUrl={blogData.images?.[0]?.url!}
             parentId={blogData._id!}
             parentType="blog"
           />

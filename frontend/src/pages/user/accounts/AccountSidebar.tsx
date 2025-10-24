@@ -1,5 +1,17 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { User, Heart, Calendar, X, BadgePercent, Wallet, IdCard, List } from 'lucide-react';
+import {
+  User,
+  Heart,
+  Calendar,
+  X,
+  BadgePercent,
+  Wallet,
+  IdCard,
+  List,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -15,27 +27,37 @@ const menuItems = [
   { path: 'my-bookings', label: 'My Bookings', icon: Calendar },
   { path: 'my-blogs', label: 'My Blogs', icon: IdCard },
   { path: 'my-reviews', label: 'My Reviews', icon: List },
-  { path: 'my-custom-package', label: 'My-Custom Package', icon: List },
-  { path: 'my-custom-package/user', label: 'Approved Custom-package', icon: List },
+  {
+    label: 'My Custom Package',
+    icon: List,
+    subItems: [
+      { path: 'my-custom-package', label: 'Requested Packages' },
+      { path: 'my-custom-package/user', label: 'Approved Packages' },
+    ],
+  },
 ];
 
 const AccountSidebar = ({ isOpen, onToggle }: Props) => {
+  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
+
+  const toggleSubMenu = (label: string) => {
+    setOpenSubMenu(openSubMenu === label ? null : label);
+  };
+
   return (
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden" onClick={onToggle} />
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
+          onClick={onToggle}
+        />
       )}
 
       <aside
         className={cn(
-          // Mobile: Slide-in fixed
           'fixed top-0 left-0 z-50 h-full w-64 bg-white border-r transition-transform duration-300',
-
-          // Slide toggle on mobile
           isOpen ? 'translate-x-0' : '-translate-x-full',
-
-          // Desktop: Keep it in flow & sticky under navbar (assumes navbar height is 64px)
           'lg:translate-x-0 lg:sticky lg:top-16 lg:z-10'
         )}
       >
@@ -48,25 +70,75 @@ const AccountSidebar = ({ isOpen, onToggle }: Props) => {
 
         <nav className="p-4">
           <ul className="space-y-2">
-            {menuItems.map(({ path, label, icon: Icon }) => (
-              <li key={path}>
-                <NavLink
-                  to={`/account/${path}`}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-3 p-2 rounded-md text-sm font-medium',
-                      isActive ? 'bg-orange text-white' : 'hover:bg-orange/10 hover:text-orange'
-                    )
-                  }
-                  onClick={() => {
-                    if (window.innerWidth < 1024) onToggle();
-                  }}
-                >
-                  <Icon className="w-4 h-4" />
-                  {label}
-                </NavLink>
-              </li>
-            ))}
+            {menuItems.map(({ path, label, icon: Icon, subItems }) =>
+              subItems ? (
+                <li key={label}>
+                  <button
+                    onClick={() => toggleSubMenu(label)}
+                    className={cn(
+                      'flex items-center justify-between w-full p-2 rounded-md text-sm font-medium hover:bg-orange/10 hover:text-orange',
+                      openSubMenu === label && 'bg-orange text-white'
+                    )}
+                  >
+                    <span className="flex items-center gap-3">
+                      <Icon className="w-4 h-4" />
+                      {label}
+                    </span>
+                    {openSubMenu === label ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    )}
+                  </button>
+
+                  {/* Submenu */}
+                  {openSubMenu === label && (
+                    <ul className="ml-8 mt-2 space-y-1 border-l border-border pl-3">
+                      {subItems.map((sub) => (
+                        <li key={sub.path}>
+                          <NavLink
+                            to={`/account/${sub.path}`}
+                            className={({ isActive }) =>
+                              cn(
+                                'block p-2 text-sm rounded-md',
+                                isActive
+                                  ? 'bg-orange text-white'
+                                  : 'hover:bg-orange/10 hover:text-orange'
+                              )
+                            }
+                            onClick={() => {
+                              if (window.innerWidth < 1024) onToggle();
+                            }}
+                          >
+                            {sub.label}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ) : (
+                <li key={path}>
+                  <NavLink
+                    to={`/account/${path}`}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex items-center gap-3 p-2 rounded-md text-sm font-medium',
+                        isActive
+                          ? 'bg-orange text-white'
+                          : 'hover:bg-orange/10 hover:text-orange'
+                      )
+                    }
+                    onClick={() => {
+                      if (window.innerWidth < 1024) onToggle();
+                    }}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {label}
+                  </NavLink>
+                </li>
+              )
+            )}
           </ul>
         </nav>
       </aside>
