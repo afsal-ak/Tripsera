@@ -17,7 +17,7 @@ const BlogsPage = () => {
   const limit = 6;
   const search = searchParams.get('search') || '';
 
-  // ✅ Debounce search value (wait 500ms after user stops typing)
+  //  Debounce search value (wait 500ms after user stops typing)
   const [debouncedSearch] = useDebounce(searchBlog, 500);
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +43,7 @@ const BlogsPage = () => {
     onPageChange: handlePageChange,
   });
 
-  // ✅ When debounced search changes, update searchParams
+  //  When debounced search changes, update searchParams
   useEffect(() => {
     if (debouncedSearch || debouncedSearch === '') {
       setSearchParams({
@@ -54,7 +54,7 @@ const BlogsPage = () => {
     }
   }, [debouncedSearch]);
 
-  // ✅ Fetch blogs when URL params change
+  //  Fetch blogs when URL params change
   useEffect(() => {
     const fetchBlogs = async () => {
       setLoading(true);

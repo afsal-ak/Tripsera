@@ -14,7 +14,9 @@ export const getBookingById = async (id: string) => {
 
 export const cancelBooking = async (id: string, reason: string) => {
   const response = await api.patch(`/user/booking/cancel/${id}`, { reason });
-  return response.data;
+  console.log(response,'booking cancel response');
+  
+  return response.data.data;
 };
 
 export const applyCoupon = async (code: string, totalAmount: number) => {

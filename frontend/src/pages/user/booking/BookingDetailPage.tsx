@@ -34,7 +34,7 @@ import {
 import { ChangeTravelDate } from './ChangeTravelDate';
 import PackageDetailPickUp from '../packages/pages/PackageDetailPickUp';
 import { BookingHistoryCard } from '@/components/booking/BookingHistoryCard';
-const BookingDetailPage = () => {
+ const BookingDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [booking, setBooking] = useState<IBooking | null>(null);
@@ -101,8 +101,9 @@ const BookingDetailPage = () => {
           : prev
       );
       setOpen(false);
-    } catch {
-      toast.error('Cancellation failed.');
+    } catch(error:any) {
+      toast.error(error?.response?.data.message||'Cancellation failed.');
+      console.log(error?.response.data.message,'bookinug')
     }
   };
 
@@ -131,8 +132,8 @@ const BookingDetailPage = () => {
 
       setBooking(updatedBooking);
       setTravellerOpen(false);
-    } catch (error) {
-      toast.error('Failed to remove traveler.');
+    } catch (error:any) {
+      toast.error(error?.response?.data?.message||'Failed to remove traveler.');
       console.error(error);
     }
   };
@@ -152,7 +153,7 @@ const BookingDetailPage = () => {
 
       setBooking(updatedBooking);
     } catch (error: any) {
-      toast.error('Failed to update travel date.');
+      toast.error(error?.response?.data?.message||'Failed to  traveler Date.');
       console.error(error);
     }
   };
