@@ -165,8 +165,17 @@ export class PackageRepository implements IPackageRepository {
     sortBy: string
   ): Promise<IPackage[]> {
     const pipeline: any[] = [
-      { $match: { ...filters, isBlocked: false, isCustom: false } },
-
+      // { $match: { ...filters, isBlocked: false, isCustom: false } },
+{
+      $match: {
+        ...filters,
+        isBlocked: false,
+        $or: [
+          { isCustom: false },
+          { isCustom: { $exists: false } } // include packages without the field
+        ]
+      },
+    },
       {
         $lookup: {
           from: 'categories',

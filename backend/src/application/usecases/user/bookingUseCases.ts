@@ -33,7 +33,7 @@ export class BookingUseCases implements IBookingUseCases {
     private _packageRepo: IPackageRepository,
     private _razorpayService: RazorpayService,
     private _notificationUseCases: INotificationUseCases
-  ) {}
+  ) { }
 
   async getAllUserBooking(
     userId: string,
@@ -68,8 +68,12 @@ export class BookingUseCases implements IBookingUseCases {
     if (booking.bookingStatus === EnumBookingStatus.CANCELLED) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'This booking is already cancelled');
     }
-    if (booking.bookingStatus === EnumBookingStatus.CONFIRMED || EnumBookingStatus.COMPLETED) {
-      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot cancel confirmed booking');
+    if (
+      booking.bookingStatus === EnumBookingStatus.CONFIRMED ||
+      booking.bookingStatus === EnumBookingStatus.COMPLETED
+    ) {
+      console.log(booking.bookingStatus, 'id in booking');
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot cancel confirmed or completed booking');
     }
 
     //  Refund if already paid
@@ -398,7 +402,8 @@ export class BookingUseCases implements IBookingUseCases {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot remove traveler from a cancelled booking');
     }
 
-    if (bookingDoc.bookingStatus === EnumBookingStatus.CONFIRMED || EnumBookingStatus.COMPLETED) {
+    if (bookingDoc.bookingStatus === EnumBookingStatus.CONFIRMED ||
+       bookingDoc.bookingStatus===EnumBookingStatus.COMPLETED) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot remove traveler from a confirmed booking');
     }
 
