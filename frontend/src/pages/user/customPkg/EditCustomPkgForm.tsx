@@ -34,6 +34,7 @@ const EditCustomPkgForm = () => {
         if (pkg) {
           // Prefill top-level fields
           setValue('destination', pkg.destination || '');
+          setValue('startingPoint', pkg.startingPoint || '');
           setValue('tripType', pkg.tripType || '');
           setValue('budget', pkg.budget || 0);
           setValue('startDate', pkg.startDate?.split('T')[0] || '');
@@ -95,7 +96,11 @@ const EditCustomPkgForm = () => {
         <Input id="destination" {...register('destination')} placeholder="Enter destination" />
         {errors.destination && <p className="text-red-500 text-sm">{errors.destination.message}</p>}
       </div>
-
+ <div>
+        <Label htmlFor="destination">Starting Point</Label>
+        <Input id="startingPoint" {...register('startingPoint')} placeholder="Enter Starting Point" />
+        {errors.startingPoint && <p className="text-red-500 text-sm">{errors.startingPoint.message}</p>}
+      </div>
       {/* Trip Type */}
       <div>
         <Label htmlFor="tripType">Trip Type</Label>

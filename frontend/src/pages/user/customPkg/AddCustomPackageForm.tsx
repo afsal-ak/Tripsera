@@ -22,6 +22,7 @@ const AddCustomPkgForm = () => {
     resolver: zodResolver(customPkgSchema),
     defaultValues: {
       destination: '',
+      startingPoint: '',
       tripType: 'romantic',
       budget: 0,
       startDate: '',
@@ -38,9 +39,10 @@ const AddCustomPkgForm = () => {
     try {
       await createCustomPkg(data);
       reset();
-      navigate(-1);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to submit package ❌');
+      navigate("/account/my-custom-package"); 
+      toast.success('Custom Package submitted')
+     } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to submit package ');
       console.error(error);
     }
   };
@@ -94,7 +96,11 @@ const AddCustomPkgForm = () => {
         <Input id="destination" placeholder="Enter your destination" {...register('destination')} />
         {errors.destination && <p className="text-red-500 text-sm">{errors.destination.message}</p>}
       </div>
-
+      <div>
+        <Label htmlFor="destination">Starting Point</Label>
+        <Input id="startingPoint" placeholder="Enter your startingPoint" {...register('startingPoint')} />
+        {errors.startingPoint && <p className="text-red-500 text-sm">{errors.startingPoint.message}</p>}
+      </div>
       {/* Trip Type */}
       <div>
         <Label htmlFor="tripType">Trip Type</Label>

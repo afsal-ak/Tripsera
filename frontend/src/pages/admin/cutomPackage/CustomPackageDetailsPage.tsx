@@ -27,9 +27,7 @@ import {
   SelectItem,
 } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/textarea';
-
-import AddPackageForm from '../package/AddPackageForm';
-
+ 
 const CustomPackageDetails = () => {
   const { pkgId } = useParams();
   const [pkg, setPkg] = useState<ICustomPackage | null>(null);
@@ -94,7 +92,7 @@ const CustomPackageDetails = () => {
   };
 
   const handleCreateCustomPackage = () => {
-    navigate(`/admin/custom-package/create/${pkg?.userId}`);
+    navigate(`/admin/custom-package/create/${pkg?.id}`);
   };
 
   if (loading) {
@@ -198,6 +196,7 @@ const CustomPackageDetails = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InfoBlock label="Destination" value={pkg.destination} />
+            <InfoBlock label="Starting Point" value={pkg.startingPoint!} />
             <InfoBlock
               label="Trip Type"
               value={pkg.tripType === 'other' ? pkg.otherTripType || 'Other' : pkg.tripType}

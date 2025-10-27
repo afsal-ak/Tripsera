@@ -145,8 +145,8 @@ const CustomPackagePage = () => {
             { value: 'cancelled', label: 'Cancelled' },
           ]}
           sortOptions={[
-            { value: 'asc', label: 'Newest' },
-            { value: 'desc', label: 'Oldest' },
+            { value: 'asc', label: 'Oldest' },
+            { value: 'desc', label: 'Newest' },
           ]}
         />
         <CardTitle className="text-2xl font-semibold text-gray-800"></CardTitle>
@@ -163,6 +163,7 @@ const CustomPackagePage = () => {
                 <TableRow>
                   <TableHead className="w-[200px]">Username</TableHead>
                   <TableHead className="w-[200px]">Destination</TableHead>
+                  <TableHead className="w-[200px]">Starting Point</TableHead>
                   <TableHead>Trip Type</TableHead>
                   <TableHead>Budget</TableHead>
                   <TableHead>Start Date</TableHead>
@@ -178,6 +179,7 @@ const CustomPackagePage = () => {
                       {item.userId?.username}
                     </TableCell>
                     <TableCell className="font-medium text-gray-800">{item.destination}</TableCell>
+                    <TableCell className="font-medium text-gray-800">{item.startingPoint}</TableCell>
                     <TableCell className="capitalize text-gray-700">{item.tripType}</TableCell>
                     <TableCell className="font-semibold text-gray-900">
                       ₹ {item.budget.toLocaleString()}

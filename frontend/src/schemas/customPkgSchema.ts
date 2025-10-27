@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const customPkgSchema = z.object({
   destination: z.string().trim().min(3, { message: 'Destination must be at least 3 characters' }),
+  startingPoint: z.string().trim().min(3, { message: 'startingPoint must be at least 3 characters' }),
+  
   tripType: z.enum(['romantic', 'adventure', 'family', 'luxury', 'budget', 'other']),
   budget: z
     .number({

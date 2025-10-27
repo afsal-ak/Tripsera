@@ -13,6 +13,18 @@ export const getAllCustomPkg = async (page: number, limit: number, filter: IFilt
   return response.data.data;
 };
 
+export const fetchAllApprovedCustomPkg = async (page: number, limit: number, filter: IFilter) => {
+  const params = {
+    page,
+    limit,
+    ...filter,
+  };
+  const response = await api.get(`/admin/custom-package/approved`, { params });
+  console.log(response.data, 'jjj');
+
+  return response.data.data;
+};
+
 export const getCustomPkgById = async (packageId: string) => {
   const response = await api.get(`/admin/custom-package/${packageId}`);
   return response.data;

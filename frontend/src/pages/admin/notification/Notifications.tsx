@@ -46,7 +46,9 @@ const NotificationPage = () => {
       case 'review':
         return `/admin/reviews`;
       case 'wallet':
-        return `/admin/wallet`;
+        return `/admin/wallet`; 
+         case 'customPackage':
+        return `/admin/custom-packages`;
       case 'report':
         return `/admin/reports/${n.reportedId}`;
       case 'follow':

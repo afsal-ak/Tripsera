@@ -46,7 +46,7 @@ export const ReferralForm = ({ defaultValues, onSubmit }: Props) => {
         </label>
       </div>
 
-      <Button type="submit">Save Settings</Button>
+      <Button type="submit">Save  </Button>
     </form>
   );
 };

@@ -130,6 +130,8 @@ const CustomPackageDetails = () => {
         <CardContent className="space-y-6 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InfoBlock label="Destination" value={pkg.destination} />
+            <InfoBlock label="Starting Point" value={pkg.startingPoint!} />
+
             <InfoBlock
               label="Trip Type"
               value={pkg.tripType === 'other' ? pkg.otherTripType || 'Other' : pkg.tripType}

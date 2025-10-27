@@ -181,7 +181,7 @@ export default function EditPackageForm() {
 
       await updatePackage(id, form);
       toast.success('Package updated successfully');
-      navigate('/admin/packages');
+      navigate(-1);
     } catch (err) {
       console.error(err);
       toast.error('Failed to update package');
@@ -216,7 +216,7 @@ export default function EditPackageForm() {
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-8 my-10 border border-gray-100">
         <h2 className="text-2xl font-semibold mb-4">Edit Package</h2>
         {!currentImage && (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -316,81 +316,113 @@ export default function EditPackageForm() {
               {errors.startPoint && <p className="text-red-500">{errors.startPoint?.message}</p>}
             </div>
 
-            <div>
-              <label className="block font-medium mb-1">Locations</label>
-              {locArray.fields.map((f, i) => (
-                <div key={f.id} className="border p-4 rounded mb-4">
-                  <div className="flex flex-col gap-2">
-                    {/* Name Field */}
-                    <div className="flex flex-col">
-                      <label className="text-sm font-medium">Name</label>
-                      <input
-                        placeholder="Location Name"
-                        {...register(`location.${i}.name` as const)}
-                        className="border p-2 rounded"
-                      />
-                      {errors.location?.[i]?.name && (
-                        <p className="text-red-500 text-sm">{errors.location[i]?.name?.message}</p>
-                      )}
+            <div className="border-t pt-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-gray-700">Locations</h3>
+                <button
+                  type="button"
+                  onClick={() => locArray.append({ name: '', lat: '', lng: '' })}
+                  className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                >
+                  + Add Location
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {locArray.fields.map((f, i) => (
+                  <div
+                    key={f.id}
+                    className="border border-gray-200 p-5 rounded-xl bg-gray-50 shadow-sm hover:shadow-md transition"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Name Field */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input
+                          type="text"
+                          placeholder="Location Name"
+                          {...register(`location.${i}.name` as const)}
+                          className="border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                        {errors.location?.[i]?.name && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.location[i]?.name?.message}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Latitude Field */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                        <input
+                          type="text"
+                          placeholder="Latitude"
+                          {...register(`location.${i}.lat` as const)}
+                          className="border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                        {errors.location?.[i]?.lat && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.location[i]?.lat?.message}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Longitude Field */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                        <input
+                          type="text"
+                          placeholder="Longitude"
+                          {...register(`location.${i}.lng` as const)}
+                          className="border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                        {errors.location?.[i]?.lng && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.location[i]?.lng?.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Latitude Field */}
-                    <div className="flex flex-col">
-                      <label className="text-sm font-medium">Latitude</label>
-                      <input
-                        placeholder="Lat"
-                        {...register(`location.${i}.lat` as const)}
-                        className="border p-2 rounded"
-                      />
-                      {errors.location?.[i]?.lat && (
-                        <p className="text-red-500 text-sm">{errors.location[i]?.lat?.message}</p>
-                      )}
+                    {/* Remove Button */}
+                    <div className="flex justify-end mt-4">
+                      <button
+                        type="button"
+                        onClick={() => locArray.remove(i)}
+                        disabled={locArray.fields.length === 1}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition ${locArray.fields.length === 1
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : 'bg-red-50 text-red-600 hover:bg-red-100'
+                          }`}
+                      >
+                        Remove Location
+                      </button>
                     </div>
-
-                    {/* Longitude Field */}
-                    <div className="flex flex-col">
-                      <label className="text-sm font-medium">Longitude</label>
-                      <input
-                        placeholder="Lng"
-                        {...register(`location.${i}.lng` as const)}
-                        className="border p-2 rounded"
-                      />
-                      {errors.location?.[i]?.lng && (
-                        <p className="text-red-500 text-sm">{errors.location[i]?.lng?.message}</p>
-                      )}
-                    </div>
-
-                    {/* Remove button */}
-                    <button
-                      type="button"
-                      onClick={() => locArray.remove(i)}
-                      disabled={locArray.fields.length === 1}
-                      className={`mt-2 text-red-600 ${locArray.fields.length === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      Remove
-                    </button>
                   </div>
-                </div>
-              ))}
-
-              <button
-                type="button"
-                onClick={() => locArray.append({ name: '', lat: '', lng: '' })}
-                className="text-blue-600 mt-2"
-              >
-                + Add Location
-              </button>
+                ))}
+              </div>
             </div>
 
             {/* Included */}
-            <div>
-              <label className="block font-medium">Included</label>
+           <div className="border border-gray-200 rounded-lg p-5 bg-gray-50 mb-6 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-gray-800">Included Items</h3>
+                <button
+                  type="button"
+                  onClick={() => setValue('included', [...(watch('included') ?? []), ''])}
+                  className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                >
+                  + Add Included
+                </button>
+              </div>
+
               {watch('included')?.map((_, i) => (
-                <div key={i} className="flex flex-col gap-1 mb-2">
-                  <div className="flex gap-2">
+                <div key={i} className="flex flex-col gap-1 mb-3">
+                  <div className="flex items-center gap-3 bg-white border border-gray-200 p-3 rounded-lg hover:shadow-md transition">
                     <input
                       {...register(`included.${i}` as const)}
-                      className="border p-2 w-full rounded"
+                      placeholder={`Included item ${i + 1}`}
+                      className="flex-1 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
                       type="button"
@@ -400,39 +432,47 @@ export default function EditPackageForm() {
                           watch('included').filter((_, idx) => idx !== i)
                         )
                       }
-                      disabled={watch('included')?.length === 1} // always keep at least 1
-                      className={`${
-                        watch('included')?.length === 1
-                          ? 'opacity-50 cursor-not-allowed'
-                          : 'text-red-600'
-                      }`}
+                      disabled={watch('included')?.length === 1}
+                      className={`px-2 py-1 rounded-lg text-sm transition ${watch('included')?.length === 1
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        }`}
                     >
                       ❌
                     </button>
                   </div>
-                  {errors.included?.[i] && (
-                    <p className="text-red-500 text-sm">{errors.included[i]?.message}</p>
+
+                  {/* Show individual error here */}
+                  {errors.included?.[i]?.message && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.included[i]?.message as string}
+                    </p>
                   )}
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => setValue('included', [...(watch('included') ?? []), ''])}
-                className="text-blue-600 mt-1"
-              >
-                + Add Included
-              </button>
             </div>
 
+
             {/* Not Included */}
-            <div className="mt-4">
-              <label className="block font-medium">Not Included</label>
+            <div className="border border-gray-200 rounded-lg p-5 bg-gray-50 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-gray-800">Not Included Items</h3>
+                <button
+                  type="button"
+                  onClick={() => setValue('notIncluded', [...(watch('notIncluded') ?? []), ''])}
+                  className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                >
+                  + Add Not Included
+                </button>
+              </div>
+
               {watch('notIncluded')?.map((_, i) => (
-                <div key={i} className="flex flex-col gap-1 mb-2">
-                  <div className="flex gap-2">
+                <div key={i} className="flex flex-col gap-1 mb-3">
+                  <div className="flex items-center gap-3 bg-white border border-gray-200 p-3 rounded-lg hover:shadow-md transition">
                     <input
                       {...register(`notIncluded.${i}` as const)}
-                      className="border p-2 w-full rounded"
+                      placeholder={`Not included item ${i + 1}`}
+                      className="flex-1 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
                       type="button"
@@ -442,184 +482,222 @@ export default function EditPackageForm() {
                           watch('notIncluded').filter((_, idx) => idx !== i)
                         )
                       }
-                      disabled={watch('notIncluded')?.length === 1} // always keep at least 1
-                      className={`${
-                        watch('notIncluded')?.length === 1
-                          ? 'opacity-50 cursor-not-allowed'
-                          : 'text-red-600'
-                      }`}
+                      disabled={watch('notIncluded')?.length === 1}
+                      className={`px-2 py-1 rounded-lg text-sm transition ${watch('notIncluded')?.length === 1
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        }`}
                     >
                       ❌
                     </button>
                   </div>
-                  {errors.notIncluded?.[i] && (
-                    <p className="text-red-500 text-sm">{errors.notIncluded[i]?.message}</p>
+
+                  {/* ✅ Show error for each field */}
+                  {errors.notIncluded?.[i]?.message && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.notIncluded[i]?.message as string}
+                    </p>
                   )}
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => setValue('notIncluded', [...(watch('notIncluded') ?? []), ''])}
-                className="text-blue-600 mt-1"
-              >
-                + Add Not Included
-              </button>
             </div>
+
 
             {/* Itinerary */}
 
-            <div>
-              <label className="block font-medium">Itinerary</label>
+            <div className="border border-gray-200 rounded-lg p-6 bg-gray-50 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">Itinerary</h2>
+                <button
+                  type="button"
+                  onClick={addDay}
+                  className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                >
+                  + Add Day
+                </button>
+              </div>
+
               {errors.itinerary?.root?.message && (
-                <p className="text-red-500 text-sm mb-2">{errors.itinerary.root.message}</p>
+                <p className="text-red-500 text-sm mb-3">{errors.itinerary.root.message}</p>
               )}
 
               {itineraryArray.fields.map((day, i) => (
-                <div key={day.id} className="border p-4 rounded-md mb-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold">Day {i + 1}</h3>
+                <div
+                  key={day.id}
+                  className="border border-gray-300 bg-white rounded-lg p-5 mb-5 shadow-sm transition hover:shadow-md"
+                >
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-gray-700">Day {i + 1}</h3>
                     <button
                       type="button"
                       onClick={() => itineraryArray.remove(i)}
                       disabled={itineraryArray.fields.length === 1}
-                      className={`${
-                        itineraryArray.fields.length === 1
-                          ? 'opacity-50 cursor-not-allowed'
-                          : 'text-red-600'
-                      }`}
+                      className={`text-sm font-medium px-2 py-1 rounded-lg transition ${itineraryArray.fields.length === 1
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        }`}
                     >
                       Delete Day
                     </button>
                   </div>
 
                   {/* Day Title */}
-                  <input
-                    {...register(`itinerary.${i}.title`)}
-                    placeholder="Day title"
-                    className="border p-2 w-full mb-2"
-                  />
-                  {errors.itinerary?.[i]?.title && (
-                    <p className="text-red-500 text-sm">{errors.itinerary[i]?.title?.message}</p>
-                  )}
+                  <div className="mb-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Day Title</label>
+                    <input
+                      {...register(`itinerary.${i}.title`)}
+                      placeholder="Enter day title"
+                      className="border border-gray-300 rounded-lg p-2.5 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {errors.itinerary?.[i]?.title && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.itinerary[i]?.title?.message}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Day Description */}
-                  <textarea
-                    {...register(`itinerary.${i}.description`)}
-                    placeholder="Day description"
-                    className="border p-2 w-full mb-2"
-                  />
-                  {errors.itinerary?.[i]?.description && (
-                    <p className="text-red-500 text-sm">
-                      {errors.itinerary[i]?.description?.message}
-                    </p>
-                  )}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      {...register(`itinerary.${i}.description`)}
+                      placeholder="Enter day description"
+                      className="border border-gray-300 rounded-lg p-2.5 w-full h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {errors.itinerary?.[i]?.description && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.itinerary[i]?.description?.message}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Activities */}
-                  <Controller
-                    control={control}
-                    name={`itinerary.${i}.activities`}
-                    render={({ field }) => (
-                      <div className="space-y-2">
-                        {(field.value || []).map((act: any, j: number) => (
-                          <div key={j} className="flex gap-2 items-center">
-                            <div className="flex flex-col">
-                              <input
-                                type="time"
-                                value={act.startTime}
-                                onChange={(e) => {
-                                  const updated = [...field.value];
-                                  updated[j].startTime = e.target.value;
-                                  field.onChange(updated);
-                                }}
-                                className="border p-2 w-28"
-                              />
-                              {errors.itinerary?.[i]?.activities?.[j]?.startTime && (
-                                <p className="text-red-500 text-sm">
-                                  {errors.itinerary[i]?.activities?.[j]?.startTime?.message}
-                                </p>
-                              )}
-                            </div>
-
-                            <span>to</span>
-
-                            <div className="flex flex-col">
-                              <input
-                                type="time"
-                                value={act.endTime}
-                                onChange={(e) => {
-                                  const updated = [...field.value];
-                                  updated[j].endTime = e.target.value;
-                                  field.onChange(updated);
-                                }}
-                                className="border p-2 w-28"
-                              />
-                              {errors.itinerary?.[i]?.activities?.[j]?.endTime && (
-                                <p className="text-red-500 text-sm">
-                                  {errors.itinerary[i]?.activities?.[j]?.endTime?.message}
-                                </p>
-                              )}
-                            </div>
-
-                            <div className="flex flex-col flex-1">
-                              <input
-                                placeholder="Activity"
-                                value={act.activity}
-                                onChange={(e) => {
-                                  const updated = [...field.value];
-                                  updated[j].activity = e.target.value;
-                                  field.onChange(updated);
-                                }}
-                                className="border p-2 flex-1"
-                              />
-                              {errors.itinerary?.[i]?.activities?.[j]?.activity && (
-                                <p className="text-red-500 text-sm">
-                                  {errors.itinerary[i]?.activities?.[j]?.activity?.message}
-                                </p>
-                              )}
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                field.onChange(
-                                  field.value.filter((_: any, idx: number) => idx !== j)
-                                )
-                              }
-                              className="text-red-600"
-                              disabled={field.value.length === 1} // keep at least 1 activity
+                  <div className="border-t border-gray-200 pt-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Activities</h4>
+                    <Controller
+                      control={control}
+                      name={`itinerary.${i}.activities`}
+                      render={({ field }) => (
+                        <div className="space-y-3">
+                          {(field.value || []).map((act: any, j: number) => (
+                            <div
+                              key={j}
+                              className="flex flex-col md:flex-row md:items-center gap-3 bg-gray-50 border border-gray-200 p-3 rounded-lg"
                             >
-                              ❌
-                            </button>
-                          </div>
-                        ))}
+                              {/* Start Time */}
+                              <div className="flex flex-col">
+                                <label className="text-xs font-medium text-gray-600 mb-1">
+                                  Start
+                                </label>
+                                <input
+                                  type="time"
+                                  value={act.startTime}
+                                  onChange={(e) => {
+                                    const updated = [...field.value];
+                                    updated[j].startTime = e.target.value;
+                                    field.onChange(updated);
+                                  }}
+                                  className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-28"
+                                />
+                                {errors.itinerary?.[i]?.activities?.[j]?.startTime && (
+                                  <p className="text-red-500 text-xs mt-1">
+                                    {errors.itinerary[i]?.activities?.[j]?.startTime?.message}
+                                  </p>
+                                )}
+                              </div>
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            field.onChange([
-                              ...(field.value ?? []),
-                              { startTime: '', endTime: '', activity: '' },
-                            ])
-                          }
-                          className="text-blue-600"
-                        >
-                          + Add Activity
-                        </button>
-                      </div>
-                    )}
-                  />
+                              <span className="text-gray-500 hidden md:block">to</span>
+
+                              {/* End Time */}
+                              <div className="flex flex-col">
+                                <label className="text-xs font-medium text-gray-600 mb-1">
+                                  End
+                                </label>
+                                <input
+                                  type="time"
+                                  value={act.endTime}
+                                  onChange={(e) => {
+                                    const updated = [...field.value];
+                                    updated[j].endTime = e.target.value;
+                                    field.onChange(updated);
+                                  }}
+                                  className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-28"
+                                />
+                                {errors.itinerary?.[i]?.activities?.[j]?.endTime && (
+                                  <p className="text-red-500 text-xs mt-1">
+                                    {errors.itinerary[i]?.activities?.[j]?.endTime?.message}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Activity Text */}
+                              <div className="flex flex-col flex-1">
+                                <label className="text-xs font-medium text-gray-600 mb-1">
+                                  Activity
+                                </label>
+                                <input
+                                  placeholder="Enter activity"
+                                  value={act.activity}
+                                  onChange={(e) => {
+                                    const updated = [...field.value];
+                                    updated[j].activity = e.target.value;
+                                    field.onChange(updated);
+                                  }}
+                                  className="border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                                />
+                                {errors.itinerary?.[i]?.activities?.[j]?.activity && (
+                                  <p className="text-red-500 text-xs mt-1">
+                                    {errors.itinerary[i]?.activities?.[j]?.activity?.message}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Delete Button */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  field.onChange(
+                                    field.value.filter((_: any, idx: number) => idx !== j)
+                                  )
+                                }
+                                disabled={field.value.length === 1}
+                                className={`mt-1 md:mt-6 px-2 py-1 rounded-lg text-sm transition ${field.value.length === 1
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-red-50 text-red-600 hover:bg-red-100'
+                                  }`}
+                              >
+                                ❌
+                              </button>
+                            </div>
+                          ))}
+
+                          {/* Add Activity Button */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              field.onChange([
+                                ...(field.value ?? []),
+                                { startTime: '', endTime: '', activity: '' },
+                              ])
+                            }
+                            className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                          >
+                            + Add Activity
+                          </button>
+                        </div>
+                      )}
+                    />
+                  </div>
                 </div>
               ))}
-
-              <div>
-                <button type="button" onClick={addDay} className="text-blue-600">
-                  + Add Day
-                </button>
-              </div>
             </div>
 
+
             <div className="border p-4 rounded-md bg-gray-50">
-              <h3 className="font-semibold mb-2">Offer Details</h3>
+              <h3 className="font-semibold mb-2">Offer Details (optional)</h3>
 
               {/* Offer Name */}
               <div className="flex flex-col mb-2">

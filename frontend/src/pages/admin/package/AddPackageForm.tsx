@@ -11,14 +11,9 @@ import ImageCropper from '@/components/ImageCropper';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/ui/button';
-import { addPackageForUser } from '@/services/admin/customPkgService';
-interface AddPackageFormProps {
-  isCustom?: boolean;
-  createdFor?: string; // user ID (if custom)
-}
 
 
-export default function  AddPackageForm({ isCustom = false, createdFor }: AddPackageFormProps) {
+export default function AddPackageForm() {
   const {
     croppedImages,
     setCroppedImages,
@@ -33,10 +28,12 @@ export default function  AddPackageForm({ isCustom = false, createdFor }: AddPac
   const {
     register,
     handleSubmit,
+    resetField,
     control,
     setValue,
     watch,
     reset,
+
     formState: { errors, isSubmitting },
   } = useForm<AddPackageFormSchema>({
     resolver: zodResolver(addPackageSchema),
@@ -83,6 +80,7 @@ export default function  AddPackageForm({ isCustom = false, createdFor }: AddPac
   const [categoryOptions, setCategoryOptions] = useState<{ value: string; label: string }[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [isSubmittingPkg, setIsSubmittingPkg] = useState(false);
+  const [showOffer, setShowOffer] = useState(false);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -113,84 +111,40 @@ export default function  AddPackageForm({ isCustom = false, createdFor }: AddPac
   // images & crop state
   const images = watch('images');
 
-  // // Submit
-  // const onSubmit = async (data: AddPackageFormSchema) => {
-  //   try {
-  //     setIsSubmittingPkg(true);
+  // Submit
+  const onSubmit = async (data: AddPackageFormSchema) => {
+    try {
+      setIsSubmittingPkg(true);
 
-  //     const form = new FormData();
+      const form = new FormData();
 
-  //     croppedImages.forEach((file) => form.append('images', file));
+      croppedImages.forEach((file) => form.append('images', file));
 
-  //     Object.entries(data).forEach(([key, value]) => {
-  //       if (key === 'images') return;
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === 'images') return;
 
-  //       if (Array.isArray(value) || typeof value === 'object') {
-  //         // stringify arrays and objects
-  //         form.append(key, JSON.stringify(value));
-  //       } else {
-  //         form.append(key, String(value ?? ''));
-  //       }
-  //     });
+        if (Array.isArray(value) || typeof value === 'object') {
+          // stringify arrays and objects
+          form.append(key, JSON.stringify(value));
+        } else {
+          form.append(key, String(value ?? ''));
+        }
+      });
 
-  //     // send
-  //     await addPackage(form);
-  //     navigate('/admin/packages');
-  //     toast.success('Package saved successfullly');
-  //     reset();
-  //     setCroppedImages([]);
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error('Failed to save');
-  //   } finally {
-  //     setIsSubmittingPkg(false);
-  //   }
-  // };
-const onSubmit = async (data: AddPackageFormSchema) => {
-  try {
-    setIsSubmittingPkg(true);
-
-    const form = new FormData();
-
-    // 1️ Add images
-    croppedImages.forEach((file) => form.append('images', file));
-
-    // 2Add all fields
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === 'images') return;
-      if (Array.isArray(value) || typeof value === 'object') {
-        form.append(key, JSON.stringify(value));
-      } else {
-        form.append(key, String(value ?? ''));
-      }
-    });
-
-    // 3Add extra fields for custom packages
-    if (isCustom) {
-      form.append('isCustom', 'true');
-      if (createdFor) form.append('createdFor', createdFor);
-    }
-
-    // 4
-    if (isCustom) {
-      await addPackageForUser(form); // new API call
-      toast.success('Custom package created successfully');
-      navigate('/admin/custom-packages');
-    } else {
+      // send
       await addPackage(form);
-      toast.success('Package saved successfully');
       navigate('/admin/packages');
+      toast.success('Package saved successfullly');
+      reset();
+      setCroppedImages([]);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save');
+    } finally {
+      setIsSubmittingPkg(false);
     }
+  };
 
-    reset();
-    setCroppedImages([]);
-  } catch (err) {
-    console.error(err);
-    toast.error('Failed to save');
-  } finally {
-    setIsSubmittingPkg(false);
-  }
-};
 
   const addDay = () => {
     itineraryArray.append({
@@ -203,6 +157,7 @@ const onSubmit = async (data: AddPackageFormSchema) => {
   useEffect(() => {
     console.log('Form errors:', errors);
   }, [errors]);
+
 
   return (
     <>
@@ -219,8 +174,14 @@ const onSubmit = async (data: AddPackageFormSchema) => {
           </div>
         </div>
       )}
+      <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-8 my-10 border border-gray-100">
 
-      <div className="max-w-4xl mx-auto p-6">
+        <div className="mb-6 border-b pb-4">
+          <h1 className="text-2xl font-semibold text-gray-800">Add New Package</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Fill in all the required fields to create a new travel package.
+          </p>
+        </div>
         <h2 className="text-2xl font-semibold mb-4">Add Package</h2>
         {!currentImage && (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -320,81 +281,116 @@ const onSubmit = async (data: AddPackageFormSchema) => {
             </div>
 
             {/* Locations */}
-            <div>
-              <label className="block font-medium mb-1">Locations</label>
-              {locArray.fields.map((f, i) => (
-                <div key={f.id} className="border p-4 rounded mb-4">
-                  <div className="flex flex-col gap-2">
-                    {/* Name Field */}
-                    <div className="flex flex-col">
-                      <label className="text-sm font-medium">Name</label>
-                      <input
-                        placeholder="Location Name"
-                        {...register(`location.${i}.name` as const)}
-                        className="border p-2 rounded"
-                      />
-                      {errors.location?.[i]?.name && (
-                        <p className="text-red-500 text-sm">{errors.location[i]?.name?.message}</p>
-                      )}
+            {/* Locations Section */}
+            <div className="border-t pt-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-gray-700">Locations</h3>
+                <button
+                  type="button"
+                  onClick={() => locArray.append({ name: '', lat: '', lng: '' })}
+                  className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                >
+                  + Add Location
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {locArray.fields.map((f, i) => (
+                  <div
+                    key={f.id}
+                    className="border border-gray-200 p-5 rounded-xl bg-gray-50 shadow-sm hover:shadow-md transition"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Name Field */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input
+                          type="text"
+                          placeholder="Location Name"
+                          {...register(`location.${i}.name` as const)}
+                          className="border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                        {errors.location?.[i]?.name && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.location[i]?.name?.message}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Latitude Field */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                        <input
+                          type="text"
+                          placeholder="Latitude"
+                          {...register(`location.${i}.lat` as const)}
+                          className="border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                        {errors.location?.[i]?.lat && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.location[i]?.lat?.message}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Longitude Field */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                        <input
+                          type="text"
+                          placeholder="Longitude"
+                          {...register(`location.${i}.lng` as const)}
+                          className="border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                        {errors.location?.[i]?.lng && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.location[i]?.lng?.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Latitude Field */}
-                    <div className="flex flex-col">
-                      <label className="text-sm font-medium">Latitude</label>
-                      <input
-                        placeholder="Lat"
-                        {...register(`location.${i}.lat` as const)}
-                        className="border p-2 rounded"
-                      />
-                      {errors.location?.[i]?.lat && (
-                        <p className="text-red-500 text-sm">{errors.location[i]?.lat?.message}</p>
-                      )}
+                    {/* Remove Button */}
+                    <div className="flex justify-end mt-4">
+                      <button
+                        type="button"
+                        onClick={() => locArray.remove(i)}
+                        disabled={locArray.fields.length === 1}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition ${locArray.fields.length === 1
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : 'bg-red-50 text-red-600 hover:bg-red-100'
+                          }`}
+                      >
+                        Remove Location
+                      </button>
                     </div>
-
-                    {/* Longitude Field */}
-                    <div className="flex flex-col">
-                      <label className="text-sm font-medium">Longitude</label>
-                      <input
-                        placeholder="Lng"
-                        {...register(`location.${i}.lng` as const)}
-                        className="border p-2 rounded"
-                      />
-                      {errors.location?.[i]?.lng && (
-                        <p className="text-red-500 text-sm">{errors.location[i]?.lng?.message}</p>
-                      )}
-                    </div>
-
-                    {/* Remove button */}
-                    <button
-                      type="button"
-                      onClick={() => locArray.remove(i)}
-                      disabled={locArray.fields.length === 1}
-                      className={`mt-2 text-red-600 ${locArray.fields.length === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      Remove
-                    </button>
                   </div>
-                </div>
-              ))}
-
-              <button
-                type="button"
-                onClick={() => locArray.append({ name: '', lat: '', lng: '' })}
-                className="text-blue-600 mt-2"
-              >
-                + Add Location
-              </button>
+                ))}
+              </div>
             </div>
 
+
             {/* Included */}
-            <div>
-              <label className="block font-medium">Included</label>
+            {/* Included Section */}
+            <div className="border border-gray-200 rounded-lg p-5 bg-gray-50 mb-6 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-gray-800">Included Items</h3>
+                <button
+                  type="button"
+                  onClick={() => setValue('included', [...(watch('included') ?? []), ''])}
+                  className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                >
+                  + Add Included
+                </button>
+              </div>
+
               {watch('included')?.map((_, i) => (
-                <div key={i} className="flex flex-col gap-1 mb-2">
-                  <div className="flex gap-2">
+                <div key={i} className="flex flex-col gap-1 mb-3">
+                  <div className="flex items-center gap-3 bg-white border border-gray-200 p-3 rounded-lg hover:shadow-md transition">
                     <input
                       {...register(`included.${i}` as const)}
-                      className="border p-2 w-full rounded"
+                      placeholder={`Included item ${i + 1}`}
+                      className="flex-1 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
                       type="button"
@@ -404,39 +400,46 @@ const onSubmit = async (data: AddPackageFormSchema) => {
                           watch('included').filter((_, idx) => idx !== i)
                         )
                       }
-                      disabled={watch('included')?.length === 1} // always keep at least 1
-                      className={`${
-                        watch('included')?.length === 1
-                          ? 'opacity-50 cursor-not-allowed'
-                          : 'text-red-600'
-                      }`}
+                      disabled={watch('included')?.length === 1}
+                      className={`px-2 py-1 rounded-lg text-sm transition ${watch('included')?.length === 1
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        }`}
                     >
                       ❌
                     </button>
                   </div>
-                  {errors.included?.[i] && (
-                    <p className="text-red-500 text-sm">{errors.included[i]?.message}</p>
+
+                  {/* ✅ Show individual error here */}
+                  {errors.included?.[i]?.message && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.included[i]?.message as string}
+                    </p>
                   )}
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => setValue('included', [...(watch('included') ?? []), ''])}
-                className="text-blue-600 mt-1"
-              >
-                + Add Included
-              </button>
             </div>
 
-            {/* Not Included */}
-            <div className="mt-4">
-              <label className="block font-medium">Not Included</label>
+            {/* Not Included Section */}
+            <div className="border border-gray-200 rounded-lg p-5 bg-gray-50 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-gray-800">Not Included Items</h3>
+                <button
+                  type="button"
+                  onClick={() => setValue('notIncluded', [...(watch('notIncluded') ?? []), ''])}
+                  className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                >
+                  + Add Not Included
+                </button>
+              </div>
+
               {watch('notIncluded')?.map((_, i) => (
-                <div key={i} className="flex flex-col gap-1 mb-2">
-                  <div className="flex gap-2">
+                <div key={i} className="flex flex-col gap-1 mb-3">
+                  <div className="flex items-center gap-3 bg-white border border-gray-200 p-3 rounded-lg hover:shadow-md transition">
                     <input
                       {...register(`notIncluded.${i}` as const)}
-                      className="border p-2 w-full rounded"
+                      placeholder={`Not included item ${i + 1}`}
+                      className="flex-1 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
                       type="button"
@@ -446,258 +449,326 @@ const onSubmit = async (data: AddPackageFormSchema) => {
                           watch('notIncluded').filter((_, idx) => idx !== i)
                         )
                       }
-                      disabled={watch('notIncluded')?.length === 1} // always keep at least 1
-                      className={`${
-                        watch('notIncluded')?.length === 1
-                          ? 'opacity-50 cursor-not-allowed'
-                          : 'text-red-600'
-                      }`}
+                      disabled={watch('notIncluded')?.length === 1}
+                      className={`px-2 py-1 rounded-lg text-sm transition ${watch('notIncluded')?.length === 1
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        }`}
                     >
                       ❌
                     </button>
                   </div>
-                  {errors.notIncluded?.[i] && (
-                    <p className="text-red-500 text-sm">{errors.notIncluded[i]?.message}</p>
+
+                  {/* ✅ Show error for each field */}
+                  {errors.notIncluded?.[i]?.message && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.notIncluded[i]?.message as string}
+                    </p>
                   )}
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => setValue('notIncluded', [...(watch('notIncluded') ?? []), ''])}
-                className="text-blue-600 mt-1"
-              >
-                + Add Not Included
-              </button>
             </div>
 
-            {/* Itinerary */}
+            {/* Itinerary Section */}
+            <div className="border border-gray-200 rounded-lg p-6 bg-gray-50 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">Itinerary</h2>
+                <button
+                  type="button"
+                  onClick={addDay}
+                  className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                >
+                  + Add Day
+                </button>
+              </div>
 
-            <div>
-              <label className="block font-medium">Itinerary</label>
               {errors.itinerary?.root?.message && (
-                <p className="text-red-500 text-sm mb-2">{errors.itinerary.root.message}</p>
+                <p className="text-red-500 text-sm mb-3">{errors.itinerary.root.message}</p>
               )}
 
               {itineraryArray.fields.map((day, i) => (
-                <div key={day.id} className="border p-4 rounded-md mb-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold">Day {i + 1}</h3>
+                <div
+                  key={day.id}
+                  className="border border-gray-300 bg-white rounded-lg p-5 mb-5 shadow-sm transition hover:shadow-md"
+                >
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-gray-700">Day {i + 1}</h3>
                     <button
                       type="button"
                       onClick={() => itineraryArray.remove(i)}
                       disabled={itineraryArray.fields.length === 1}
-                      className={`${
-                        itineraryArray.fields.length === 1
-                          ? 'opacity-50 cursor-not-allowed'
-                          : 'text-red-600'
-                      }`}
+                      className={`text-sm font-medium px-2 py-1 rounded-lg transition ${itineraryArray.fields.length === 1
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        }`}
                     >
                       Delete Day
                     </button>
                   </div>
 
                   {/* Day Title */}
-                  <input
-                    {...register(`itinerary.${i}.title`)}
-                    placeholder="Day title"
-                    className="border p-2 w-full mb-2"
-                  />
-                  {errors.itinerary?.[i]?.title && (
-                    <p className="text-red-500 text-sm">{errors.itinerary[i]?.title?.message}</p>
-                  )}
+                  <div className="mb-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Day Title</label>
+                    <input
+                      {...register(`itinerary.${i}.title`)}
+                      placeholder="Enter day title"
+                      className="border border-gray-300 rounded-lg p-2.5 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {errors.itinerary?.[i]?.title && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.itinerary[i]?.title?.message}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Day Description */}
-                  <textarea
-                    {...register(`itinerary.${i}.description`)}
-                    placeholder="Day description"
-                    className="border p-2 w-full mb-2"
-                  />
-                  {errors.itinerary?.[i]?.description && (
-                    <p className="text-red-500 text-sm">
-                      {errors.itinerary[i]?.description?.message}
-                    </p>
-                  )}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      {...register(`itinerary.${i}.description`)}
+                      placeholder="Enter day description"
+                      className="border border-gray-300 rounded-lg p-2.5 w-full h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {errors.itinerary?.[i]?.description && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.itinerary[i]?.description?.message}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Activities */}
-                  <Controller
-                    control={control}
-                    name={`itinerary.${i}.activities`}
-                    render={({ field }) => (
-                      <div className="space-y-2">
-                        {(field.value || []).map((act: any, j: number) => (
-                          <div key={j} className="flex gap-2 items-center">
-                            <div className="flex flex-col">
-                              <input
-                                type="time"
-                                value={act.startTime}
-                                onChange={(e) => {
-                                  const updated = [...field.value];
-                                  updated[j].startTime = e.target.value;
-                                  field.onChange(updated);
-                                }}
-                                className="border p-2 w-28"
-                              />
-                              {errors.itinerary?.[i]?.activities?.[j]?.startTime && (
-                                <p className="text-red-500 text-sm">
-                                  {errors.itinerary[i]?.activities?.[j]?.startTime?.message}
-                                </p>
-                              )}
-                            </div>
-
-                            <span>to</span>
-
-                            <div className="flex flex-col">
-                              <input
-                                type="time"
-                                value={act.endTime}
-                                onChange={(e) => {
-                                  const updated = [...field.value];
-                                  updated[j].endTime = e.target.value;
-                                  field.onChange(updated);
-                                }}
-                                className="border p-2 w-28"
-                              />
-                              {errors.itinerary?.[i]?.activities?.[j]?.endTime && (
-                                <p className="text-red-500 text-sm">
-                                  {errors.itinerary[i]?.activities?.[j]?.endTime?.message}
-                                </p>
-                              )}
-                            </div>
-
-                            <div className="flex flex-col flex-1">
-                              <input
-                                placeholder="Activity"
-                                value={act.activity}
-                                onChange={(e) => {
-                                  const updated = [...field.value];
-                                  updated[j].activity = e.target.value;
-                                  field.onChange(updated);
-                                }}
-                                className="border p-2 flex-1"
-                              />
-                              {errors.itinerary?.[i]?.activities?.[j]?.activity && (
-                                <p className="text-red-500 text-sm">
-                                  {errors.itinerary[i]?.activities?.[j]?.activity?.message}
-                                </p>
-                              )}
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                field.onChange(
-                                  field.value.filter((_: any, idx: number) => idx !== j)
-                                )
-                              }
-                              className="text-red-600"
-                              disabled={field.value.length === 1} // keep at least 1 activity
+                  <div className="border-t border-gray-200 pt-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Activities</h4>
+                    <Controller
+                      control={control}
+                      name={`itinerary.${i}.activities`}
+                      render={({ field }) => (
+                        <div className="space-y-3">
+                          {(field.value || []).map((act: any, j: number) => (
+                            <div
+                              key={j}
+                              className="flex flex-col md:flex-row md:items-center gap-3 bg-gray-50 border border-gray-200 p-3 rounded-lg"
                             >
-                              ❌
-                            </button>
-                          </div>
-                        ))}
+                              {/* Start Time */}
+                              <div className="flex flex-col">
+                                <label className="text-xs font-medium text-gray-600 mb-1">
+                                  Start
+                                </label>
+                                <input
+                                  type="time"
+                                  value={act.startTime}
+                                  onChange={(e) => {
+                                    const updated = [...field.value];
+                                    updated[j].startTime = e.target.value;
+                                    field.onChange(updated);
+                                  }}
+                                  className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-28"
+                                />
+                                {errors.itinerary?.[i]?.activities?.[j]?.startTime && (
+                                  <p className="text-red-500 text-xs mt-1">
+                                    {errors.itinerary[i]?.activities?.[j]?.startTime?.message}
+                                  </p>
+                                )}
+                              </div>
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            field.onChange([
-                              ...(field.value ?? []),
-                              { startTime: '', endTime: '', activity: '' },
-                            ])
-                          }
-                          className="text-blue-600"
-                        >
-                          + Add Activity
-                        </button>
-                      </div>
-                    )}
-                  />
+                              <span className="text-gray-500 hidden md:block">to</span>
+
+                              {/* End Time */}
+                              <div className="flex flex-col">
+                                <label className="text-xs font-medium text-gray-600 mb-1">
+                                  End
+                                </label>
+                                <input
+                                  type="time"
+                                  value={act.endTime}
+                                  onChange={(e) => {
+                                    const updated = [...field.value];
+                                    updated[j].endTime = e.target.value;
+                                    field.onChange(updated);
+                                  }}
+                                  className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-28"
+                                />
+                                {errors.itinerary?.[i]?.activities?.[j]?.endTime && (
+                                  <p className="text-red-500 text-xs mt-1">
+                                    {errors.itinerary[i]?.activities?.[j]?.endTime?.message}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Activity Text */}
+                              <div className="flex flex-col flex-1">
+                                <label className="text-xs font-medium text-gray-600 mb-1">
+                                  Activity
+                                </label>
+                                <input
+                                  placeholder="Enter activity"
+                                  value={act.activity}
+                                  onChange={(e) => {
+                                    const updated = [...field.value];
+                                    updated[j].activity = e.target.value;
+                                    field.onChange(updated);
+                                  }}
+                                  className="border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                                />
+                                {errors.itinerary?.[i]?.activities?.[j]?.activity && (
+                                  <p className="text-red-500 text-xs mt-1">
+                                    {errors.itinerary[i]?.activities?.[j]?.activity?.message}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Delete Button */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  field.onChange(
+                                    field.value.filter((_: any, idx: number) => idx !== j)
+                                  )
+                                }
+                                disabled={field.value.length === 1}
+                                className={`mt-1 md:mt-6 px-2 py-1 rounded-lg text-sm transition ${field.value.length === 1
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-red-50 text-red-600 hover:bg-red-100'
+                                  }`}
+                              >
+                                ❌
+                              </button>
+                            </div>
+                          ))}
+
+                          {/* Add Activity Button */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              field.onChange([
+                                ...(field.value ?? []),
+                                { startTime: '', endTime: '', activity: '' },
+                              ])
+                            }
+                            className="px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                          >
+                            + Add Activity
+                          </button>
+                        </div>
+                      )}
+                    />
+                  </div>
                 </div>
               ))}
-
-              <div>
-                <button type="button" onClick={addDay} className="text-blue-600">
-                  + Add Day
-                </button>
-              </div>
             </div>
 
-            <div className="border p-4 rounded-md bg-gray-50">
-              <h3 className="font-semibold mb-2">Offer Details</h3>
 
-              {/* Offer Name */}
-              <div className="flex flex-col mb-2">
-                <label className="text-sm font-medium mb-1">Offer Name</label>
-                <input
-                  type="text"
-                  placeholder="Offer name"
-                  {...register('offer.name' as const)}
-                  className="border p-2 rounded w-full"
-                />
-                {errors.offer?.name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.offer.name.message}</p>
-                )}
-              </div>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-semibold text-gray-800">Offer Details (optional)</h3>
 
-              <div className="flex flex-col md:flex-row md:gap-3 items-start">
-                {/* Offer Type */}
-                <div className="flex flex-col mb-2 md:mb-0">
-                  <label className="text-sm font-medium mb-1">Type</label>
-                  <select
-                    {...register('offer.type' as const)}
-                    className="border p-2 rounded w-full"
-                  >
-                    <option value="percentage">Percentage</option>
-                    <option value="flat">Flat</option>
-                  </select>
-                  {errors.offer?.value?.message && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {(errors.offer.value as any).message}
-                    </p>
-                  )}
+              {!showOffer ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowOffer(true)}
+                  className="text-sm"
+                >
+                  + Add Offer
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => {
+                    setShowOffer(false);
+                    resetField('offer'); // clears values
+                  }}
+                  className="text-sm"
+                >
+                  − Remove Offer
+                </Button>
+              )}
+            </div>
+
+            {/* Offer Form */}
+            {showOffer && (
+              <div className="border border-gray-200 p-5 rounded-xl bg-gray-50 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Offer Name */}
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-700 mb-1">Offer Name</label>
+                    <input
+                      type="text"
+                      placeholder="Enter offer name"
+                      {...register('offer.name')}
+                      className="border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-100 p-2 rounded-md outline-none transition-all"
+                    />
+                    {errors.offer?.name && (
+                      <p className="text-red-500 text-xs mt-1">{errors.offer.name.message}</p>
+                    )}
+                  </div>
+
+                  {/* Type */}
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-700 mb-1">Type</label>
+                    <select
+                      {...register('offer.type')}
+                      className="border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-100 p-2 rounded-md outline-none transition-all"
+                    >
+                      <option value="">Select type</option>
+                      <option value="percentage">Percentage</option>
+                      <option value="flat">Flat</option>
+                    </select>
+
+                  </div>
+
+                  {/* Value */}
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-700 mb-1">Value</label>
+                    <input
+                      type="number"
+                      placeholder="Enter value"
+                      {...register('offer.value', { valueAsNumber: true })}
+                      className="border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-100 p-2 rounded-md outline-none transition-all"
+                    />
+                    {errors.offer?.value && (
+                      <p className="text-red-500 text-xs mt-1">{errors.offer.value.message}</p>
+                    )}
+                  </div>
+
+                  {/* Valid Until */}
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-700 mb-1">Valid Until</label>
+                    <input
+                      type="date"
+                      {...register('offer.validUntil')}
+                      className="border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-100 p-2 rounded-md outline-none transition-all"
+                    />
+                    {errors.offer?.validUntil && (
+                      <p className="text-red-500 text-xs mt-1">{errors.offer.validUntil.message}</p>
+                    )}
+                  </div>
                 </div>
 
-                {/* Offer Value */}
-                <div className="flex flex-col mb-2 md:mb-0">
-                  <label className="text-sm font-medium mb-1">Value</label>
-                  <input
-                    type="number"
-                    placeholder="Value"
-                    {...register('offer.value' as const, { valueAsNumber: true })}
-                    className="border p-2 rounded w-full md:w-32"
-                  />
-                  {errors.offer?.value && (
-                    <p className="text-red-500 text-sm mt-1">{errors.offer.value.message}</p>
-                  )}
-                </div>
-
-                {/* Valid Until */}
-                <div className="flex flex-col mb-2 md:mb-0">
-                  <label className="text-sm font-medium mb-1">Valid Until</label>
-                  <input
-                    type="date"
-                    {...register('offer.validUntil' as const)}
-                    className="border p-2 rounded w-full"
-                  />
-                  {errors.offer?.validUntil && (
-                    <p className="text-red-500 text-sm mt-1">{errors.offer.validUntil.message}</p>
-                  )}
-                </div>
-
-                {/* Active Checkbox */}
-                <div className="flex items-center mt-5 md:mt-0">
+                {/* Active Toggle */}
+                <div className="mt-4 flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    {...register('offer.isActive' as const)}
+                    {...register('offer.isActive')}
                     id="offerActive"
-                    className="mr-2"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <label htmlFor="offerActive" className="text-sm font-medium">
-                    Active
+                  <label htmlFor="offerActive" className="text-sm text-gray-700 font-medium select-none">
+                    Active Offer
                   </label>
                 </div>
+
+                {/* Generic Offer Error */}
+                {errors.offer?.message && (
+                  <p className="text-red-500 text-sm mt-3">{errors.offer.message}</p>
+                )}
               </div>
-            </div>
+            )}
+
+
             <div>
               <Label>Upload Images (Max 4)</Label>
               <br />
@@ -740,6 +811,7 @@ const onSubmit = async (data: AddPackageFormSchema) => {
             </Button>
           </form>
         )}
+        {/* </div> */}
       </div>
     </>
   );
