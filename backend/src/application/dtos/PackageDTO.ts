@@ -98,6 +98,7 @@ export interface PackageResponseDTO {
   offer?: OfferDTO;
   importantDetails?: string;
   isCustom?: boolean;
+  customReqId?: string;
   isBlocked: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -115,7 +116,8 @@ export interface PackageTableResponseDTO {
   isBlocked: boolean;
   offerName?: string;
   isCustom?: boolean;
-  // createdFor?:string;
+  createdFor?: string;
+  customReqId?: string;
   categoryCount: number;
   createdAt?: Date;
 }
@@ -131,6 +133,6 @@ export interface PackageCardDTO {
   offerName?: string;
   offerType?: string;
   offerValue?: number;
-  isCustom?:boolean,
+  isCustom?: boolean,
 
 }

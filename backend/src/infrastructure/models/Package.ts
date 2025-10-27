@@ -6,19 +6,19 @@ const offerSchema = new Schema(
     type: {
       type: String,
       enum: ['percentage', 'flat'],
-      required: true,
+      required: false,
     },
     value: {
       type: Number,
-      required: true,
+      required: false,
     },
     name: {
       type: String,
-      required: true,
+      required: false,
     },
     validUntil: {
       type: Date,
-      required: true,
+      required: false,
     },
     isActive: {
       type: Boolean,
@@ -113,8 +113,10 @@ const packageSchema = new Schema(
     },
 
     // Offer
-    offer: { type: offerSchema },
-
+    offer: {
+      type: offerSchema,
+      required: false,
+    },
     isBlocked: {
       type: Boolean,
       default: false,
@@ -136,7 +138,11 @@ const packageSchema = new Schema(
       type: Boolean,
       default: false,
     },
-
+    customReqId: {
+      type: Schema.Types.ObjectId,
+      required: false,
+      ref: 'CustomPackage',
+    },
     createdFor: {
       type: Schema.Types.ObjectId,
       required: false,

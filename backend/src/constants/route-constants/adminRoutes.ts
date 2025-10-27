@@ -102,8 +102,10 @@ export const REPORT_ROUTE = {
 
 export const CUSTOM_PACKAGE_ROUTE = {
   CHANGE_STATUS: '/custom-package/:packageId/edit',
+    GET_ALL_APPROVED_PKG: '/custom-package/approved',
+  GET_ALL_REQUESTED_PKG: '/custom-package',
+
   GET_BY_ID: '/custom-package/:packageId',
-  GET_ALL_PKG: '/custom-package',
   DELETE: '/custom-package/:packageId/delete',
   CREATE:'/custom-package/create',
   UPDATE:'/custom-package/edit/:id'

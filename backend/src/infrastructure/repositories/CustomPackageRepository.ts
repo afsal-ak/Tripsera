@@ -8,13 +8,12 @@ import { SortOrder } from 'mongoose';
 
 export class CustomPackageRepository
   extends BaseRepository<ICustomPackage>
-  implements ICustomPackageRepository
-{
+  implements ICustomPackageRepository {
   constructor() {
     super(CustomPackage);
   }
 
-  async getAllCustomPkgs(
+  async getAllRequestedCustomPkg(
     page: number,
     limit: number,
     filters?: IFilter
@@ -38,12 +37,14 @@ export class CustomPackageRepository
       };
     }
 
-    const sortOption: Record<string, SortOrder> = {};
 
-    if (filters?.sort === 'desc') {
-      sortOption.createdAt = -1;
-    } else if (filters?.sort === 'asc') {
+    const sortOption: Record<string, SortOrder> = {};
+    if (filters?.sort === 'asc') {
       sortOption.createdAt = 1;
+    } else if (filters?.sort === 'desc') {
+      sortOption.createdAt = -1;
+    } else {
+      sortOption.createdAt = -1;
     }
     const [data, total] = await Promise.all([
       CustomPackage.find(query)
@@ -76,4 +77,7 @@ export class CustomPackageRepository
       return await CustomPackage.findByIdAndUpdate(pkgId, { $set: data }, { new: true });
     }
   }
+
+
+
 }

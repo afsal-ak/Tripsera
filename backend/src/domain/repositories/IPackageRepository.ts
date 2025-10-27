@@ -1,6 +1,7 @@
 import { IPackage } from '@domain/entities/IPackage';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
 
 export interface IPackageRepository {
   create(pkg: IPackage): Promise<IPackage>;
@@ -31,4 +32,10 @@ export interface IPackageRepository {
     page:number,
     limit:number
   ):Promise<{ packages: IPackage[]; pagination: PaginationInfo }>
+
+  getAllUserCustomPackages(
+    page: number,
+    limit: number,
+    filters: IFilter
+  ): Promise<{ packages: CustomPackageApprovedResponseDTO[]; pagination: PaginationInfo }>
 }

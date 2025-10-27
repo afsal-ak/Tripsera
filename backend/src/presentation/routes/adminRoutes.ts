@@ -298,14 +298,20 @@ router.patch(
 
 //CUSTOM PACAKGE ROUTES
 router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_ALL_REQUESTED_PKG,
+  adminAuthMiddleware,
+  customPkgController.getAllRequestedCustomPkgs
+);
+router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_ALL_APPROVED_PKG,
+  adminAuthMiddleware,
+  customPkgController.getAllApprovedCustomPkgs
+);
+
+router.get(
   CUSTOM_PACKAGE_ROUTE.GET_BY_ID,
   adminAuthMiddleware,
   customPkgController.getCustomPkgById
-);
-router.get(
-  CUSTOM_PACKAGE_ROUTE.GET_ALL_PKG,
-  adminAuthMiddleware,
-  customPkgController.getAllCustomPkgs
 );
 
 router.post(CUSTOM_PACKAGE_ROUTE.CREATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.createCustomPackage)

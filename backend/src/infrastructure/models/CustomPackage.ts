@@ -20,6 +20,8 @@ const CustomPackageSchema = new Schema<CustomPackageDocument>(
       phone: { type: String },
     },
     destination: { type: String, required: true },
+    startingPoint: { type: String, required: true },
+
     tripType: {
       type: String,
       enum: Object.values(TripTypeEnum),

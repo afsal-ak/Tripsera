@@ -14,6 +14,7 @@ export interface ICustomPackage {
     phone?: string;
   };
   destination: string;
+  startingPoint:string;
   tripType: TripTypeEnum;
   otherTripType?: string; // if tripType is "other"
   budget: number;

@@ -88,7 +88,7 @@ export interface IPackage {
   //for custom package
   isCustom?: boolean;
   createdFor?: Types.ObjectId;
-
+  customReqId?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -4,7 +4,7 @@ import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 
 export interface ICustomPackageRepository extends IBaseRepository<ICustomPackage> {
-  getAllCustomPkgs(
+  getAllRequestedCustomPkg(
     page: number,
     limit: number,
     filters?: IFilter

@@ -4,6 +4,7 @@ import { IPackage } from '@domain/entities/IPackage';
 import { Types } from 'mongoose';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {
     const createPkg = await PackageModel.create(pkg);
@@ -138,6 +139,115 @@ export class PackageRepository implements IPackageRepository {
 
     return { packages, pagination };
   }
+  async getAllUserCustomPackages(
+    page: number,
+    limit: number,
+    filters: IFilter
+  ): Promise<{ packages: CustomPackageApprovedResponseDTO[]; pagination: PaginationInfo }> {
+    const skip = (page - 1) * limit;
+
+    const matchStage: any = {
+      isCustom: true,
+      createdFor: { $exists: true, $ne: null },
+    };
+
+    // Status filter
+    if (filters.status === 'active') matchStage.isBlocked = false;
+    else if (filters.status === 'blocked') matchStage.isBlocked = true;
+
+    // Date range filter
+    if (filters.startDate && filters.endDate) {
+      matchStage.createdAt = {
+        $gte: new Date(filters.startDate),
+        $lte: new Date(filters.endDate),
+      };
+    }
+
+    // Sorting (default newest first)
+    const sortOption: Record<string, 1 | -1> = {};
+    if (filters.sort === 'asc') sortOption.createdAt = 1;
+    else sortOption.createdAt = -1;
+
+    const pipeline: any[] = [
+      { $match: matchStage },
+
+      // Populate createdFor (user)
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'createdFor',
+          foreignField: '_id',
+          as: 'userDetails',
+        },
+      },
+      { $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true } },
+
+      // Populate customReqId (custom request info)
+      {
+        $lookup: {
+          from: 'custompackages',
+          localField: 'customReqId',
+          foreignField: '_id',
+          as: 'customReqDetails',
+        },
+      },
+      { $unwind: { path: '$customReqDetails', preserveNullAndEmptyArrays: true } },
+
+      // Search (by username or package title)
+      filters.search
+        ? {
+          $match: {
+            $or: [
+              { title: { $regex: filters.search, $options: 'i' } },
+              { 'userDetails.username': { $regex: filters.search, $options: 'i' } },
+            ],
+          },
+        }
+        : undefined,
+
+      { $sort: sortOption },
+      { $skip: skip },
+      { $limit: limit },
+
+      {
+        $project: {
+          title: 1,
+          description: 1,
+          price: 1,
+          offer: 1,
+          isBlocked: 1,
+          isCustom: 1,
+          createdAt: 1,
+          'userDetails.username': 1,
+          'userDetails.email': 1,
+          'userDetails.profileImage.url': 1,
+          'customReqDetails.packageName': 1,
+          'customReqDetails.destination': 1,
+          'customReqDetails.budget': 1,
+        },
+      },
+    ].filter(Boolean);
+
+    const [packages, totalResult] = await Promise.all([
+      PackageModel.aggregate(pipeline),
+      PackageModel.aggregate([
+        ...pipeline.filter((stage) => !('$skip' in stage) && !('$limit' in stage)),
+        { $count: 'total' },
+      ]),
+    ]);
+
+    const total = totalResult[0]?.total || 0;
+
+    const pagination: PaginationInfo = {
+      totalItems: total,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(total / limit),
+    };
+
+    return { packages, pagination };
+  }
+
 
   async countDocument(): Promise<number> {
     return PackageModel.countDocuments();
@@ -166,16 +276,16 @@ export class PackageRepository implements IPackageRepository {
   ): Promise<IPackage[]> {
     const pipeline: any[] = [
       // { $match: { ...filters, isBlocked: false, isCustom: false } },
-{
-      $match: {
-        ...filters,
-        isBlocked: false,
-        $or: [
-          { isCustom: false },
-          { isCustom: { $exists: false } } // include packages without the field
-        ]
+      {
+        $match: {
+          ...filters,
+          isBlocked: false,
+          $or: [
+            { isCustom: false },
+            { isCustom: { $exists: false } } // include packages without the field
+          ]
+        },
       },
-    },
       {
         $lookup: {
           from: 'categories',
@@ -228,7 +338,7 @@ export class PackageRepository implements IPackageRepository {
   //   const pkg=await PackageModel.
 
   // }
- async getCustomPackagesForUser(
+  async getCustomPackagesForUser(
     userId: string,
     page: number,
     limit: number
@@ -247,7 +357,7 @@ export class PackageRepository implements IPackageRepository {
       PackageModel.countDocuments(query),
     ]);
 
- const pagination: PaginationInfo = {
+    const pagination: PaginationInfo = {
       totalItems: total,
       currentPage: page,
       pageSize: limit,
@@ -255,7 +365,7 @@ export class PackageRepository implements IPackageRepository {
     };
     return {
       packages: packages,
-      pagination:pagination
+      pagination: pagination
     };
   }
   async block(id: string): Promise<void> {

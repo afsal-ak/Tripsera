@@ -3,6 +3,7 @@ import {
   CustomPkgResponseDTO,
   CustomPkgTableDTO,
   CustomPkgUserListDTO,
+  CustomPackageApprovedResponseDTO
 } from '../dtos/CustomPkgDTO';
 
 export class CustomPkgMapper {
@@ -12,6 +13,8 @@ export class CustomPkgMapper {
       userId: pkg.userId as string,
       guestInfo: pkg.guestInfo,
       destination: pkg.destination,
+      startingPoint: pkg.startingPoint,
+
       tripType: pkg.tripType,
       otherTripType: pkg.otherTripType,
       budget: pkg.budget,
@@ -34,6 +37,8 @@ export class CustomPkgMapper {
       id: pkg._id?.toString() ?? '',
       userId: pkg.userId as string,
       destination: pkg.destination,
+      startingPoint: pkg.startingPoint,
+
       tripType: pkg.tripType,
       budget: pkg.budget,
       startDate: pkg.startDate,
@@ -48,6 +53,7 @@ export class CustomPkgMapper {
     return {
       id: pkg._id?.toString() ?? '',
       destination: pkg.destination,
+      startingPoint: pkg.startingPoint,
       tripType: pkg.tripType,
       budget: pkg.budget,
       startDate: pkg.startDate,
@@ -58,4 +64,44 @@ export class CustomPkgMapper {
       createdAt: pkg.createdAt!,
     };
   }
+
+
+   static toApprovedResponseDTO(pkg: CustomPackageApprovedResponseDTO): CustomPackageApprovedResponseDTO {
+    return {
+      _id: pkg._id?.toString(),
+      title: pkg.title,
+      description: pkg.description,
+      price: pkg.price,
+      offer: pkg.offer
+        ? {
+            discountType: pkg.offer.discountType,
+            discountValue: pkg.offer.discountValue,
+            validUntil: pkg.offer.validUntil,
+          }
+        : undefined,
+      isBlocked: pkg.isBlocked,
+      isCustom: pkg.isCustom,
+      createdAt: pkg.createdAt,
+
+      userDetails: pkg.userDetails
+        ? {
+            _id: pkg.userDetails._id?.toString(),
+            username: pkg.userDetails.username,
+            email: pkg.userDetails.email,
+            profileImage: pkg.userDetails?.profileImage || null,
+          }
+        : undefined,
+
+      customRequest: pkg.customRequest
+        ? {
+            _id: pkg.customRequest._id?.toString(),
+            packageName: pkg.customRequest.packageName,
+            destination: pkg.customRequest.destination,
+            budget: pkg.customRequest.budget,
+          }
+        : undefined,
+    };
+  }
+
+
 }

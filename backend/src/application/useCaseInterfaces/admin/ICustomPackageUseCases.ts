@@ -5,7 +5,8 @@ import {
   CustomPkgResponseDTO,
   CustomPkgTableDTO,
   AdminCreateCustomPackageDTO,
-  AdminEditCustomPackageDTO
+  AdminEditCustomPackageDTO,
+  CustomPackageApprovedResponseDTO
 } from '@application/dtos/CustomPkgDTO';
 import { PackageResponseDTO } from '@application/dtos/PackageDTO';
 
@@ -15,15 +16,19 @@ export interface ICustomPkgUseCases {
     data: UpdateCustomPkgStatusDTO
   ): Promise<CustomPkgResponseDTO | null>;
   deleteCustomPkg(customPkgId: string): Promise<boolean>;
-  getAllCustomPkg(
+  getAllRequestedCustomPkg(
     page: number,
     limit: number,
     filters?: IFilter
   ): Promise<IPaginatedResult<CustomPkgTableDTO>>;
   getCustomPkgById(customPkgId: string): Promise<CustomPkgResponseDTO | null>;
 
-   createCustomPackage(pkg: AdminCreateCustomPackageDTO): Promise<PackageResponseDTO>  
-     
+  createCustomPackage(pkg: AdminCreateCustomPackageDTO): Promise<PackageResponseDTO>
+  getApprovedCustomPackage(
+    page: number,
+    limit: number,
+    filters?: IFilter
+  ): Promise<IPaginatedResult<CustomPackageApprovedResponseDTO>>
   editCustomPackageData(
     id: string,
     data: AdminEditCustomPackageDTO,

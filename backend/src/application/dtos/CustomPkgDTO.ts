@@ -9,6 +9,7 @@ export interface CreateCustomPkgDTO {
   userId?: Types.ObjectId;
   guestInfo?: { name?: string; email?: string; phone?: string };
   destination: string;
+  startingPoint: string;
   tripType: TripTypeEnum;
   otherTripType?: string;
   budget: number;
@@ -24,6 +25,7 @@ export interface CreateCustomPkgDTO {
 export interface UpdateCustomPkgDTO {
   guestInfo?: { name?: string; email?: string; phone?: string };
   destination?: string;
+  startingPoint?: string;
   tripType?: TripTypeEnum;
   otherTripType?: string;
   budget?: number;
@@ -48,6 +50,8 @@ export interface CustomPkgTableDTO {
   id: string;
   userId?: string;
   destination: string;
+  startingPoint: string,
+
   tripType: string;
   budget: number;
   startDate: Date;
@@ -60,6 +64,7 @@ export interface CustomPkgTableDTO {
 export interface CustomPkgUserListDTO {
   id: string;
   destination: string;
+  startingPoint: string;
   tripType: string;
   budget: number;
   startDate: Date;
@@ -75,6 +80,7 @@ export interface CustomPkgResponseDTO {
   userId?: string;
   guestInfo?: { name?: string; email?: string; phone?: string };
   destination: string;
+  startingPoint: string;
   tripType: TripTypeEnum | string;
   otherTripType?: string;
   budget: number;
@@ -95,11 +101,48 @@ export interface CustomPkgResponseDTO {
 
 
 //for admin to create packages for user
-import { CreatePackageDTO, EditPackageDTO} from '@application/dtos/PackageDTO';
+import { CreatePackageDTO, EditPackageDTO } from '@application/dtos/PackageDTO';
 
 export interface AdminCreateCustomPackageDTO extends CreatePackageDTO {
   createdFor: Types.ObjectId;  // link to user
   isCustom: boolean;
+  customReqId: Types.ObjectId
 }
 
-export interface AdminEditCustomPackageDTO extends Partial<AdminCreateCustomPackageDTO> {}
+export interface AdminEditCustomPackageDTO extends Partial<AdminCreateCustomPackageDTO> { }
+
+
+export interface OfferDTO {
+  discountType: 'percentage' | 'flat';
+  discountValue: number;
+  validUntil: Date;
+}
+
+export interface UserInfoDTO {
+  _id: string;
+  username: string;
+  email: string;
+  profileImage?: string | null;
+}
+
+export interface CustomRequestInfoDTO {
+  _id: string;
+  packageName: string;
+  destination?: string;
+  budget?: number;
+}
+
+export interface CustomPackageApprovedResponseDTO {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  offer?: OfferDTO;
+
+  isBlocked: boolean;
+  isCustom: boolean;
+  createdAt: Date;
+
+  userDetails?: UserInfoDTO;
+  customRequest?: CustomRequestInfoDTO;
+}

@@ -31,7 +31,7 @@ export class CustomPackageController {
     }
   };
 
-  getAllCustomPkgs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getAllRequestedCustomPkgs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 9;
@@ -42,7 +42,7 @@ export class CustomPackageController {
         startDate: (req.query.startDate as string) || '',
         endDate: (req.query.endDate as string) || '',
       };
-      const data = await this._customPkgUseCases.getAllCustomPkg(page, limit, filters);
+      const data = await this._customPkgUseCases.getAllRequestedCustomPkg(page, limit, filters);
       res.status(HttpStatus.OK).json({
         data,
         message: 'Package fetched successfully',
@@ -51,6 +51,28 @@ export class CustomPackageController {
       next(error);
     }
   };
+
+  getAllApprovedCustomPkgs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 9;
+      const filters: IFilter = {
+        search: (req.query.search as string) || '',
+        status: (req.query.status as string) || '',
+        sort: (req.query.sort as string) || '',
+        startDate: (req.query.startDate as string) || '',
+        endDate: (req.query.endDate as string) || '',
+      };
+      const data = await this._customPkgUseCases.getApprovedCustomPackage(page, limit, filters);
+      res.status(HttpStatus.OK).json({
+        data,
+        message: 'Package fetched successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 
   getCustomPkgById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
