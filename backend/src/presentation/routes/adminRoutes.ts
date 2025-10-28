@@ -62,7 +62,7 @@ import { ReviewUseCases } from '@application/usecases/admin/reviewUseCase';
 import { ReviewController } from '@presentation/controllers/admin/reviewController';
 
 import { ReferralRepository } from '@infrastructure/repositories/ReferralRepository';
-import { ReferralUseCase } from '@application/usecases/admin/referralUseCases.ts';
+import { ReferralUseCase } from '@application/usecases/admin/referralUseCases';
 import { ReferralController } from '@presentation/controllers/admin/referralController';
 import { SalesReportRepository } from '@infrastructure/repositories/salesReportRepository';
 import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
