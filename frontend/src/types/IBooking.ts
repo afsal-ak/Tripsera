@@ -10,10 +10,31 @@ export interface ITravelerHistory {
   traveler: ITraveler;
   action: 'added' | 'removed' | 'updated';
   changedBy?: string;
-  changedAt?: Date;
+  changedAt?: string;
   note?: string;
 }
+interface TravelerHistory {
+  traveler?: {
+    fullName: string;
+    gender?: string;
+    age?: number;
+    idType?: string;
+    idNumber?: string;
+  };
+  action: string;
+  note?: string;
+  changedBy?: string;
+  changedAt: string ;
+}
 
+interface DateHistory {
+  action: string;
+  oldValue?: string | Date;
+  newValue?: string | Date;
+  note?: string;
+  changedBy?: string;
+  changedAt: string | string;
+}
 export interface ITravelDateHistory {
   oldDate?: Date;
   newDate: Date;

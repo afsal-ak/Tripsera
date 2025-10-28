@@ -1,32 +1,12 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-interface TravelerHistory {
-  traveler?: {
-    fullName: string;
-    gender?: string;
-    age?: number;
-    idType?: string;
-    idNumber?: string;
-  };
-  action: string;
-  note?: string;
-  changedBy?: string;
-  changedAt: string | Date;
-}
+import type{ IBookingHistory, ITravelDateHistory,ITravelerHistory } from '@/types/IBooking';
 
-interface DateHistory {
-  action: string;
-  oldValue?: string | Date;
-  newValue?: string | Date;
-  note?: string;
-  changedBy?: string;
-  changedAt: string | Date;
-}
 
 interface BookingHistoryCardProps {
   title: string;
   type: 'traveler' | 'date'; // choose what kind of history to show
-  history?: TravelerHistory[] | DateHistory[];
+  history?: ITravelerHistory[] | IBookingHistory[];
 }
 
 export const BookingHistoryCard = ({ title, type, history }: BookingHistoryCardProps) => {

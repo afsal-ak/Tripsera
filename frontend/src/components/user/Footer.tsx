@@ -1,111 +1,93 @@
-const Footer = () => {
+import { Linkedin, MessageCircle, Twitter,PlaneTakeoff } from 'lucide-react';
+
+export default function Footer() {
   return (
-    <footer className="bg-foreground text-white">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-white border-t border-gray-200 mt-12">
+      {/* Divider above footer */}
+      <div className="border-t border-gray-300"></div>
+
+      <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-2xl font-bold mb-4">
-              <span className="text-orange">Picnigo</span>
-            </h3>
-            <p className="text-gray-300 mb-4">
-              Your trusted travel partner for unforgettable adventures around the globe. We create
-              experiences that inspire and transform.
+          {/* Logo and Description */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-1">
+              <span className="text-3xl font-bold text-orange">Tripsera </span>
+              {/* <svg className="w-8 h-8 text-orange-500" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7.5 5.5L17 12l-9.5 6.5v-13z" />
+              </svg> */}
+              <span className='text'>< PlaneTakeoff/></span>
+            </div>
+            <p className="text-gray-600 text-sm">
+              Travel helps companies<br />
+              manage payments easily.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                Facebook
+            <div className="flex space-x-3">
+              <a href="#" className="text-orange hover:text-orange-600">
+                <Linkedin className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                Instagram
+              <a href="#" className="text-orange hover:text-orange-600">
+                <MessageCircle className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                Twitter
+              <a href="#" className="text-orange hover:text-orange-600">
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a href="#" className="text-orange hover:text-orange-600">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                </svg>
               </a>
             </div>
           </div>
 
+          {/* Company */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-orange">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Packages
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Contact
-                </a>
-              </li>
+            <h3 className="font-bold text-gray-900 text-lg mb-4">Company</h3>
+            <ul className="space-y-3">
+              {['About Us', 'Careers', 'Blog', 'Pricing'].map((link) => (
+                <li key={link}>
+                  <a href="#" className="text-gray-700 hover:text-orange-500 text-sm">{link}</a>
+                </li>
+              ))}
             </ul>
           </div>
 
+          {/* Destinations */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-orange">Services</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Adventure Tours
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Cultural Experiences
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Wildlife Safaris
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Beach Holidays
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange transition-colors">
-                  Custom Trips
-                </a>
-              </li>
+            <h3 className="font-bold text-gray-900 text-lg mb-4">Destinations</h3>
+            <ul className="space-y-3">
+              {['Maldives', 'Los Angeles', 'Las Vegas', 'Toronto'].map((dest) => (
+                <li key={dest}>
+                  <a href="#" className="text-gray-700 hover:text-orange-500 text-sm">{dest}</a>
+                </li>
+              ))}
             </ul>
           </div>
 
+          {/* Newsletter */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-orange">Contact Info</h4>
-            <ul className="space-y-2 text-gray-300">
-              <li>📧 info@picnigo.com</li>
-              <li>📞 +1 (555) 123-4567</li>
-              <li>📍 123 Adventure St, Travel City, TC 12345</li>
-              <li>🕒 Mon-Fri: 9AM-6PM</li>
-            </ul>
+            <h3 className="font-bold text-gray-900 text-lg mb-4">Join Our Newsletter</h3>
+            <div className="flex">
+              <input
+                type="email"
+                placeholder="Your email address"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+              />
+              <button className="bg-orange text-white px-6 py-2 rounded-r-lg hover:bg-orange font-medium text-sm">
+                Subscribe
+              </button>
+            </div>
+            <p className="text-gray-500 text-xs mt-3">
+              * Will send you weekly updates for your better<br />
+              tour packages.
+            </p>
           </div>
         </div>
 
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-          <p className="text-gray-300">
-            © 2025 <span className="text-orange">Picnigo</span>. All rights reserved. | Privacy
-            Policy | Terms of Service
-          </p>
+        {/* Footer Bottom */}
+        <div className="mt-8 border-t border-gray-200 pt-6 text-center text-gray-500 text-sm">
+          © 2025 <span className='text'> Tripsera. </span>All rights reserved. | <a href="#" className="hover:text-orange">Privacy Policy</a> | <a href="#" className="hover:text-orange">Terms of Service</a>
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}
