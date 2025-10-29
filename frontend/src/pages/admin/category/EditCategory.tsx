@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
+ import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/Button';
 import { toast } from 'sonner';
 import { getCategoryById, updateCategory } from '@/services/admin/categoryService';
