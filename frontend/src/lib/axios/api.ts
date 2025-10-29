@@ -31,12 +31,13 @@ function getAuthEndpoints(url: string) {
   return {
     tokenKey: isUser ? 'accessToken' : 'adminAccessToken',
     refreshEndpoint: isUser ? '/user/refresh-token' : '/admin/refresh-token',
-    loginUrl: isUser ? '/login' : '/admin/login',
     isUser,
   };
 }
 
+
 // Request interceptor
+
 api.interceptors.request.use(
   (config) => {
     const url = config.url ?? '';
@@ -50,7 +51,9 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+
 // Response interceptor
+
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -59,19 +62,18 @@ api.interceptors.response.use(
     const message = (error.response?.data as any)?.message ?? '';
     const url = originalRequest.url ?? '';
 
-    //   blocked user
+    //  Handle blocked user
     if (
       url.startsWith('/user') &&
       status === HttpStatus.FORBIDDEN &&
       message.toLowerCase().includes('blocked')
     ) {
       localStorage.removeItem('accessToken');
-      toast.error('You have been blocked by the admin');
-      setTimeout(() => (window.location.href = '/login'), 1000);
+      toast.error('You have been blocked by the admin.');
       return Promise.reject(error);
     }
 
-    // Handle refresh token for both
+    //  Handle token refresh
     if (
       status === HttpStatus.UNAUTHORIZED &&
       !originalRequest._retry &&
@@ -80,7 +82,7 @@ api.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
-      const { tokenKey, refreshEndpoint, loginUrl } = getAuthEndpoints(url);
+      const { tokenKey, refreshEndpoint } = getAuthEndpoints(url);
 
       try {
         const res = await axios.post(
@@ -99,8 +101,8 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem(tokenKey);
-        toast.error('Session expired. Please log in again.');
-        setTimeout(() => (window.location.href = loginUrl), 1000);
+        // No redirect here; let your ProtectedRoute handle it
+        console.warn('Session expired — ProtectedRoute will handle redirect.');
         return Promise.reject(refreshError);
       }
     }
