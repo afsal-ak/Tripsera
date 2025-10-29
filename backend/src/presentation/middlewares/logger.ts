@@ -1,19 +1,21 @@
 import morgan from 'morgan';
-import fs from 'fs';
+import { createStream } from 'rotating-file-stream';
 import path from 'path';
-const logDir = path.join(__dirname, '../../../logs/');
+import fs from 'fs';
+
+// Create logs directory if missing
+const logDir = path.join(__dirname, '../../../logs');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
 
-const logStream = fs.createWriteStream(path.join(logDir, 'access.log'), {
-  flags: 'a', // append mode
+// Create a rotating write stream (rotates daily)
+const accessLogStream = createStream('access.log', {
+  interval: '1d', // rotate daily
+  path: logDir,
+  compress: 'gzip', // optional: compress old logs
 });
 
-// Use 'dev' format for console but also always write to file
-const morganLogger = [
-  morgan('dev'), // Logs to console
-  morgan('combined', { stream: logStream }), // Logs to file
-];
-
-export default morganLogger;
+// Morgan setup
+export const morganConsole = morgan('dev'); // console log
+export const morganLogger = morgan('combined', { stream: accessLogStream }); // file log

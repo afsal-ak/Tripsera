@@ -232,7 +232,7 @@ router.get(
 
 // HOME ROUTES
 router.get(HOME_ROUTES.HOME, optionalAuthMiddleware,homeController.getHome);
-router.get(HOME_ROUTES.PACKAGES, optionalAuthMiddleware,homeController.getActivePackage);
+router.get(HOME_ROUTES.PACKAGES, optionalAuthMiddleware,homeController.getActivePackages);
 router.get(HOME_ROUTES.PACKAGE_BY_ID, optionalAuthMiddleware,homeController.getPackagesById);
 
 // PROFILE ROUTES

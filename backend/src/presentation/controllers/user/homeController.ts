@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
+import { IPackageFilter } from '@domain/entities/IPackageFilter';
 
 export class HomeController {
-  constructor(private _homeUseCases: IHomeUseCases) {}
+  constructor(private _homeUseCases: IHomeUseCases) { }
 
   getHome = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -15,34 +16,31 @@ export class HomeController {
     }
   };
 
-  getActivePackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  
+  getActivePackages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { page, limit, sort, search, ...restFilters } = req.query;
- 
-      const pageNum = parseInt(page as string) || 1;
-      const limitNum = parseInt(limit as string) || 9;
-      const sortBy = (sort as string) || 'newest';
-      const searchQuery = (search as string) || '';
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 9;
 
-      const rawFilters = restFilters;
-      const filters: Record<string, string> = {};
-      for (const [key, value] of Object.entries(rawFilters)) {
-        if (value && typeof value === 'string' && value.trim() !== '') {
-          filters[key] = value.trim();
-        }
-      }
+      const filters: IPackageFilter = {
+        search: (req.query.search as string) || '',
+        sort: (req.query.sort as string) as IPackageFilter['sort'] || 'newest',
+        category: (req.query.category as string) || '',
+        duration: req.query.duration ? parseInt(req.query.duration as string, 10) : undefined,
+        startDate: (req.query.startDate as string) || '',
+        endDate: (req.query.endDate as string) || '',
+      };
 
-      const result = await this._homeUseCases.getActivePackage({
-        filters,
-        page: pageNum,
-        limit: limitNum,
-        sort: sortBy,
-        search: searchQuery,
-      });
+      const data = await this._homeUseCases.getActivePackage(
+        page,
+        limit,
+        filters
+
+      );
 
       res.status(HttpStatus.OK).json({
         message: 'Active packages fetched successfully',
-        ...result,
+        data,
       });
     } catch (error) {
       next(error);

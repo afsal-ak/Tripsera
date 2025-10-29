@@ -3,8 +3,11 @@ import { PackageModel } from '@infrastructure/models/Package';
 import { IPackage } from '@domain/entities/IPackage';
 import { Types } from 'mongoose';
 import { IFilter } from '@domain/entities/IFilter';
-import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
+ import { IPackageFilter } from '@domain/entities/IPackageFilter';
+import { PaginationInfo } from '@application/dtos/PaginationDto';
+import { SortOrder } from 'mongoose';
+
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {
     const createPkg = await PackageModel.create(pkg);
@@ -269,61 +272,81 @@ export class PackageRepository implements IPackageRepository {
   }
 
   async getActivePackages(
-    filters: any = {},
-    skip: number,
-    limit: number,
-    sortBy: string
-  ): Promise<IPackage[]> {
-    const pipeline: any[] = [
-      // { $match: { ...filters, isBlocked: false, isCustom: false } },
-      {
-        $match: {
-          ...filters,
-          isBlocked: false,
-          $or: [
-            { isCustom: false },
-            { isCustom: { $exists: false } } // include packages without the field
-          ]
-        },
-      },
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'category',
-          foreignField: '_id',
-          as: 'categoryDetails',
-        },
-      },
+  page: number,
+  limit: number,
+  filter?: IPackageFilter
+): Promise<{ package: IPackage[]; pagination: PaginationInfo }> {
+  const skip = (page - 1) * limit;
 
-      {
-        $match: {
-          'categoryDetails.isBlocked': { $ne: true },
-        },
-      },
+  const query: any = {
+    isBlocked: false,
+    $or: [{ isCustom: false }, { isCustom: { $exists: false } }],
+  };
 
-      { $sort: sortBy },
-      { $skip: skip },
-      { $limit: limit },
-
-      {
-        $project: {
-          title: 1,
-          price: 1,
-          finalPrice: 1,
-          categoryDetails: { name: 1, isBlocked: 1 },
-          createdAt: 1,
-          durationDays: 1,
-          durationNights: 1,
-          imageUrls: 1,
-          isCustom: 1
-
-        },
-      },
+  if (filter?.search) {
+    query.$or = [
+      { title: { $regex: filter.search, $options: 'i' } },
+      { 'location.name': { $regex: filter.search, $options: 'i' } },
     ];
-
-    const packages = await PackageModel.aggregate(pipeline);
-    return packages;
   }
+
+  if (filter?.category) {
+    query.category = filter.category;
+  }
+
+  if (filter?.duration) {
+    query.durationDays = filter.duration;
+  }
+
+  if (filter?.startDate && filter?.endDate) {
+    query.startDate = {
+      $gte: new Date(filter.startDate),
+      $lte: new Date(filter.endDate),
+    };
+  }
+
+  const sortOption: Record<string, SortOrder> = {};
+  switch (filter?.sort) {
+    case 'newest':
+      sortOption.createdAt = -1;
+      break;
+    case 'oldest':
+      sortOption.createdAt = 1;
+      break;
+    case 'price_asc':
+      sortOption.price = 1;
+      break;
+    case 'price_desc':
+      sortOption.price = -1;
+      break;
+    default:
+      sortOption.createdAt = -1;
+      break;
+  }
+
+  const [packages, total] = await Promise.all([
+    PackageModel.find(query)
+      .populate({
+        path: 'category',
+        select: 'name isBlocked',
+        match: { isBlocked: false }, // filter blocked categories
+      })
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    PackageModel.countDocuments(query),
+  ]);
+
+  const pagination: PaginationInfo = {
+    totalItems: total,
+    currentPage: page,
+    pageSize: limit,
+    totalPages: Math.ceil(total / limit),
+  };
+
+  return { package: packages, pagination };
+}
 
   async countActivePackages(filters: any): Promise<number> {
     const query = { ...filters, isBlocked: false, isCustom: false };
@@ -331,13 +354,6 @@ export class PackageRepository implements IPackageRepository {
   }
 
 
-  // getCustomPackagesForUser(userId: string, page: number, limit: number
-  // ): Promise<{ packages: IPackage[]; pagination: PaginationInfo; }> {
-  //        const skip = (page - 1) * limit;
-
-  //   const pkg=await PackageModel.
-
-  // }
   async getCustomPackagesForUser(
     userId: string,
     page: number,

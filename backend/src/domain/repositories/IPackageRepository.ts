@@ -2,7 +2,8 @@ import { IPackage } from '@domain/entities/IPackage';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
-
+import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
+import { IPackageFilter } from '@domain/entities/IPackageFilter';
 export interface IPackageRepository {
   create(pkg: IPackage): Promise<IPackage>;
   editPackage(
@@ -19,9 +20,12 @@ export interface IPackageRepository {
     filters?: IFilter
   ): Promise<{ packages: IPackage[]; pagination: PaginationInfo }>;
   countDocument(): Promise<number>;
-  getActivePackages(filters: any, skip: number, limit: number, sort: any, userId?: string ): Promise<IPackage[]>;
-  countActivePackages(filters: any): Promise<number>;
+   getActivePackages(page:number,limit:number,filter?:IPackageFilter
+  ):Promise<{package:IPackage[],pagination:PaginationInfo}>;
 
+  
+  countActivePackages(filters: any): Promise<number>;
+   
   delete(id: string): Promise<void>;
   block(id: string): Promise<void>;
   unblock(id: string): Promise<void>;

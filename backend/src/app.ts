@@ -9,7 +9,7 @@ import { errorHandler } from '@presentation/middlewares/errorHandler';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import morganLogger from '@presentation/middlewares/logger';
+import {morganLogger,morganConsole} from '@presentation/middlewares/logger';
 import { Server } from 'socket.io';
 
 //chat
@@ -72,6 +72,7 @@ app.use(
   })
 );
 app.use(morganLogger);
+app.use(morganConsole);
 app.use(bodyParser.json());
 
 process.on('unhandledRejection', (reason, promise) => {
