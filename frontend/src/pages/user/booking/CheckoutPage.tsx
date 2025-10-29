@@ -18,7 +18,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/Button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/Label';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Plane, Plus, Minus, CreditCard, Wallet, Zap, Check } from 'lucide-react';
 import { toast } from 'sonner';

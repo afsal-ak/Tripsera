@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/textarea';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/Label';
 import { toast } from 'sonner';
 import ImageCropper from '@/components/ImageCropper';
 import { handleBlogCreation } from '@/services/user/blogService';

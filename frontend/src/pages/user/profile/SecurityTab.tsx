@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/Label';
 import { Button } from '@/components/Button';
 import { requestEmailChange, passwordChange } from '@/services/user/profileService';
 import { useState } from 'react';

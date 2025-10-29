@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/Label';
 import { Button } from '@/components/Button';
 import { customPkgEditSchema, type EditCustomPkgFormSchema } from '@/schemas/customPkgSchema';
 import { getCustomPkgById, updateCustomPkg } from '@/services/user/customPkgService';

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import ImageCropper from '@/components/ImageCropper';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/Label';
 import { Button } from '@/components/ui/button';
 import { addPackageForUser } from '@/services/admin/customPkgService';
 import type { ICustomAdminPackage } from '@/types/ICustomPkg';

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '@/lib/utils/cropUtils';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/Label';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/Button';

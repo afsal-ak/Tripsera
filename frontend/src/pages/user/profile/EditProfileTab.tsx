@@ -6,7 +6,7 @@ import { setUser } from '@/redux/slices/userAuthSlice';
 import { updateUserProfile } from '@/services/user/profileService';
 import { ProfileSchema, type ProfileFormSchema } from '@/schemas/ProfileFormSchema';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
+import { Label } from '@/components/Label';
 import { Button } from '@/components/Button';
 import { Textarea } from '@/components/ui/textarea';
 import type { IUser } from '@/types/IUser';
