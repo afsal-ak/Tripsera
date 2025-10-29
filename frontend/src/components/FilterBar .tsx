@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
-} from '@/components/ui/Select';
+} from '@/components/Select';
 
 interface Option {
   value: string;

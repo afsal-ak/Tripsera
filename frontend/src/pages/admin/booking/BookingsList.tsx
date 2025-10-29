@@ -22,7 +22,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/components/ui/Select';
+} from '@/components/Select';
 import { getAllBooking } from '@/services/admin/bookingService';
 import type { IBooking } from '@/types/IBooking';
 

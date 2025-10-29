@@ -25,7 +25,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/components/ui/Select';
+} from '@/components/Select';
 import { Textarea } from '@/components/ui/textarea';
  
 const CustomPackageDetails = () => {

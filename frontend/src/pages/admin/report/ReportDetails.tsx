@@ -20,7 +20,7 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
-} from '@/components/ui/Select';
+} from '@/components/Select';
 import { Badge } from '@/components/ui/Badge';
 import BlogDetailCard from '../blog/BlogDetailCard';
 import ReviewDetailCard from '../review/ReviewDetailCard';
