@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Input } from '@/components/ui/Input';
 // import { Label } from '@/components/ui/Label';
-import { Label } from '../../../components/ui/Label';
+import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/Button';
 import { createCoupon } from '@/services/admin/couponService';
 
