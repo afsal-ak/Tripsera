@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Calendar, Tag, ArrowRight, User } from 'lucide-react';
+import { Calendar, Tag, ArrowRight } from 'lucide-react';
 import type { IBlog } from '@/types/IBlog';
 
 type Props = {
