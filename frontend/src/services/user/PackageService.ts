@@ -1,4 +1,4 @@
-import type { IPackage } from '@/types/homeTypes';
+import type{ IPackage } from '@/types/IPackage';
 import api from '@/lib/axios/api';
 
 interface PackageQueryParams {
@@ -15,14 +15,11 @@ interface PackageQueryParams {
 
 export const fetchActivePackages = async (
   params: PackageQueryParams
-): Promise<{
-  data: IPackage[];
-  total: number;
-  currentPage: number;
-  totalPages: number;
-}> => {
+)=>{
   const res = await api.get('/user/packages', { params });
-  return res.data;
+  console.log(res,'inn pacaksd');
+  
+  return res.data.data;
 };
 
 export const fetchPackgeById = async (id: string): Promise<IPackage> => {
