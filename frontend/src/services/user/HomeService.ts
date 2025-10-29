@@ -1,4 +1,5 @@
-import type { IBanner, IPackage } from '@/types/homeTypes';
+import type { IBanner } from '@/types/homeTypes';
+import type{ IPackage } from '@/types/IPackage';
 import api from '@/lib/axios/api';
 
 export const fetchHomeData = async (): Promise<{

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '@/lib/utils/cropUtils';
-import { Label } from '@/component/ui/label';
+import { Label } from '@/components/ui/Label';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/Button';
@@ -51,8 +51,7 @@ const AddBannerForm = () => {
     if (result) {
       const { file, previewUrl } = result;
       setImageFile(file);
-      // optionally use previewUrl if needed
-      setShowCropper(false);
+       setShowCropper(false);
     }
   };
 

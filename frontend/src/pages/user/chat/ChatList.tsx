@@ -7,6 +7,7 @@ import { MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import type { IChatRoom } from '@/types/IMessage';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
 interface ChatListProps {
   onRoomSelect: (room: IChatRoom) => void;
   selectedRoomId?: string;
@@ -17,7 +18,7 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
   const currentUserId = useSelector((state: RootState) => state.userAuth.user?._id);
   const [search, setSearch] = useState('');
 
-  const totalUnread = useTotalUnreadCount(currentUserId!);
+  const totalUnread = useTotalUnreadCount(EnumUserRole.USER);
   console.log(totalUnread, 'coutn unread');
 
   const filteredRooms = rooms.filter((room) => {

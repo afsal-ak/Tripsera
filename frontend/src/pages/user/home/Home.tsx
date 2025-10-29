@@ -6,7 +6,8 @@ import { Button } from '@/components/Button';
 import { fetchHomeData } from '@/services/user/HomeService';
 import { fetchAllPublishedBlog } from '@/services/user/blogService';
 import BlogCard from '@/components/user/BlogCard';
-import type { IPackage, IBanner } from '@/types/homeTypes';
+import type {  IBanner } from '@/types/homeTypes';
+import type { IPackage } from '@/types/IPackage';
 import type { IBlog } from '@/types/IBlog';
 
 const Home = () => {

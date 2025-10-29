@@ -8,6 +8,7 @@ import { useState, useMemo } from 'react';
 import type { IChatRoom } from '@/types/IMessage';
 import { Button } from '@/components/ui/button';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
 interface ChatListProps {
   onRoomSelect: (room: IChatRoom) => void;
   selectedRoomId?: string;
@@ -20,7 +21,7 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
   const [search, setSearch] = useState('');
   const [sortByUnread, setSortByUnread] = useState(false);
 
-  const totalUnread = useTotalUnreadCount(currentUserId!);
+  const totalUnread = useTotalUnreadCount(EnumUserRole.ADMIN);
   console.log(totalUnread, 'coutn unread');
 
   const filteredRooms = useMemo(() => {

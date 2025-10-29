@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@/component/ui/button';
+import { Button } from '../ui/button';
 import { Link ,useNavigate} from 'react-router-dom';
 import { Menu, User, X, Bell, MessageCircle } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';

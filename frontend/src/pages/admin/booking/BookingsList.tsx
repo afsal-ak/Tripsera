@@ -14,8 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/Table';
 import { Input } from '@/components/ui/Input';
-// import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/features/components/ui/Select";
-import { usePaginationButtons } from '@/hooks/usePaginationButtons';
+ import { usePaginationButtons } from '@/hooks/usePaginationButtons';
 
 import {
   Select,
@@ -23,7 +22,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/component/ui/select';
+} from '@/components/ui/Select';
 import { getAllBooking } from '@/services/admin/bookingService';
 import type { IBooking } from '@/types/IBooking';
 
