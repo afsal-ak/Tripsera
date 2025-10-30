@@ -82,6 +82,9 @@ export const BookingSchema = z.object({
         message: 'Phone number must be exactly 10 digits',
       }),
     email: z.string().email('Invalid email address'),
+  }).refine((data) => data.phone !== data.alternatePhone, {
+    message: 'Primary and alternate phone numbers cannot be the same',
+    path: ['alternatePhone'],  
   }),
 
   totalAmount: z
@@ -100,3 +103,48 @@ export const BookingSchema = z.object({
 });
 
 export type BookingFormSchema = z.infer<typeof BookingSchema>;
+
+ 
+export const TravelerBookingSchema = z.object({
+  packageId: z.string().min(1, 'Package ID is required'),
+  bookingId: z.string().min(1, 'bookingId ID is required'),
+
+  travelDate: z.string().refine(
+    (date) => {
+      const selected = new Date(date);
+      selected.setHours(0, 0, 0, 0);
+
+      const minAllowed = new Date();
+      minAllowed.setHours(0, 0, 0, 0);
+      minAllowed.setDate(minAllowed.getDate() + 2);
+
+      return selected >= minAllowed;
+    },
+    {
+      message: 'Travel date must be at least 2 days from today',
+    }
+  ),
+
+  travelers: z
+    .array(TravelerSchema)
+    .min(1, 'At least one traveler is required'),
+
+  totalAmount: z
+    .number({ required_error: 'Total amount is required' })
+    .min(1, 'Total amount must be at least 1'),
+
+  couponCode: z.string().optional(),
+  discount: z.number().optional(),
+  useWallet: z.boolean().optional(),
+  walletAmountUsed: z.number().optional(),
+  amountPaid: z.number().optional(),
+
+  paymentMethod: z
+    .enum(['wallet', 'razorpay', 'wallet+razorpay', ''], {
+      required_error: 'Please select a payment method',
+    })
+    .optional(),
+});
+
+export type TravelerBookingFormSchema = z.infer<typeof TravelerBookingSchema>;
+

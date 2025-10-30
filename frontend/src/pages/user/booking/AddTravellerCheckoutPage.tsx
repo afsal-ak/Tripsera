@@ -4,13 +4,15 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
-import { BookingSchema, type BookingFormSchema } from '@/schemas/BookingSchema';
+import { TravelerBookingSchema, type TravelerBookingFormSchema } from '@/schemas/BookingSchema';
 import {
   applyCoupon,
   createBookingWithWalletPayment,
   createBookingWithOnlinePayment,
   verifyRazorpayPayment,
   cancelUnpaidBooking,
+  addTravellerBookingWithWalletPayment,
+  addTravellerBookingWithOnlinePayment,
 } from '@/services/user/bookingService';
 import { fetchPackgeById } from '@/services/user/PackageService';
 import { getWalletBalance } from '@/services/user/walletService';
@@ -30,8 +32,8 @@ declare global {
   }
 }
 
-const CheckoutPage = () => {
-  const { id } = useParams();
+const AddTravellerCheckoutPage = () => {
+const { packageId, bookingId } = useParams();
   const navigate = useNavigate();
 
   const userData = useSelector((state: RootState) => state.userAuth.user);
@@ -112,15 +114,14 @@ const CheckoutPage = () => {
     setCouponError('');
   };
 
-  //console.log(localStorage.getItem('user'), 'reduc user info')
   console.log(couponCode, couponDiscount, 'coupon in payment');
   useEffect(() => {
     const loadPackage = async () => {
-      if (!id) {
+      if (!packageId) {
         return;
       }
       try {
-        const data = await fetchPackgeById(id);
+        const data = await fetchPackgeById(packageId);
 
         setPackageData(data as IPackage);
       } catch (error) {
@@ -128,7 +129,7 @@ const CheckoutPage = () => {
       }
     };
     loadPackage();
-  }, [id]);
+  }, [packageId]);
 
   const {
     register,
@@ -137,19 +138,14 @@ const CheckoutPage = () => {
     formState: { errors },
     watch,
     setValue,
-  } = useForm<BookingFormSchema>({
-    resolver: zodResolver(BookingSchema),
+  } = useForm<TravelerBookingFormSchema>({
+    resolver: zodResolver(TravelerBookingSchema),
     defaultValues: {
-      packageId: id ?? '',
+      packageId: packageId ?? '',
+      bookingId:bookingId??"",
       travelDate: '',
-      // travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
-      travelers: [{ fullName: '', age: 0, gender: 'male', idType: undefined, idNumber: '' }],
-      contactDetails: {
-        name: userData?.fullName || '',
-        phone: userData?.phone ? String(userData.phone) : '',
-        alternatePhone: '',
-        email: userData?.email || '',
-      },
+      travelers: [{ fullName: '', age: 0, gender: 'male', idType: 'aadhaar', idNumber: '' }],
+
       couponCode: '',
       discount: 0,
       totalAmount: 0,
@@ -214,7 +210,7 @@ const CheckoutPage = () => {
   const initiateRazorpayPayment = (
     razorpayOrder: any,
     booking: any,
-    formData: BookingFormSchema
+    formData: TravelerBookingFormSchema
   ) => {
     console.log('razorpayOrder', razorpayOrder);
 
@@ -248,11 +244,7 @@ const CheckoutPage = () => {
           }
         },
       },
-      prefill: {
-        name: formData.contactDetails.name,
-        email: formData.contactDetails.email,
-        contact: formData.contactDetails.phone,
-      },
+
       theme: { color: '#F97316' },
     };
 
@@ -260,13 +252,13 @@ const CheckoutPage = () => {
     rzp.open();
   };
 
-  const handlePayment = async (formData: BookingFormSchema) => {
+  const handlePayment = async (formData: TravelerBookingFormSchema) => {
     try {
       if (formData.paymentMethod === 'wallet') {
         setIsWalletApplied(true); //  enable wallet deduction UI
 
         if (walletBalance >= finalPayableAmount) {
-          const res = await createBookingWithWalletPayment({
+          const res = await addTravellerBookingWithWalletPayment({
             ...formData,
             useWallet: true,
           });
@@ -281,7 +273,7 @@ const CheckoutPage = () => {
       ) {
         setIsWalletApplied(formData.paymentMethod === 'wallet+razorpay');
 
-        const razorpayOrderData = await createBookingWithOnlinePayment({
+        const razorpayOrderData = await addTravellerBookingWithOnlinePayment({
           ...formData,
           useWallet: isUsingWallet,
           walletAmountUsed: walletUsed,
@@ -311,7 +303,7 @@ const CheckoutPage = () => {
               <Plane className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold">Complete Your Booking</h1>
+              <h1 className="text-3xl md:text-4xl font-semibold">Add New Travellers</h1>
               <p className="text-sm md:text-base text-white/90 mt-1">
                 Just a few steps away from your dream vacation
               </p>
@@ -322,65 +314,7 @@ const CheckoutPage = () => {
         <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Name */}
-                  <div className="flex flex-col">
-                    <Input
-                      placeholder="Name *"
-                      defaultValue={userData?.fullName || ''}
-                      {...register('contactDetails.name')}
-                    />
-                    {errors.contactDetails?.name && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.contactDetails.name.message}
-                      </p>
-                    )}
-                  </div>
 
-                  {/* Email */}
-                  <div className="flex flex-col">
-                    <Input
-                      placeholder="Email *"
-                      defaultValue={userData?.email || ''}
-                      {...register('contactDetails.email')}
-                    />
-                    {errors.contactDetails?.email && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.contactDetails.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Phone */}
-                  <div className="flex flex-col">
-                    <Input
-                      placeholder="Phone *"
-                      defaultValue={userData?.phone || ''}
-                      {...register('contactDetails.phone')}
-                    />
-                    {errors.contactDetails?.phone && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.contactDetails.phone.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Alternate Phone */}
-                  <div className="flex flex-col">
-                    <Input
-                      placeholder="Alternate Phone *"
-                      {...register('contactDetails.alternatePhone')}
-                    />
-                    {errors.contactDetails?.alternatePhone && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.contactDetails.alternatePhone.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
             </Card>
 
             <Card>
@@ -422,7 +356,7 @@ const CheckoutPage = () => {
                       {/* Age */}
                       <div>
                         <Input
-                          type="number"
+                          type="string"
                           placeholder="Age *"
                           {...register(`travelers.${index}.age`, { valueAsNumber: true })}
                         />
@@ -804,4 +738,4 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+export default AddTravellerCheckoutPage;

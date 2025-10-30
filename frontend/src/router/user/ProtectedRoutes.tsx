@@ -8,6 +8,7 @@ import Wishlist from '@/pages/user/accounts/Wishlist';
 import CouponList from '@/pages/user/coupons/CouponList';
 import WalletPage from '@/pages/user/wallet/WalletPage';
 import CheckoutPage from '@/pages/user/booking/CheckoutPage';
+import AddTravellerCheckoutPage from '@/pages/user/booking/AddTravellerCheckoutPage';
 import BookingSuccessPage from '@/pages/user/booking/BookingSuccessPage';
 import UserBookingPage from '@/pages/user/booking/UserBookingPage';
 import BookingDetailPage from '@/pages/user/booking/BookingDetailPage';
@@ -36,6 +37,11 @@ const ProtectedRoutes = (
   <Route element={<UserProtectedRoutes />}>
     <Route path="/home" element={<Home />} />
     <Route path="/checkout/:id" element={<CheckoutPage />} />
+ <Route
+  path="/checkout/add-traveller/:packageId/:bookingId"
+  element={<AddTravellerCheckoutPage />}
+/>
+    {/* <Route path="/checkout/add-traveller/:id" element={<AddTravellerCheckoutPage />} /> */}
     <Route path="/booking-success/:id" element={<BookingSuccessPage />} />
     <Route path="/booking-failed/:id" element={<PaymentFailed />} />
     <Route path="/packages/:packageId/review" element={<ReviewPage />} />

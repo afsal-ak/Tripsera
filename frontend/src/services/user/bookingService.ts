@@ -1,4 +1,4 @@
-import type { BookingFormSchema } from '@/schemas/BookingSchema';
+import type { BookingFormSchema,TravelerBookingFormSchema } from '@/schemas/BookingSchema';
 import api from '@/lib/axios/api';
 import type { IBooking } from '@/types/IBooking';
 
@@ -29,11 +29,25 @@ export const createBookingWithWalletPayment = async (data: BookingFormSchema) =>
   console.log(response, 'create booking walet');
   return response.data;
 };
-
 export const createBookingWithOnlinePayment = async (data: BookingFormSchema) => {
   const response = await api.post('/user/booking/online', data);
   return response.data;
 };
+
+
+export const addTravellerBookingWithWalletPayment = async (data: TravelerBookingFormSchema) => {
+  const response = await api.post('/user/booking/add-traveller/wallet', data);
+  console.log(response, 'create booking walet');
+  return response.data;
+};
+
+
+export const addTravellerBookingWithOnlinePayment = async (data: TravelerBookingFormSchema) => {
+  const response = await api.post('/user/booking/add-traveller/online', data);
+  return response.data;
+};
+
+
 
 export const verifyRazorpayPayment = async (data: {
   razorpay_order_id: string;
