@@ -48,6 +48,22 @@ export interface CreateBookingDTO {
   updatedAt?: Date;
 }
 
+
+export interface AddTravellerDTO
+  extends Omit<CreateBookingDTO, 'contactDetails' | 'travelDate' | 'razorpay'> {
+  bookingId: string;
+  travelers: {
+    fullName: string;
+    age: number;
+    gender: EnumGender;
+    idType: EnumIdType;
+    idNumber: string;
+  }[];
+  totalAmount: number; // Cost for newly added travelers
+  amountPaid: number; // Amount user pays (wallet or Razorpay)
+  paymentMethod?: EnumPaymentMethod;
+}
+
 export interface UpdateBookingDTO extends Partial<CreateBookingDTO> {
   bookingId: string;
   adminNote?: string;

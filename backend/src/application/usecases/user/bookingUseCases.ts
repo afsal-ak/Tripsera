@@ -15,12 +15,14 @@ import {
   EnumDateChangeAction,
   EnumTravelerAction,
 } from '@constants/enum/bookingEnum';
-import { EnumPaymentStatus } from '@constants/enum/paymentEnum';
+import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
 import { EnumUserRole } from '@constants/enum/userEnum';
 import {
   BookingDetailResponseDTO,
   BookingUserResponseDTO,
   CreateBookingDTO,
+  AddTravellerDTO,
+  TravelerDTO
 } from '@application/dtos/BookingDTO';
 import { BookingMapper } from '@application/mappers/BookingMapper';
 import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
@@ -195,6 +197,81 @@ export class BookingUseCases implements IBookingUseCases {
       razorpayOrder,
     };
   }
+  async createBookingWithWalletPayment(
+    userId: string,
+    data: CreateBookingDTO & { useWallet?: boolean }
+  ): Promise<{ booking?: BookingDetailResponseDTO }> {
+    const {
+      packageId,
+      travelers,
+      contactDetails,
+      totalAmount,
+      couponCode,
+      travelDate,
+      useWallet = false,
+    } = data;
+
+    const discount = 0;
+
+    if (!useWallet) {
+      // If user didn't select wallet, skip this route
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Wallet usage not requested');
+    }
+
+    const wallet = await this._walletRepo.getUserWallet(userId);
+    if (!wallet) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
+    }
+    const walletBalance = wallet.balance;
+
+    if (walletBalance < totalAmount) {
+      // Wallet not enough, should redirect to Razorpay flow
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
+    }
+    const bookingCode = await generateBookingCode();
+
+    // Wallet fully covers booking
+    await this._walletRepo.debitWallet(userId, totalAmount, `Used for booking ${bookingCode}`);
+
+    const bookingData: IBookingInput = {
+      packageId: packageId.toString(),
+      travelers,
+      contactDetails,
+      travelDate,
+      totalAmount,
+      discount,
+      couponCode,
+      walletUsed: true,
+      walletAmountUsed: totalAmount,
+      amountPaid: 0,
+      paymentMethod: 'wallet',
+      bookingStatus: 'booked',
+      paymentStatus: 'paid',
+      bookingCode,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const booking = await this._bookingRepo.createBooking(userId, bookingData);
+    const user = await this._userRepo.findById(userId);
+    const pkg = await this._packageRepo.findById(booking.packageId.toString());
+
+    const message = `User ${user?.username} booked package ${pkg?.title})`;
+    //  Save notification in DB
+    const notification = await this._notificationUseCases.sendNotification({
+      role: EnumUserRole.ADMIN,
+      title: 'New Booking',
+      entityType: EnumNotificationEntityType.BOOKING,
+      bookingId: booking?._id?.toString(),
+      packageId: booking?.packageId.toString(),
+      message,
+      type: EnumNotificationType.SUCCESS,
+      triggeredBy: userId,
+      metadata: { bookingId: booking._id },
+    });
+
+    return { booking: BookingMapper.toDetailResponseDTO(booking) };
+  }
 
   async verifyRazorpaySignature(
     razorpayOrderId: string,
@@ -312,81 +389,6 @@ export class BookingUseCases implements IBookingUseCases {
     };
   }
 
-  async createBookingWithWalletPayment(
-    userId: string,
-    data: CreateBookingDTO & { useWallet?: boolean }
-  ): Promise<{ booking?: BookingDetailResponseDTO }> {
-    const {
-      packageId,
-      travelers,
-      contactDetails,
-      totalAmount,
-      couponCode,
-      travelDate,
-      useWallet = false,
-    } = data;
-
-    const discount = 0;
-
-    if (!useWallet) {
-      // If user didn't select wallet, skip this route
-      throw new AppError(HttpStatus.BAD_REQUEST, 'Wallet usage not requested');
-    }
-
-    const wallet = await this._walletRepo.getUserWallet(userId);
-    if (!wallet) {
-      throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
-    }
-    const walletBalance = wallet.balance;
-
-    if (walletBalance < totalAmount) {
-      // Wallet not enough, should redirect to Razorpay flow
-      throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
-    }
-    const bookingCode = await generateBookingCode();
-
-    // Wallet fully covers booking
-    await this._walletRepo.debitWallet(userId, totalAmount, `Used for booking ${bookingCode}`);
-
-    const bookingData: IBookingInput = {
-      packageId: packageId.toString(),
-      travelers,
-      contactDetails,
-      travelDate,
-      totalAmount,
-      discount,
-      couponCode,
-      walletUsed: true,
-      walletAmountUsed: totalAmount,
-      amountPaid: 0,
-      paymentMethod: 'wallet',
-      bookingStatus: 'booked',
-      paymentStatus: 'paid',
-      bookingCode,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const booking = await this._bookingRepo.createBooking(userId, bookingData);
-    const user = await this._userRepo.findById(userId);
-    const pkg = await this._packageRepo.findById(booking.packageId.toString());
-
-    const message = `User ${user?.username} booked package ${pkg?.title})`;
-    //  Save notification in DB
-    const notification = await this._notificationUseCases.sendNotification({
-      role: EnumUserRole.ADMIN,
-      title: 'New Booking',
-      entityType: EnumNotificationEntityType.BOOKING,
-      bookingId: booking?._id?.toString(),
-      packageId: booking?.packageId.toString(),
-      message,
-      type: EnumNotificationType.SUCCESS,
-      triggeredBy: userId,
-      metadata: { bookingId: booking._id },
-    });
-
-    return { booking: BookingMapper.toDetailResponseDTO(booking) };
-  }
 
   async removeTraveler(
     bookingId: string,
@@ -403,7 +405,7 @@ export class BookingUseCases implements IBookingUseCases {
     }
 
     if (bookingDoc.bookingStatus === EnumBookingStatus.CONFIRMED ||
-       bookingDoc.bookingStatus===EnumBookingStatus.COMPLETED) {
+      bookingDoc.bookingStatus === EnumBookingStatus.COMPLETED) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Cannot remove traveler from a confirmed booking');
     }
 
@@ -482,6 +484,254 @@ export class BookingUseCases implements IBookingUseCases {
 
     const booking = await this._bookingRepo.updateBooking(bookingId, bookingDoc);
     return booking ? BookingMapper.toDetailResponseDTO(booking) : null;
+  }
+
+  // async addTravellerBookingWithOnlinePayment(
+  //   userId: string,
+  //   data: AddTravellerDTO & { useWallet?: boolean; }
+  // ): Promise<{
+  //   booking: BookingDetailResponseDTO;
+  //   razorpayOrder?: { id: string; amount: number; currency: string; receipt: string; };
+  // }> {
+  //   const {
+  //     packageId,
+  //     travelers,
+  //     totalAmount,
+  //     couponCode,
+  //     //  travelDate,
+  //     useWallet = false,
+  //   } = data;
+
+  //   const discount = 0;
+
+  //   if (!useWallet) {
+  //     // If user didn't select wallet, skip this route
+  //     throw new AppError(HttpStatus.BAD_REQUEST, 'Wallet usage not requested');
+  //   }
+
+  //   const wallet = await this._walletRepo.getUserWallet(userId);
+  //   if (!wallet) {
+  //     throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
+  //   }
+  //   const walletBalance = wallet.balance;
+
+  //   if (walletBalance < totalAmount!) {
+  //     // Wallet not enough, should redirect to Razorpay flow
+  //     throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
+  //   }
+
+  //   // Wallet fully covers booking
+  //   await this._walletRepo.debitWallet(userId, totalAmount!, `Used for booking ${bookingCode}`);
+
+  //   const bookingData: AddTravellerDTO = {
+  //     travelers,
+  //     totalAmount,
+  //     discount,
+  //     couponCode,
+  //     walletUsed: true,
+  //     walletAmountUsed: totalAmount,
+  //     amountPaid: 0,
+  //     paymentMethod: EnumPaymentMethod.WALLET,
+  //     bookingStatus: EnumBookingStatus.BOOKED,
+  //     paymentStatus: EnumPaymentStatus.PAID,
+  //     createdAt: new Date(),
+  //     updatedAt: new Date(),
+  //   };
+
+  //   const booking = await this._bookingRepo.updateBooking(bookingData.bookingId, bookingData);
+  //   const user = await this._userRepo.findById(userId);
+  //   const pkg = await this._packageRepo.findById(booking!.packageId.toString());
+
+  //   const message = `User ${user?.username} booked package ${pkg?.title})`;
+  //   //  Save notification in DB
+  //   const notification = await this._notificationUseCases.sendNotification({
+  //     role: EnumUserRole.ADMIN,
+  //     title: 'New TRaveller Booking',
+  //     entityType: EnumNotificationEntityType.BOOKING,
+  //     bookingId: booking?._id?.toString(),
+  //     packageId: booking?.packageId.toString(),
+  //     message,
+  //     type: EnumNotificationType.SUCCESS,
+  //     triggeredBy: userId,
+  //     metadata: { bookingId: booking?._id! },
+  //   });
+
+  //   return { booking: BookingMapper.toDetailResponseDTO(booking!) };
+  // }
+
+
+  // async addTravellerBookingWithWalletPayment(
+  //   userId: string,
+  //   data: AddTravellerDTO & { useWallet?: boolean; }
+  // ): Promise<{ booking?: BookingDetailResponseDTO; }> {
+
+  // }
+
+  async addTravellerBookingWithOnlinePayment(
+    userId: string,
+    data: AddTravellerDTO & { useWallet?: boolean }
+  ): Promise<{
+    booking: BookingDetailResponseDTO;
+    razorpayOrder?: {
+      id: string;
+      amount: number;
+      currency: string;
+      receipt: string;
+    };
+  }> {
+    const { bookingId, travelers, totalAmount, amountPaid, paymentMethod } = data;
+
+    const booking = await this._bookingRepo.findById(bookingId);
+    if (!booking || !bookingId) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
+    }
+
+    // Merge new travelers into existing list
+    const updatedTravelers = [...booking.travelers, ...travelers];
+
+    // Maintain traveler history
+    const travelerHistoryEntry = travelers.map((t) => ({
+      traveler: t,
+      action: EnumTravelerAction.ADDED,
+      changedBy: userId,
+      changedAt: new Date(),
+    }));
+
+    const finalAmount = amountPaid;
+    const newTotal = booking.totalAmount + totalAmount;
+
+    // Create Razorpay order for new payment
+    const razorpayOrder = await this._razorpayService.createOrder(
+      finalAmount,
+      bookingId
+    );
+
+    // Update booking
+    const updatedBooking = await this._bookingRepo.updateBooking(bookingId, {
+      travelers: updatedTravelers,
+      travelerHistory: [
+        ...(booking.travelerHistory || []),
+        ...travelerHistoryEntry,
+      ],
+      totalAmount: newTotal,
+      amountPaid: booking.amountPaid + finalAmount,
+      updatedAt: new Date(),
+      razorpay: {
+        orderId: razorpayOrder.id,
+      },
+    });
+
+    await this._bookingRepo.addBookingHistory(bookingId, {
+      action: EnumBookingHistoryAction.TRAVELER_ADDED,
+      oldValue: booking.travelers,
+      newValue: updatedTravelers,
+      changedBy: EnumUserRole.USER,
+      changedAt: new Date(),
+      note: `Added ${travelers.length} traveler(s)`,
+    });
+
+    // Notification for admin
+    const user = await this._userRepo.findById(userId);
+    const message = `User ${user?.username} added ${travelers.length} traveler(s) to booking ${booking.bookingCode}`;
+
+    await this._notificationUseCases.sendNotification({
+      role: EnumUserRole.ADMIN,
+      title: 'Traveller Added',
+      entityType: EnumNotificationEntityType.BOOKING,
+      bookingId: bookingId,
+      packageId: booking.packageId.toString(),
+      message,
+      type: EnumNotificationType.INFO,
+      triggeredBy: userId,
+      metadata: { bookingId: booking._id },
+    });
+
+    return {
+      booking: BookingMapper.toDetailResponseDTO(updatedBooking!),
+      razorpayOrder,
+    };
+  }
+  async addTravellerBookingWithWalletPayment(
+    userId: string,
+    data: AddTravellerDTO & { useWallet?: boolean }
+  ): Promise<{ booking?: BookingDetailResponseDTO }> {
+    const { bookingId, travelers, totalAmount, useWallet = false } = data;
+
+    if (!useWallet) {
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Wallet usage not requested');
+    }
+
+     const booking = await this._bookingRepo.findById(bookingId);
+    if (!booking) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
+    }
+
+     const wallet = await this._walletRepo.getUserWallet(userId);
+    if (!wallet) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
+    }
+
+    const walletBalance = wallet.balance;
+    if (walletBalance < totalAmount) {
+      throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
+    }
+
+     await this._walletRepo.debitWallet(
+      userId,
+      totalAmount,
+      `Used for adding travelers to booking ${booking.bookingCode}`
+    );
+
+     const updatedTravelers = [...booking.travelers, ...travelers];
+
+     const travelerHistoryEntry = travelers.map((t) => ({
+      traveler: t,
+      action: EnumTravelerAction.ADDED,
+      changedBy: userId,
+      changedAt: new Date(),
+    }));
+
+    const newTotal = booking.totalAmount + totalAmount;
+
+     const updatedBooking = await this._bookingRepo.updateBooking(bookingId, {
+      travelers: updatedTravelers,
+      travelerHistory: [
+        ...(booking.travelerHistory || []),
+        ...travelerHistoryEntry,
+      ],
+      totalAmount: newTotal,
+      walletAmountUsed: (booking.walletAmountUsed || 0) + totalAmount,
+      updatedAt: new Date(),
+    });
+
+     await this._bookingRepo.addBookingHistory(bookingId, {
+      action: EnumBookingHistoryAction.TRAVELER_ADDED,
+      oldValue: booking.travelers,
+      newValue: updatedTravelers,
+      changedBy: EnumUserRole.USER,
+      changedAt: new Date(),
+      note: `Added ${travelers.length} traveler(s) using wallet`,
+    });
+
+    // Notification for admin
+    const user = await this._userRepo.findById(userId);
+    const message = `User ${user?.username} added ${travelers.length} traveler(s) to booking ${booking.bookingCode} using wallet`;
+
+    await this._notificationUseCases.sendNotification({
+      role: EnumUserRole.ADMIN,
+      title: 'Traveler Added',
+      entityType: EnumNotificationEntityType.BOOKING,
+      bookingId: bookingId,
+      packageId: booking.packageId.toString(),
+      message,
+      type: EnumNotificationType.INFO,
+      triggeredBy: userId,
+      metadata: { bookingId: booking._id },
+    });
+
+    return {
+      booking: BookingMapper.toDetailResponseDTO(updatedBooking!),
+    };
   }
 
   async changeTravelDate(

@@ -6,7 +6,7 @@ import { IBookingUseCases } from '@application/useCaseInterfaces/user/IBookingUs
 import { generateBookingInvoice } from '@shared/utils/generateBookingInvoice';
 import { generateInvoiceCode } from '@shared/utils/generateInvoiceCode';
 export class BookingController {
-  constructor(private _bookingUseCases: IBookingUseCases) {}
+  constructor(private _bookingUseCases: IBookingUseCases) { }
 
   createBookingWithOnlinePayment = async (
     req: Request,
@@ -27,6 +27,29 @@ export class BookingController {
       next(error);
     }
   };
+  createBookingWithWalletPayment = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
+      const data = req.body;
+
+      const { booking } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
+
+      if (!booking) {
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
+      }
+
+      res.status(HttpStatus.CREATED).json({
+        message: 'Booking created successfully using wallet',
+        booking,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   verifyRazorpayPayment = async (
     req: Request,
@@ -35,7 +58,7 @@ export class BookingController {
   ): Promise<void> => {
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-       const isValid = await this._bookingUseCases.verifyRazorpaySignature(
+      const isValid = await this._bookingUseCases.verifyRazorpaySignature(
         razorpay_order_id,
         razorpay_payment_id,
         razorpay_signature
@@ -81,7 +104,7 @@ export class BookingController {
     try {
       const userId = getUserIdFromRequest(req);
       const bookingId = req.params.id;
- 
+
       const result = await this._bookingUseCases.retryBookingPayment(userId, bookingId);
 
       res.status(HttpStatus.OK).json({
@@ -94,29 +117,6 @@ export class BookingController {
     }
   };
 
-  createBookingWithWalletPayment = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      const userId = getUserIdFromRequest(req);
-      const data = req.body;
- 
-      const { booking } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
-
-      if (!booking) {
-        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
-      }
-
-      res.status(HttpStatus.CREATED).json({
-        message: 'Booking created successfully using wallet',
-        booking,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
 
   getUserBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -159,12 +159,12 @@ export class BookingController {
     }
   };
 
-  downloadInvoice = async (req: Request, res: Response,next: NextFunction): Promise<void> => {
+  downloadInvoice = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
 
       const bookingId = req.params.bookingId;
-       const booking = await this._bookingUseCases.getBookingById(userId, bookingId);
+      const booking = await this._bookingUseCases.getBookingById(userId, bookingId);
 
       if (!booking) {
         throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
@@ -185,7 +185,7 @@ export class BookingController {
     try {
       const userId = getUserIdFromRequest(req);
       const bookingId = req.params.id;
-       const { reason } = req.body;
+      const { reason } = req.body;
 
       const booking = await this._bookingUseCases.cancelBooking(userId, bookingId, reason);
 
@@ -231,6 +231,56 @@ export class BookingController {
         note
       );
       res.status(HttpStatus.OK).json(updatedBooking);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+
+
+
+  addTravellerBookingWithOnlinePayment = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
+      const data = req.body;
+console.log(data,'traveller add online');
+
+      const result = await this._bookingUseCases.addTravellerBookingWithOnlinePayment(userId, data);
+      res.status(HttpStatus.CREATED).json({
+        message: 'Booking created successfully',
+        booking: result.booking,
+        razorpayOrder: result.razorpayOrder || null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  addTravellerBookingWithWalletPayment = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const userId = getUserIdFromRequest(req);
+      const data = req.body;
+console.log(data,'traveller add wallet');
+
+      const { booking } = await this._bookingUseCases.addTravellerBookingWithWalletPayment(userId, data);
+
+      if (!booking) {
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Booking creation failed');
+      }
+
+      res.status(HttpStatus.CREATED).json({
+        message: 'Booking created successfully using wallet',
+        booking,
+      });
     } catch (error) {
       next(error);
     }

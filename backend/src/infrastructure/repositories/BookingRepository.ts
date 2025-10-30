@@ -1,4 +1,5 @@
-import { IBooking } from '@domain/entities/IBooking';
+import { Types } from 'mongoose';
+import { IBooking ,IBookingHistory} from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { BookingModel } from '@infrastructure/models/Booking';
@@ -216,5 +217,22 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
   }
   async updateById(id: string, update: any): Promise<IBooking | null> {
     return await BookingModel.findByIdAndUpdate(id, update, { new: true });
+  }
+
+  async addBookingHistory(
+    bookingId: string,
+    history: IBookingHistory
+  ): Promise<void> {
+    const bookingObjectId = new Types.ObjectId(bookingId);
+
+    await BookingModel.updateOne(
+      { _id: bookingObjectId },
+      {
+        $push: {
+          history: history,
+        },
+        $set: { updatedAt: new Date() },
+      }
+    );
   }
 }

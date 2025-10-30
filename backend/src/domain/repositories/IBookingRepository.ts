@@ -1,4 +1,4 @@
-import { IBooking } from '@domain/entities/IBooking';
+import { IBooking, IBookingHistory } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBaseRepository } from './IBaseRepository';
 import { IBookingTable } from '@domain/entities/IBookingTable';
@@ -18,8 +18,8 @@ export interface IBookingRepository extends IBaseRepository<IBooking> {
     limit: number
   ): Promise<{ bookings: IBookingPopulatedForUser[]; total: number }>;
   getBookingById(userId: string, bookingId: string): Promise<IBooking | null>;
-     findOne(query: Partial<IBooking>): Promise<IBooking | null> 
-   
+  findOne(query: Partial<IBooking>): Promise<IBooking | null>
+
   findOneByUserAndPackage(userId: string, packageId: string): Promise<IBooking | null>;
 
   getBookingByIdForAdmin(bookingId: string): Promise<IBooking | null>;
@@ -33,4 +33,9 @@ export interface IBookingRepository extends IBaseRepository<IBooking> {
   findByRazorpayOrderId(orderId: string): Promise<IBooking | null>;
   save(booking: any): Promise<IBooking>;
   updateById(id: string, update: any): Promise<IBooking | null>;
+
+  addBookingHistory(
+    bookingId: string,
+    history: IBookingHistory
+  ): Promise<void>
 }

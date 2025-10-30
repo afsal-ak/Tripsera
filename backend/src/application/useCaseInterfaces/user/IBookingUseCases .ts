@@ -2,6 +2,7 @@ import {
   CreateBookingDTO,
   BookingDetailResponseDTO,
   BookingUserResponseDTO,
+  AddTravellerDTO
 } from '@application/dtos/BookingDTO';
 
 export interface IBookingUseCases {
@@ -31,6 +32,10 @@ export interface IBookingUseCases {
       receipt: string;
     };
   }>;
+  createBookingWithWalletPayment(
+    userId: string,
+    data: CreateBookingDTO & { useWallet?: boolean }
+  ): Promise<{ booking?: BookingDetailResponseDTO }>;
 
   verifyRazorpaySignature(
     razorpayOrderId: string,
@@ -55,10 +60,6 @@ export interface IBookingUseCases {
     };
   }>;
 
-  createBookingWithWalletPayment(
-    userId: string,
-    data: CreateBookingDTO & { useWallet?: boolean }
-  ): Promise<{ booking?: BookingDetailResponseDTO }>;
 
   removeTraveler(
     bookingId: string,
@@ -72,4 +73,24 @@ export interface IBookingUseCases {
     userId: string,
     note?: string
   ): Promise<BookingDetailResponseDTO>;
+
+
+  addTravellerBookingWithOnlinePayment(
+    userId: string,
+    data: AddTravellerDTO & { useWallet?: boolean }
+  ): Promise<{
+    booking: BookingDetailResponseDTO;
+    razorpayOrder?: {
+      id: string;
+      amount: number;
+      currency: string;
+      receipt: string;
+    };
+  }>;
+
+  addTravellerBookingWithWalletPayment(
+    userId: string,
+    data: AddTravellerDTO & { useWallet?: boolean }
+  ): Promise<{ booking?: BookingDetailResponseDTO }>;
+
 }

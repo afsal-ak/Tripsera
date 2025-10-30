@@ -312,9 +312,20 @@ router.post(
   userAuthMiddleware,
   bookingController.createBookingWithWalletPayment
 );
+
+router.post(
+  BOOKING_ROUTES.ADD_TRAVELLER_WALLET_BOOKING,
+  userAuthMiddleware,
+  bookingController.addTravellerBookingWithWalletPayment
+);
+router.post(
+  BOOKING_ROUTES.ADD_TRAVELLE_ONLINE_BOOKING,
+  userAuthMiddleware,
+  bookingController.addTravellerBookingWithOnlinePayment
+);
 router.get(BOOKING_ROUTES.INVOICE_DOWNLOAD, userAuthMiddleware, bookingController.downloadInvoice);
 
-router.put(BOOKING_ROUTES.REMOVE_TRAVELER, userAuthMiddleware, bookingController.removeTraveler);
+router.put(BOOKING_ROUTES.REMOVE_TRAVELLER, userAuthMiddleware, bookingController.removeTraveler);
 router.put(
   BOOKING_ROUTES.CHANGE_TRAVEL_DATE,
   userAuthMiddleware,

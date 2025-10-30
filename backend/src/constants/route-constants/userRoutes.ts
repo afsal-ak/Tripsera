@@ -65,9 +65,22 @@ export const BOOKING_ROUTES = {
   RETRY_PAYMENT: '/retry-payment/:id',
   WALLET_BOOKING: '/booking/wallet',
   INVOICE_DOWNLOAD: '/booking/invoice/:bookingId/download',
-  REMOVE_TRAVELER: '/booking/:id/remove-traveler',
+  REMOVE_TRAVELLER: '/booking/:id/remove-traveler',
+  ADD_TRAVELLER_WALLET_BOOKING:'/booking/add-traveller/wallet',
+  ADD_TRAVELLE_ONLINE_BOOKING:'/booking/add-traveller/online',
   CHANGE_TRAVEL_DATE: '/booking/:id/change-travel-date',
 };
+// export const addTravellerBookingWithWalletPayment = async (data: TravelerBookingFormSchema) => {
+//   const response = await api.post('/user/booking/add-traveller/wallet', data);
+//   console.log(response, 'create booking walet');
+//   return response.data;
+// };
+
+
+// export const addTravellerBookingWithOnlinePayment = async (data: TravelerBookingFormSchema) => {
+//   const response = await api.post('/user/booking//add-traveller/online', data);
+//   return response.data;
+// };
 
 export const BLOG_ROUTES = {
   CREATE: '/blog/create',
