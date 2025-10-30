@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_API_BACKEND_URL
+const SOCKET_URL = import.meta.env.VITE_API_BASE_URL
  || 'http://localhost:4001';
 
 export const socket: Socket = io(SOCKET_URL, {
