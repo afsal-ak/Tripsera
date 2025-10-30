@@ -651,6 +651,7 @@ import { BookingHistoryCard } from '@/components/booking/BookingHistoryCard';
             </div>
           </div>
         </div>
+        <h1>add traveller</h1>
       </div>
       <BookingHistoryCard
         title="Traveler History"
