@@ -20,6 +20,7 @@ import { generatePackageCode } from '@shared/utils/generatePackageCode';
 
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+import { EnumPackageType } from '@constants/enum/packageEnum';
 
 
 
@@ -85,17 +86,21 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
         }
         finalPrice = Math.max(finalPrice, 0);
       }
+console.log(pkg,'in usecaes');
 
       const packageData = {
         ...pkg,
         packageCode,
         finalPrice,
+        packageType:EnumPackageType.CUSTOM
       };
 
+console.log(packageData,'in usecaes data');
+
       const result = await this._packageRepo.create(packageData);
+      
       return PackageMapper.toResponseDTO(result);
-      //  return PackageMapper.toResponseDTO(result);
-    } catch (error) {
+     } catch (error) {
       throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to create custom package');
     }
   }
@@ -110,7 +115,7 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
     const packageData = await this._packageRepo.findById(id);
     if (!packageData) throw new AppError(HttpStatus.NOT_FOUND, 'Package not found');
 
-    if (!packageData.isCustom)
+    if (packageData.packageType!==EnumPackageType.CUSTOM)
       throw new AppError(HttpStatus.BAD_REQUEST, 'Not a custom package');
 
     const oldImages = packageData.imageUrls || [];

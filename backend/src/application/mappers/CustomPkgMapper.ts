@@ -66,7 +66,7 @@ export class CustomPkgMapper {
   }
 
 
-   static toApprovedResponseDTO(pkg: CustomPackageApprovedResponseDTO): CustomPackageApprovedResponseDTO {
+  static toApprovedResponseDTO(pkg: CustomPackageApprovedResponseDTO): CustomPackageApprovedResponseDTO {
     return {
       _id: pkg._id?.toString(),
       title: pkg.title,
@@ -74,31 +74,32 @@ export class CustomPkgMapper {
       price: pkg.price,
       offer: pkg.offer
         ? {
-            discountType: pkg.offer.discountType,
-            discountValue: pkg.offer.discountValue,
-            validUntil: pkg.offer.validUntil,
-          }
+          discountType: pkg.offer.discountType,
+          discountValue: pkg.offer.discountValue,
+          validUntil: pkg.offer.validUntil,
+        }
         : undefined,
       isBlocked: pkg.isBlocked,
-      isCustom: pkg.isCustom,
+         isCustom: pkg.isCustom,
+      packageType: pkg.packageType,
       createdAt: pkg.createdAt,
 
       userDetails: pkg.userDetails
         ? {
-            _id: pkg.userDetails._id?.toString(),
-            username: pkg.userDetails.username,
-            email: pkg.userDetails.email,
-            profileImage: pkg.userDetails?.profileImage || null,
-          }
+          _id: pkg.userDetails._id?.toString(),
+          username: pkg.userDetails.username,
+          email: pkg.userDetails.email,
+          profileImage: pkg.userDetails?.profileImage || null,
+        }
         : undefined,
 
       customRequest: pkg.customRequest
         ? {
-            _id: pkg.customRequest._id?.toString(),
-            packageName: pkg.customRequest.packageName,
-            destination: pkg.customRequest.destination,
-            budget: pkg.customRequest.budget,
-          }
+          _id: pkg.customRequest._id?.toString(),
+          packageName: pkg.customRequest.packageName,
+          destination: pkg.customRequest.destination,
+          budget: pkg.customRequest.budget,
+        }
         : undefined,
     };
   }

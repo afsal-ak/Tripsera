@@ -4,7 +4,7 @@ import {
   PackageTableResponseDTO,
   PackageCardDTO,
 } from '@application/dtos/PackageDTO';
-import { EnumOfferType } from '@constants/enum/packageEnum';
+import { EnumOfferType, EnumPackageType } from '@constants/enum/packageEnum';
 
 export abstract class PackageMapper {
   static toResponseDTO(pkg: IPackage): PackageResponseDTO {
@@ -16,8 +16,7 @@ export abstract class PackageMapper {
       description: pkg.description,
       price: pkg.price,
       finalPrice,
-      duration: pkg.duration,
-      durationDays: pkg.durationDays,
+       durationDays: pkg.durationDays,
       durationNights: pkg.durationNights,
       startDate: pkg.startDate,
       endDate: pkg.endDate,
@@ -42,7 +41,9 @@ export abstract class PackageMapper {
         : undefined,
       importantDetails: pkg.importantDetails,
       isBlocked: pkg.isBlocked,
-      isCustom:pkg?.isCustom,
+      //isCustom:pkg?.isCustom,
+      packageType: pkg.packageType||EnumPackageType.NORMAL,
+
       createdAt: pkg.createdAt,
       updatedAt: pkg.updatedAt,
     };
@@ -60,7 +61,8 @@ export abstract class PackageMapper {
       price: pkg.price,
       finalPrice,
       imageUrl: pkg.imageUrls?.[0]?.url || null,
-      isCustom: pkg.isCustom,
+      //  isCustom: pkg.isCustom,
+      packageType: pkg.packageType||EnumPackageType.NORMAL,
 
       offerName: pkg.offer?.isActive ? pkg.offer.name : undefined,
       offerType: pkg.offer?.isActive ? pkg.offer.type : undefined,
@@ -75,12 +77,12 @@ export abstract class PackageMapper {
       title: pkg.title,
       price: pkg.price,
       finalPrice,
-      duration: pkg.duration,
-      category: pkg.category,
+       category: pkg.category,
 
       isBlocked: pkg.isBlocked,
       offerName: pkg.offer?.name,
-      isCustom: pkg.isCustom,
+      // isCustom: pkg.isCustom,
+      packageType: pkg.packageType||EnumPackageType.NORMAL,
       categoryCount: pkg.category?.length || 0,
       createdAt: pkg.createdAt,
     };

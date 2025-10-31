@@ -15,3 +15,10 @@ export enum OfferTypeEnum {
 export enum LocationTypeEnum {
   POINT = 'Point',
 }
+
+export enum EnumPackageType {
+  NORMAL = 'normal',
+  GROUP='group',
+  CUSTOM='custom'
+}
+ 

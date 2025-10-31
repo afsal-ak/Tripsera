@@ -52,5 +52,6 @@ BlogSchema.pre('save', async function (next) {
   this.slug = slug;
   next();
 });
+//BlogSchema.index({ slug: 1 });
 
 export const BlogModel = model<BlogDocument>('Blog', BlogSchema);

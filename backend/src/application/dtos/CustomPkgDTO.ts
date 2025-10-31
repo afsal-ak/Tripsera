@@ -102,12 +102,12 @@ export interface CustomPkgResponseDTO {
 
 //for admin to create packages for user
 import { CreatePackageDTO, EditPackageDTO } from '@application/dtos/PackageDTO';
+import { EnumPackageType } from '@constants/enum/packageEnum';
 
 export interface AdminCreateCustomPackageDTO extends CreatePackageDTO {
   createdFor: Types.ObjectId;  // link to user
-  isCustom: boolean;
   customReqId: Types.ObjectId
-}
+ }
 
 export interface AdminEditCustomPackageDTO extends Partial<AdminCreateCustomPackageDTO> { }
 
@@ -141,6 +141,7 @@ export interface CustomPackageApprovedResponseDTO {
 
   isBlocked: boolean;
   isCustom: boolean;
+  packageType: EnumPackageType;
   createdAt: Date;
 
   userDetails?: UserInfoDTO;

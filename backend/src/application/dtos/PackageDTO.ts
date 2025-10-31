@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { EnumOfferType } from '@constants/enum/packageEnum';
+import { EnumOfferType, EnumPackageType } from '@constants/enum/packageEnum';
 
 // Location DTO
 export interface GeoPointDTO {
@@ -53,8 +53,7 @@ export interface CreatePackageDTO {
   title: string;
   description: string;
   price: number;
-  duration: string;
-  durationDays: number;
+   durationDays: number;
   durationNights: number;
   startDate?: Date;
   endDate?: Date;
@@ -83,8 +82,7 @@ export interface PackageResponseDTO {
   description: string;
   price: number;
   finalPrice: number;
-  duration: string;
-  durationDays: number;
+   durationDays: number;
   durationNights: number;
   startDate?: Date;
   endDate?: Date;
@@ -98,6 +96,7 @@ export interface PackageResponseDTO {
   offer?: OfferDTO;
   importantDetails?: string;
   isCustom?: boolean;
+  packageType: EnumPackageType;
   customReqId?: string;
   isBlocked: boolean;
   createdAt?: Date;
@@ -109,13 +108,14 @@ export interface PackageTableResponseDTO {
   title: string;
   price: number;
   finalPrice: number;
-  duration: string;
-  category: Types.ObjectId[];
+   category: Types.ObjectId[];
   durationDays?: number;
   durationNights?: number;
   isBlocked: boolean;
   offerName?: string;
-  isCustom?: boolean;
+  packageType: EnumPackageType;
+
+  // isCustom?: boolean;
   createdFor?: string;
   customReqId?: string;
   categoryCount: number;
@@ -133,6 +133,8 @@ export interface PackageCardDTO {
   offerName?: string;
   offerType?: string;
   offerValue?: number;
-  isCustom?: boolean,
+  // isCustom?: boolean,
+  packageType: EnumPackageType;
+
 
 }
