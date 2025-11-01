@@ -53,7 +53,10 @@ export interface CreatePackageDTO {
   title: string;
   description: string;
   price: number;
-   durationDays: number;
+  pricePerChild?: number;
+  ageOfAdult: number;
+  ageOfChild?: number;
+  durationDays: number;
   durationNights: number;
   startDate?: Date;
   endDate?: Date;
@@ -65,6 +68,11 @@ export interface CreatePackageDTO {
   itinerary: ItineraryDayDTO[];
   imageUrls?: ImageInfoDTO[];
   offer?: OfferDTO;
+
+  packageType: EnumPackageType;
+  departureDates?: Date;
+  groupSize?: number;
+  availableSlots?: number;
   importantDetails?: string;
   isBlocked: boolean;
 }
@@ -81,11 +89,17 @@ export interface PackageResponseDTO {
   title: string;
   description: string;
   price: number;
+  pricePerChild: number;
+  ageOfAdult: number;
+  ageOfChild: number;
   finalPrice: number;
-   durationDays: number;
+  durationDays: number;
   durationNights: number;
   startDate?: Date;
   endDate?: Date;
+  departureDates?: Date;
+  groupSize?: number;
+  availableSlots?: number;
   category: Types.ObjectId[];
   location: LocationDTO[];
   startPoint: string;
@@ -107,13 +121,19 @@ export interface PackageTableResponseDTO {
   _id: string;
   title: string;
   price: number;
+  pricePerChild: number;
+  ageOfAdult: number;
+  ageOfChild: number;
   finalPrice: number;
-   category: Types.ObjectId[];
+  category: Types.ObjectId[];
   durationDays?: number;
   durationNights?: number;
   isBlocked: boolean;
   offerName?: string;
   packageType: EnumPackageType;
+  departureDates?: Date;
+  endDate?:Date;
+  availableSlots?: number;
 
   // isCustom?: boolean;
   createdFor?: string;
@@ -129,11 +149,11 @@ export interface PackageCardDTO {
   durationNights: number;
   price: number;
   finalPrice: number;
+  availableSlots?: number;
   imageUrl: string | null;
   offerName?: string;
   offerType?: string;
   offerValue?: number;
-  // isCustom?: boolean,
   packageType: EnumPackageType;
 
 

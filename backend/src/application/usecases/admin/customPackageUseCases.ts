@@ -86,21 +86,21 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
         }
         finalPrice = Math.max(finalPrice, 0);
       }
-console.log(pkg,'in usecaes');
+      console.log(pkg, 'in usecaes');
 
       const packageData = {
         ...pkg,
         packageCode,
         finalPrice,
-        packageType:EnumPackageType.CUSTOM
+        packageType: EnumPackageType.CUSTOM
       };
 
-console.log(packageData,'in usecaes data');
+      console.log(packageData, 'in usecaes data');
 
       const result = await this._packageRepo.create(packageData);
-      
+
       return PackageMapper.toResponseDTO(result);
-     } catch (error) {
+    } catch (error) {
       throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to create custom package');
     }
   }
@@ -115,7 +115,7 @@ console.log(packageData,'in usecaes data');
     const packageData = await this._packageRepo.findById(id);
     if (!packageData) throw new AppError(HttpStatus.NOT_FOUND, 'Package not found');
 
-    if (packageData.packageType!==EnumPackageType.CUSTOM)
+    if (packageData.packageType !== EnumPackageType.CUSTOM)
       throw new AppError(HttpStatus.BAD_REQUEST, 'Not a custom package');
 
     const oldImages = packageData.imageUrls || [];

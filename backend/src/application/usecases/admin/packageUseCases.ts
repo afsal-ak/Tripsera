@@ -14,7 +14,7 @@ import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IFilter } from '@domain/entities/IFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 export class PackageUseCases implements IPackageUseCases {
-  constructor(private _packageRepo: IPackageRepository) {}
+  constructor(private _packageRepo: IPackageRepository) { }
 
   async getAllPackages(
     page: number,
@@ -22,7 +22,7 @@ export class PackageUseCases implements IPackageUseCases {
     filters?: IFilter
   ): Promise<IPaginatedResult<PackageTableResponseDTO>> {
     const result = await this._packageRepo.findAll(page, limit, filters);
- 
+
     return {
       data: result.packages.map(PackageMapper.toTableResponseDTO),
       pagination: result.pagination,
@@ -32,7 +32,7 @@ export class PackageUseCases implements IPackageUseCases {
   async getSinglePackage(id: string): Promise<PackageResponseDTO | null> {
     const pkg = await this._packageRepo.findById(id);
     if (!pkg) return null;
-     return PackageMapper.toResponseDTO(pkg);
+    return PackageMapper.toResponseDTO(pkg);
   }
 
   async createPackage(pkg: CreatePackageDTO): Promise<PackageResponseDTO> {
@@ -50,17 +50,19 @@ export class PackageUseCases implements IPackageUseCases {
         }
         finalPrice = Math.max(finalPrice, 0);
       }
+      let availableSlots = pkg.groupSize
 
       const packageData = {
         ...pkg,
         packageCode,
         finalPrice,
+        availableSlots
       };
 
       const result = await this._packageRepo.create(packageData);
       return PackageMapper.toResponseDTO(result);
     } catch (error) {
-       throw error;
+      throw error;
     }
   }
 
@@ -70,8 +72,18 @@ export class PackageUseCases implements IPackageUseCases {
     existingImages: { public_id: string }[],
     newImages: { url: string; public_id: string }[]
   ): Promise<void> {
-     const packageData = await this._packageRepo.findById(id);
+    const packageData = await this._packageRepo.findById(id);
     if (!packageData) throw new AppError(HttpStatus.NOT_FOUND, 'Package not found');
+
+    const oldGroupSize = packageData?.groupSize!
+    let availableSlots = packageData?.availableSlots||0
+    let newGroupSize = data?.groupSize!
+    if (newGroupSize > oldGroupSize) {
+      availableSlots += newGroupSize - oldGroupSize
+    } else if (newGroupSize < oldGroupSize) {
+      availableSlots -= oldGroupSize - newGroupSize
+
+    }
 
     const oldImages = packageData.imageUrls || [];
 
@@ -96,7 +108,7 @@ export class PackageUseCases implements IPackageUseCases {
       finalPrice = Math.max(finalPrice, 0);
     }
 
-    await this._packageRepo.editPackage(id, { ...data, finalPrice }, deletedImages, newImages);
+    await this._packageRepo.editPackage(id, { ...data, finalPrice, availableSlots }, deletedImages, newImages);
   }
 
   async block(id: string): Promise<void> {

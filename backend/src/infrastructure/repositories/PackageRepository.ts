@@ -11,7 +11,6 @@ import { EnumPackageType } from '@constants/enum/packageEnum';
 
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {
-    console.log(pkg, 'in db');
 
     const createPkg = await PackageModel.create(pkg);
     return createPkg.toObject();
@@ -62,14 +61,17 @@ export class PackageRepository implements IPackageRepository {
     if (filters.status === 'active') matchStage.isBlocked = false;
     else if (filters.status === 'blocked') matchStage.isBlocked = true;
 
-    if (filters.customFilter === 'custom') {
-      matchStage.isCustom = true;
-    } else if (filters.customFilter === 'normal') {
-      //matchStage.isCustom = false;
-      matchStage.$or = [{ isCustom: false }, { isCustom: { $exists: false } }];
+    if (filters.customFilter === EnumPackageType.CUSTOM) {
+      matchStage.packageType = EnumPackageType.CUSTOM;
+    } else if (filters.customFilter === EnumPackageType.NORMAL) {
+       matchStage.packageType = EnumPackageType.NORMAL;
+
+    } else if (filters.customFilter === EnumPackageType.GROUP) {
+       matchStage.packageType = EnumPackageType.GROUP;
+       console.log('groip');
+       
 
     }
-
     if (filters.startDate && filters.endDate) {
       matchStage.createdAt = {
         $gte: new Date(filters.startDate),
@@ -118,8 +120,11 @@ export class PackageRepository implements IPackageRepository {
           offer: 1,
           durationDays: 1,
           durationNights: 1,
+          availableSlots:1,
+          departureDates:1,
+          endDate:1,
           'categoryDetails.name': 1,
-          isCustom: 1,
+          packageType: 1,
           isBlocked: 1,
           createdAt: 1,
         },
@@ -283,7 +288,7 @@ export class PackageRepository implements IPackageRepository {
 
     const query: any = {
       isBlocked: false,
-      $or: [{ isCustom: false }, { isCustom: { $exists: false } }],
+      packageType: { $ne: EnumPackageType.CUSTOM }, // exclude custom packages
     };
 
     if (filter?.search) {
@@ -352,8 +357,11 @@ export class PackageRepository implements IPackageRepository {
   }
 
   async countActivePackages(filters: any): Promise<number> {
-    const query = { ...filters, isBlocked: false, isCustom: false };
-    return await PackageModel.countDocuments(query);
+    const query = {
+      ...filters,
+      isBlocked: false,
+      packageType: { $ne: EnumPackageType.CUSTOM },
+    }; return await PackageModel.countDocuments(query);
   }
 
 

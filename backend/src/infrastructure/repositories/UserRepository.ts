@@ -92,10 +92,11 @@ export class UserRepository implements IUserRepository {
     return referredBy;
   }
   async findAll(
-    skip: number,
+    page: number,
     limit: number,
     filters: IFilter
   ): Promise<{ data: IUser[]; pagination: PaginationInfo }> {
+    const skip = (page - 1) * limit;
     const matchStage: any = {};
 
     //  Search filter
