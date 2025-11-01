@@ -15,6 +15,7 @@ import AddBanner from '@/pages/admin/banner/AddBanner';
 import AddPackageForm from '@/pages/admin/package/AddPackageForm';
 import PackageList from '@/pages/admin/package/PackageList';
 import EditPackageForm from '@/pages/admin/package/EditPackage';
+import PackageDetails from '@/pages/admin/package/PackageDetail';
 import CouponList from '@/pages/admin/coupon/CouponList';
 import AddCouponForm from '@/pages/admin/coupon/AddCouponForm';
 import EditCouponForm from '@/pages/admin/coupon/EditCouponForm';
@@ -61,6 +62,7 @@ const AdminRoutes = () => {
           <Route path="package/edit/:id" element={<EditPackageForm />} />
           <Route path="packages/block/:id" element={<PackageList />} />
           <Route path="packages/unblock/:id" element={<PackageList />} />
+          <Route path="package/:id" element={<PackageDetails />} />
           <Route path="coupons" element={<CouponList />} />
           <Route path="coupon/add" element={<AddCouponForm />} />
           <Route path="coupon/edit/:id" element={<EditCouponForm />} />

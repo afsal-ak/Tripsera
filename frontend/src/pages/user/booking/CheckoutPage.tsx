@@ -51,7 +51,9 @@ const CheckoutPage = () => {
 
   const [subtotal, setSubtotal] = useState(0);
   const [amountAfterDiscount, setAmountAfterDiscount] = useState(0);
-
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const paymentMethods = [
     {
       id: 'razorpay',
@@ -565,10 +567,10 @@ const CheckoutPage = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-travel">
-              <CardContent className="p-6">
+            <Card className="shadow-travel w-full max-w-full">
+              <CardContent className="p-4 sm:p-6 overflow-hidden">
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-foreground mb-2 font-poppins">
+                  <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2 font-poppins">
                     Payment Method
                   </h3>
                   <p className="text-muted-foreground text-sm">
@@ -576,78 +578,83 @@ const CheckoutPage = () => {
                   </p>
                 </div>
 
-                <Controller
-                  name="paymentMethod"
-                  control={control}
-                  rules={{ required: 'Please select a payment method' }}
-                  render={({ field }) => (
-                    <RadioGroup
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="space-y-4"
-                    >
-                      {paymentMethods.map((method) => (
-                        <div key={method.id} className="relative">
-                          <Label
-                            htmlFor={method.id}
-                            className={cn(
-                              'flex items-center space-x-4 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200',
-                              field.value === method.id
-                                ? 'border-orange bg-orange/5 shadow-md'
-                                : 'border-border hover:border-orange/50 hover:bg-muted/30',
-                              method.disabled && 'opacity-50 cursor-not-allowed'
-                            )}
-                          >
-                            <RadioGroupItem
-                              value={method.id}
-                              id={method.id}
-                              disabled={method.disabled}
+                <div className="w-full overflow-hidden">
+                  <Controller
+                    name="paymentMethod"
+                    control={control}
+                    rules={{ required: 'Please select a payment method' }}
+                    render={({ field }) => (
+                      <RadioGroup
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        className="flex flex-col gap-3 sm:gap-4 w-full"
+                      >
+                        {paymentMethods.map((method) => (
+                          <div key={method.id} className="relative w-full">
+                            <Label
+                              htmlFor={method.id}
                               className={cn(
-                                'flex-shrink-0',
-                                field.value === method.id && 'border-orange text-orange'
-                              )}
-                            />
-
-                            <div
-                              className={cn(
-                                'w-12 h-12 rounded-full flex items-center justify-center text-white flex-shrink-0',
-                                `bg-gradient-to-br ${method.color}`
+                                // ✅ Make every option full width, and stack neatly
+                                'flex items-center sm:items-center w-full gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 flex-wrap sm:flex-nowrap',
+                                field.value === method.id
+                                  ? 'border-orange bg-orange/5 shadow-md'
+                                  : 'border-border hover:border-orange/50 hover:bg-muted/30',
+                                method.disabled && 'opacity-50 cursor-not-allowed'
                               )}
                             >
-                              <method.icon className="w-6 h-6" />
-                            </div>
+                              <RadioGroupItem
+                                value={method.id}
+                                id={method.id}
+                                disabled={method.disabled}
+                                className="flex-shrink-0"
+                              />
 
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold text-foreground">
-                                  {method.label}
-                                </span>
-                                {method.recommended && (
-                                  <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-orange text-white rounded-full">
-                                    <Check className="w-3 h-3" />
-                                    Recommended
-                                  </span>
+                              <div
+                                className={cn(
+                                  'w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white flex-shrink-0',
+                                  `bg-gradient-to-br ${method.color}`
                                 )}
-                                {method.disabled && (
-                                  <span className="text-xs text-muted-foreground font-medium">
-                                    Insufficient balance
-                                  </span>
-                                )}
+                              >
+                                <method.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                               </div>
-                              <p className="text-sm text-muted-foreground">{method.description}</p>
-                            </div>
 
-                            {field.value === method.id && (
-                              <div className="w-5 h-5 rounded-full bg-orange flex items-center justify-center flex-shrink-0">
-                                <Check className="w-3 h-3 text-white" />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                                  <span className="font-semibold text-foreground text-sm sm:text-base">
+                                    {method.label}
+                                  </span>
+
+                                  {method.recommended && (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] sm:text-xs font-medium bg-orange text-white rounded-full">
+                                      <Check className="w-3 h-3" />
+                                      Recommended
+                                    </span>
+                                  )}
+
+                                  {method.disabled && (
+                                    <span className="text-xs text-muted-foreground font-medium">
+                                      Insufficient balance
+                                    </span>
+                                  )}
+                                </div>
+
+                                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                                  {method.description}
+                                </p>
                               </div>
-                            )}
-                          </Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  )}
-                />
+
+                              {field.value === method.id && (
+                                <div className="w-5 h-5 rounded-full bg-orange flex items-center justify-center flex-shrink-0">
+                                  <Check className="w-3 h-3 text-white" />
+                                </div>
+                              )}
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                  />
+                </div>
 
                 {errors.paymentMethod && (
                   <p className="text-destructive text-sm mt-3 flex items-center gap-2">
@@ -657,64 +664,10 @@ const CheckoutPage = () => {
                 )}
               </CardContent>
             </Card>
+
           </div>
 
-          {/* <div className="space-y-6">
-            <Card className="sticky top-4">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Booking Summary</h3>
 
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Package Price</span>
-                    <span>₹{packageData?.finalPrice?.toLocaleString() ?? '0'}</span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span>Travelers</span>
-                    <span>× {travelers.length}</span>
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex justify-between font-medium">
-                    <span>Subtotal</span>
-                    <span>₹{subtotal.toLocaleString()}</span>
-                  </div>
-
-                  {isCouponApplied && (
-                    <div className="flex justify-between text-green-600">
-                      <span>Coupon Discount</span>
-                      <span>-₹{couponDiscount.toLocaleString()}</span>
-                    </div>
-                  )}
-
-                  {(watch('paymentMethod') === 'wallet' ||
-                    watch('paymentMethod') === 'wallet+razorpay') && (
-                    <div className="flex justify-between">
-                      <span>Wallet Used:</span>
-                      <span>- ₹{walletUsed.toLocaleString()}</span>
-                    </div>
-                  )}
-
-                  <Separator />
-
-                  <div className="flex justify-between font-bold text-lg text-orange-600">
-                    <span>Total</span>
-                    <span>₹{finalPayableAmount.toLocaleString()}</span>
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  // disabled={!selectedPaymentMethod}
-                  className="mt-6 w-full gradient-orange text-white py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <CheckCircle className="w-5 h-5 mr-2" /> Proceed to Pay
-                </Button>
-              </CardContent>
-            </Card>
-          </div> */}
           <div className="space-y-6">
             <Card className="sticky top-4 overflow-hidden shadow-md rounded-xl">
               {/* Full-width package image */}

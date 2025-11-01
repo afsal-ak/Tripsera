@@ -88,9 +88,11 @@ export default function EditPackageForm() {
 
         reset({
           ...data,
+          ageOfAdult:data.ageOfAdult,
           category: data.category?.map((c: any) => c._id ?? c),
           startDate: data.startDate ? new Date(data.startDate).toISOString().split('T')[0] : '',
           endDate: data.endDate ? new Date(data.endDate).toISOString().split('T')[0] : '',
+          departureDates: data.departureDates ? new Date(data.departureDates).toISOString().split('T')[0] : '',
           location: data.location?.map((loc: any) => ({
             name: loc.name,
             lat: loc.geo.coordinates[1].toString(), // lat is 2nd
@@ -98,11 +100,11 @@ export default function EditPackageForm() {
           })),
           offer: data.offer
             ? {
-                ...data.offer,
-                validUntil: data.offer.validUntil
-                  ? new Date(data.offer.validUntil).toISOString().split('T')[0]
-                  : '',
-              }
+              ...data.offer,
+              validUntil: data.offer.validUntil
+                ? new Date(data.offer.validUntil).toISOString().split('T')[0]
+                : '',
+            }
             : undefined,
           images: [], // keep upload field empty
         });
@@ -256,10 +258,10 @@ export default function EditPackageForm() {
               {errors.category && <p className="text-red-500">{errors.category.message}</p>}
             </div>
 
-            {/* Price / Days / Nights */}
+            {/* Price / Days / Nights
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block">Price</label>
+                <label className="block">Price Per Adult</label>
                 <input
                   type="number"
                   {...register('price', { valueAsNumber: true })}
@@ -267,6 +269,17 @@ export default function EditPackageForm() {
                 />
                 {errors.price && <p className="text-red-500">{errors.price.message}</p>}
               </div>
+                <div>
+                <label className="block">Price Per Child</label>
+                <input
+                  type="number"
+                  {...register('pricePerChild', { valueAsNumber: true })}
+                  className="border p-2 rounded w-full"
+                />
+                {errors.pricePerChild && <p className="text-red-500">{errors.pricePerChild.message}</p>}
+              </div>
+              <br />
+              <br />
               <div>
                 <label className="block">Days</label>
                 <input
@@ -289,10 +302,219 @@ export default function EditPackageForm() {
                   <p className="text-red-500">{errors.durationNights?.message}</p>
                 )}
               </div>
-            </div>
+            </div> */}
 
+            <div className="grid grid-cols-3 gap-6 bg-white p-6 rounded-2xl shadow-md">
+              {/* Age Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+                  Age Configuration
+                </h3>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Minimum Age of Adult
+                  </label>
+                  <input
+                    type="number"
+                    {...register('ageOfAdult', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.ageOfAdult && (
+                    <p className="text-red-500 text-sm mt-1">{errors.ageOfAdult.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Minimum Age of Child
+                  </label>
+                  <input
+                    type="number"
+                    {...register('ageOfChild', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.ageOfChild && (
+                    <p className="text-red-500 text-sm mt-1">{errors.ageOfChild.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Price Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+                  Pricing Details
+                </h3>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Price Per Person
+                  </label>
+                  <input
+                    type="number"
+                    {...register('price', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.price && (
+                    <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Price Per Child
+                  </label>
+                  <input
+                    type="number"
+                    {...register('pricePerChild', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.pricePerChild && (
+                    <p className="text-red-500 text-sm mt-1">{errors.pricePerChild.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Duration Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+                  Duration
+                </h3>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Days
+                  </label>
+                  <input
+                    type="number"
+                    {...register('durationDays', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.durationDays && (
+                    <p className="text-red-500 text-sm mt-1">{errors.durationDays.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Nights
+                  </label>
+                  <input
+                    type="number"
+                    {...register('durationNights', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.durationNights && (
+                    <p className="text-red-500 text-sm mt-1">{errors.durationNights.message}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+            {/* Package Type */}
+            <div>
+              <label className="block font-medium">Package Type</label>
+              <select
+                {...register('packageType')}
+                className="border p-2 w-full rounded"
+              >
+                <option value="normal">Normal</option>
+                <option value="group">Group</option>
+                <option value="custom">Custom</option>
+
+              </select>
+              {errors.packageType && <p className="text-red-500 text-sm">{errors.packageType.message}</p>}
+            </div>
+  {watch('packageType') === 'normal' && (
+              <div className="border rounded-lg p-4 mt-3 bg-gray-50">
+                <h3 className="font-semibold text-gray-700 mb-2">Normal Package  </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label>Start Date</label>
+                    <input
+                      type="date"
+                      {...register('startDate')}
+                      className="border p-2 w-full rounded"
+                    />
+                    {errors.startDate && <p className="text-red-500 text-sm">{errors.startDate.message}</p>}
+                  </div>
+
+                  <div>
+                    <label>End Date</label>
+                    <input
+                      type="date"
+                      {...register('endDate')}
+                      className="border p-2 w-full rounded"
+                    />
+                    {errors.endDate && <p className="text-red-500 text-sm">{errors.endDate.message}</p>}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {watch('packageType') === 'custom' && (
+              <div className="border rounded-lg p-4 mt-3 bg-gray-50">
+                <h3 className="font-semibold text-gray-700 mb-2">custom Package  </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+
+
+                  <div>
+                    <label>Departure Date</label>
+                    <input
+                      type="date"
+                      {...register('departureDates')}
+                      placeholder="Enter departure DAte"
+                      className="border p-2 w-full rounded"
+                    />
+                    {errors.departureDates && <p className="text-red-500 text-sm">{errors.departureDates.message}</p>}
+                  </div>
+
+
+
+
+                </div>
+              </div>
+            )}
+
+            {watch('packageType') === 'group' && (
+              <div className="border rounded-lg p-4 mt-3 bg-gray-50">
+                <h3 className="font-semibold text-gray-700 mb-2">Group Package  </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  <div>
+                    <label>Departure Date</label>
+                    <input
+                      type="date"
+                      {...register('departureDates')}
+                      placeholder="Enter departure DAte"
+                      className="border p-2 w-full rounded"
+                    />
+                    {errors.departureDates && <p className="text-red-500 text-sm">{errors.departureDates.message}</p>}
+                  </div>
+
+
+                  <div>
+                    <label>Group Size</label>
+                    <input
+                      type="text"
+                      {...register('groupSize')}
+                      placeholder="Enter group Size "
+                      className="border p-2 w-full rounded"
+                    />
+                    {errors.groupSize && <p className="text-red-500 text-sm">{errors.groupSize.message}</p>}
+                  </div>
+
+                </div>
+              </div>
+            )}
+
+
+          
             {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* <div className="grid grid-cols-2 gap-4">
               <div>
                 <label>Start Date</label>
                 <input
@@ -307,7 +529,7 @@ export default function EditPackageForm() {
                 <input type="date" {...register('endDate')} className="border p-2 rounded w-full" />
                 {errors.endDate && <p className="text-red-500">{errors.endDate?.message}</p>}
               </div>
-            </div>
+            </div> */}
 
             {/* Start Point */}
             <div>
@@ -391,8 +613,8 @@ export default function EditPackageForm() {
                         onClick={() => locArray.remove(i)}
                         disabled={locArray.fields.length === 1}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition ${locArray.fields.length === 1
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-red-50 text-red-600 hover:bg-red-100'
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
                           }`}
                       >
                         Remove Location
@@ -404,7 +626,7 @@ export default function EditPackageForm() {
             </div>
 
             {/* Included */}
-           <div className="border border-gray-200 rounded-lg p-5 bg-gray-50 mb-6 shadow-sm">
+            <div className="border border-gray-200 rounded-lg p-5 bg-gray-50 mb-6 shadow-sm">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-gray-800">Included Items</h3>
                 <button
@@ -434,8 +656,8 @@ export default function EditPackageForm() {
                       }
                       disabled={watch('included')?.length === 1}
                       className={`px-2 py-1 rounded-lg text-sm transition ${watch('included')?.length === 1
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-50 text-red-600 hover:bg-red-100'
                         }`}
                     >
                       ❌
@@ -484,8 +706,8 @@ export default function EditPackageForm() {
                       }
                       disabled={watch('notIncluded')?.length === 1}
                       className={`px-2 py-1 rounded-lg text-sm transition ${watch('notIncluded')?.length === 1
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-50 text-red-600 hover:bg-red-100'
                         }`}
                     >
                       ❌
@@ -534,8 +756,8 @@ export default function EditPackageForm() {
                       onClick={() => itineraryArray.remove(i)}
                       disabled={itineraryArray.fields.length === 1}
                       className={`text-sm font-medium px-2 py-1 rounded-lg transition ${itineraryArray.fields.length === 1
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-50 text-red-600 hover:bg-red-100'
                         }`}
                     >
                       Delete Day
@@ -665,8 +887,8 @@ export default function EditPackageForm() {
                                 }
                                 disabled={field.value.length === 1}
                                 className={`mt-1 md:mt-6 px-2 py-1 rounded-lg text-sm transition ${field.value.length === 1
-                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                    : 'bg-red-50 text-red-600 hover:bg-red-100'
+                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                  : 'bg-red-50 text-red-600 hover:bg-red-100'
                                   }`}
                               >
                                 ❌

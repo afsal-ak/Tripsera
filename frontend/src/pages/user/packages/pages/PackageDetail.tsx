@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { formatTimeAgo } from '@/lib/utils/formatTime';
 import ReadMore from '@/components/ReadMore';
 import PackageDetailPickUp from './PackageDetailPickUp';
+import { cn } from '@/lib/utils';
 const PackageDetails = () => {
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
@@ -103,6 +104,12 @@ const PackageDetails = () => {
   const handleAddReview = () => {
     navigate(`/packages/${id}/review/add`);
   };
+  const isSlotFull = pkg?.packageType === 'group' && pkg?.availableSlots! <= 0;
+  const isExpired =
+    (pkg?.departureDates && new Date(pkg.departureDates) < new Date()) ||
+    (pkg?.endDate && new Date(pkg.endDate) < new Date());
+
+  const isBookingDisabled: boolean = Boolean(isSlotFull || isExpired);
 
   if (!pkg) {
     return <div className="h-screen flex items-center justify-center">Loading...</div>;
@@ -135,7 +142,7 @@ const PackageDetails = () => {
             </span>{' '}
             /{' '}
             <span>
-              <Link to="/packages">Packges</Link>
+              <Link to="/packages">Packages</Link>
             </span>
             / <span className="text-foreground">{pkg.title}</span>
           </div>
@@ -144,7 +151,7 @@ const PackageDetails = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
               <div className="flex items-center gap-4 mb-4">
-                <Badge className="bg-orange text-white px-3 py-1">{pkg.duration} Days</Badge>
+                <Badge className="bg-orange text-white px-3 py-1">{pkg.durationDays}D/{pkg.durationNights}N Days</Badge>
 
                 {ratingSummary && (
                   <div className="flex items-center text-sm">
@@ -214,9 +221,8 @@ const PackageDetails = () => {
                         <div
                           key={index}
                           onClick={() => setSelectedImage(index)}
-                          className={`relative h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${
-                            isSelected ? 'ring-2 ring-orange ring-offset-2' : 'hover:opacity-80'
-                          }`}
+                          className={`relative h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${isSelected ? 'ring-2 ring-orange ring-offset-2' : 'hover:opacity-80'
+                            }`}
                         >
                           <img
                             src={image}
@@ -234,7 +240,6 @@ const PackageDetails = () => {
           </div>
         </div>
       </div>
-
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
@@ -343,11 +348,10 @@ const PackageDetails = () => {
             {/* Booking Card */}
             <Card className="sticky top-4 border-2 border-orange/20 shadow-lg">
               <CardContent className="p-8">
+                {/* PRICE + OFFER */}
                 <div className="text-center mb-6">
                   <div className="flex items-center justify-center mb-2 space-x-3 relative">
-                    {pkg.offer &&
-                    pkg.offer.isActive &&
-                    new Date(pkg.offer.validUntil) > new Date() ? (
+                    {pkg.offer && pkg.offer.isActive && new Date(pkg.offer.validUntil) > new Date() ? (
                       <>
                         {/* Original Price (strike-through) */}
                         {pkg.price !== pkg.finalPrice && (
@@ -374,44 +378,135 @@ const PackageDetails = () => {
                       </span>
                     )}
                   </div>
-                  <span className="text-gray-500 text-sm">per person</span>
+                  <span className="text-gray-500 text-sm">per adult</span>
                 </div>
 
+                {/* EXTRA DETAILS SECTION */}
                 <div className="space-y-4 mb-8">
+                  {/* Adult Price */}
+                  <div className="flex items-center justify-between py-3 border-b">
+                    <span className="text-sm font-medium text-gray-700">Adult Price</span>
+                    <span className="text-sm font-semibold text-gray-800">₹{pkg.price}</span>
+                  </div>
+
+                  {/* Child Price */}
+                  {pkg.pricePerChild && (
+                    <div className="flex items-center justify-between py-3 border-b">
+                      <span className="text-sm font-medium text-gray-700">Child Price</span>
+                      <span className="text-sm font-semibold text-gray-800">₹{pkg.pricePerChild}</span>
+                    </div>
+                  )}
+
+                  {/* Package Type */}
+                  <div className="flex items-center justify-between py-3 border-b">
+                    <span className="text-sm font-medium text-gray-700">Package Type</span>
+                    <span
+                      className={`text-sm font-semibold ${pkg.packageType === 'custom'
+                          ? 'text-blue-600'
+                          : pkg.packageType === 'group'
+                            ? 'text-purple-600'
+                            : 'text-green-600'
+                        }`}
+                    >
+                      {pkg.packageType === 'custom'
+                        ? 'Custom Package'
+                        : pkg.packageType === 'group'
+                          ? 'Group Package'
+                          : 'Normal Package'}
+                    </span>
+                  </div>
+
+                  {/* Available Slots (Group only) */}
+                  {pkg.packageType === 'group' && (
+                    <div className="flex items-center justify-between py-3 border-b">
+                      <span className="text-sm font-medium text-gray-700">Available Slots</span>
+                      <span className="text-sm font-semibold text-gray-800">
+                        {pkg.availableSlots ?? 'N/A'}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Duration */}
                   <div className="flex items-center justify-between py-3 border-b">
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 text-orange mr-3" />
-                      <span className="text-sm font-medium">Duration</span>
+                      <span className="text-sm font-medium text-gray-700">Duration</span>
                     </div>
-                    <span className="text-sm font-semibold">
+                    <span className="text-sm font-semibold text-gray-800">
                       {pkg?.durationDays !== null && pkg?.durationNights !== null
                         ? `${pkg.durationDays} Days ${pkg.durationNights} Nights`
                         : pkg?.duration || 'N/A'}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between py-3">
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 text-orange mr-3" />
-                      <span className="text-sm font-medium">Ending Date</span>
-                    </div>
-                    {pkg.endDate
-                      ? new Date(pkg.endDate).toLocaleDateString('en-US', {
+                  {/* Departure Dates */}
+                  {pkg?.departureDates && (
+                    <div className="flex items-center justify-between border-b pb-2">
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 text-orange mr-3" />
+                        <span className="text-sm font-medium text-gray-700">Departure Date</span>
+                      </div>
+                      <span className="text-sm text-gray-700 bg-gray-50 px-3 py-1.5 rounded-md shadow-sm border border-gray-100">
+                        {new Date(pkg.departureDates).toLocaleDateString('en-US', {
                           day: '2-digit',
                           month: 'short',
                           year: 'numeric',
-                        })
-                      : '-'}
-                  </div>
+                        })}
+                      </span>
+                    </div>
+                  )}
+                    {pkg?.startDate && (
+                    <div className="flex items-center justify-between border-b pb-2">
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 text-orange mr-3" />
+                        <span className="text-sm font-medium text-gray-700">Start Date </span>
+                      </div>
+                      <span className="text-sm text-gray-700 bg-gray-50 px-3 py-1.5 rounded-md shadow-sm border border-gray-100">
+                        {new Date(pkg.startDate).toLocaleDateString('en-US', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </span>
+                    </div>
+                  )}
+                  {pkg?.endDate && (
+                    <div className="flex items-center justify-between border-b pb-2">
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 text-orange mr-3" />
+                        <span className="text-sm font-medium text-gray-700">End Date </span>
+                      </div>
+                      <span className="text-sm text-gray-700 bg-gray-50 px-3 py-1.5 rounded-md shadow-sm border border-gray-100">
+                        {new Date(pkg.endDate).toLocaleDateString('en-US', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
+                {/* BUTTONS */}
                 <div className="space-y-3">
                   <Button
                     onClick={handleClick}
-                    className="w-full bg-orange hover:bg-orange-dark text-white py-3 text-lg font-semibold"
+                    disabled={isBookingDisabled}
+                    className={cn(
+                      "w-full py-3 text-lg font-semibold transition-all",
+                      isBookingDisabled
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-orange hover:bg-orange-dark text-white"
+                    )}
                   >
-                    Book Now
+                    {isSlotFull
+                      ? "Slots Full"
+                      : isExpired
+                        ? "Package Expired"
+                        : "Book Now"}
                   </Button>
+
+
                   <Button
                     variant="outline"
                     className="w-full border-orange text-orange hover:bg-orange hover:text-white py-3"
@@ -419,33 +514,12 @@ const PackageDetails = () => {
                     Contact Us
                   </Button>
                 </div>
+
               </CardContent>
             </Card>
 
-            {/* Quick Info */}
-            {/* <Card className="border shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Quick Info</h3>
-                <div className="space-y-4 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Difficulty Level:</span>
-                    <Badge variant="secondary">Moderate</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Best Season:</span>
-                    <span className="font-medium">May - October</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Languages:</span>
-                    <span className="font-medium">English, German</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Accommodation:</span>
-                    <span className="font-medium">4-5 Star Hotels</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card> */}
+
+
           </div>
         </div>
         <section className="mt-8">

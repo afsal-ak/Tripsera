@@ -51,10 +51,16 @@ export interface IPackage {
   duration?: string;
   durationDays?: number;
   durationNights?: number;
+  packageType: string;
+  ageOfAdult: number;
+  ageOfChild?: number;
+  pricePerChild?: number;
 
   startDate?: string;
   endDate?: string;
-
+  departureDates?: Date;
+  groupSize?: number;
+  availableSlots?: number;
   category: ICategory[];
   location: ILocation[];
   startPoint: string;
@@ -71,8 +77,8 @@ export interface IPackage {
 
   importantDetails?: string;
   isBlocked: boolean;
-  isCustom?:boolean;
-  createdFor:string;
+  isCustom?: boolean;
+  createdFor: string;
   createdAt?: string;
   updatedAt?: string;
 }

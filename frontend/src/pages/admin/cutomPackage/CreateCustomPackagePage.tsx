@@ -23,61 +23,65 @@ const CreateCustomPackagePage = () => {
   const [customRequest, setCustomRequest] = useState<ICustomAdminPackage | null>(null);
   const [createdFor, setCreatedFor] = useState<string>()
   const [loading, setLoading] = useState<boolean>(true);
-  
-  
+
+
 
 
   // Fetch package details
- const fetchPkg = async () => {
-  if (!customId) return;
-  try {
-    const response = await getCustomPkgById(customId);
-    const data = response.data;
+  const fetchPkg = async () => {
+    if (!customId) return;
+    try {
+      const response = await getCustomPkgById(customId);
+      const data = response.data;
 
-    //  update states directly
-    setCustomRequest(data);
-    setCreatedFor(data.userId);
+      //  update states directly
+      setCustomRequest(data);
+      setCreatedFor(data.userId);
 
-    console.log(data, 'custom package data');
+      console.log(data, 'custom package data');
 
-    //  use response.data directly to reset form
-    reset({
-      price: data.budget || 0,
-      startDate: data.startDate
-        ? new Date(data.startDate).toISOString().split("T")[0]
-        : "",
-      durationDays: data.days || 0,
-      durationNights: data.nights || 0,
-      included: [''],
+      //  use response.data directly to reset form
+      reset({
+        price: data.budget || 0,
+        // startDate: data.startDate
+        //   ? new Date(data.startDate).toISOString().split("T")[0]
+        //   : "",
+        durationDays: data.days || 0,
+        durationNights: data.nights || 0,
+        included: [''],
 
-      notIncluded: [''],
-       itinerary: [
-        {
-          day: 1,
-          title: '',
-          description: '',
-          activities: [{ startTime: '', endTime: '', activity: '' }],
-        },
-      ],
-      location: [
-        {
-          name: '',
-          lat: '',
-          lng: '',
-        },
-      ],
-      images: [],
-       // description: data.additionalDetails || '',
-     offer: { type: 'percentage', value: 0, validUntil: '', isActive: false },
+        notIncluded: [''],
+        itinerary: [
+          {
+            day: 1,
+            title: '',
+            description: '',
+            activities: [{ startTime: '', endTime: '', activity: '' }],
+          },
+        ],
+        location: [
+          {
+            name: '',
+            lat: '',
+            lng: '',
+          },
+        ],
+        images: [],
+        // description: data.additionalDetails || '',
+        packageType: 'custom',
+        departureDates:data.startDate
+          ? new Date(data.startDate).toISOString().split("T")[0]
+          : "",
+        offer: { type: 'percentage', value: 0, validUntil: '', isActive: false },
 
-      startPoint: data.destination,
-    });
-  } catch (error: any) {
-    toast.error(error?.response?.data?.message || 'Failed to fetch package details');
-  } finally {
-    setLoading(false);
-  }
-};
+        startPoint: data.destination,
+      });
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to fetch package details');
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     fetchPkg();
   }, [customId]);
@@ -173,10 +177,10 @@ const CreateCustomPackagePage = () => {
       form.append('isCustom', 'true');
       if (createdFor) {
         form.append('createdFor', createdFor);
-        form.append('customReqId',customRequest?.id!)
+        form.append('customReqId', customRequest?.id!)
       }
 
-      await addPackageForUser(form); // new API call
+      await addPackageForUser(form);
       toast.success('Custom package created successfully');
       navigate(`/admin/custom-packages/${customId}`);
 
@@ -257,60 +261,142 @@ const CreateCustomPackagePage = () => {
               />
               {errors.category && <p className="text-red-500">{errors.category.message}</p>}
             </div>
+            <div className="grid grid-cols-3 gap-6 bg-white p-6 rounded-2xl shadow-md">
+              {/* Age Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+                  Age Configuration
+                </h3>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Minimum Age of Adult
+                  </label>
+                  <input
+                    type="number"
+                    {...register('ageOfAdult', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.ageOfAdult && (
+                    <p className="text-red-500 text-sm mt-1">{errors.ageOfAdult.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Minimum Age of Child
+                  </label>
+                  <input
+                    type="number"
+                    {...register('ageOfChild', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.ageOfChild && (
+                    <p className="text-red-500 text-sm mt-1">{errors.ageOfChild.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Price Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+                  Pricing Details
+                </h3>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Price Per Person
+                  </label>
+                  <input
+                    type="number"
+                    {...register('price', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.price && (
+                    <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Price Per Child
+                  </label>
+                  <input
+                    type="number"
+                    {...register('pricePerChild', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.pricePerChild && (
+                    <p className="text-red-500 text-sm mt-1">{errors.pricePerChild.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Duration Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+                  Duration
+                </h3>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Days
+                  </label>
+                  <input
+                    type="number"
+                    {...register('durationDays', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.durationDays && (
+                    <p className="text-red-500 text-sm mt-1">{errors.durationDays.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Nights
+                  </label>
+                  <input
+                    type="number"
+                    {...register('durationNights', { valueAsNumber: true })}
+                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+                  />
+                  {errors.durationNights && (
+                    <p className="text-red-500 text-sm mt-1">{errors.durationNights.message}</p>
+                  )}
+                </div>
+              </div>
+            </div>
 
             {/* Price & duration */}
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block">Price</label>
-                <input
-                  type="number"
-                  {...register('price', { valueAsNumber: true })}
-                  className="border p-2 rounded w-full"
-                />
-                {errors.price && <p className="text-red-500">{errors.price.message}</p>}
-              </div>
-              <div>
-                <label className="block">Days</label>
-                <input
-                  type="number"
-                  {...register('durationDays', { valueAsNumber: true })}
-                  className="border p-2 rounded w-full"
-                />
-                {errors.durationDays && (
-                  <p className="text-red-500">{errors.durationDays.message}</p>
-                )}
-              </div>
-              <div>
-                <label className="block">Nights</label>
-                <input
-                  type="number"
-                  {...register('durationNights', { valueAsNumber: true })}
-                  className="border p-2 rounded w-full"
-                />
-                {errors.durationNights && (
-                  <p className="text-red-500">{errors.durationNights.message}</p>
-                )}
-              </div>
-            </div>
+             
 
             {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label>Start Date</label>
-                <input
-                  type="date"
-                  {...register('startDate')}
-                  className="border p-2 rounded w-full"
-                />
-                {errors.startDate && <p className="text-red-500">{errors.startDate.message}</p>}
-              </div>
-              <div>
-                <label>End Date</label>
-                <input type="date" {...register('endDate')} className="border p-2 rounded w-full" />
-                {errors.endDate && <p className="text-red-500">{errors.endDate.message}</p>}
-              </div>
-            </div>
+            {watch('packageType') === 'custom' && (
+              <div className="border rounded-lg p-4 mt-3 bg-gray-50">
+                <h3 className="font-semibold text-gray-700 mb-2">custom Package  </h3>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+
+
+                  <div>
+                    <label>Departure Date</label>
+                    <input
+                      type="date"
+                      {...register('departureDates')}
+                      placeholder="Enter departure DAte"
+                      className="border p-2 w-full rounded"
+                    />
+                    {errors.departureDates && <p className="text-red-500 text-sm">{errors.departureDates.message}</p>}
+                  </div>
+
+
+
+
+                </div>
+              </div>
+            )}
             {/* Start point */}
             <div>
               <label>Start Point</label>
@@ -394,8 +480,8 @@ const CreateCustomPackagePage = () => {
                         onClick={() => locArray.remove(i)}
                         disabled={locArray.fields.length === 1}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg transition ${locArray.fields.length === 1
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-red-50 text-red-600 hover:bg-red-100'
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-red-50 text-red-600 hover:bg-red-100'
                           }`}
                       >
                         Remove Location
@@ -439,8 +525,8 @@ const CreateCustomPackagePage = () => {
                       }
                       disabled={watch('included')?.length === 1}
                       className={`px-2 py-1 rounded-lg text-sm transition ${watch('included')?.length === 1
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-50 text-red-600 hover:bg-red-100'
                         }`}
                     >
                       ❌
@@ -488,8 +574,8 @@ const CreateCustomPackagePage = () => {
                       }
                       disabled={watch('notIncluded')?.length === 1}
                       className={`px-2 py-1 rounded-lg text-sm transition ${watch('notIncluded')?.length === 1
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-50 text-red-600 hover:bg-red-100'
                         }`}
                     >
                       ❌
@@ -536,8 +622,8 @@ const CreateCustomPackagePage = () => {
                       onClick={() => itineraryArray.remove(i)}
                       disabled={itineraryArray.fields.length === 1}
                       className={`text-sm font-medium px-2 py-1 rounded-lg transition ${itineraryArray.fields.length === 1
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-red-50 text-red-600 hover:bg-red-100'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-50 text-red-600 hover:bg-red-100'
                         }`}
                     >
                       Delete Day
@@ -667,8 +753,8 @@ const CreateCustomPackagePage = () => {
                                 }
                                 disabled={field.value.length === 1}
                                 className={`mt-1 md:mt-6 px-2 py-1 rounded-lg text-sm transition ${field.value.length === 1
-                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                    : 'bg-red-50 text-red-600 hover:bg-red-100'
+                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                  : 'bg-red-50 text-red-600 hover:bg-red-100'
                                   }`}
                               >
                                 ❌
@@ -697,7 +783,7 @@ const CreateCustomPackagePage = () => {
               ))}
             </div>
 
-             <div>
+            <div>
               <Label>Upload Images (Max 4)</Label>
               <br />
               <input
