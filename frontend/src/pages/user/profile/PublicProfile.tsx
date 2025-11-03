@@ -21,7 +21,7 @@ import { handleBlockUser, handelUnBlockUser, handelIsBlocked } from '@/services/
 
 const PublicProfile = () => {
   const { username } = useParams();
-  const userId = useSelector((state: RootState) => state.userAuth.user?._id);
+  const currentUserName = useSelector((state: RootState) => state.userAuth.user?.username);
 
   const [profile, setProfile] = useState<IPublicProfile>();
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
@@ -48,6 +48,7 @@ const PublicProfile = () => {
         setProfile(response.profile);
         setFollowers(response.profile.followersCount);
         setIsFollowing(response.isFollowing);
+        // setTotalBlogs(response.profile.)
         if (response.profile?._id) {
           console.log('is bloked');
 
@@ -68,7 +69,8 @@ const PublicProfile = () => {
         if (!profile?._id) return;
         const response = await handlePublicUserBlogs(profile._id, currentPage, limit);
         setBlogs(response.data);
-        setTotalBlogs(response.totalBlogs);
+        setTotalBlogs(response.data.length);
+
       } catch (error) {
         toast.error('Failed to fetch posts');
       }
@@ -188,21 +190,27 @@ const PublicProfile = () => {
             <p className="mt-2 text-gray-700">{profile?.bio}</p>
           </div>
 
-          {userId !== profile?._id && (
+          {currentUserName !== username && (
             <div className="mt-4 md:mt-0 flex flex-col md:items-end space-y-2">
               <div className="flex space-x-2">
                 <Button onClick={toggleFollow} disabled={loading}>
                   {isFollowing ? 'Unfollow' : 'Follow'}
                 </Button>
-                <Button variant="outline">Message</Button>
+                {/* <Button variant="outline">Message</Button> */}
               </div>
             </div>
           )}
-          <OptionsDropdown
-            options={options}
-            onSelect={(value) => handleOptionSelect(value, profile?._id!, 'user')}
-          />
+
+
         </div>
+{currentUserName !== username && (
+  <div className="relative">
+    <OptionsDropdown
+      options={options}
+      onSelect={(value) => handleOptionSelect(value, profile?._id!, 'user')}
+    />
+  </div>
+)}
 
         <div className="mt-8 grid grid-cols-3 gap-4 max-w-md mx-auto md:mx-0">
           <Card className="p-4 text-center">
