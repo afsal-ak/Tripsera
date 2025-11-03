@@ -192,7 +192,7 @@ export default function AddPackageForm() {
             {/* Title */}
             <div>
               <label className="block font-medium">Title</label>
-              <input {...register('title')} className="border p-2 w-full rounded" />
+              <input {...register('title')} maxLength={25} className="border p-2 w-full rounded" />
               {errors.title && <p className="text-red-500">{errors.title.message}</p>}
             </div>
 

@@ -112,7 +112,7 @@ const CategoryList = () => {
         <CardTitle className="text-lg font-semibold text-gray-800">Categories</CardTitle>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
-          {/* 🔍 Search Box */}
+          {/*  Search Box */}
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-2.5 text-gray-400 h-4 w-4" />
             <Input
@@ -136,7 +136,7 @@ const CategoryList = () => {
             )}
           </div>
 
-          {/* 🧩 Status Filter */}
+          {/*  Status Filter */}
           <select
             value={status}
             onChange={(e) => {
@@ -150,7 +150,7 @@ const CategoryList = () => {
             <option value="blocked">Blocked</option>
           </select>
 
-          {/* 🧹 Clear + Add */}
+          {/*  Clear + Add */}
           <div className="flex gap-2">
             <Button
               onClick={handleClearAll}

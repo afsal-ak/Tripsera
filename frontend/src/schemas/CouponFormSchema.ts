@@ -1,16 +1,18 @@
 import z from 'zod';
 
 export const couponSchema = z
-  .object({
+   .object({
     code: z
       .string()
-      .transform((val) => val.trim())
-      .refine((val) => val.length >= 3, {
-        message: 'Code must be at least 3 characters',
-      }),
+      .trim()
+      .min(3, { message: 'Code must be at least 3 characters' })
+      .max(7, { message: 'Code cannot be more than 7 characters' }),
 
-    type: z.enum(['percentage', 'flat']),
+    type: z.enum(['percentage', 'flat'], {
+      required_error: 'Coupon type is required',
+    }),
 
+ 
     discountValue: z
       .number({
         required_error: 'Discount value is required',
