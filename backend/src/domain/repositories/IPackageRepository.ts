@@ -2,8 +2,9 @@ import { IPackage } from '@domain/entities/IPackage';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
-import { IPackageQueryOptions } from '@domain/entities/IPackageQueryOptions';
 import { IPackageFilter } from '@domain/entities/IPackageFilter';
+
+
 export interface IPackageRepository {
   create(pkg: IPackage): Promise<IPackage>;
   editPackage(
@@ -20,26 +21,32 @@ export interface IPackageRepository {
     filters?: IFilter
   ): Promise<{ packages: IPackage[]; pagination: PaginationInfo }>;
   countDocument(): Promise<number>;
-   getActivePackages(page:number,limit:number,filter?:IPackageFilter
-  ):Promise<{package:IPackage[],pagination:PaginationInfo}>;
+  getActivePackages(page: number, limit: number, filter?: IPackageFilter
+  ): Promise<{ package: IPackage[], pagination: PaginationInfo }>;
 
-  
+
   countActivePackages(filters: any): Promise<number>;
-   
+
   delete(id: string): Promise<void>;
   block(id: string): Promise<void>;
   unblock(id: string): Promise<void>;
   getHomeData(): Promise<IPackage[]>;
 
   getCustomPackagesForUser(
-    userId:string,
-    page:number,
-    limit:number
-  ):Promise<{ packages: IPackage[]; pagination: PaginationInfo }>
+    userId: string,
+    page: number,
+    limit: number
+  ): Promise<{ packages: IPackage[]; pagination: PaginationInfo }>
 
   getAllUserCustomPackages(
     page: number,
     limit: number,
     filters: IFilter
   ): Promise<{ packages: CustomPackageApprovedResponseDTO[]; pagination: PaginationInfo }>
+
+
+  decrementSlots(packageId: string, slots: number): Promise<IPackage>
+  incrementSlots(packageId: string, slots: number): Promise<IPackage>
+
+
 }

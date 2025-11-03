@@ -26,6 +26,7 @@ import {
 } from '@application/dtos/BookingDTO';
 import { BookingMapper } from '@application/mappers/BookingMapper';
 import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
+import { EnumPackageType } from '@constants/enum/packageEnum';
 
 export class BookingUseCases implements IBookingUseCases {
   constructor(
@@ -113,6 +114,17 @@ export class BookingUseCases implements IBookingUseCases {
       throw new AppError(HttpStatus.NOT_FOUND, 'Package not found for this booking');
     }
 
+
+    let travelersCount = booking.travelers.length
+    // increment available slots for GROUP package
+    if (pkg.packageType === EnumPackageType.GROUP) {
+      const incremented = await this._packageRepo.incrementSlots(pkg._id!.toString(), travelersCount);
+      if (!incremented) {
+        throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to update package slots');
+      }
+    }
+
+
     //  Notify Admins about cancellation
     const bookingMessage = `User ${user.username} cancelled booking for "${pkg.title}" (Reason: ${reason})`;
 
@@ -156,6 +168,33 @@ export class BookingUseCases implements IBookingUseCases {
       walletAmountUsed,
       discount,
     } = data;
+
+    // Fetch package data
+    const pkgData = await this._packageRepo.findById(packageId);
+    const availableSlots = pkgData?.availableSlots ?? 0;
+    const travelersCount = travelers.length
+    const packageType = data.packageType
+
+    // Check if group package has enough slots
+    if (packageType === EnumPackageType.GROUP) {
+      if (availableSlots < travelersCount) {
+        throw new AppError(
+          HttpStatus.CONFLICT,
+          `Only ${availableSlots} slot(s) available,
+           but ${travelersCount} traveler(s) selected.
+            Please reduce travelers or choose another date/package.`
+        );
+      }
+
+      const updated = await this._packageRepo.decrementSlots(packageId, travelersCount);
+      if (!updated) {
+        throw new AppError(
+          HttpStatus.CONFLICT,
+          'Failed to reserve slots. Try again.'
+        );
+      }
+    }
+
     const finalAmount = amountPaid;
     const bookingCode = await generateBookingCode();
 
@@ -212,6 +251,31 @@ export class BookingUseCases implements IBookingUseCases {
     } = data;
 
     const discount = 0;
+    // Fetch package data
+    const pkgData = await this._packageRepo.findById(packageId);
+    const availableSlots = pkgData?.availableSlots ?? 0;
+    const travelersCount = travelers.length
+    const packageType = data.packageType
+
+    // Check if group package has enough slots
+    if (packageType === EnumPackageType.GROUP) {
+      if (availableSlots < travelersCount) {
+        throw new AppError(
+          HttpStatus.CONFLICT,
+          `Only ${availableSlots} slot(s) available,
+           but ${travelersCount} traveler(s) selected.
+            Please reduce travelers or choose another date/package.`
+        );
+      }
+
+      const updated = await this._packageRepo.decrementSlots(packageId, travelersCount);
+      if (!updated) {
+        throw new AppError(
+          HttpStatus.CONFLICT,
+          'Failed to reserve slots. Try again.'
+        );
+      }
+    }
 
     if (!useWallet) {
       // If user didn't select wallet, skip this route
@@ -435,6 +499,19 @@ export class BookingUseCases implements IBookingUseCases {
       if (!wallet) {
         throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to refund wallet');
       }
+      const pkg = await this._packageRepo.findById(bookingDoc.packageId.toString());
+      if (!pkg) {
+        throw new AppError(HttpStatus.NOT_FOUND, 'Package not found for this booking');
+      }
+
+
+      // increment available slots for GROUP package
+      if (pkg.packageType === EnumPackageType.GROUP) {
+        const incremented = await this._packageRepo.incrementSlots(pkg._id!.toString(), 1);
+        if (!incremented) {
+          throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to update package slots');
+        }
+      }
 
       // Send notification to user
       await this._notificationUseCases.sendNotification({
@@ -467,16 +544,16 @@ export class BookingUseCases implements IBookingUseCases {
       bookingDoc.cancelReason = note || 'All travelers removed';
       bookingDoc.cancelledBy = 'user';
     }
+    const pkg = await this._packageRepo.findById(bookingDoc.packageId.toString());
 
     // Notify admin about traveler removal
-    const pkg = await this._packageRepo.findById(bookingDoc.packageId.toString());
     await this._notificationUseCases.sendNotification({
       role: EnumUserRole.ADMIN,
       title: 'Traveler Removed',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: bookingDoc._id!.toString(),
       packageId: bookingDoc.packageId.toString(),
-      message: `Traveler ${removedTraveler.fullName} removed from booking ${bookingDoc.bookingCode} (${pkg?.title || ''})`,
+      message: `Traveler ${removedTraveler.fullName} removed from booking ${bookingDoc.bookingCode} (${pkg} || ''})`,
       type: EnumNotificationType.WARNING,
       triggeredBy: userId,
       metadata: { removedTraveler, note },
@@ -486,86 +563,6 @@ export class BookingUseCases implements IBookingUseCases {
     return booking ? BookingMapper.toDetailResponseDTO(booking) : null;
   }
 
-  // async addTravellerBookingWithOnlinePayment(
-  //   userId: string,
-  //   data: AddTravellerDTO & { useWallet?: boolean; }
-  // ): Promise<{
-  //   booking: BookingDetailResponseDTO;
-  //   razorpayOrder?: { id: string; amount: number; currency: string; receipt: string; };
-  // }> {
-  //   const {
-  //     packageId,
-  //     travelers,
-  //     totalAmount,
-  //     couponCode,
-  //     //  travelDate,
-  //     useWallet = false,
-  //   } = data;
-
-  //   const discount = 0;
-
-  //   if (!useWallet) {
-  //     // If user didn't select wallet, skip this route
-  //     throw new AppError(HttpStatus.BAD_REQUEST, 'Wallet usage not requested');
-  //   }
-
-  //   const wallet = await this._walletRepo.getUserWallet(userId);
-  //   if (!wallet) {
-  //     throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
-  //   }
-  //   const walletBalance = wallet.balance;
-
-  //   if (walletBalance < totalAmount!) {
-  //     // Wallet not enough, should redirect to Razorpay flow
-  //     throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
-  //   }
-
-  //   // Wallet fully covers booking
-  //   await this._walletRepo.debitWallet(userId, totalAmount!, `Used for booking ${bookingCode}`);
-
-  //   const bookingData: AddTravellerDTO = {
-  //     travelers,
-  //     totalAmount,
-  //     discount,
-  //     couponCode,
-  //     walletUsed: true,
-  //     walletAmountUsed: totalAmount,
-  //     amountPaid: 0,
-  //     paymentMethod: EnumPaymentMethod.WALLET,
-  //     bookingStatus: EnumBookingStatus.BOOKED,
-  //     paymentStatus: EnumPaymentStatus.PAID,
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   };
-
-  //   const booking = await this._bookingRepo.updateBooking(bookingData.bookingId, bookingData);
-  //   const user = await this._userRepo.findById(userId);
-  //   const pkg = await this._packageRepo.findById(booking!.packageId.toString());
-
-  //   const message = `User ${user?.username} booked package ${pkg?.title})`;
-  //   //  Save notification in DB
-  //   const notification = await this._notificationUseCases.sendNotification({
-  //     role: EnumUserRole.ADMIN,
-  //     title: 'New TRaveller Booking',
-  //     entityType: EnumNotificationEntityType.BOOKING,
-  //     bookingId: booking?._id?.toString(),
-  //     packageId: booking?.packageId.toString(),
-  //     message,
-  //     type: EnumNotificationType.SUCCESS,
-  //     triggeredBy: userId,
-  //     metadata: { bookingId: booking?._id! },
-  //   });
-
-  //   return { booking: BookingMapper.toDetailResponseDTO(booking!) };
-  // }
-
-
-  // async addTravellerBookingWithWalletPayment(
-  //   userId: string,
-  //   data: AddTravellerDTO & { useWallet?: boolean; }
-  // ): Promise<{ booking?: BookingDetailResponseDTO; }> {
-
-  // }
 
   async addTravellerBookingWithOnlinePayment(
     userId: string,
@@ -585,6 +582,32 @@ export class BookingUseCases implements IBookingUseCases {
     if (!booking || !bookingId) {
       throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
+    // Fetch package data
+    const pkgData = await this._packageRepo.findById(booking.packageId.toString());
+    const availableSlots = pkgData?.availableSlots ?? 0;
+    const travelersCount = travelers.length
+    const packageType = booking.packageType
+    const packageId = booking.packageId.toString()
+    // Check if group package has enough slots
+    if (packageType === EnumPackageType.GROUP) {
+      if (availableSlots < travelersCount) {
+        throw new AppError(
+          HttpStatus.CONFLICT,
+          `Only ${availableSlots} slot(s) available,
+           but ${travelersCount} traveler(s) selected.
+            Please reduce travelers or choose another date/package.`
+        );
+      }
+
+      const updated = await this._packageRepo.decrementSlots(packageId, travelersCount);
+      if (!updated) {
+        throw new AppError(
+          HttpStatus.CONFLICT,
+          'Failed to reserve slots. Try again.'
+        );
+      }
+    }
+
 
     // Merge new travelers into existing list
     const updatedTravelers = [...booking.travelers, ...travelers];
@@ -661,12 +684,37 @@ export class BookingUseCases implements IBookingUseCases {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Wallet usage not requested');
     }
 
-     const booking = await this._bookingRepo.findById(bookingId);
+    const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
       throw new AppError(HttpStatus.NOT_FOUND, 'Booking not found');
     }
+    // Fetch package data
+    const pkgData = await this._packageRepo.findById(booking.packageId.toString());
+    const availableSlots = pkgData?.availableSlots ?? 0;
+    const travelersCount = travelers.length
+    const packageType = booking.packageType
+    const packageId = booking.packageId.toString()
 
-     const wallet = await this._walletRepo.getUserWallet(userId);
+    // Check if group package has enough slots
+    if (packageType === EnumPackageType.GROUP) {
+      if (availableSlots < travelersCount) {
+        throw new AppError(
+          HttpStatus.CONFLICT,
+          `Only ${availableSlots} slot(s) available,
+           but ${travelersCount} traveler(s) selected.
+            Please reduce travelers or choose another date/package.`
+        );
+      }
+
+      const updated = await this._packageRepo.decrementSlots(packageId, travelersCount);
+      if (!updated) {
+        throw new AppError(
+          HttpStatus.CONFLICT,
+          'Failed to reserve slots. Try again.'
+        );
+      }
+    }
+    const wallet = await this._walletRepo.getUserWallet(userId);
     if (!wallet) {
       throw new AppError(HttpStatus.NOT_FOUND, 'Wallet not found');
     }
@@ -676,15 +724,15 @@ export class BookingUseCases implements IBookingUseCases {
       throw new AppError(HttpStatus.BAD_REQUEST, 'Insufficient wallet balance');
     }
 
-     await this._walletRepo.debitWallet(
+    await this._walletRepo.debitWallet(
       userId,
       totalAmount,
       `Used for adding travelers to booking ${booking.bookingCode}`
     );
 
-     const updatedTravelers = [...booking.travelers, ...travelers];
+    const updatedTravelers = [...booking.travelers, ...travelers];
 
-     const travelerHistoryEntry = travelers.map((t) => ({
+    const travelerHistoryEntry = travelers.map((t) => ({
       traveler: t,
       action: EnumTravelerAction.ADDED,
       changedBy: userId,
@@ -693,7 +741,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     const newTotal = booking.totalAmount + totalAmount;
 
-     const updatedBooking = await this._bookingRepo.updateBooking(bookingId, {
+    const updatedBooking = await this._bookingRepo.updateBooking(bookingId, {
       travelers: updatedTravelers,
       travelerHistory: [
         ...(booking.travelerHistory || []),
@@ -704,7 +752,7 @@ export class BookingUseCases implements IBookingUseCases {
       updatedAt: new Date(),
     });
 
-     await this._bookingRepo.addBookingHistory(bookingId, {
+    await this._bookingRepo.addBookingHistory(bookingId, {
       action: EnumBookingHistoryAction.TRAVELER_ADDED,
       oldValue: booking.travelers,
       newValue: updatedTravelers,

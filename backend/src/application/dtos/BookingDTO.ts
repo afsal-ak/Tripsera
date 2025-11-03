@@ -6,12 +6,14 @@ import {
   EnumBookingHistoryAction,
 } from '@constants/enum/bookingEnum';
 import { EnumGender } from '@constants/enum/commonEnum';
+import { EnumPackageType } from '@constants/enum/packageEnum';
 import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
 
 export interface CreateBookingDTO {
   bookingCode: string;
   packageId: string;
   travelDate: Date;
+  packageType:EnumPackageType,
 
   travelers: {
     fullName: string;
@@ -57,6 +59,8 @@ export interface AddTravellerDTO
     age: number;
     gender: EnumGender;
     idType: EnumIdType;
+    pricePaid: number; // store the actual amount charged
+  type: 'adult' | 'child';
     idNumber: string;
   }[];
   totalAmount: number; // Cost for newly added travelers
@@ -77,8 +81,10 @@ export interface TravelerDTO {
   fullName: string;
   age: number;
   gender: EnumGender;
-  idType: EnumIdType;
-  idNumber: string;
+  idType?: EnumIdType;
+  idNumber?: string;
+  pricePaid: number; // store the actual amount charged
+  type: 'adult' | 'child';
 }
 
 //  Traveler History DTO

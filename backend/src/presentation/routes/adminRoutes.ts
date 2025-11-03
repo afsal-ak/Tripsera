@@ -135,6 +135,7 @@ const bookingRepository = new BookingRepository();
 const bookingUseCase = new BookingUseCases(
   bookingRepository,
   walletRepository,
+  packageRepository,
   notificationUseCases
 );
 const bookingController = new BookingController(bookingUseCase);

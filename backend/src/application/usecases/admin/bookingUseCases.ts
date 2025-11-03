@@ -9,12 +9,15 @@ import { BookingDetailResponseDTO, BookingTableResponseDTO } from '@application/
 import { BookingMapper } from '@application/mappers/BookingMapper';
 import { EnumDateChangeAction, EnumBookingHistoryAction } from '@constants/enum/bookingEnum';
 import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
+import { IPackageRepository } from '@domain/repositories/IPackageRepository';
+import { EnumPackageType } from '@constants/enum/packageEnum';
 export class BookingUseCases implements IBookingUseCases {
   constructor(
     private _bookingRepo: IBookingRepository,
     private _walletRepo: IWalletRepository,
+    private _packageRepo: IPackageRepository,
     private _notificationUseCases: INotificationUseCases
-  ) {}
+  ) { }
 
   async getAllBookings(filters: {
     page: number;
@@ -25,7 +28,7 @@ export class BookingUseCases implements IBookingUseCases {
     endDate?: string;
   }): Promise<{ bookings: BookingTableResponseDTO[]; total: number }> {
     const result = await this._bookingRepo.getAllBooking(filters);
- 
+
     return {
       bookings: result.bookings.map(BookingMapper.toAdminTableResponseDTO),
       total: result.total,
@@ -72,6 +75,24 @@ export class BookingUseCases implements IBookingUseCases {
       }
 
       const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
+
+      const pkg = await this._packageRepo.findById(booking.packageId.toString());
+      if (!pkg) {
+        throw new AppError(HttpStatus.NOT_FOUND, 'Package not found for this booking');
+      }
+
+
+      let travelersCount = booking.travelers.length
+
+      // increment available slots for GROUP package
+      if (pkg.packageType === EnumPackageType.GROUP) {
+        const incremented = await this._packageRepo.incrementSlots(pkg._id!.toString(), travelersCount);
+        if (!incremented) {
+          throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to update package slots');
+        }
+      }
+
+
 
       await this._notificationUseCases.sendNotification({
         role: EnumUserRole.USER,

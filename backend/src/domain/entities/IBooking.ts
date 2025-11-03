@@ -9,13 +9,15 @@ import {
 } from '@constants/enum/bookingEnum';
 import { EnumGender } from '@constants/enum/commonEnum';
 import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnum';
-
+import { EnumPackageType } from '@constants/enum/packageEnum';
 export interface ITraveler {
   fullName: string;
   age: number;
   gender: EnumGender;
-  idType: EnumIdType;
-  idNumber: string;
+  idType?: EnumIdType;
+  idNumber?: string;
+  pricePaid: number; // store the actual amount charged
+  type: 'adult' | 'child'; // determine from age at booking
 }
 
 export interface ITravelerHistory {
@@ -59,6 +61,7 @@ export interface IBooking {
   bookingCode: string;
   userId: Types.ObjectId | string;
   packageId: Types.ObjectId | string;
+  packageType?:EnumPackageType,
 
   travelers: ITraveler[];
   travelerHistory?: ITravelerHistory[];

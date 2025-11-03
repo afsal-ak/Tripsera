@@ -8,6 +8,8 @@ import { IPackageFilter } from '@domain/entities/IPackageFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { SortOrder } from 'mongoose';
 import { EnumPackageType } from '@constants/enum/packageEnum';
+import { AppError } from '@shared/utils/AppError';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {
@@ -64,12 +66,12 @@ export class PackageRepository implements IPackageRepository {
     if (filters.customFilter === EnumPackageType.CUSTOM) {
       matchStage.packageType = EnumPackageType.CUSTOM;
     } else if (filters.customFilter === EnumPackageType.NORMAL) {
-       matchStage.packageType = EnumPackageType.NORMAL;
+      matchStage.packageType = EnumPackageType.NORMAL;
 
     } else if (filters.customFilter === EnumPackageType.GROUP) {
-       matchStage.packageType = EnumPackageType.GROUP;
-       console.log('groip');
-       
+      matchStage.packageType = EnumPackageType.GROUP;
+      console.log('groip');
+
 
     }
     if (filters.startDate && filters.endDate) {
@@ -120,9 +122,9 @@ export class PackageRepository implements IPackageRepository {
           offer: 1,
           durationDays: 1,
           durationNights: 1,
-          availableSlots:1,
-          departureDates:1,
-          endDate:1,
+          availableSlots: 1,
+          departureDates: 1,
+          endDate: 1,
           'categoryDetails.name': 1,
           packageType: 1,
           isBlocked: 1,
@@ -423,4 +425,39 @@ export class PackageRepository implements IPackageRepository {
       throw new Error('Package not found');
     }
   }
+
+  async decrementSlots(packageId: string, slots: number): Promise<IPackage> {
+    const updated = await PackageModel.findOneAndUpdate(
+      { _id: packageId, availableSlots: { $gte: slots } },
+      { $inc: { availableSlots: -slots } },
+      { new: true }
+    ).lean();
+
+    if (!updated) {
+      const pkg = await PackageModel.findById(packageId).lean();
+      const available = pkg?.availableSlots ?? 0;
+      throw new AppError(
+        HttpStatus.CONFLICT,
+        `Booking failed: Only ${available} slot(s) available`
+      );
+    }
+
+    return updated as IPackage;
+  }
+
+
+  async incrementSlots(packageId: string, slots: number): Promise<IPackage> {
+    const updated = await PackageModel.findByIdAndUpdate(
+      packageId,
+      { $inc: { availableSlots: slots } },
+      { new: true }
+    ).lean();
+
+    if (!updated) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'Package not found');
+    }
+
+    return updated as IPackage;
+  }
+
 }

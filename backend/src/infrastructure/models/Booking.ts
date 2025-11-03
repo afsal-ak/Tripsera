@@ -2,6 +2,7 @@ import { Schema, model, Document } from 'mongoose';
 import { IBooking, ITraveler } from '@domain/entities/IBooking';
 import { EnumPaymentStatus, EnumPaymentMethod } from '@constants/enum/paymentEnum';
 import { EnumGender } from '@constants/enum/commonEnum';
+import { EnumPackageType } from '@constants/enum/packageEnum';
 import {
   EnumBookingStatus,
   EnumDateChangeAction,
@@ -24,11 +25,11 @@ const TravelerSchema = new Schema<ITraveler>(
     idType: {
       type: String,
       enum: Object.values(EnumIdType),
-      required: true,
+      required: false,
     },
-    idNumber: { type: String, required: true },
+    idNumber: { type: String, required: false },
   },
-  { _id: false }
+  { _id: true }
 );
 
 // History Schemas
@@ -101,6 +102,11 @@ const BookingSchema = new Schema<IBookingDocument>(
     bookingCode: { type: String, required: true, unique: true },
     userId: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
     packageId: { type: Schema.Types.ObjectId, ref: 'Package', required: true },
+  packageType: {
+      type: String,
+      enum: Object.values(EnumPackageType),
+      default: EnumPackageType.NORMAL,
+    },
 
     travelers: { type: [TravelerSchema], required: true },
     travelerHistory: { type: [TravelerHistorySchema], default: [] },

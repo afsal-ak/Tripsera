@@ -20,6 +20,8 @@ export abstract class BookingMapper {
         gender: t.gender,
         idType: t.idType,
         idNumber: t.idNumber,
+        pricePaid: t.pricePaid, // store the actual amount charged
+        type: t.type,
       })),
       totalAmount: booking.totalAmount,
       discount: booking.discount || 0,
@@ -60,6 +62,8 @@ export abstract class BookingMapper {
         gender: t.gender,
         idType: t.idType,
         idNumber: t.idNumber,
+       pricePaid: t.pricePaid, 
+        type: t.type,
       })),
       totalAmount: booking.totalAmount,
       discount: booking.discount || 0,
