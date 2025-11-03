@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { handleSearchUserForChat } from '@/services/user/profileService';
+import { handleSearchUser } from '@/services/admin/userService';
 import { createChatRoom } from '@/services/user/messageService';
 import { useNavigate } from 'react-router-dom';
 import type { RootState } from '@/redux/store';
@@ -30,7 +31,7 @@ export default function UserSearchForChat({ onUserSelected, onRoomCreated }: Pro
           return;
         }
         setLoading(true);
-        const response = await handleSearchUserForChat(searchQuery);
+        const response = await handleSearchUser(searchQuery);
         setUsers(response.data || []);
       } catch (error) {
         console.error('Failed to fetch users:', error);
