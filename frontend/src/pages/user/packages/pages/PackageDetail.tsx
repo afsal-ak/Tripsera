@@ -378,24 +378,24 @@ const PackageDetails = () => {
                       </span>
                     )}
                   </div>
-                  <span className="text-gray-500 text-sm">per adult</span>
+                  <span className="text-gray-500 text-sm">per Person</span>
                 </div>
 
                 {/* EXTRA DETAILS SECTION */}
                 <div className="space-y-4 mb-8">
                   {/* Adult Price */}
                   <div className="flex items-center justify-between py-3 border-b">
-                    <span className="text-sm font-medium text-gray-700">Adult Price</span>
+                    <span className="text-sm font-medium text-gray-700"> Price</span>
                     <span className="text-sm font-semibold text-gray-800">₹{pkg.price}</span>
                   </div>
 
                   {/* Child Price */}
-                  {pkg.pricePerChild && (
+                  {/* {pkg.pricePerChild && (
                     <div className="flex items-center justify-between py-3 border-b">
                       <span className="text-sm font-medium text-gray-700">Child Price</span>
                       <span className="text-sm font-semibold text-gray-800">₹{pkg.pricePerChild}</span>
                     </div>
-                  )}
+                  )} */}
 
                   {/* Package Type */}
                   <div className="flex items-center justify-between py-3 border-b">

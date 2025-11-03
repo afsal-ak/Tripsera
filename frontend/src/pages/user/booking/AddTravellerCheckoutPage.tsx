@@ -430,6 +430,7 @@ const AddTravellerCheckoutPage = () => {
                       age: 0,
                       gender: 'male',
                       idType: undefined,
+                      isMainTraveler:false,
                       idNumber: '',
                     })
                   }

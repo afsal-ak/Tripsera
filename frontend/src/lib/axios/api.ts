@@ -54,6 +54,62 @@ api.interceptors.request.use(
 
 // Response interceptor
 
+// api.interceptors.response.use(
+//   (response) => response,
+//   async (error: AxiosError) => {
+//     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+//     const status = error.response?.status;
+//     const message = (error.response?.data as any)?.message ?? '';
+//     const url = originalRequest.url ?? '';
+
+//     //  Handle blocked user
+//     if (
+//       url.startsWith('/user') &&
+//       status === HttpStatus.FORBIDDEN &&
+//       message.toLowerCase().includes('blocked')
+//     ) {
+//       localStorage.removeItem('accessToken');
+//       toast.error('You have been blocked by the admin.');
+//       return Promise.reject(error);
+//     }
+
+//     //  Handle token refresh
+//     if (
+//       status === HttpStatus.UNAUTHORIZED &&
+//       !originalRequest._retry &&
+//       !url.includes('/login') &&
+//       !url.includes('/refresh-token')
+//     ) {
+//       originalRequest._retry = true;
+
+//       const { tokenKey, refreshEndpoint } = getAuthEndpoints(url);
+
+//       try {
+//         const res = await axios.post(
+//           `${import.meta.env.VITE_API_BASE_URL}${refreshEndpoint}`,
+//           {},
+//           { withCredentials: true }
+//         );
+
+//         const { accessToken } = res.data as { accessToken: string };
+//         if (!accessToken) throw new Error('No access token received');
+
+//         localStorage.setItem(tokenKey, accessToken);
+//         originalRequest.headers = originalRequest.headers || {};
+//         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
+//         return api(originalRequest);
+//       } catch (refreshError) {
+//         localStorage.removeItem(tokenKey);
+//         // No redirect here; let your ProtectedRoute handle it
+//         console.warn('Session expired — ProtectedRoute will handle redirect.');
+//         return Promise.reject(refreshError);
+//       }
+//     }
+
+//     return Promise.reject(error);
+//   }
+// );
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -62,18 +118,22 @@ api.interceptors.response.use(
     const message = (error.response?.data as any)?.message ?? '';
     const url = originalRequest.url ?? '';
 
-    //  Handle blocked user
+    // Handle blocked user
     if (
       url.startsWith('/user') &&
       status === HttpStatus.FORBIDDEN &&
       message.toLowerCase().includes('blocked')
     ) {
-      localStorage.removeItem('accessToken');
       toast.error('You have been blocked by the admin.');
+
+      localStorage.removeItem('accessToken');
+
+      // Redirect to login
+      setTimeout(() => (window.location.href = "/login"), 1000);
       return Promise.reject(error);
     }
 
-    //  Handle token refresh
+    // Handle token refresh
     if (
       status === HttpStatus.UNAUTHORIZED &&
       !originalRequest._retry &&
@@ -101,8 +161,10 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem(tokenKey);
-        // No redirect here; let your ProtectedRoute handle it
-        console.warn('Session expired — ProtectedRoute will handle redirect.');
+        toast.error('Session expired. Please login again.');
+
+        // Redirect to login
+        window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }

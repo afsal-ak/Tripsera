@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import { ChangeTravelDate } from './ChangeTravelDate';
 import PackageDetailPickUp from '../packages/pages/PackageDetailPickUp';
-import {BookingHistoryCard} from '@/components/booking/BookingHistoryCard';
+import { BookingHistoryCard } from '@/components/booking/BookingHistoryCard';
 const BookingDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -605,101 +605,128 @@ const BookingDetailPage = () => {
                 </div>
               </CardContent>
             </Card>
-            <div>
-              {booking &&
-                booking.bookingStatus !== "cancelled" &&
-                booking.bookingStatus !== "confirmed" &&
-                new Date(booking.travelDate!) > new Date() && (
-                  <ChangeTravelDate
-                    booking={booking}
-                    handleChangeTravelDate={handleChangeTravelDate}
-                  />
-                )}
+            <div className="space-y-4 mt-6">
+              {/* Retry Payment */}
+              {(() => {
+                const now = new Date();
+                const travelDate = booking?.travelDate
+                  ? new Date(booking.travelDate)
+                  : null;
+                const hasPaymentIssue =
+                  booking?.paymentStatus === "pending" ||
+                  booking?.paymentStatus === "failed";
 
-              {/* Action Buttons */}
-              <div className="space-y-4 mt-6">
-                {/* Retry Payment */}
-                {(booking?.paymentStatus === "pending" ||
-                  booking?.paymentStatus === "failed") && (
+                const isBeforeTravel = travelDate && now < travelDate; // can't retry after travel date
+
+                //  Show retry if payment failed/pending and travel not started yet
+                if (hasPaymentIssue && isBeforeTravel) {
+                  return (
                     <Button
                       onClick={() => setShowRetryModal(true)}
                       className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold text-lg rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
                     >
                       Retry Payment
                     </Button>
-                  )}
+                  );
+                }
+                return null;
+              })()}
 
-                {/* Add Traveller */}
-                <Button
-                  onClick={handleAddTraveller}
-                  className="w-full py-4 text-lg font-bold bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 hover:from-blue-600 hover:via-indigo-700 hover:to-purple-700 text-white rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-                >
-                  + Add Traveller
-                </Button>
+              {/* Add Traveller */}
+              {(() => {
+                const now = new Date();
+                const endDate = pkg?.endDate ? new Date(pkg.endDate) : null;
+                const departureDate = booking?.travelDate
+                  ? new Date(booking.travelDate)
+                  : null;
 
-                {/* Cancel Booking */}
-                {booking?.bookingStatus !== "cancelled" &&
-                  new Date(booking?.travelDate!) > new Date() && (
-                    <Dialog open={open} onOpenChange={setOpen}>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="destructive"
-                          className="w-full py-3 bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-700 hover:to-red-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
-                        >
+                const isPast =
+                  (endDate && now > endDate) || (departureDate && now > departureDate);
+
+                const isGroup = pkg?.packageType === "group";
+                const isSlotsFull =
+                  isGroup && pkg?.availableSlots !== undefined && pkg.availableSlots <= 0;
+
+                const isBookingValid =
+                  booking?.paymentStatus === "paid" ||
+                  booking?.paymentStatus === "failed"; // allow add if paid or failed (you can adjust)
+
+                // Show only if trip not yet ended/departed AND slots available (if group) AND booking valid
+                if (!isPast && !isSlotsFull && isBookingValid) {
+                  return (
+                    <Button
+                      onClick={handleAddTraveller}
+                      className="w-full py-4 text-lg font-bold bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 hover:from-blue-600 hover:via-indigo-700 hover:to-purple-700 text-white rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                    >
+                      + Add Traveller
+                    </Button>
+                  );
+                }
+
+                return null;
+              })()}
+
+              {/* Cancel Booking */}
+              {booking?.bookingStatus !== "cancelled" &&
+                new Date(booking?.travelDate!) > new Date() && (
+                  <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        className="w-full py-3 bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-700 hover:to-red-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+                      >
+                        Cancel Booking
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="rounded-2xl p-6 bg-white">
+                      <div className="space-y-4">
+                        <h3 className="text-xl font-semibold text-gray-800">
                           Cancel Booking
-                        </Button>
-                      </DialogTrigger>
-
-                      <DialogContent className="rounded-2xl p-6 bg-white">
-                        <div className="space-y-4">
-                          <h3 className="text-xl font-semibold text-gray-800">
-                            Cancel Booking
-                          </h3>
-                          <p className="text-gray-600">
-                            Please provide a reason for cancellation:
-                          </p>
-                          <Textarea
-                            rows={4}
-                            value={cancelReason}
-                            onChange={(e) => setCancelReason(e.target.value)}
-                            placeholder="Enter your reason for cancellation..."
-                            className="w-full border-gray-200 focus:ring-2 focus:ring-red-500 rounded-lg"
-                          />
-                          <div className="flex gap-3 pt-2">
-                            <Button
-                              variant="outline"
-                              onClick={() => setOpen(false)}
-                              className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-100 rounded-lg"
-                            >
-                              Keep Booking
-                            </Button>
-                            <Button
-                              onClick={handleCancel}
-                              variant="destructive"
-                              className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
-                            >
-                              Confirm Cancel
-                            </Button>
-                          </div>
+                        </h3>
+                        <p className="text-gray-600">
+                          Please provide a reason for cancellation:
+                        </p>
+                        <Textarea
+                          rows={4}
+                          value={cancelReason}
+                          onChange={(e) => setCancelReason(e.target.value)}
+                          placeholder="Enter your reason for cancellation..."
+                          className="w-full border-gray-200 focus:ring-2 focus:ring-red-500 rounded-lg"
+                        />
+                        <div className="flex gap-3 pt-2">
+                          <Button
+                            variant="outline"
+                            onClick={() => setOpen(false)}
+                            className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-100 rounded-lg"
+                          >
+                            Keep Booking
+                          </Button>
+                          <Button
+                            onClick={handleCancel}
+                            variant="destructive"
+                            className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
+                          >
+                            Confirm Cancel
+                          </Button>
                         </div>
-                      </DialogContent>
-                    </Dialog>
-                  )}
-              </div>
-
-
-              {booking?.bookingStatus !== 'cancelled' &&
-                new Date(booking?.travelDate!) <= new Date() && (
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex items-start gap-2">
-                      <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-600">
-                        This booking cannot be cancelled as the travel date has passed.
-                      </p>
-                    </div>
-                  </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 )}
+
             </div>
+            {booking?.bookingStatus !== 'cancelled' &&
+              new Date(booking?.travelDate!) <= new Date() && (
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-gray-600">
+                      This booking cannot be cancelled as the travel date has passed.
+                    </p>
+                  </div>
+                </div>
+              )}
           </div>
         </div>
 

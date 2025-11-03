@@ -43,13 +43,13 @@ const CreateCustomPackagePage = () => {
       //  use response.data directly to reset form
       reset({
         price: data.budget || 0,
-        // startDate: data.startDate
-        //   ? new Date(data.startDate).toISOString().split("T")[0]
-        //   : "",
+        
         durationDays: data.days || 0,
         durationNights: data.nights || 0,
         included: [''],
-
+        ageOfAdult:18,
+        ageOfChild:5,
+        
         notIncluded: [''],
         itinerary: [
           {
@@ -230,7 +230,7 @@ const CreateCustomPackagePage = () => {
             {/* Title */}
             <div>
               <label className="block font-medium">Title</label>
-              <input {...register('title')} className="border p-2 w-full rounded" />
+              <input maxLength={20} {...register('title')} className="border p-2 w-full rounded" />
               {errors.title && <p className="text-red-500">{errors.title.message}</p>}
             </div>
 
@@ -261,83 +261,13 @@ const CreateCustomPackagePage = () => {
               />
               {errors.category && <p className="text-red-500">{errors.category.message}</p>}
             </div>
-            <div className="grid grid-cols-3 gap-6 bg-white p-6 rounded-2xl shadow-md">
-              {/* Age Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
-                  Age Configuration
-                </h3>
+               <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+                Duration
+              </h3>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Minimum Age of Adult
-                  </label>
-                  <input
-                    type="number"
-                    {...register('ageOfAdult', { valueAsNumber: true })}
-                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
-                  />
-                  {errors.ageOfAdult && (
-                    <p className="text-red-500 text-sm mt-1">{errors.ageOfAdult.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Minimum Age of Child
-                  </label>
-                  <input
-                    type="number"
-                    {...register('ageOfChild', { valueAsNumber: true })}
-                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
-                  />
-                  {errors.ageOfChild && (
-                    <p className="text-red-500 text-sm mt-1">{errors.ageOfChild.message}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Price Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
-                  Pricing Details
-                </h3>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Price Per Person
-                  </label>
-                  <input
-                    type="number"
-                    {...register('price', { valueAsNumber: true })}
-                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
-                  />
-                  {errors.price && (
-                    <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Price Per Child
-                  </label>
-                  <input
-                    type="number"
-                    {...register('pricePerChild', { valueAsNumber: true })}
-                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
-                  />
-                  {errors.pricePerChild && (
-                    <p className="text-red-500 text-sm mt-1">{errors.pricePerChild.message}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Duration Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
-                  Duration
-                </h3>
-
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Days */}
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">
                     Days
@@ -352,6 +282,7 @@ const CreateCustomPackagePage = () => {
                   )}
                 </div>
 
+                {/* Nights */}
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">
                     Nights
@@ -366,6 +297,19 @@ const CreateCustomPackagePage = () => {
                   )}
                 </div>
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Price Per Person
+              </label>
+              <input
+                type="number"
+                {...register('price', { valueAsNumber: true })}
+                className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+              />
+              {errors.price && (
+                <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
+              )}
             </div>
 
             {/* Price & duration */}

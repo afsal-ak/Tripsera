@@ -42,7 +42,7 @@ export default function AddPackageForm() {
       title: '',
       description: '',
       price: 0,
-      pricePerChild: 0,
+      pricePerChild: 1000,
       durationDays: 1,
       durationNights: 0,
       startDate: '',
@@ -123,7 +123,7 @@ export default function AddPackageForm() {
       const form = new FormData();
 
       croppedImages.forEach((file) => form.append('images', file));
-
+      setValue('pricePerChild',data.price)
       Object.entries(data).forEach(([key, value]) => {
         if (key === 'images') return;
 
@@ -326,83 +326,16 @@ export default function AddPackageForm() {
               </div>
             )}
 
-            <div className="grid grid-cols-3 gap-6 bg-white p-6 rounded-2xl shadow-md">
-              {/* Age Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
-                  Age Configuration
-                </h3>
+            {/* Age Section */}
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Minimum Age of Adult
-                  </label>
-                  <input
-                    type="number"
-                    {...register('ageOfAdult', { valueAsNumber: true })}
-                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
-                  />
-                  {errors.ageOfAdult && (
-                    <p className="text-red-500 text-sm mt-1">{errors.ageOfAdult.message}</p>
-                  )}
-                </div>
+            {/* Duration Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
+                Duration
+              </h3>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Minimum Age of Child
-                  </label>
-                  <input
-                    type="number"
-                    {...register('ageOfChild', { valueAsNumber: true })}
-                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
-                  />
-                  {errors.ageOfChild && (
-                    <p className="text-red-500 text-sm mt-1">{errors.ageOfChild.message}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Price Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
-                  Pricing Details
-                </h3>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Price Per Person
-                  </label>
-                  <input
-                    type="number"
-                    {...register('price', { valueAsNumber: true })}
-                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
-                  />
-                  {errors.price && (
-                    <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Price Per Child
-                  </label>
-                  <input
-                    type="number"
-                    {...register('pricePerChild', { valueAsNumber: true })}
-                    className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
-                  />
-                  {errors.pricePerChild && (
-                    <p className="text-red-500 text-sm mt-1">{errors.pricePerChild.message}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Duration Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">
-                  Duration
-                </h3>
-
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Days */}
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">
                     Days
@@ -417,6 +350,7 @@ export default function AddPackageForm() {
                   )}
                 </div>
 
+                {/* Nights */}
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">
                     Nights
@@ -432,6 +366,20 @@ export default function AddPackageForm() {
                 </div>
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Price Per Person
+              </label>
+              <input
+                type="number"
+                {...register('price', { valueAsNumber: true })}
+                className="border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 rounded-lg p-2 w-full"
+              />
+              {errors.price && (
+                <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
+              )}
+            </div>
+
 
             {/* Dates */}
             {/* <div className="grid grid-cols-2 gap-4">

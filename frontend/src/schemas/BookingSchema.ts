@@ -44,7 +44,7 @@ export const TravelerSchema = z
   });
 export const BookingSchema = z.object({
   packageId: z.string().min(1, 'Package ID is required'),
-
+  packageType:z.string().min(1, 'Package Type is required'),
   travelDate: z.string().refine(
     (date) => {
       const selected = new Date(date);
@@ -104,10 +104,12 @@ export const BookingSchema = z.object({
 
 export type BookingFormSchema = z.infer<typeof BookingSchema>;
 
+
  
 export const TravelerBookingSchema = z.object({
   packageId: z.string().min(1, 'Package ID is required'),
   bookingId: z.string().min(1, 'bookingId ID is required'),
+  packageType:z.string().min(1, 'Package Type is required'),
 
   travelDate: z.string().refine(
     (date) => {
@@ -147,4 +149,3 @@ export const TravelerBookingSchema = z.object({
 });
 
 export type TravelerBookingFormSchema = z.infer<typeof TravelerBookingSchema>;
-

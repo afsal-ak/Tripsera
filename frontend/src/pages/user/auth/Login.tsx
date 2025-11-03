@@ -49,7 +49,7 @@ const Login = () => {
         {/* Left Side */}
         <div className="hidden md:flex md:w-1/2 bg-orange items-center justify-center p-8">
           <div className="text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">Welcome Back to Picnigo</h2>
+            <h2 className="text-3xl font-bold mb-4">Welcome Back to Tripsera</h2>
             <p className="text-base leading-relaxed">
               Discover unforgettable journeys, explore breathtaking destinations, and turn your
               travel dreams into reality. Your next adventure starts here!
@@ -66,7 +66,7 @@ const Login = () => {
               handleSubmit();
             }}
           >
-            <h2 className="text-2xl font-bold text-orange mb-6 text-center">Login to Picnigo</h2>
+            <h2 className="text-2xl font-bold text-orange mb-6 text-center">Login to Tripsera</h2>
 
             {(localError || error) && (
               <p className="text-sm text-red-500 mb-4 text-center">{localError || error}</p>

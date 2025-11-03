@@ -20,7 +20,11 @@ import { Button } from '@/components/Button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/Label';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, Plane, Plus, Minus, CreditCard, Wallet, Zap, Check } from 'lucide-react';
+import {
+  CheckCircle, Plane, Plus, Minus,
+  CreditCard, Wallet, Zap, Check,
+  MapPin, Clock, Users, Ticket
+} from 'lucide-react';
 import { toast } from 'sonner';
 import type { IPackage } from '@/types/IPackage';
 import { cn } from '@/lib/utils';
@@ -114,8 +118,6 @@ const CheckoutPage = () => {
     setCouponError('');
   };
 
-  //console.log(localStorage.getItem('user'), 'reduc user info')
-  console.log(couponCode, couponDiscount, 'coupon in payment');
   useEffect(() => {
     const loadPackage = async () => {
       if (!id) {
@@ -125,6 +127,7 @@ const CheckoutPage = () => {
         const data = await fetchPackgeById(id);
 
         setPackageData(data as IPackage);
+
       } catch (error) {
         console.error('Failed to fetch package details', error);
       }
@@ -145,13 +148,14 @@ const CheckoutPage = () => {
       packageId: id ?? '',
       travelDate: '',
       // travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
-      travelers: [{ fullName: '', age: 0, gender: 'male', idType: undefined, idNumber: '' }],
+      travelers: [{ fullName: '', age: 0, gender: 'male', idType: 'aadhaar', idNumber: '' }],
       contactDetails: {
         name: userData?.fullName || '',
         phone: userData?.phone ? String(userData.phone) : '',
         alternatePhone: '',
         email: userData?.email || '',
       },
+
       couponCode: '',
       discount: 0,
       totalAmount: 0,
@@ -159,6 +163,7 @@ const CheckoutPage = () => {
       amountPaid: 0,
       useWallet: true,
       paymentMethod: '',
+
     },
   });
 
@@ -202,6 +207,18 @@ const CheckoutPage = () => {
     setValue('amountPaid', amountToPay);
     setValue('couponCode', couponCode);
     setValue('discount', couponDiscount);
+    setValue('packageType',packageData?.packageType!)
+if (packageData?.departureDates) {
+  if (typeof packageData.departureDates === 'string') {
+    setValue('travelDate', packageData.departureDates);
+  } else if (packageData.departureDates instanceof Date) {
+    // Convert Date to yyyy-MM-dd string
+    const dateStr = packageData.departureDates.toISOString().split('T')[0];
+    setValue('travelDate', dateStr);
+  }
+} else {
+  setValue('travelDate', '');
+}
   }, [
     packageData?.finalPrice,
     travelers.length,
@@ -300,6 +317,17 @@ const CheckoutPage = () => {
       toast.error(err?.response?.data?.message || 'Payment failed.');
     }
   };
+  // const minAgeOfInfant = 0;
+  // const maxAgeOfInfant = packageData?.ageOfChild ? packageData.ageOfChild - 1 : 2; // infants below child age
+  // const minAgeOfChild = packageData?.ageOfChild ?? 2;
+  // const maxAgeOfChild = packageData?.ageOfAdult ? packageData.ageOfAdult - 1 : 11;
+  // const minAgeOfAdult = packageData?.ageOfAdult ?? 12;
+
+  // const getTravelerPrice = (age: number) => {
+  //   if (age >= minAgeOfAdult) return packageData?.price ?? packageData?.finalPrice ?? 0; // adult price
+  //   if (age >= minAgeOfChild) return packageData?.pricePerChild ?? 0; // child price
+  //   return 0; // infant, no charge
+  // };
 
   // const onSubmit = (data: BookingFormSchema) => {
   //   console.log("Submitting...", data);
@@ -384,8 +412,10 @@ const CheckoutPage = () => {
                 </div>
               </CardContent>
             </Card>
+          
 
             <Card>
+
 
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Traveler Details</h3>
@@ -495,8 +525,8 @@ const CheckoutPage = () => {
                       fullName: '',
                       age: 0,
                       gender: 'male',
-                      idType: undefined,
-                      idNumber: '',
+                      idType: 'aadhaar',
+                       idNumber: '',
                     })
                   }
                   className="w-full text-orange border-orange hover:bg-orange hover:text-white"
@@ -505,26 +535,44 @@ const CheckoutPage = () => {
                 </Button>
               </CardContent>
             </Card>
+
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Travel Date</h3>
-                <Input
-                  type="date"
-                  min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
-                  {...register('travelDate')}
-                  max={
-                    packageData?.endDate
-                      ? new Date(packageData.endDate).toISOString().split('T')[0]
-                      : undefined
-                  }
-                  {...register('travelDate')}
-                  className="border-gray-300"
-                />
+
+                {packageData?.packageType === 'normal' ? (
+                  // Normal package → editable date
+                  <Input
+                    type="date"
+                    min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                    max={
+                      packageData?.endDate
+                        ? new Date(packageData.endDate).toISOString().split('T')[0]
+                        : undefined
+                    }
+                    {...register('travelDate')}
+                    className="border-gray-300"
+                  />
+                ) : (
+                  // Custom/departure package → show fixed date, read-only
+                  <Input
+                    type="text"
+                    value={
+                      packageData?.departureDates
+                        ? new Date(packageData.departureDates).toLocaleDateString()
+                        : ''
+                    }
+                    readOnly
+                    className="border-gray-300 bg-gray-100 cursor-not-allowed"
+                  />
+                )}
+
                 {errors.travelDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.travelDate.message}</p>
                 )}
               </CardContent>
             </Card>
+
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Coupon Code</h3>
@@ -668,37 +716,48 @@ const CheckoutPage = () => {
           </div>
 
 
+
           <div className="space-y-6">
-            <Card className="sticky top-4 overflow-hidden shadow-md rounded-xl">
-              {/* Full-width package image */}
-              <div className="relative h-44 w-full">
+            <Card className="sticky top-4 overflow-hidden shadow-lg rounded-2xl hover:shadow-xl transition-shadow duration-300">
+              {/* Package Image */}
+              <div className="relative h-48 w-full rounded-t-2xl overflow-hidden">
                 <img
                   src={packageData?.imageUrls?.[0]?.url || '/placeholder.jpg'}
                   alt={packageData?.title}
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                <div className="absolute bottom-3 left-4 text-white">
-                  <h3 className="text-xl font-semibold">{packageData?.title}</h3>
-                  <p className="text-sm opacity-90">{packageData?.location?.[0]?.name}</p>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h3 className="text-2xl font-bold">{packageData?.title}</h3>
+                  <p className="text-sm opacity-90 flex items-center gap-1">
+                    <MapPin className="w-4 h-4" /> {packageData?.location?.[0]?.name}
+                  </p>
                 </div>
+                {packageData?.availableSlots && (
+                  <div className="absolute top-3 right-3 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1">
+                    <Ticket className="w-3 h-3" /> {packageData.availableSlots} Slots
+                  </div>
+                )}
               </div>
 
-              <CardContent className="p-6">
-                {/* Duration & Details */}
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm text-gray-600">
-                    ⏱️ {packageData?.durationDays} Days / {packageData?.durationNights} Nights
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Start: {packageData?.startPoint}
-                  </p>
+              <CardContent className="p-6 space-y-4">
+                {/* Package Details */}
+                <div className="flex flex-col space-y-2 text-sm text-gray-700">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-orange-500" />
+                    <span>{packageData?.durationDays} Days / {packageData?.durationNights} Nights</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <MapPin className="w-4 h-4" />
+                    <span>Start: {packageData?.startPoint}</span>
+                  </div>
                 </div>
 
-                <Separator className="mb-4" />
+                <Separator />
 
                 {/* Booking Summary */}
-                <h3 className="text-lg font-semibold mb-3">Booking Summary</h3>
+                <h3 className="text-lg font-semibold mb-2">Booking Summary</h3>
 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
@@ -706,8 +765,10 @@ const CheckoutPage = () => {
                     <span>₹{packageData?.finalPrice?.toLocaleString() ?? '0'}</span>
                   </div>
 
-                  <div className="flex justify-between">
-                    <span>Travelers</span>
+                  <div className="flex justify-between items-center">
+                    <span className="flex items-center gap-1">
+                      <Users className="w-4 h-4" /> Travelers
+                    </span>
                     <span>× {travelers.length}</span>
                   </div>
 
@@ -727,7 +788,7 @@ const CheckoutPage = () => {
 
                   {(watch('paymentMethod') === 'wallet' ||
                     watch('paymentMethod') === 'wallet+razorpay') && (
-                      <div className="flex justify-between">
+                      <div className="flex justify-between text-blue-600">
                         <span>Wallet Used</span>
                         <span>- ₹{walletUsed.toLocaleString()}</span>
                       </div>
@@ -743,9 +804,9 @@ const CheckoutPage = () => {
 
                 <Button
                   type="submit"
-                  className="mt-6 w-full bg-gradient-to-r from-orange to-red-500 hover:opacity-90 text-white py-3 text-lg rounded-lg shadow-sm"
+                  className="mt-6 w-full bg-gradient-to-r from-orange to-red-500 hover:opacity-90 text-white py-3 text-lg rounded-xl shadow-md flex items-center justify-center gap-2"
                 >
-                  <CheckCircle className="w-5 h-5 mr-2" /> Proceed to Pay
+                  <CheckCircle className="w-5 h-5" /> Proceed to Pay
                 </Button>
               </CardContent>
             </Card>

@@ -89,7 +89,7 @@ const Signup = () => {
       <div className="flex w-full max-w-5xl shadow-lg rounded-lg overflow-hidden bg-white">
         <div className="hidden md:flex md:w-1/2 bg-orange items-center justify-center p-8">
           <div className="text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">Join Picnigo Today</h2>
+            <h2 className="text-3xl font-bold mb-4">Join Tripsera Today</h2>
             <p className="text-base">
               Start your journey with us — explore amazing destinations, connect with fellow
               travelers, and book unforgettable experiences.

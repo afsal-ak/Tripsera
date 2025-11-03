@@ -10,7 +10,6 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   adminPhone,
   message = 'Hello! I need help with my booking.',
 }) => {
-  console.log(adminPhone, 'adiadnadmad');
   const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
 
   return (

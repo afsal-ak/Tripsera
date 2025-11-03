@@ -35,11 +35,11 @@ export interface IAdjustmentHistory {
 
 export interface IBookingHistory {
   action:
-    | 'traveler_removed'
-    | 'traveler_added'
-    | 'date_changed'
-    | 'status_changed'
-    | 'amount_changed';
+  | 'traveler_removed'
+  | 'traveler_added'
+  | 'date_changed'
+  | 'status_changed'
+  | 'amount_changed';
   oldValue?: any;
   newValue?: any;
   changedBy: string; // userId or "admin"
@@ -59,6 +59,8 @@ export interface IBooking {
     imageUrls: { url: string }[];
     //  location: PackageLocation[];
   };
+  packageType: string;
+
   userId: {
     _id: string;
     email: string;
