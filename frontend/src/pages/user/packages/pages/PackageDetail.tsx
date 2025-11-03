@@ -386,7 +386,7 @@ const PackageDetails = () => {
                   {/* Adult Price */}
                   <div className="flex items-center justify-between py-3 border-b">
                     <span className="text-sm font-medium text-gray-700"> Price</span>
-                    <span className="text-sm font-semibold text-gray-800">₹{pkg.price}</span>
+                    <span className="text-sm font-semibold text-gray-800">₹{pkg.finalPrice}</span>
                   </div>
 
                   {/* Child Price */}
