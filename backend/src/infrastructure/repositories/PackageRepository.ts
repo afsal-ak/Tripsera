@@ -274,7 +274,7 @@ export class PackageRepository implements IPackageRepository {
   async getHomeData(): Promise<IPackage[]> {
     const pkg = await PackageModel.find({
       isBlocked: false,
-      isCustom: false
+      packageType: { $ne: EnumPackageType.CUSTOM }, // exclude custom packages
     })
       .limit(4)
       .lean();
