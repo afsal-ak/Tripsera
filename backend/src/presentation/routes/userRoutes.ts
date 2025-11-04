@@ -269,9 +269,9 @@ router.patch(
 
 // WISHLIST ROUTES
 router.get(WISHLIST_ROUTES.GET_ALL, userAuthMiddleware, wishlistController.getAllWishlist);
-router.get(WISHLIST_ROUTES.CHECK, userAuthMiddleware, wishlistController.checkPackageInWishlist);
-router.post(WISHLIST_ROUTES.ADD, userAuthMiddleware, wishlistController.addToWishlist);
-router.delete(WISHLIST_ROUTES.DELETE, userAuthMiddleware, wishlistController.removeFromWishlist);
+router.get(WISHLIST_ROUTES.CHECK, optionalAuthMiddleware, wishlistController.checkPackageInWishlist);
+router.post(WISHLIST_ROUTES.ADD, optionalAuthMiddleware, wishlistController.addToWishlist);
+router.delete(WISHLIST_ROUTES.DELETE, optionalAuthMiddleware, wishlistController.removeFromWishlist);
 
 // COUPON ROUTES
 router.get(COUPON_ROUTES.GET_COUPONS, userAuthMiddleware, couponController.getActiveCoupons);
@@ -358,7 +358,7 @@ router.get(
 router.delete(BLOG_ROUTES.DELETE, userAuthMiddleware, blogController.deleteBlog);
 router.patch(BLOG_ROUTES.LIKE, userAuthMiddleware, blogController.likeBlog);
 router.patch(BLOG_ROUTES.UNLIKE, userAuthMiddleware, blogController.unLikeBlog);
-router.get(BLOG_ROUTES.BLOG_LIKE_LIST, userAuthMiddleware, blogController.getBlogLikeList);
+router.get(BLOG_ROUTES.BLOG_LIKE_LIST, optionalAuthMiddleware, blogController.getBlogLikeList);
 
 //REVIEW ROUTES
 

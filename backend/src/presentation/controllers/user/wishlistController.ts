@@ -27,14 +27,20 @@ export class WishlistController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const userId = getUserIdFromRequest(req);
+        let userId: string | undefined;
+      try {
+        userId = getUserIdFromRequest(req);
+      } catch (err) {
+        userId = undefined; // No token or invalid token
+      }
+
       const packageId = req.query.packageId as string;
       if (!packageId) {
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'packageId is required' });
         return;
       }
 
-      const result = await this._wishlistUseCases.checkPackageInWishlist(userId, packageId);
+      const result = await this._wishlistUseCases.checkPackageInWishlist(userId!, packageId);
       res.status(HttpStatus.OK).json({ result, message: 'Package check successful' });
     } catch (error: any) {
       next(error);

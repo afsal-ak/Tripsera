@@ -5,13 +5,13 @@ import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuth
 import { EnumUserRole } from '@constants/enum/userEnum';
 
 export class UserAuthController {
-  constructor(private _userAuthUseCases: IUserAuthUseCases) {}
+  constructor(private _userAuthUseCases: IUserAuthUseCases) { }
 
   preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email, username, password } = req.body;
       const referredReferralCode = req.query.referralCode as string;
-       await this._userAuthUseCases.preRegistration({
+      await this._userAuthUseCases.preRegistration({
         email,
         username,
         password,
@@ -131,9 +131,16 @@ export class UserAuthController {
 
   userLogout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      res.clearCookie('userRefreshToken', {
+      console.log('refrsh token logount');
+
+      // res.clearCookie('userRefreshToken', {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: 'none',
+      // });
+      res.cookie('userRefreshToken', {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: 'none',
       });
 
