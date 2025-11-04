@@ -2,16 +2,23 @@ import { useEffect, useState } from 'react';
 import { fetchUserCustomPackages } from '@/services/user/customPkgService';
 import PackageCard from '@/components/user/PackageCard';
 import type { IPackage } from '@/types/IPackage';
+import { usePaginationButtons } from '@/hooks/usePaginationButtons';
+import { useSearchParams } from 'react-router-dom';
 
 const UserCustomPackagesPage = () => {
   const [packages, setPackages] = useState<IPackage[]>([]);
-  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 6;
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '3', 10);
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ page: page.toString(), limit: limit.toString() });
+  };
   const loadPackages = async () => {
     try {
-      const res = await fetchUserCustomPackages(page, limit);
+      const res = await fetchUserCustomPackages(currentPage, limit);
       setPackages(res.data);
       setTotalPages(res.pagination.totalPages);
     } catch (err) {
@@ -21,8 +28,12 @@ const UserCustomPackagesPage = () => {
 
   useEffect(() => {
     loadPackages();
-  }, [page]);
-
+  }, [searchParams]);
+  const paginationButtons = usePaginationButtons({
+    currentPage,
+    totalPages,
+    onPageChange: handlePageChange,
+  });
   return (
     <div className="container mx-auto py-8">
       <h2 className="text-2xl font-bold mb-6">Your Custom Packages</h2>
@@ -35,29 +46,10 @@ const UserCustomPackagesPage = () => {
         )}
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-6 items-center gap-2">
-        <button
-          onClick={() => setPage((p) => Math.max(p - 1, 1))}
-          disabled={page === 1}
-          className="px-3 py-1.5 rounded border bg-orange text-white hover:bg-orange/90 disabled:bg-gray-200 disabled:text-gray-500"
-        >
-          Prev
-        </button>
-
-        <span className="px-2 text-sm">
-          Page <strong>{page}</strong> of <strong>{totalPages}</strong>
-        </span>
-
-        <button
-          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-          disabled={page === totalPages}
-          className="px-3 py-1.5 rounded border bg-orange text-white hover:bg-orange/90 disabled:bg-gray-200 disabled:text-gray-500"
-        >
-          Next
-        </button>
+       <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
+        {paginationButtons}
       </div>
-    </div>
+    </div >
   );
 };
 

@@ -26,7 +26,7 @@ const UserBookingPage = () => {
   const [loading, setLoading] = useState(false);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '10', 10);
+  const limit = parseInt(searchParams.get('limit') || '5', 10);
 
   const handlePageChange = (page: number) => {
     setSearchParams({ page: page.toString(), limit: limit.toString() });

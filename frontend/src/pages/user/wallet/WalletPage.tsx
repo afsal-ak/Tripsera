@@ -6,6 +6,7 @@ import type { IWalletTransaction } from '@/types/IWallet';
 import { Button } from '@/components/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Wallet } from 'lucide-react';
+
 const WalletPage = () => {
   const [balance, setBalance] = useState<number>(0);
   const [transactions, setTransactions] = useState<IWalletTransaction[]>([]);
@@ -14,7 +15,7 @@ const WalletPage = () => {
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const sort = (searchParams.get('sort') || 'newest') as 'newest' | 'oldest';
-  const limit = 10;
+  const limit = 5;
 
   const handlePageChange = (page: number) => {
     setSearchParams({
