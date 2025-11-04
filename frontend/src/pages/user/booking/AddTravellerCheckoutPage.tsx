@@ -198,6 +198,9 @@ const AddTravellerCheckoutPage = () => {
     setValue('amountPaid', amountToPay);
     setValue('couponCode', couponCode);
     setValue('discount', couponDiscount);
+
+    setValue('packageType', packageData?.packageType!)
+
   }, [
     packageData?.finalPrice,
     travelers.length,
@@ -430,7 +433,7 @@ const AddTravellerCheckoutPage = () => {
                       age: 0,
                       gender: 'male',
                       idType: undefined,
-                      isMainTraveler:false,
+                      // isMainTraveler:false,
                       idNumber: '',
                     })
                   }
