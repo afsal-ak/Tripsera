@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { Link ,useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, User, X, Bell, MessageCircle } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '@/redux/slices/userAuthSlice';
@@ -12,12 +12,16 @@ import { OptionsDropdown } from '../OptionsDropdown ';
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
- 
+
   const { isAuthenticated, accessToken, user } = useSelector((state: RootState) => state.userAuth);
-  const notificationUnread = useSelector((state: RootState) => state.notifications.unreadCount);
+  let notificationUnread=0
+  let totalChatUnread=0
+  if (isAuthenticated) {
+      notificationUnread = useSelector((state: RootState) => state.notifications.unreadCount);
 
-  const totalChatUnread = useTotalUnreadCount(EnumUserRole.USER);
+      totalChatUnread = useTotalUnreadCount(EnumUserRole.USER);
 
+  }
   useEffect(() => {
     if (!accessToken) {
       dispatch(logoutUser());
@@ -85,32 +89,32 @@ const Navbar = () => {
             </Link>
 
             {isAuthenticated ? (
-        <div className="relative hidden sm:flex items-center">
-          <OptionsDropdown
-            options={[
-              { label: 'My Account', value: 'profile' },
-              { label: 'Wishlist', value: 'wishlist' },
-              { label: 'Logout', value: 'logout', className: 'text-red-500' },
-            ]}
-            onSelect={(value) => {
-              if (value === 'profile') {
-                navigate('/account/profile'); // ✅ React Router navigation
-              } else if (value === 'wishlist') {
-                navigate('/account/wishlist'); // ✅
-              } else if (value === 'logout') {
-                dispatch(logoutUser());
-                toast.success('Logout successful');
-              }
-            }}
-            triggerElement={
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="w-10 h-10 rounded-full object-cover border cursor-pointer hover:ring-2 hover:ring-orange transition"
-              />
-            }
-          />
-        </div>
+              <div className="relative hidden sm:flex items-center">
+                <OptionsDropdown
+                  options={[
+                    { label: 'My Account', value: 'profile' },
+                    { label: 'Wishlist', value: 'wishlist' },
+                    { label: 'Logout', value: 'logout', className: 'text-red-500' },
+                  ]}
+                  onSelect={(value) => {
+                    if (value === 'profile') {
+                      navigate('/account/profile'); // ✅ React Router navigation
+                    } else if (value === 'wishlist') {
+                      navigate('/account/wishlist'); // ✅
+                    } else if (value === 'logout') {
+                      dispatch(logoutUser());
+                      toast.success('Logout successful');
+                    }
+                  }}
+                  triggerElement={
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover border cursor-pointer hover:ring-2 hover:ring-orange transition"
+                    />
+                  }
+                />
+              </div>
             ) : (
               <>
                 <Link to="/login">

@@ -37,6 +37,8 @@ export const loginUser = createAsyncThunk(
 // Logout
 export const logoutUser = createAsyncThunk('auth/logoutUser', async (_, { rejectWithValue }) => {
   try {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user'); 
     await handleLogout();
     return true;
   } catch (error: any) {

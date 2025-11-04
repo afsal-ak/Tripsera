@@ -127,6 +127,7 @@ api.interceptors.response.use(
       toast.error('You have been blocked by the admin.');
 
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
 
       // Redirect to login
       setTimeout(() => (window.location.href = "/login"), 1000);
@@ -138,7 +139,9 @@ api.interceptors.response.use(
       status === HttpStatus.UNAUTHORIZED &&
       !originalRequest._retry &&
       !url.includes('/login') &&
-      !url.includes('/refresh-token')
+      !url.includes('/refresh-token') &&
+      !url.includes('/home')// &&
+   //   !url.includes('/refresh-token')
     ) {
       originalRequest._retry = true;
 
@@ -164,7 +167,7 @@ api.interceptors.response.use(
         toast.error('Session expired. Please login again.');
 
         // Redirect to login
-        window.location.href = '/login';
+      setTimeout(() => (window.location.href = "/login"), 1000);
         return Promise.reject(refreshError);
       }
     }

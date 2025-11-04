@@ -51,6 +51,8 @@ export const handelChangePassword = async (token: string, password: string) => {
 
 export const handleLogout = async (): Promise<void> => {
   try {
+        localStorage.removeItem('accessToken');
+    localStorage.removeItem('user'); 
     await api.post('/user/logout', {}, { withCredentials: true });
   } catch (error: any) {
     throw new Error(error?.response?.data?.message || 'Logout failed');
