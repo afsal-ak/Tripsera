@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   User,
   Heart,
@@ -38,15 +38,25 @@ const menuItems = [
 ];
 
 const AccountSidebar = ({ isOpen, onToggle }: Props) => {
+  const location = useLocation();
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
 
   const toggleSubMenu = (label: string) => {
     setOpenSubMenu(openSubMenu === label ? null : label);
   };
 
+  // ✅ Automatically open submenu if current path matches any of its sub-items
+  useEffect(() => {
+    const matchedMenu = menuItems.find(
+      (item) =>
+        item.subItems &&
+        item.subItems.some((sub) => location.pathname.includes(sub.path))
+    );
+    setOpenSubMenu(matchedMenu ? matchedMenu.label : null);
+  }, [location.pathname]);
+
   return (
     <>
-      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
@@ -76,8 +86,10 @@ const AccountSidebar = ({ isOpen, onToggle }: Props) => {
                   <button
                     onClick={() => toggleSubMenu(label)}
                     className={cn(
-                      'flex items-center justify-between w-full p-2 rounded-md text-sm font-medium hover:bg-orange/10 hover:text-orange',
-                      openSubMenu === label && 'bg-orange text-white'
+                      'flex items-center justify-between w-full p-2 rounded-md text-sm font-medium transition-colors',
+                      openSubMenu === label
+                        ? 'bg-orange text-white'
+                        : 'hover:bg-orange/10 hover:text-orange'
                     )}
                   >
                     <span className="flex items-center gap-3">
@@ -91,16 +103,16 @@ const AccountSidebar = ({ isOpen, onToggle }: Props) => {
                     )}
                   </button>
 
-                  {/* Submenu */}
                   {openSubMenu === label && (
                     <ul className="ml-8 mt-2 space-y-1 border-l border-border pl-3">
                       {subItems.map((sub) => (
                         <li key={sub.path}>
                           <NavLink
                             to={`/account/${sub.path}`}
+                            end
                             className={({ isActive }) =>
                               cn(
-                                'block p-2 text-sm rounded-md',
+                                'block p-2 text-sm rounded-md transition-colors',
                                 isActive
                                   ? 'bg-orange text-white'
                                   : 'hover:bg-orange/10 hover:text-orange'
@@ -123,7 +135,7 @@ const AccountSidebar = ({ isOpen, onToggle }: Props) => {
                     to={`/account/${path}`}
                     className={({ isActive }) =>
                       cn(
-                        'flex items-center gap-3 p-2 rounded-md text-sm font-medium',
+                        'flex items-center gap-3 p-2 rounded-md text-sm font-medium transition-colors',
                         isActive
                           ? 'bg-orange text-white'
                           : 'hover:bg-orange/10 hover:text-orange'
