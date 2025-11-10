@@ -10,8 +10,8 @@ type Props = {
 const BlogCard = ({ blog, linkPrefix }: Props) => {
   const blogUrl = `${linkPrefix}/${blog.slug}`;
   const image =
-    blog.images && blog.images.length > 0
-      ? blog.images[0].url.replace('/upload/', '/upload/f_auto,q_auto/')
+    blog.coverImage
+      ? blog.coverImage.url.replace('/upload/', '/upload/f_auto,q_auto/')
       : 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=500&fit=crop';
 
   const formatDate = (date?: Date) => {

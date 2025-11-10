@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Heart, MessageCircle, Send, Bookmark, Verified } from 'lucide-react';
 import {
   fetchBlogBySlug,
   handleLikeBlog,
@@ -7,69 +6,64 @@ import {
   handleDeleteBlog,
   fetchBlogLikeList,
 } from '@/services/user/blogService';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import type { IBlog } from '@/types/IBlog';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css';
-import { Navigation, Pagination } from 'swiper/modules';
+import { Heart, Calendar, ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { OptionsDropdown } from '@/components/OptionsDropdown ';
-import ReportForm from '../report/ReportForm';
-import type { IReportedType, ISelectedReport } from '@/types/IReport';
-import Modal from '@/components/ui/Model';
 import UserList from '@/components/UserList';
 import type { UserBasicInfo } from '@/types/UserBasicInfo';
-import CommentModal from '@/components/CommentModal';
+import CommentSection from '@/components/CommentSection';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import type { IReportedType } from '@/types/IReport';
+
 const UserBlogDetails = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-   const [liked, setLiked] = useState(false);
-   const [blogData, setBlogData] = useState<IBlog | null>(null);
+  const [liked, setLiked] = useState(false);
+  const [blogData, setBlogData] = useState<IBlog | null>(null);
   const [likesCount, setLikesCount] = useState(0);
   const [likedUsers, setLikedUsers] = useState<UserBasicInfo[]>([]);
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const [selectedReport, setSelectedReport] = useState<ISelectedReport | null>(null);
-  const [showReportModal, setShowReportModal] = useState(true);
-  const [showCommentModal, setShowCommentModal] = useState(false);
-
+  //  Load blog details
   useEffect(() => {
     const loadBlogDetail = async () => {
       if (!slug) return;
 
       try {
         const response = await fetchBlogBySlug(slug);
-        console.log(response, 'response fr');
         setBlogData(response.blog);
         setLiked(response.blog?.isLiked || false);
         setLikesCount(response.blog?.likes?.length || 0);
+
         if (response.blog?._id) {
- 
           const likesResponse = await fetchBlogLikeList(response.blog._id);
           setLikedUsers(likesResponse);
-         }
-      } catch (error: any) {
+        }
+      } catch (error) {
         toast.error('Failed to fetch blog details');
       }
     };
 
     loadBlogDetail();
   }, [slug]);
+
+  // ✅ Delete blog
   const handleDelete = async () => {
-    if (!blogData?._id) {
-      return;
-    }
+    if (!blogData?._id) return;
     try {
       await handleDeleteBlog(blogData._id);
+      toast.success('Blog deleted successfully');
       navigate('/account/my-blogs');
-      toast.success('blog deleted successfully');
-    } catch (error: any) {
-      toast.error('Failed to unlike post');
+    } catch (error) {
+      toast.error('Failed to delete blog');
     }
   };
 
+  //  Like/unlike
   const toggleLike = async () => {
     if (!blogData?._id) return;
 
@@ -83,191 +77,194 @@ const UserBlogDetails = () => {
         setLiked(true);
         setLikesCount((prev) => prev + 1);
       }
-    } catch (error: unknown) {
-      console.error('Like/Unlike failed', error);
+    } catch (error) {
       toast.error('Please log in');
     }
   };
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
-    }
-    return num.toString();
-  };
-
-  const handleNavigateUseProfile = (username: string) => {
-    navigate(`/profile/${username}`);
-  };
   const options = [
-    { label: 'Edit', value: 'edit', className: 'text-black-500' },
+    { label: 'Edit', value: 'edit', className: 'text-blue-500' },
     { label: 'Delete', value: 'delete', className: 'text-red-500' },
-    
   ];
 
-  function handleOptionSelect(value: string, _id: string, reportedType: IReportedType) {
-    console.log('Selected option:', value);
-    // Add your logic here based on value
-    if (value == 'delete') {
-      handleDelete();
-    } else if (value === 'edit') {
-      navigate(`/account/my-blogs/edit/${blogData?._id}`);
-    }
-  }
+  
   return (
-    <div className="min-h-screen bg-bg px-4 py-6">
-      {blogData && (
-        <article className="bg-white shadow-md rounded-xl overflow-hidden max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b">
-            <div
-              onClick={() => handleNavigateUseProfile(blogData.author.username)}
-              className="flex items-center space-x-3"
-            >
-              <img
-                src={blogData.author?.profileImage?.url || '/profile-default.jpg'}
-                alt={blogData.author?.username}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-orange/30"
-              />
-              <div>
-                <div className="flex items-center space-x-1">
-                  <span className="text-sm font-semibold text-darkText">
-                    {blogData.author?.username}
-                  </span>
-                  <Verified className="w-4 h-4 text-orange" />
-                </div>
-                
-              </div>
+    <div className="relative max-w-[90vw] mx-auto mt-6 rounded-2xl overflow-hidden">
+      {/* ===== COVER IMAGE ===== */}
+      <div className="relative w-full h-[75vh]">
+        <img
+          src={blogData?.coverImage.url}
+          alt={blogData?.title}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+        {/* Back button */}
+        <div className="absolute top-4 left-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 bg-black/40 hover:bg-black/60 text-white px-3 py-1.5 rounded-full transition"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
+        </div>
+
+        {/*  Edit + Delete buttons in top-right corner */}
+        <div className="absolute top-4 right-4 flex items-center gap-3">
+          {/* Edit Button */}
+          <button
+            onClick={() => navigate(`/account/my-blogs/edit/${blogData?._id}`)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full transition"
+          >
+            <Edit size={16} />
+            Edit
+          </button>
+
+          {/* Delete Button */}
+          <ConfirmDialog
+            title="Are you sure you want to delete this blog?"
+            actionLabel="Delete"
+            onConfirm={handleDelete}
+          >
+            <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-700 hover:bg-red-800 text-white transition">
+              <Trash2 size={16} /> Delete
+            </button>
+          </ConfirmDialog>
+        </div>
+
+
+        {/* Title and details */}
+        <div className="absolute bottom-10 left-10 text-white space-y-4 max-w-3xl">
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-5xl font-bold leading-tight drop-shadow-md break-words"
+          >
+            {blogData?.title}
+          </motion.h1>
+
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200">
+            {blogData?.author && (
+              <Link
+                to={`/profile/${blogData.author.username}`}
+                className="flex items-center gap-2 hover:underline hover:text-white"
+              >
+                <img
+                  src={blogData.author?.profileImage?.url || '/default-avatar.png'}
+                  alt={blogData.author.username}
+                  className="w-8 h-8 rounded-full object-cover border border-white"
+                />
+                <span>{blogData.author.username}</span>
+              </Link>
+            )}
+            <div className="flex items-center gap-2">
+              <Calendar size={16} />
+              <span>{new Date(blogData?.createdAt!).toDateString()}</span>
             </div>
-            <OptionsDropdown
-              options={options}
-              onSelect={(value) => handleOptionSelect(value, blogData?._id!, 'blog')} triggerElement={undefined}            />
           </div>
 
-          {/* Images */}
-          {blogData.images?.length! > 0 && (
-            <Swiper
-              spaceBetween={10}
-              slidesPerView={1}
-              navigation
-              pagination={{ clickable: true }}
-              modules={[Navigation, Pagination]}
-              className="w-full"
+          {/* Likes */}
+          <div className="flex items-center gap-3 mt-3">
+            <button
+              onClick={toggleLike}
+              className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-white transition"
             >
-              {blogData.images!.map((img, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    src={img.url}
-                    alt={`Slide ${index + 1}`}
-                    className="w-full h-[400px] object-cover"
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          )}
-
-          {/* Actions */}
-          <div className="p-4">
-            <div className="flex justify-between mb-2">
-              <div className="flex items-center space-x-4">
-                <button onClick={toggleLike}>
-                  <Heart
-                    className={`w-6 h-6 transition-all duration-200 ${
-                      liked
-                        ? 'fill-red-500 text-red-500'
-                        : 'text-darkText hover:text-muted-foreground'
-                    }`}
-                  />
-                </button>
-
-                {/* <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" /> */}
-                <button onClick={() => setShowCommentModal(true)}>
-                  <MessageCircle className="w-6 h-6 text-darkText hover:text-muted-foreground" />
-                </button>
-
-                <Send className="w-6 h-6 text-darkText hover:text-muted-foreground" />
-              </div>
-              <Bookmark className="w-6 h-6 text-darkText hover:text-muted-foreground" />
-            </div>
-
-            {/* Likes */}
-            <div
-              className="text-sm font-semibold text-darkText mb-2 cursor-pointer hover:underline"
+              <Heart size={18} className={liked ? 'fill-red-500 text-red-500' : 'text-white'} />
+              <span>{likesCount} Likes</span>
+            </button>
+            <button
               onClick={() => setIsLikesModalOpen(true)}
+              className="text-sm underline hover:text-gray-300"
             >
-              {formatNumber(likesCount)} likes
-            </div>
-
-            <UserList
-              title="Liked by"
-              users={likedUsers}
-              isOpen={isLikesModalOpen}
-              onClose={() => setIsLikesModalOpen(false)}
-            />
-            {showCommentModal && (
-              <Modal onClose={() => setShowCommentModal(false)}>
-                <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
-                  <div className="flex justify-between items-center p-3 border-b">
-                    <h2 className="text-lg font-semibold">Comments</h2>
-                    <button
-                      onClick={() => setShowCommentModal(false)}
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              </Modal>
-            )}
-
-            {/* Content */}
-            <div className="mb-3">
-              <span className="font-semibold text-sm text-darkText mr-2">
-                {blogData.author?.username}
-              </span>
-              <span className="text-lg text-darkText">{blogData.title}</span>
-              <br />
-
-              <span className="text-sm text-darkText">{blogData.content}</span>
-            </div>
-
-            {/* Tags */}
-            {blogData.tags!.length > 0 && (
-              <div className="mb-2">
-                <span className="text-sm text-orange">
-                  {blogData.tags!.map((tag, i) => (
-                    <span key={i} className="mr-2">
-                      #{tag}
-                    </span>
-                  ))}
-                </span>
-              </div>
-            )}
-
-            {/* Date */}
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">
-              {new Date(blogData?.createdAt!).toLocaleDateString()}
-            </div>
+              View liked users
+            </button>
           </div>
-          <CommentModal
-            isOpen={showCommentModal}
-            onClose={() => setShowCommentModal(false)}
-            imageUrl={blogData.images?.[0]?.url!}
-            parentId={blogData._id!}
-            parentType="blog"
-          />
-          {/* Comments Modal */}
-        </article>
-      )}
-      {showReportModal && selectedReport && (
-        <Modal onClose={() => setShowReportModal(false)}>
-          <ReportForm
-            id={selectedReport._id}
-            status={selectedReport.reportedType}
-            onSuccess={() => setShowReportModal(false)}
-          />
-        </Modal>
-      )}
+        </div>
+      </div>
+
+      {/* ===== MAIN CONTENT ===== */}
+      <div className="max-w-4xl mx-auto p-6 space-y-12">
+        {/* Overview */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+        >
+          <p className="text-lg leading-relaxed text-muted-foreground text-justify break-words">
+            {blogData?.overview}
+          </p>
+        </motion.section>
+
+        {/* Blog sections */}
+        {blogData?.sections?.map((section, index) => (
+          <motion.section
+            key={index}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className={`flex flex-col md:flex-row ${index % 2 === 1 ? 'md:flex-row-reverse' : ''} items-center gap-8`}
+          >
+            <div className="md:w-1/2">
+              <img
+                src={section?.image?.url}
+                alt={section.heading}
+                className="rounded-3xl shadow-lg object-cover w-full h-[400px]"
+              />
+            </div>
+            <div className="md:w-1/2 space-y-3">
+              <h2 className="text-2xl font-semibold break-words">{section.heading}</h2>
+              <p className="text-muted-foreground leading-relaxed text-justify break-words whitespace-pre-line">
+                {section.content}
+              </p>
+            </div>
+          </motion.section>
+        ))}
+
+        {/* Tags */}
+        {blogData?.tags?.length ? (
+          <section className="flex flex-wrap gap-2">
+            {blogData.tags.map((tag) => (
+              <span
+                key={tag}
+                className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
+              >
+                #{tag}
+              </span>
+            ))}
+          </section>
+        ) : null}
+
+        {/* Divider */}
+        <hr className="border-gray-300 dark:border-gray-700 my-8" />
+
+        {/* Comments */}
+        {blogData?._id && (
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="bg-white dark:bg-card rounded-2xl shadow-md p-6"
+          >
+            <h3 className="text-2xl font-semibold mb-6 border-b pb-3">Comments</h3>
+            <CommentSection parentId={blogData._id} parentType="blog" />
+          </motion.section>
+        )}
+      </div>
+
+      {/* ===== MODALS ===== */}
+      <UserList
+        title="Liked by"
+        users={likedUsers}
+        isOpen={isLikesModalOpen}
+        onClose={() => setIsLikesModalOpen(false)}
+      />
+
+
+
     </div>
   );
 };

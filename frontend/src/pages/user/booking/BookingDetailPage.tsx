@@ -163,9 +163,7 @@ const BookingDetailPage = () => {
     navigate(`/packages/${packageId}/review/add`);
   };
 
-  // const handleAddTraveller = () => {
-  //   navigate(`/checkout/add-traveller/${packageId}`);
-  // };
+ 
 
   const handleAddTraveller = () => {
     navigate(`/checkout/add-traveller/${packageId}/${booking?._id}`);

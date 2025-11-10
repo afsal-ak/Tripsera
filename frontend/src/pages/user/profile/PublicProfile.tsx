@@ -203,14 +203,14 @@ const PublicProfile = () => {
 
 
         </div>
-{currentUserName !== username && (
-  <div className="relative">
-    <OptionsDropdown
-      options={options}
-      onSelect={(value) => handleOptionSelect(value, profile?._id!, 'user')}
-    />
-  </div>
-)}
+        {currentUserName !== username && (
+          <div className="relative">
+            <OptionsDropdown
+              options={options}
+              onSelect={(value) => handleOptionSelect(value, profile?._id!, 'user')}
+            />
+          </div>
+        )}
 
         <div className="mt-8 grid grid-cols-3 gap-4 max-w-md mx-auto md:mx-0">
           <Card className="p-4 text-center">

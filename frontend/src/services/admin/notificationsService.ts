@@ -6,6 +6,8 @@ export const fetchAdminNotification = async (params?: {
   status?: string;
 }) => {
   const response = await api.get('/admin/notification', { params });
+  console.log(response,'noitigc');
+  
   return response.data;
 };
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface UseLoadMoreProps {
   totalPages: number;
@@ -9,7 +9,12 @@ interface UseLoadMoreProps {
 export const useLoadMore = ({ totalPages, initialPage = 1, onLoad }: UseLoadMoreProps) => {
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(totalPages > 1);
+
+  useEffect(() => {
+    // Whenever totalPages changes (like when data reloads)
+    setHasMore(totalPages > page);
+  }, [totalPages, page]);
 
   const loadMore = async () => {
     if (loading || !hasMore) return;
