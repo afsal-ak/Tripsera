@@ -1,17 +1,16 @@
 import { UserBasicInfoDto } from '@application/dtos/UserBasicInfoDTO';
-import { BlogResponseDTO, CreateBlogDTO, UpdateBlogDTO } from '@application/dtos/BlogDTO';
+import { BlogResponseDTO, CreateBlogDTO, UpdateBlogDTO, BlogSectionDTO } from '@application/dtos/BlogDTO';
 import { PaginatedResult } from '@domain/entities/IPaginatedResult';
 
 export interface IBlogUseCases {
   createBlog(userId: string, blogData: CreateBlogDTO): Promise<BlogResponseDTO>;
 
+
   editBlog(
     blogId: string,
     blogData: UpdateBlogDTO,
-    existingImages: { public_id: string }[],
-    newImages: { url: string; public_id: string }[]
-  ): Promise<BlogResponseDTO | null>;
-
+    files?: { [fieldname: string]: Express.Multer.File[] }
+  ): Promise<BlogResponseDTO | null>
   getBlogById(blogId: string): Promise<BlogResponseDTO | null>;
 
   getBlogByUser(

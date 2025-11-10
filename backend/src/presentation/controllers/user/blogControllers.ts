@@ -6,25 +6,41 @@ import { IBlogUseCases } from '@application/useCaseInterfaces/user/IBlogUseCases
 import { CreateBlogDTO, UpdateBlogDTO } from '@application/dtos/BlogDTO';
 
 export class BlogController {
-  constructor(private readonly _blogUseCases: IBlogUseCases) {}
+  constructor(private readonly _blogUseCases: IBlogUseCases) { }
 
-  createBlog = async (req: Request, res: Response, next: NextFunction) => {
+  createBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
+      console.log(req.body, 'blog data');
 
       const blogData: CreateBlogDTO = req.body;
- 
-      const files = req.files as Express.Multer.File[];
-      if (!files || files.length === 0) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: 'No file uploaded' });
-        return;
-      }
-      
 
-      const imageUrls = await Promise.all(
-        files.map((file) => uploadCloudinary(file.path, 'blogs'))
-      );
-      blogData.images = imageUrls;
+      const files = req.files as {
+        [fieldname: string]: Express.Multer.File[];
+      };
+      console.log(files, 'files');
+
+      //Upload cover image (mandatory)
+      if (!files?.coverImage?.[0]) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: 'Cover image is required' });
+      }
+
+      const coverImage = await uploadCloudinary(files.coverImage[0].path, 'blogs');
+      blogData.coverImage = coverImage;
+
+      // Upload section images if any
+      if (blogData.sections && blogData.sections.length > 0) {
+        const uploadedSectionImages = await Promise.all(
+          (files.sectionImages || []).map((file) => uploadCloudinary(file.path, 'blogs'))
+        );
+
+        // attach each uploaded image to its corresponding section if index matches
+        blogData.sections = blogData.sections.map((section, index) => ({
+          ...section,
+          image: uploadedSectionImages[index] || undefined,
+        }));
+      }
+
       const blog = await this._blogUseCases.createBlog(userId, blogData);
       res.status(HttpStatus.CREATED).json({ message: 'Blog created successfully', blog });
     } catch (err) {
@@ -32,31 +48,29 @@ export class BlogController {
     }
   };
 
+
+
+
   editBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { blogId } = req.params;
-      const blogData: UpdateBlogDTO = req.body;
-       const files = req.files as Express.Multer.File[];
- 
-      const existingImageUrls: { public_id: string }[] = req.body.existingImages || [];
+      console.log(req.body, 'body');
 
-       //  Upload new images
-      const newImages = files?.length
-        ? await Promise.all(files.map((file) => uploadCloudinary(file.path, 'blogs')))
-        : [];
-     
-      const blog = await this._blogUseCases.editBlog(
-        blogId,
-        blogData,
-        existingImageUrls,
-        newImages
-      );
-      res.status(HttpStatus.OK).json({ message: 'Blog updated successfully', blog });
-    } catch (err) {
-      next(err);
+      const blogData = req.body;
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      console.log(files, 'files');
+
+      const blog = await this._blogUseCases.editBlog(blogId, blogData, files);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Blog updated successfully',
+        blog,
+      });
+    } catch (error) {
+      next(error);
     }
   };
-
   getBlogById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { blogId } = req.params;
@@ -110,7 +124,7 @@ export class BlogController {
       } catch (err) {
         userId = undefined; // No token or invalid token
       }
-       const blog = await this._blogUseCases.getBySlug(slug);
+      const blog = await this._blogUseCases.getBySlug(slug);
 
       if (!blog) {
         res.status(HttpStatus.NOT_FOUND).json({ message: 'Blog not found' });
@@ -162,7 +176,7 @@ export class BlogController {
       const { blogId } = req.params;
 
       const data = await this._blogUseCases.getBlogLikeList(blogId);
-       res.status(HttpStatus.OK).json(data);
+      res.status(HttpStatus.OK).json(data);
     } catch (error) {
       next(error);
     }

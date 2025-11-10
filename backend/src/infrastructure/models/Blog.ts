@@ -8,43 +8,67 @@ const BlogSchema = new Schema<BlogDocument>(
   {
     title: { type: String, required: true },
     slug: { type: String, unique: true },
+    overview: { type: String, trim: true }, // for summary
     content: { type: String, required: true },
+
     coverImage: {
       url: String,
       public_id: String,
     },
+
+    sections: [
+      {
+        heading: String,
+        content: String,
+        image: {
+          url: String,
+          public_id: String,
+        },
+      },
+    ],
+
     images: [
       {
         url: String,
         public_id: String,
       },
     ],
+
     tags: [{ type: String }],
+
     author: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
+
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Users' }],
+
+    comments: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
 
     status: {
       type: String,
       enum: ['draft', 'published', 'archived'],
       default: 'draft',
     },
+
     isBlocked: {
       type: Boolean,
       default: false,
     },
-    likes: [{ type: Schema.Types.ObjectId, ref: 'Users' }],
   },
   { timestamps: true }
 );
 
 BlogSchema.pre('save', async function (next) {
-  // Only regenerate slug if title is new or changed
   if (!this.isModified('title')) return next();
 
   const baseSlug = slugify(this.title, { lower: true, strict: true });
   let slug = baseSlug;
   let count = 1;
 
-  // Check if slug already exists
   while (await BlogModel.exists({ slug })) {
     slug = `${baseSlug}-${count++}`;
   }
@@ -52,6 +76,5 @@ BlogSchema.pre('save', async function (next) {
   this.slug = slug;
   next();
 });
-//BlogSchema.index({ slug: 1 });
 
 export const BlogModel = model<BlogDocument>('Blog', BlogSchema);

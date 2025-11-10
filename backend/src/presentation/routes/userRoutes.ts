@@ -155,7 +155,7 @@ const bookingController = new BookingController(bookingUseCases);
 
 
 const couponRepository = new CouponRepository();
-const couponUseCases = new CouponUseCases(couponRepository,bookingRepository);
+const couponUseCases = new CouponUseCases(couponRepository, bookingRepository);
 const couponController = new CouponController(couponUseCases);
 
 
@@ -231,9 +231,9 @@ router.get(
 );
 
 // HOME ROUTES
-router.get(HOME_ROUTES.HOME, optionalAuthMiddleware,homeController.getHome);
-router.get(HOME_ROUTES.PACKAGES, optionalAuthMiddleware,homeController.getActivePackages);
-router.get(HOME_ROUTES.PACKAGE_BY_ID, optionalAuthMiddleware,homeController.getPackagesById);
+router.get(HOME_ROUTES.HOME, optionalAuthMiddleware, homeController.getHome);
+router.get(HOME_ROUTES.PACKAGES, optionalAuthMiddleware, homeController.getActivePackages);
+router.get(HOME_ROUTES.PACKAGE_BY_ID, optionalAuthMiddleware, homeController.getPackagesById);
 
 // PROFILE ROUTES
 router.get(PROFILE_ROUTES.GET_PROFILE, userAuthMiddleware, profileController.getUserProfile);
@@ -332,14 +332,25 @@ router.put(
   bookingController.changeTravelDate
 );
 
-// BLOG ROUTES
 router.post(
   BLOG_ROUTES.CREATE,
   userAuthMiddleware,
-  upload.array('images'),
+  upload.fields([
+    { name: 'coverImage', maxCount: 1 },
+    { name: 'sectionImages', maxCount: 10 },
+  ]),
   blogController.createBlog
 );
-router.put(BLOG_ROUTES.EDIT, userAuthMiddleware, upload.array('images'), blogController.editBlog);
+router.put(
+  BLOG_ROUTES.EDIT,
+  userAuthMiddleware,
+  upload.fields([
+    { name: 'coverImage', maxCount: 1 },
+    { name: 'sectionImages', maxCount: 10 },
+  ]),
+  blogController.editBlog
+);
+// router.put(BLOG_ROUTES.EDIT, userAuthMiddleware, upload.array('images'), blogController.editBlog);
 router.get(BLOG_ROUTES.GET_ALL, blogController.getAllPublishedBlogs);
 router.get(BLOG_ROUTES.GET_USER_BLOGS, userAuthMiddleware, blogController.getBlogByUser);
 router.get(

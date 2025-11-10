@@ -6,13 +6,12 @@ import { IBaseRepository } from './IBaseRepository';
 
 export interface IBlogRepository extends IBaseRepository<IBlog> {
   createBlog(userId: string, blogData: IBlog): Promise<IBlog>;
-  editBlog(
-    id: string,
-    blogData: Partial<IBlog>,
-    deletedImages?: { public_id: string }[],
-    newImages?: { url: string; public_id: string }[]
-  ): Promise<IBlog | null>;
 
+  editBlog(
+    blogId: string,
+    blogData: Partial<IBlog>,
+
+  ): Promise<IBlog | null>
   getAllBlog(
     page: number,
     limit: number,

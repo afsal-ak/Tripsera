@@ -9,6 +9,7 @@ export class BlogMapper {
       _id: blog._id?.toString() ?? '',
       title: blog.title,
       slug: blog.slug,
+      overview:blog.overview,
       content: blog.content,
       coverImage: blog.coverImage,
       images: blog.images || [],
@@ -19,6 +20,7 @@ export class BlogMapper {
         email: author.email || '',
         profileImage:author.profileImage||''
       },
+      sections:blog.sections,
       likes: blog.likes?.map((id) => id.toString()) ?? [],
       status: blog.status,
       isBlocked: blog.isBlocked ?? false,

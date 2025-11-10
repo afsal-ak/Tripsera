@@ -24,37 +24,9 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
   async editBlog(
     blogId: string,
     blogData: Partial<IBlog>,
-    deletedImages: { public_id: string }[],
-    newImages: { url: string; public_id: string }[]
+
   ): Promise<IBlog | null> {
-    const updateOps: any = {
-      ...blogData,
-    };
-
-    // Step 1: Pull deleted images
-    if (deletedImages.length > 0) {
-      await BlogModel.findByIdAndUpdate(blogId, {
-        $pull: {
-          images: {
-            public_id: { $in: deletedImages.map((img) => img.public_id) },
-          },
-        },
-      });
-    }
- 
-    // Step 2: Push new images
-    if (newImages.length > 0) {
-      updateOps.$push = {
-        images: {
-          $each: newImages,
-        },
-      };
-    }
-
-    // Step 3: Update other fields
-    return await BlogModel.findByIdAndUpdate(blogId, updateOps, {
-      new: true,
-    });
+    return await BlogModel.findByIdAndUpdate(blogId, blogData, { new: true });
   }
 
   async getBlogById(blogId: string): Promise<IBlog | null> {
@@ -165,7 +137,7 @@ export class BlogRepository extends BaseRepository<IBlog> implements IBlogReposi
 
     //  Fetch paginated blogs
     const blogs = await BlogModel.aggregate(aggregatePipeline);
-     const pagination: PaginationInfo = {
+    const pagination: PaginationInfo = {
       totalItems: total,
       currentPage: page,
       pageSize: limit,
