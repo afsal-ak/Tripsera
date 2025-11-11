@@ -125,7 +125,26 @@ const Home = () => {
           </div>
         </section>
       )}
-    </>
+      {/* <section className="bg-orange-50 py-12 text-center rounded-2xl my-12">
+  <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+    ✉️ Stay Updated With Tripsera!
+  </h2>
+  <p className="text-gray-600 mb-6">
+    Subscribe for weekly updates on new destinations and exclusive deals.
+  </p>
+  <div className="flex justify-center">
+    <input
+      type="email"
+      placeholder="Your email address"
+      className="px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm w-64"
+    />
+    <button className="bg-orange text-white px-6 py-2 rounded-r-lg hover:bg-orange-600 text-sm">
+      Subscribe
+    </button>
+  </div>
+</section> */}
+
+     </>
   );
 };
 
