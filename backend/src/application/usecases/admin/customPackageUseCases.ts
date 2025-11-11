@@ -21,13 +21,17 @@ import { generatePackageCode } from '@shared/utils/generatePackageCode';
 import { IPackageRepository } from '@domain/repositories/IPackageRepository';
 import { deleteImageFromCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { EnumPackageType } from '@constants/enum/packageEnum';
+import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
+import { EnumUserRole } from '@constants/enum/userEnum';
+import { EnumNotificationEntityType, EnumNotificationType } from '@constants/enum/notificationEnum';
 
 
 
 export class CustomPackageUseCases implements ICustomPkgUseCases {
   constructor(
     private readonly _customPkgRepo: ICustomPackageRepository,
-    private readonly _packageRepo: IPackageRepository
+    private readonly _packageRepo: IPackageRepository,
+    private readonly _notificationUseCases: INotificationUseCases
   ) { }
 
   async getCustomPkgById(customPkgId: string): Promise<CustomPkgResponseDTO | null> {
@@ -96,8 +100,18 @@ export class CustomPackageUseCases implements ICustomPkgUseCases {
       };
 
       console.log(packageData, 'in usecaes data');
-
       const result = await this._packageRepo.create(packageData);
+
+      await this._notificationUseCases.sendNotification({
+        role: EnumUserRole.USER,
+        userId: pkg.createdFor.toString(),
+        title: 'Custom Package Created',
+        entityType: EnumNotificationEntityType.CUSTOM_PACKAGE,
+         packageId: result._id,
+        message: 'Admin Created new Custom Package',
+        type: EnumNotificationType.SUCCESS,
+       });
+
 
       return PackageMapper.toResponseDTO(result);
     } catch (error) {

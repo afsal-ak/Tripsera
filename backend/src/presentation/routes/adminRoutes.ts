@@ -161,7 +161,7 @@ const reportUseCases = new ReportUseCases(reportRepository);
 const reportController = new ReportController(reportUseCases);
 
 const customPkgRepository = new CustomPackageRepository();
-const customPkgUseCases = new CustomPackageUseCases(customPkgRepository,packageRepository);
+const customPkgUseCases = new CustomPackageUseCases(customPkgRepository,packageRepository,notificationUseCases);
 const customPkgController = new CustomPackageController(customPkgUseCases);
 
 const dashboardRepository = new DashboardRepository();
