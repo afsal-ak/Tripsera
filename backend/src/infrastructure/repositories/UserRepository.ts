@@ -300,4 +300,32 @@ export class UserRepository implements IUserRepository {
       .sort({ createdAt: -1 })
       .limit(20);
   }
+
+
+  // async newsLetterSubscribe(userId: string): Promise<IUser | null> {
+  //   return await UserModel.findByIdAndUpdate(
+  //     userId,
+  //     { isNewsletterSubscribed: true },
+  //     { new: true }
+  //   );
+  // }
+
+  // async newsLetterUnsubscribe(userId: string): Promise<IUser | null> {
+  //   return await UserModel.findByIdAndUpdate(
+  //     userId,
+  //     { isNewsletterSubscribed: false },
+  //     { new: true }
+  //   );
+  // }
+async updateNewsletterSubscription(userId: string, subscribed: boolean):Promise<IUser|null> {
+  return await UserModel.findByIdAndUpdate(
+    userId,
+    { isNewsletterSubscribed: subscribed },
+    { new: true }
+  );
+}
+
+  async getAllNewsletterSubscribers(): Promise<IUser[]> {
+    return await UserModel.find({ isNewsletterSubscribed: true });
+  }
 }

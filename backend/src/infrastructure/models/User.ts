@@ -40,6 +40,10 @@ const UserSchema = new Schema<IUserDocument>(
     referredBy: { type: Schema.Types.ObjectId, ref: 'Users' },
     googleId: String,
     isGoogleUser: { type: Boolean, default: false },
+    isNewsletterSubscribed: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

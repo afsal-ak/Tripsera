@@ -31,4 +31,5 @@ export interface IUser {
   referredBy?: Types.ObjectId | string;
   googleId?: string;
   isGoogleUser?: boolean;
+  isNewsletterSubscribed?: boolean;
 }

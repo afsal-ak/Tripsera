@@ -35,4 +35,16 @@ export interface IUserRepository {
   updateUserAddress(userId: string, addressData: Partial<IUser>): Promise<IUser | null>;
   addFollowerAndFollowing(followerId: string, followingId: string): Promise<void>;
   unFollowAndFollowing(followerId: string, followingId: string): Promise<void>;
+
+
+
+
+  // newsLetterSubscribe(userId: string): Promise<IUser | null>
+
+  // newsLetterUnsubscribe(userId: string): Promise<IUser | null>
+  updateNewsletterSubscription(userId: string, subscribed: boolean) :Promise<IUser|null>
+  
+
+  getAllNewsletterSubscribers(): Promise<IUser[]>
+
 }
