@@ -5,15 +5,12 @@ import ChatbotLauncher from '@/pages/user/chatbot/ChatbotLauncher';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch, RootState } from '@/redux/store';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import WhatsAppButton from '@/components/WhatsAppButton';
-import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
 import { useGlobalSocket } from '@/hooks/useGlobalSocket';
-import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
- import { VideoCallUI } from '@/components/chat/VideoCallUI';
-  
+import { VideoCallUI } from '@/components/chat/VideoCallUI';
+
 const UserLayout = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
 
   const [incomingCallData, setIncomingCallData] = useState<{
@@ -41,7 +38,7 @@ const UserLayout = () => {
     },
   });
 
- // useChatRoomsSocket({ currentUserId: userId! });
+  // useChatRoomsSocket({ currentUserId: userId! });
   useNotificationSocket(userId!);
 
   const location = useLocation();
@@ -57,7 +54,10 @@ const UserLayout = () => {
     <div className="flex flex-col min-h-screen bg-background font-poppins text-foreground">
       <Navbar />
 
-      <main className="flex-1">
+      {/* <main className="flex-1">
+        <Outlet />
+      </main> */}
+      <main className="flex-1 flex flex-col justify-between">
         <Outlet />
       </main>
 

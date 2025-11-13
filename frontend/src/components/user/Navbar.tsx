@@ -9,24 +9,30 @@ import { toast } from 'sonner';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
 import { EnumUserRole } from '@/Constants/enums/userEnum';
 import { OptionsDropdown } from '../OptionsDropdown ';
+
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { isAuthenticated, accessToken, user } = useSelector((state: RootState) => state.userAuth);
-  let notificationUnread=0
-  let totalChatUnread=0
-  if (isAuthenticated) {
-      notificationUnread = useSelector((state: RootState) => state.notifications.unreadCount);
+  const { isAuthenticated, accessToken, user } = useSelector(
+    (state: RootState) => state.userAuth
+  );
 
-      totalChatUnread = useTotalUnreadCount(EnumUserRole.USER);
+  const notificationUnread = useSelector(
+    (state: RootState) => state.notifications.unreadCount
+   );
+  // const notificationUnread=0
+  // const totalChatUnread = 0
+  const totalChatUnread = useTotalUnreadCount(EnumUserRole.USER);
 
-  }
+   const unreadNotifications = isAuthenticated ? notificationUnread : 0;
+  const unreadChats = isAuthenticated ? totalChatUnread : 0;
+
   useEffect(() => {
     if (!accessToken) {
       dispatch(logoutUser());
     }
-  }, []);
+  }, [accessToken, dispatch]);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -62,18 +68,21 @@ const Navbar = () => {
               </Link>
               <Link to="/chatbot" className="text-foreground hover:text-orange transition-colors">
                 Chat Bot
+              </Link><Link to="/about"
+             className="text-foreground hover:text-orange transition-colors">
+                About
               </Link>
             </nav>
           </div>
 
           {/* Right - Icons & Auth */}
           <div className="flex items-center space-x-4">
-            {/* Chat Icon with Unread Badge */}
+            {/* Chat Icon */}
             <Link to="/chat" className="relative">
               <MessageCircle className="w-6 h-6 text-foreground hover:text-orange" />
-              {totalChatUnread > 0 && (
+              {unreadChats > 0 && (
                 <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                  {totalChatUnread}
+                  {unreadChats}
                 </span>
               )}
             </Link>
@@ -81,13 +90,14 @@ const Navbar = () => {
             {/* Notification Bell */}
             <Link to="/notification" className="relative">
               <Bell className="w-6 h-6 text-foreground hover:text-orange" />
-              {notificationUnread > 0 && (
+              {unreadNotifications > 0 && (
                 <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                  {notificationUnread}
+                  {unreadNotifications}
                 </span>
               )}
             </Link>
 
+            {/* Profile / Auth Buttons */}
             {isAuthenticated ? (
               <div className="relative hidden sm:flex items-center">
                 <OptionsDropdown
@@ -97,11 +107,9 @@ const Navbar = () => {
                     { label: 'Logout', value: 'logout', className: 'text-red-500' },
                   ]}
                   onSelect={(value) => {
-                    if (value === 'profile') {
-                      navigate('/account/profile'); // ✅ React Router navigation
-                    } else if (value === 'wishlist') {
-                      navigate('/account/wishlist'); // ✅
-                    } else if (value === 'logout') {
+                    if (value === 'profile') navigate('/account/profile');
+                    else if (value === 'wishlist') navigate('/account/wishlist');
+                    else if (value === 'logout') {
                       dispatch(logoutUser());
                       toast.success('Logout successful');
                     }
@@ -134,7 +142,7 @@ const Navbar = () => {
               </>
             )}
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
               size="icon"
@@ -175,14 +183,14 @@ const Navbar = () => {
               className="block text-foreground hover:text-orange"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Chat {totalChatUnread > 0 && `(${totalChatUnread})`}
+              Chat {unreadChats > 0 && `(${unreadChats})`}
             </Link>
             <Link
               to="/notification"
               className="block text-foreground hover:text-orange"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Notification {notificationUnread > 0 && `(${notificationUnread})`}
+              Notifications {unreadNotifications > 0 && `(${unreadNotifications})`}
             </Link>
             <Link
               to="/account/profile"

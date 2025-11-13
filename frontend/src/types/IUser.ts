@@ -38,5 +38,6 @@ export interface IUser {
   followingCount: number;
   googleId?: string;
   isGoogleUser?: boolean;
+  isNewsletterSubscribed?: boolean;
   createdAt?: Date;
 }

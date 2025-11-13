@@ -23,6 +23,8 @@ import ReadMore from '@/components/ReadMore';
 import PackageDetailPickUp from './PackageDetailPickUp';
 import { cn } from '@/lib/utils';
 const PackageDetails = () => {
+     const navigate = useNavigate();
+
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,6 +49,10 @@ const PackageDetails = () => {
     loadWishListCheck();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+  
   useEffect(() => {
     const loadPackage = async () => {
       if (!id) {
@@ -94,8 +100,7 @@ const PackageDetails = () => {
     };
     fetchReviews();
   }, []);
-  console.log(ratingSummary, 'rating');
-  const navigate = useNavigate();
+
 
   const handleClick = () => {
     navigate(`/checkout/${id}`);
@@ -172,13 +177,13 @@ const PackageDetails = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 mt-4 md:mt-0">
-              <Button
+              {/* <Button
                 variant="outline"
                 size="icon"
                 className="border-orange text-orange hover:bg-orange hover:text-white"
               >
                 <Share2 className="w-4 h-4" />
-              </Button>
+              </Button> */}
 
               <Button
                 onClick={handleWishlist}

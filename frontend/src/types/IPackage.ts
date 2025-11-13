@@ -72,7 +72,7 @@ export interface IPackage {
 
   images?: File[]; // new uploads
   imageUrls?: ImageInfo[]; // existing images
-
+imageUrl: string;
   offer?: IOffer;
 
   importantDetails?: string;
