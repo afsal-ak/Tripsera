@@ -30,6 +30,8 @@ export abstract class UserMapper {
       referralCode: user.referralCode,
       referredBy: user.referredBy?.toString(),
       isGoogleUser: !!user.isGoogleUser,
+      isNewsletterSubscribed: user.isNewsletterSubscribed||false,
+
     };
   }
 
@@ -43,6 +45,7 @@ export abstract class UserMapper {
       profileImage: user.profileImage,
       gender: user.gender as EnumGender,
       isBlocked: !!user.isBlocked,
+      isNewsletterSubscribed: !!user.isNewsletterSubscribed,
     };
   }
 
@@ -54,6 +57,8 @@ export abstract class UserMapper {
     profileImage: user.profileImage,
     fullName: user.fullName,
     phone: user.phone,
+    isGoogleUser: !!user.isGoogleUser,
+    isNewsletterSubscribed: !!user.isNewsletterSubscribed,
   });
 
   static toAdminUserListDTO(user: IUser): AdminUserListResponseDTO {

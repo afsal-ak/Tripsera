@@ -18,7 +18,8 @@ export const HOME_ROUTES = {
   HOME: '/home',
   PACKAGES: '/packages',
   PACKAGE_BY_ID: '/packages/:id',
-};
+  TOP_BOOKED_PACKAGES: '/home/top-booked-packages',
+}; 
 //router.get('/packages/:id', homeController.getPackagesById);
 
 export const PROFILE_ROUTES = {
@@ -66,8 +67,8 @@ export const BOOKING_ROUTES = {
   WALLET_BOOKING: '/booking/wallet',
   INVOICE_DOWNLOAD: '/booking/invoice/:bookingId/download',
   REMOVE_TRAVELLER: '/booking/:id/remove-traveler',
-  ADD_TRAVELLER_WALLET_BOOKING:'/booking/add-traveller/wallet',
-  ADD_TRAVELLE_ONLINE_BOOKING:'/booking/add-traveller/online',
+  ADD_TRAVELLER_WALLET_BOOKING: '/booking/add-traveller/wallet',
+  ADD_TRAVELLE_ONLINE_BOOKING: '/booking/add-traveller/online',
   CHANGE_TRAVEL_DATE: '/booking/:id/change-travel-date',
 };
 // export const addTravellerBookingWithWalletPayment = async (data: TravelerBookingFormSchema) => {
@@ -118,15 +119,15 @@ export const CUSTOM_PACKAGE_ROUTE = {
   UPDATE: '/custom-package/:packageId/edit',
   GET_BY_ID: '/custom-package/:packageId',
   GET_ALL_PKG: '/custom-package',
-  GET_CUSTOM_PKG_FOR_USER:'/custom-packages/user',
+  GET_CUSTOM_PKG_FOR_USER: '/custom-packages/user',
   DELETE: '/custom-package/:packageId/delete',
 };
 
 export const CHAT_ROOM_ROUTE = {
   CREATE: '/chatrooms',
   UPDATE: '/chatrooms/:roomId',
-    TOATAL_UNREAD_COUNT:'/count/chatrooms',
-// `/user/count/chatrooms
+  TOATAL_UNREAD_COUNT: '/count/chatrooms',
+  // `/user/count/chatrooms
   GET_BY_ID: '/chatrooms/:roomId',
   GET_USER_ROOMS: '/chatrooms',
   DELETE: '/chatrooms/:roomId',
@@ -161,3 +162,8 @@ export const COMMENT_ROUTE = {
   DELETE: '/comment/delete/:commentId',
   LIKE: '/comment/:commentId/like',
 };
+
+
+export const NEWSLETTER_ROUTE = {
+  SUBSCRIBE: '/newsletter/subscribe',
+}

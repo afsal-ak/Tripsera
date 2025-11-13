@@ -19,6 +19,7 @@ export enum LocationTypeEnum {
 export enum EnumPackageType {
   NORMAL = 'normal',
   GROUP='group',
-  CUSTOM='custom'
+  CUSTOM='custom',
+  EnumPackageType = "EnumPackageType"
 }
  

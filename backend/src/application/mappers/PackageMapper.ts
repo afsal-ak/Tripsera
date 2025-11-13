@@ -47,8 +47,7 @@ export abstract class PackageMapper {
         : undefined,
       importantDetails: pkg.importantDetails,
       isBlocked: pkg.isBlocked,
-      //isCustom:pkg?.isCustom,
-      packageType: pkg.packageType || EnumPackageType.NORMAL,
+       packageType: pkg.packageType || EnumPackageType.NORMAL,
 
       createdAt: pkg.createdAt,
       updatedAt: pkg.updatedAt,
@@ -67,7 +66,6 @@ export abstract class PackageMapper {
       price: pkg.price,
       finalPrice,
       imageUrl: pkg.imageUrls?.[0]?.url || null,
-      //  isCustom: pkg.isCustom,
       packageType: pkg.packageType,
       availableSlots: pkg.availableSlots,
       offerName: pkg.offer?.isActive ? pkg.offer.name : undefined,
@@ -75,6 +73,7 @@ export abstract class PackageMapper {
       offerValue: pkg.offer?.isActive ? pkg.offer.value : undefined,
     };
   }
+
   static toTableResponseDTO(pkg: IPackage): PackageTableResponseDTO {
     const finalPrice = PackageMapper.calculateFinalPrice(pkg); // fixed
 
@@ -90,7 +89,7 @@ export abstract class PackageMapper {
       isBlocked: pkg.isBlocked,
       offerName: pkg.offer?.name,
       availableSlots: pkg.availableSlots,
-      departureDates:pkg.departureDates,
+      departureDates: pkg.departureDates,
       endDate: pkg.endDate,
       packageType: pkg.packageType || EnumPackageType.NORMAL,
       categoryCount: pkg.category?.length || 0,

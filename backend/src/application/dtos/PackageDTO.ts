@@ -89,9 +89,9 @@ export interface PackageResponseDTO {
   title: string;
   description: string;
   price: number;
-  pricePerChild: number;
-  ageOfAdult: number;
-  ageOfChild: number;
+  pricePerChild?: number;
+  ageOfAdult?: number;
+  ageOfChild?: number;
   finalPrice: number;
   durationDays: number;
   durationNights: number;
@@ -141,6 +141,7 @@ export interface PackageTableResponseDTO {
   categoryCount: number;
   createdAt?: Date;
 }
+
 export interface PackageCardDTO {
   _id: string;
   title: string;

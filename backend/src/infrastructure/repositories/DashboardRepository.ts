@@ -5,7 +5,8 @@ import { BookingModel } from '@infrastructure/models/Booking';
 import { BlogModel } from '@infrastructure/models/Blog';
 
 import CustomPackage from '@infrastructure/models/CustomPackage';
-import { IBookingsChartData, ITopCategory, ITopPackage } from '@application/dtos/DashboardDTO';
+import { IBookingsChartData, ITopCategory, ITopPackage,IHomeTopPackage } from '@application/dtos/DashboardDTO';
+import { EnumPackageType } from '@constants/enum/packageEnum';
 
 export class DashboardRepository implements IDashboardRepository {
   async getTotalUsers(startDate?: Date, endDate?: Date): Promise<number> {
@@ -147,57 +148,7 @@ export class DashboardRepository implements IDashboardRepository {
     return topCat;
   }
 
-  async sgetBookingsChartData(
-    startDate?: Date,
-    endDate?: Date,
-    groupBy?: 'day' | 'month' | 'year'
-  ) {
-    const matchStage: any = { status: 'confirmed' };
-
-    // If filtering by date range
-    if (startDate && endDate) {
-      matchStage.createdAt = { $gte: startDate, $lte: endDate };
-
-      // Auto-decide groupBy for custom ranges if not provided
-      if (!groupBy) {
-        const diffInDays =
-          (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24);
-
-        if (diffInDays <= 31) {
-          groupBy = 'day';
-        } else if (diffInDays <= 365) {
-          groupBy = 'month';
-        } else {
-          groupBy = 'year';
-        }
-      }
-    } else if (!groupBy) {
-      // Default groupBy if no date filter provided
-      groupBy = 'month';
-    }
-
-    // Set MongoDB date format based on groupBy
-    let dateFormat: string;
-    if (groupBy === 'day')
-      dateFormat = '%d %b'; // e.g., 01 Aug
-    else if (groupBy === 'month')
-      dateFormat = '%b %Y'; // e.g., Aug 2025
-    else dateFormat = '%Y'; // e.g., 2025
-
-    const result = await BookingModel.aggregate([
-      { $match: matchStage },
-      {
-        $group: {
-          _id: { $dateToString: { format: dateFormat, date: '$createdAt' } },
-          bookingCount: { $sum: 1 },
-        },
-      },
-      { $sort: { _id: 1 } },
-    ]);
-
-    return result;
-  }
-
+   
   async getBookingsChartData(
     startDate: Date,
     endDate: Date,
@@ -248,5 +199,93 @@ export class DashboardRepository implements IDashboardRepository {
         $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1, '_id.hour': 1 },
       },
     ]);
+  }
+
+
+async getTopBookedPackagesForUser(limit = 10): Promise<IHomeTopPackage[]> {
+    const today = new Date();
+
+    const topPackages = await BookingModel.aggregate([
+      {
+        $lookup: {
+          from: "packages",
+          localField: "packageId",
+          foreignField: "_id",
+          as: "packageDetails",
+        },
+      },
+      { $unwind: "$packageDetails" },
+
+      {
+        $match: {
+          "packageDetails.packageType": {
+            $in: [EnumPackageType.NORMAL, EnumPackageType.GROUP],
+          },
+          "packageDetails.isBlocked": false,
+          "packageDetails.endDate": { $gte: today },
+        },
+      },
+      {
+        $group: {
+          _id: "$packageId",
+          totalBookings: { $sum: 1 },
+          packageDetails: { $first: "$packageDetails" },
+        },
+      },
+      { $sort: { totalBookings: -1 } },
+      { $limit: limit },
+    ]);
+
+    return topPackages;
+  }
+  //  Top booked categories (for homepage category carousel)
+  async getTopBookedCategoriesForUser(limit = 10): Promise<ITopCategory[]> {
+    const today = new Date();
+
+    const topCategories = await BookingModel.aggregate([
+      {
+        $lookup: {
+          from: "packages",
+          localField: "packageId",
+          foreignField: "_id",
+          as: "packageDetails",
+        },
+      },
+      { $unwind: "$packageDetails" },
+      {
+        $match: {
+          "packageDetails.packageType": { $in: [EnumPackageType.NORMAL, EnumPackageType.GROUP] },
+          "packageDetails.isBlocked": false,
+          "packageDetails.endDate": { $gte: today },
+        },
+      },
+      { $unwind: "$packageDetails.category" },
+      {
+        $group: {
+          _id: "$packageDetails.category",
+          totalBookings: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "categoryInfo",
+        },
+      },
+      { $unwind: "$categoryInfo" },
+      {
+        $project: {
+          categoryId: "$categoryInfo._id",
+          name: "$categoryInfo.name",
+          totalBookings: 1,
+        },
+      },
+      { $sort: { totalBookings: -1 } },
+      { $limit: limit },
+    ]);
+
+    return topCategories;
   }
 }

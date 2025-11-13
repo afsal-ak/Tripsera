@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import {morganLogger,morganConsole} from '@presentation/middlewares/logger';
 import { Server } from 'socket.io';
-
+import { startNewsletterCron } from '@infrastructure/cronjobs/weeklyNewsletterJob';
 //chat
 import { MessageUseCases } from '@application/usecases/chat/messageUseCases';
 import { ChatRoomRepository } from '@infrastructure/repositories/ChatRoomRepository';
@@ -39,6 +39,10 @@ const connectMongoDB = async () => {
     process.exit(1);
   }
 };
+// Initialize CRON Jobs
+startNewsletterCron();
+import("@infrastructure/cronjobs/weeklyNewsletterJob")
+
 export const io = new Server(server, {
   cors: {
     origin:process.env.FRONTEND_ORIGIN,

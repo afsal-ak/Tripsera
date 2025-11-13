@@ -303,26 +303,17 @@ export class UserRepository implements IUserRepository {
 
 
   // async newsLetterSubscribe(userId: string): Promise<IUser | null> {
-  //   return await UserModel.findByIdAndUpdate(
-  //     userId,
-  //     { isNewsletterSubscribed: true },
-  //     { new: true }
-  //   );
-  // }
+  
 
-  // async newsLetterUnsubscribe(userId: string): Promise<IUser | null> {
-  //   return await UserModel.findByIdAndUpdate(
-  //     userId,
-  //     { isNewsletterSubscribed: false },
-  //     { new: true }
-  //   );
-  // }
 async updateNewsletterSubscription(userId: string, subscribed: boolean):Promise<IUser|null> {
-  return await UserModel.findByIdAndUpdate(
+  const subscribe= await UserModel.findByIdAndUpdate(
     userId,
     { isNewsletterSubscribed: subscribed },
     { new: true }
   );
+  console.log('userid',userId);
+  console.log('subscribeee',subscribe);
+  return subscribe;
 }
 
   async getAllNewsletterSubscribers(): Promise<IUser[]> {

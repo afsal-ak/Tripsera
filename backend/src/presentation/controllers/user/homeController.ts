@@ -47,6 +47,16 @@ export class HomeController {
     }
   };
 
+  getTopBookedPackagesForUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+      const packages = await this._homeUseCases.getTopBookedPackagesForUser(limit);
+      res.status(HttpStatus.OK).json({ message: 'Top booked packages fetched successfully', packages });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getPackagesById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;

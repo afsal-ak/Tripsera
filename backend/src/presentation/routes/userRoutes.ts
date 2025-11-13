@@ -22,6 +22,7 @@ import {
   BLOCK_ROUTE,
   COMMENT_ROUTE,
   CHATBOT_ROUTE,
+  NEWSLETTER_ROUTE
 } from 'constants/route-constants/userRoutes';
 
 import { UserAuthUsecases } from '@application/usecases/user/userAuthUseCases';
@@ -96,6 +97,13 @@ import { BlockController } from '@presentation/controllers/user/blockController'
 import { BlockUseCase } from '@application/usecases/user/blockUseCases';
 import { BlockRepository } from '@infrastructure/repositories/BlockRepository';
 
+import { NewsLetterSubscribeController } from '@presentation/controllers/user/newsLetterSubscribeController';
+import { NewsLetterSubscriceUseCases } from '@application/usecases/user/newsLetterSubscribeUseCases';
+
+import { DashboardRepository } from '@infrastructure/repositories/DashboardRepository';
+
+const dashboardRepository=new DashboardRepository();
+
 const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
 const chatbotUseCase = new ChatbotUseCase(chatbotService);
 const chatController = new ChatController(chatbotUseCase);
@@ -126,7 +134,7 @@ const userAuthController = new UserAuthController(userAuthUseCases);
 
 const bannerRepository = new BannerRepository();
 const packageRepository = new PackageRepository();
-const homeUseCases = new HomeUseCases(packageRepository, bannerRepository);
+const homeUseCases = new HomeUseCases(packageRepository,bannerRepository,dashboardRepository);
 const homeController = new HomeController(homeUseCases);
 
 const wishlistRepository = new WishlistRepository();
@@ -199,6 +207,9 @@ const blockRepository = new BlockRepository();
 const blockUseCases = new BlockUseCase(blockRepository);
 const blockController = new BlockController(blockUseCases);
 
+const newsLetterSubscribeUseCases = new NewsLetterSubscriceUseCases(userRepository,dashboardRepository);
+const newsLetterSubscribeController = new NewsLetterSubscribeController(newsLetterSubscribeUseCases);
+
 const router = Router();
 
 // AUTH ROUTES
@@ -234,7 +245,11 @@ router.get(
 router.get(HOME_ROUTES.HOME, optionalAuthMiddleware, homeController.getHome);
 router.get(HOME_ROUTES.PACKAGES, optionalAuthMiddleware, homeController.getActivePackages);
 router.get(HOME_ROUTES.PACKAGE_BY_ID, optionalAuthMiddleware, homeController.getPackagesById);
-
+router.get(
+  HOME_ROUTES.TOP_BOOKED_PACKAGES,
+  optionalAuthMiddleware,
+  homeController.getTopBookedPackagesForUser
+);
 // PROFILE ROUTES
 router.get(PROFILE_ROUTES.GET_PROFILE, userAuthMiddleware, profileController.getUserProfile);
 router.put(PROFILE_ROUTES.UPDATE_PROFILE, userAuthMiddleware, profileController.updateUserProfile);
@@ -444,5 +459,12 @@ router.get(COMMENT_ROUTE.GET_ALL, userAuthMiddleware, commentController.getComme
 router.get(COMMENT_ROUTE.GET_REPLIES, userAuthMiddleware, commentController.getReplies);
 router.post(COMMENT_ROUTE.LIKE, userAuthMiddleware, commentController.toggleLike);
 router.delete(COMMENT_ROUTE.DELETE, userAuthMiddleware, commentController.deleteComment);
+
+router.put(
+  NEWSLETTER_ROUTE.SUBSCRIBE,
+  userAuthMiddleware,
+  newsLetterSubscribeController.updateNewsletter
+);
+
 
 export default router;

@@ -1,3 +1,4 @@
+import { IPackage } from '@domain/entities/IPackage';
 export interface IDashboardSummary {
   totalUsers: number;
   totalBookings: number;
@@ -14,6 +15,10 @@ export interface ITopPackage {
   totalBookings: number;
 }
 
+export interface IHomeTopPackage {
+  packageDetails: IPackage;
+  totalBookings: number;
+}
 export const mapToTopPkgResponseDTO = (topPkg: ITopPackage): ITopPackage => {
   return {
     packageId: topPkg.packageId,

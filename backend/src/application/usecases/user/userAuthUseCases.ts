@@ -14,7 +14,6 @@ import { IReferralRepository } from '@domain/repositories/IReferralRepository';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
 import {
   LoginResponseDTO,
-  mapToLoginResponseDTO,
   PreRegistrationDTO,
 } from '@application/dtos/UserAuthDTO';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
@@ -235,7 +234,7 @@ export class UserAuthUsecases implements IUserAuthUseCases {
       email: user.email,
     });
 
-    return { accessToken, user: mapToLoginResponseDTO(user) };
+    return { accessToken, user: UserMapper.mapToLoginResponseDTO(user) };
   }
 
 

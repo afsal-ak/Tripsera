@@ -27,6 +27,8 @@ export interface UserDetailsResponseDTO {
   referralCode?: string;
   referredBy?: string;
   isGoogleUser?: boolean;
+  isNewsletterSubscribed?: boolean;
+
 }
 
 export interface UserBasicResponseDTO {
@@ -38,6 +40,7 @@ export interface UserBasicResponseDTO {
   profileImage?: { url: string; public_id: string };
   gender?: EnumGender;
   isBlocked: boolean;
+  isNewsletterSubscribed?: boolean;
 }
 export interface AdminUserListResponseDTO {
   _id: string;
