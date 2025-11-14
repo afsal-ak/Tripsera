@@ -3,13 +3,14 @@ import { PackageModel } from '@infrastructure/models/Package';
 import { IPackage } from '@domain/entities/IPackage';
 import { Types } from 'mongoose';
 import { IFilter } from '@domain/entities/IFilter';
-import { CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
+import { CreateCustomPkgDTO, CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
 import { IPackageFilter } from '@domain/entities/IPackageFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
 import { SortOrder } from 'mongoose';
 import { EnumPackageType } from '@constants/enum/packageEnum';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { ICustomPackage } from '@domain/entities/ICustomPackage';
 
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {
@@ -459,5 +460,78 @@ export class PackageRepository implements IPackageRepository {
 
     return updated as IPackage;
   }
+
+  /**
+   *  Find an exact matching package
+   * (same destination, days/nights, budget range, etc.)
+   * Excludes expired or past packages.
+   */
+  async findExactMatch(customPkg: CreateCustomPkgDTO):Promise<IPackage[]|null> {
+    const today = new Date();
+
+    return await PackageModel.findOne({
+      isBlocked: false,
+      $or: [
+        //  Normal packages still valid
+        {
+          packageType: EnumPackageType.NORMAL,
+          $or: [
+            { endDate: { $exists: false } },
+            { endDate: { $gte: today } },
+          ],
+        },
+        //  Group packages with future departures
+        {
+          packageType: EnumPackageType.GROUP,
+          departureDates: { $elemMatch: { $gte: today } },
+        },
+      ],
+      "location.name": customPkg.destination,
+      startPoint: customPkg.startingPoint,
+      durationDays: customPkg.days,
+      durationNights: customPkg.nights,
+      price: {
+        $gte: customPkg.budget * 0.9,
+        $lte: customPkg.budget * 1.1,
+      },
+    });
+  }
+
+  /**
+   *  Find similar packages
+   * (close in budget, duration, and destination)
+   */
+  async findSimilarPackages(customPkg: CreateCustomPkgDTO):Promise<IPackage[]|null> {
+    const today = new Date();
+
+    return await PackageModel.find({
+      isBlocked: false,
+      $or: [
+        //  Normal packages still valid
+        {
+          packageType: EnumPackageType.NORMAL,
+          $or: [
+            { endDate: { $exists: false } },
+            { endDate: { $gte: today } },
+          ],
+        },
+        //  Group packages with future departures
+        {
+          packageType: EnumPackageType.GROUP,
+          departureDates: { $elemMatch: { $gte: today } },
+        },
+      ],
+      "location.name": customPkg.destination,
+      durationDays: { $gte: customPkg.days - 2, $lte: customPkg.days + 2 },
+      price: {
+        $gte: customPkg.budget * 0.8,
+        $lte: customPkg.budget * 1.2,
+      },
+    })
+      .limit(3)
+      .sort({ createdAt: -1 });
+  }
+
+ 
 
 }

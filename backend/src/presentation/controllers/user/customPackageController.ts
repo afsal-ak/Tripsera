@@ -4,7 +4,6 @@ import { CreateCustomPkgDTO, UpdateCustomPkgDTO } from '@application/dtos/Custom
 import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { AppError } from '@shared/utils/AppError';
-import { error } from 'console';
 
 export class CustomPackageController {
   constructor(private readonly _customPkgUseCases: ICustomPkgUseCases) { }
@@ -17,104 +16,130 @@ export class CustomPackageController {
         ...req.body,
         userId,
       };
-      const pkg = await this._customPkgUseCases.createCutomPkg(data);
+      const result = await this._customPkgUseCases.createCutomPkg(data);
+      console.log(result, 'custom pkg resposnse');
 
-      res.status(HttpStatus.CREATED).json({
-        success: true,
-        data: pkg,
-        message: 'Package created successfully',
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+      switch (result.status) {
+        case 'exact_match':
+          res.status(HttpStatus.OK).json({
+            success: true,
+            ...result,
+          });
+          break;
 
-  updateCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const userId = getUserIdFromRequest(req);
-      const pkgId = req.params.packageId;
-      const data: UpdateCustomPkgDTO = req.body;
+        case 'similar_found':
+          res.status(HttpStatus.OK).json({
+            success: true,
+            ...result,
+          });
+          break;
 
-      const pkg = await this._customPkgUseCases.updateCutomPkg(pkgId, userId, data);
-      if (!pkg) {
-        throw new AppError(HttpStatus.NOT_FOUND, 'not found');
+        case 'created':
+          res.status(HttpStatus.CREATED).json({
+            success: true,
+            ...result,
+          });
+          break;
+
+        default:
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Internal server error',
+          });
+        }
+       
+
+      } catch (error) {
+        next(error);
       }
-      res.status(HttpStatus.CREATED).json({
-        success: true,
-        data: pkg,
-        message: 'Package updated successfully',
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+    };
 
-  getAllCustomPkgs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const userId = getUserIdFromRequest(req);
+    updateCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const userId = getUserIdFromRequest(req);
+        const pkgId = req.params.packageId;
+        const data: UpdateCustomPkgDTO = req.body;
 
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 9;
-      const data = await this._customPkgUseCases.getAllCustomPkg(userId, page, limit);
+        const pkg = await this._customPkgUseCases.updateCutomPkg(pkgId, userId, data);
+        if (!pkg) {
+          throw new AppError(HttpStatus.NOT_FOUND, 'not found');
+        }
+        res.status(HttpStatus.CREATED).json({
+          success: true,
+          data: pkg,
+          message: 'Package updated successfully',
+        });
+      } catch (error) {
+        next(error);
+      }
+    };
 
-      res.status(HttpStatus.OK).json({
-        data,
-        message: 'Package fetched successfully',
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+    getAllCustomPkgs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const userId = getUserIdFromRequest(req);
 
-  getCustomPkgById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const pkgId = req.params.packageId;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 9;
+        const data = await this._customPkgUseCases.getAllCustomPkg(userId, page, limit);
 
-      const data = await this._customPkgUseCases.getCustomPkgById(pkgId);
-      res.status(HttpStatus.OK).json({
-        data,
-        message: 'Package fetched successfully',
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+        res.status(HttpStatus.OK).json({
+          data,
+          message: 'Package fetched successfully',
+        });
+      } catch (error) {
+        next(error);
+      }
+    };
 
-  deleteCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const userId = getUserIdFromRequest(req);
-      const pkgId = req.params.packageId;
-      const result = await this._customPkgUseCases.deleteCustomPkg(pkgId, userId);
-      res.status(HttpStatus.OK).json({
-        result,
-        message: 'Package deleted successfully',
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+    getCustomPkgById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const pkgId = req.params.packageId;
 
-  getCustomPackagesForUser = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      const userId = getUserIdFromRequest(req);
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+        const data = await this._customPkgUseCases.getCustomPkgById(pkgId);
+        res.status(HttpStatus.OK).json({
+          data,
+          message: 'Package fetched successfully',
+        });
+      } catch (error) {
+        next(error);
+      }
+    };
 
-      const { data, pagination } = await this._customPkgUseCases.getCustomPackagesForUser(userId,page,limit);
+    deleteCustomPkg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const userId = getUserIdFromRequest(req);
+        const pkgId = req.params.packageId;
+        const result = await this._customPkgUseCases.deleteCustomPkg(pkgId, userId);
+        res.status(HttpStatus.OK).json({
+          result,
+          message: 'Package deleted successfully',
+        });
+      } catch (error) {
+        next(error);
+      }
+    };
 
-      res.status(HttpStatus.OK).json({
-        data,
-        pagination,
-         message: 'Custom packages sent successfully',
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+    getCustomPackagesForUser = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> => {
+      try {
+        const userId = getUserIdFromRequest(req);
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        const { data, pagination } = await this._customPkgUseCases.getCustomPackagesForUser(userId, page, limit);
+
+        res.status(HttpStatus.OK).json({
+          data,
+          pagination,
+          message: 'Custom packages sent successfully',
+        });
+      } catch (error) {
+        next(error);
+      }
+    };
 
 
-}
+  }

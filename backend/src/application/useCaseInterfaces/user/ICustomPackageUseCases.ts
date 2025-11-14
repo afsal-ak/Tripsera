@@ -9,7 +9,24 @@ import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 import { PackageResponseDTO } from '@application/dtos/PackageDTO';
 
 export interface ICustomPkgUseCases {
-  createCutomPkg(data: CreateCustomPkgDTO): Promise<CustomPkgResponseDTO>;
+  //createCutomPkg(data: CreateCustomPkgDTO): Promise<CustomPkgResponseDTO>;
+   createCutomPkg(data: CreateCustomPkgDTO): Promise<
+    | {
+        status: "exact_match";
+        message: string;
+        package: PackageResponseDTO[];
+      }
+    | {
+        status: "similar_found";
+        message: string;
+        similarPackages: PackageResponseDTO[];
+      }
+    | {
+        status: "created";
+        message: string;
+        customPackage: CustomPkgResponseDTO;
+      }
+  > 
   updateCutomPkg(
     customPkgId: string,
     userId: string,

@@ -1,7 +1,7 @@
 import { IPackage } from '@domain/entities/IPackage';
 import { IFilter } from '@domain/entities/IFilter';
 import { PaginationInfo } from '@application/dtos/PaginationDto';
-import { CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
+import { CreateCustomPkgDTO, CustomPackageApprovedResponseDTO } from '@application/dtos/CustomPkgDTO';
 import { IPackageFilter } from '@domain/entities/IPackageFilter';
 
 
@@ -48,5 +48,8 @@ export interface IPackageRepository {
   decrementSlots(packageId: string, slots: number): Promise<IPackage>
   incrementSlots(packageId: string, slots: number): Promise<IPackage>
 
+  //for custom pkg suggestions
+  findExactMatch(customPkg: CreateCustomPkgDTO): Promise<IPackage[] | null>
+  findSimilarPackages(customPkg: CreateCustomPkgDTO): Promise<IPackage[] | null>
 
 }
