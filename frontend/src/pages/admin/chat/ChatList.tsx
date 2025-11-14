@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
-import type { RootState } from '@/redux/store';
+import { useSelector,useDispatch } from 'react-redux';
+import type { RootState,AppDispatch } from '@/redux/store';
 import { ChatRoomItem } from '@/components/chat/ChatRoomItem';
 import { ChatListHeader } from '@/components/chat/ChatListHeader';
 import UserSearchForChat from '@/components/chat/UserSearchForChat';
@@ -9,12 +9,15 @@ import type { IChatRoom } from '@/types/IMessage';
 import { Button } from '@/components/ui/button';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
 import { EnumUserRole } from '@/Constants/enums/userEnum';
-interface ChatListProps {
+import AdminSearchForChat from '@/components/chat/AdminSearchForChat';
+import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
+ interface ChatListProps {
   onRoomSelect: (room: IChatRoom) => void;
   selectedRoomId?: string;
 }
 
 export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
+  const dispatch=useDispatch<AppDispatch>();
   const rooms = useSelector((state: RootState) => state.chatRoom.rooms);
   const currentUserId = useSelector((state: RootState) => state.adminAuth.admin?._id);
 
@@ -73,7 +76,13 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
         </div>
 
         {/* Search */}
-        <UserSearchForChat onRoomCreated={() => {}} />
+        <AdminSearchForChat
+              onRoomCreated={async (room) => {
+                await dispatch(fetchUserRooms({ isAdmin: true }));
+                onRoomSelect(room);
+               }}
+            />
+        {/* <AdminSearchForChat onRoomCreated={() => {}} /> */}
       </div>
 
       {/* Room List */}

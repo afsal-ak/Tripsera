@@ -178,6 +178,12 @@ const Navbar = () => {
             >
               Blog
             </Link>
+             <Link
+                to="/custom-package"
+                className="text-foreground hover:text-orange transition-colors"
+              >
+                Custom Package
+              </Link>
             <Link
               to="/chat"
               className="block text-foreground hover:text-orange"

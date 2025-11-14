@@ -14,7 +14,7 @@ export const getCustomPkgById = async (packageId: string) => {
 
 export const createCustomPkg = async (data: CustomPkgFormSchema) => {
   const response = await api.post(`/user/custom-package/create`, data);
-  return response.data;
+  return response;
 };
 
 export const updateCustomPkg = async (

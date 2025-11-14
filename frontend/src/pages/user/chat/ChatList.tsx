@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
-import type { RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '@/redux/store';
 import { ChatRoomItem } from '@/components/chat/ChatRoomItem';
 import { ChatListHeader } from '@/components/chat/ChatListHeader';
 import UserSearchForChat from '@/components/chat/UserSearchForChat';
@@ -8,12 +8,15 @@ import { useState } from 'react';
 import type { IChatRoom } from '@/types/IMessage';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
 import { EnumUserRole } from '@/Constants/enums/userEnum';
+import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
 interface ChatListProps {
   onRoomSelect: (room: IChatRoom) => void;
   selectedRoomId?: string;
 }
 
 export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const rooms = useSelector((state: RootState) => state.chatRoom.rooms);
   const currentUserId = useSelector((state: RootState) => state.userAuth.user?._id);
   const [search, setSearch] = useState('');
@@ -37,7 +40,11 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
     <div className="bg-white flex flex-col h-full">
       <div className="sticky top-0 z-10 bg-white shadow-sm">
         <ChatListHeader role="user" totalUnread={totalUnread} />
-        <UserSearchForChat onRoomCreated={() => {}} />
+        <UserSearchForChat
+          onRoomCreated={async (room) => {
+            await dispatch(fetchUserRooms({ isAdmin: false }));
+            onRoomSelect(room);
+          }} />
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -51,11 +58,10 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
             <div
               key={room._id}
               onClick={() => onRoomSelect(room)}
-              className={`cursor-pointer ${
-                selectedRoomId === room._id
-                  ? 'bg-blue-50 border-l-4 border-blue-500'
-                  : 'hover:bg-gray-50'
-              }`}
+              className={`cursor-pointer ${selectedRoomId === room._id
+                ? 'bg-blue-50 border-l-4 border-blue-500'
+                : 'hover:bg-gray-50'
+                }`}
             >
               <ChatRoomItem
                 room={room}

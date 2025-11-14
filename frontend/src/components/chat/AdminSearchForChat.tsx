@@ -129,7 +129,7 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { handleSearchUser } from '@/services/admin/userService';
-import { createChatRoom } from '@/services/user/messageService';
+import { adminCreateChatRoom } from '@/services/admin/messageService';
 import { useNavigate } from 'react-router-dom';
 import type { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
@@ -141,7 +141,7 @@ interface Props {
   onRoomCreated?: (room: IChatRoom) => void;
 }
 
-export default function UserSearchForChat({ onUserSelected, onRoomCreated }: Props) {
+export default function AdminSearchForChat({ onUserSelected, onRoomCreated }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState<IUser[]>([]);
   const [loading, setLoading] = useState(false);
@@ -180,19 +180,18 @@ export default function UserSearchForChat({ onUserSelected, onRoomCreated }: Pro
         isGroup: false,
       };
 
-      const response = await createChatRoom(payload);
+      const response = await adminCreateChatRoom(payload);
       const chatRoom: IChatRoom = response.data;
 
       // Trigger callback to update chat list instantly
       if (onRoomCreated) onRoomCreated(chatRoom);
 
       // Redirect to chat page
-     // navigate(`/chat`);
 
       // Close modal or search bar if callback provided
       if (onUserSelected) onUserSelected();
 
-      // ✅ Clear search bar and user list after selecting
+      //  Clear search bar and user list after selecting
       setSearchQuery('');
       setUsers([]);
     } catch (error) {
