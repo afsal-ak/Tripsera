@@ -6,7 +6,7 @@ import { IProfileUseCases } from '@application/useCaseInterfaces/user/IProfileUs
 import { UpdateProfileDTO } from '@application/dtos/ProfileDTO';
 
 export class ProfileController {
-  constructor(private _profileUseCases: IProfileUseCases) {}
+  constructor(private _profileUseCases: IProfileUseCases) { }
 
   getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -25,7 +25,7 @@ export class ProfileController {
   updateUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = getUserIdFromRequest(req);
-      const profileData: UpdateProfileDTO = req.body;
+      const profileData: UpdateProfileDTO = req.body.profileData;
       const updatedProfile = await this._profileUseCases.updateUserProfile(userId, profileData);
       res.status(HttpStatus.OK).json({
         success: true,
@@ -41,7 +41,7 @@ export class ProfileController {
     try {
       const userId = getUserIdFromRequest(req);
       const address = req.body.address;
- 
+
       const updatedAddress = await this._profileUseCases.updateUserAddress(userId, address);
 
       res.status(HttpStatus.OK).json({
@@ -113,9 +113,9 @@ export class ProfileController {
   getPublicProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const viewerId = getUserIdFromRequest(req);
- 
+
       const { username } = req.params;
-       const user = await this._profileUseCases.getPublicProfile(username);
+      const user = await this._profileUseCases.getPublicProfile(username);
       const isFollowing = user!.followers.toString()?.includes(viewerId) ?? false;
 
       res.status(HttpStatus.OK).json({
