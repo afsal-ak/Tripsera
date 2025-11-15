@@ -22,8 +22,10 @@ import { formatTimeAgo } from '@/lib/utils/formatTime';
 import ReadMore from '@/components/ReadMore';
 import PackageDetailPickUp from './PackageDetailPickUp';
 import { cn } from '@/lib/utils';
+import MapModal from '@/components/MapModal';
+import MapPreview from '@/components/MapPreview';
 const PackageDetails = () => {
-     const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
@@ -32,6 +34,8 @@ const PackageDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [previewReviews, setPreviewReviews] = useState<IReview[]>([]);
   const [ratingSummary, setRatingSummary] = useState<IRating>();
+  const [openMap, setOpenMap] = useState(false);
+  const packageLocations = pkg?.location || [];
 
   useEffect(() => {
     if (!id) {
@@ -52,7 +56,7 @@ const PackageDetails = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-  
+
   useEffect(() => {
     const loadPackage = async () => {
       if (!id) {
@@ -255,6 +259,24 @@ const PackageDetails = () => {
               <p className="text-muted-foreground text-lg leading-relaxed">{pkg.description}</p>
             </section>
             <PackageDetailPickUp startPoint={pkg?.startPoint!} />
+             
+            <div className="h-96 w-full rounded-lg overflow-hidden border">
+              {!openMap && (
+                <MapPreview
+                  locations={packageLocations}
+                  onClick={() => setOpenMap(true)}
+                />
+              )}
+            </div>
+
+            {/* Full screen map modal should be outside */}
+            <MapModal
+              open={openMap}
+              onClose={() => setOpenMap(false)}
+              locations={packageLocations}
+            />
+
+
 
             {/* Itinerary */}
             <section className="bg-white rounded-xl p-8 shadow-sm border">
@@ -346,7 +368,9 @@ const PackageDetails = () => {
                 </div>
               </div>
             </section>
+
           </div>
+
 
           {/* Sidebar */}
           <div className="space-y-6">
@@ -407,10 +431,10 @@ const PackageDetails = () => {
                     <span className="text-sm font-medium text-gray-700">Package Type</span>
                     <span
                       className={`text-sm font-semibold ${pkg.packageType === 'custom'
-                          ? 'text-blue-600'
-                          : pkg.packageType === 'group'
-                            ? 'text-purple-600'
-                            : 'text-green-600'
+                        ? 'text-blue-600'
+                        : pkg.packageType === 'group'
+                          ? 'text-purple-600'
+                          : 'text-green-600'
                         }`}
                     >
                       {pkg.packageType === 'custom'
@@ -460,7 +484,7 @@ const PackageDetails = () => {
                       </span>
                     </div>
                   )}
-                    {pkg?.startDate && (
+                  {pkg?.startDate && (
                     <div className="flex items-center justify-between border-b pb-2">
                       <div className="flex items-center">
                         <Calendar className="w-4 h-4 text-orange mr-3" />

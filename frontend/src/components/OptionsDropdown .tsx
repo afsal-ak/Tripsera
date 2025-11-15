@@ -1,5 +1,4 @@
-// src/components/OptionsDropdown.tsx
-import { useState, useRef, useEffect } from 'react';
+ import { useState, useRef, useEffect } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 
 interface Option {
@@ -11,7 +10,7 @@ interface Option {
 interface OptionsDropdownProps {
   options: Option[];
   onSelect: (value: string) => void;
-  triggerElement?: React.ReactNode; // ✅ Added triggerElement prop
+  triggerElement?: React.ReactNode; //  Added triggerElement prop
 }
 
 export const OptionsDropdown = ({ options, onSelect, triggerElement }: OptionsDropdownProps) => {

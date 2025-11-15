@@ -34,6 +34,8 @@ import {
 import { ChangeTravelDate } from './ChangeTravelDate';
 import PackageDetailPickUp from '../packages/pages/PackageDetailPickUp';
 import { BookingHistoryCard } from '@/components/booking/BookingHistoryCard';
+import MapModal from '@/components/MapModal';
+import MapPreview from '@/components/MapPreview';
 const BookingDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -46,6 +48,8 @@ const BookingDetailPage = () => {
   const [selectedTravelerIndex, setSelectedTravelerIndex] = useState<number | null>(null);
   const [travellerCancelReason, settravellerCancelReason] = useState('');
   const [travellerOpen, setTravellerOpen] = useState(false);
+  const [openMap, setOpenMap] = useState(false);
+  const packageLocations = pkg?.location || [];
 
   useEffect(() => {
     const loadBooking = async () => {
@@ -163,7 +167,7 @@ const BookingDetailPage = () => {
     navigate(`/packages/${packageId}/review/add`);
   };
 
- 
+
 
   const handleAddTraveller = () => {
     navigate(`/checkout/add-traveller/${packageId}/${booking?._id}`);
@@ -297,6 +301,21 @@ const BookingDetailPage = () => {
               </CardContent>
             </Card>
             <PackageDetailPickUp startPoint={pkg?.startPoint!} />
+            <div className="h-96 w-full rounded-lg overflow-hidden border">
+              {!openMap && (
+                <MapPreview
+                  locations={packageLocations}
+                  onClick={() => setOpenMap(true)}
+                />
+              )}
+            </div>
+
+            {/* Full screen map modal should be outside */}
+            <MapModal
+              open={openMap}
+              onClose={() => setOpenMap(false)}
+              locations={packageLocations}
+            />
 
             {/* Day by Day Itinerary */}
             <section className="bg-white rounded-xl p-8 shadow-sm border">
