@@ -30,4 +30,6 @@ export interface IUserAuthUseCases {
     search: string,
     role: EnumUserRole
   ): Promise<UserBasicResponseDTO[] | null>;
+      searchAllUsers(search: string): Promise<UserBasicResponseDTO[]>;
+
 }

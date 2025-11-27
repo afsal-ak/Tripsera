@@ -131,8 +131,26 @@ export const CHAT_ROOM_ROUTE = {
   GET_BY_ID: '/chatrooms/:roomId',
   GET_USER_ROOMS: '/chatrooms',
   DELETE: '/chatrooms/:roomId',
+    SEARCH_USERS: '/users/search-all',
+
 };
 
+// export const uploadFile = async (formData: FormData) => {
+//   const response = await api.post('/user/messages/upload', formData, {
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//     },
+//   });
+//   console.log(response, 'response chat');
+//   return response.data;
+// };
+
+
+
+// export const handleSearchUser = async (search: string) => {
+//   const response = await api.get(`/user/users/search-all?search=${search}`);
+//   return response.data;
+// };
 export const MESSAGE_ROUTE = {
   SEND: '/chatrooms/messages',
   GET_BY_ROOM: '/chatrooms/:roomId/messages',

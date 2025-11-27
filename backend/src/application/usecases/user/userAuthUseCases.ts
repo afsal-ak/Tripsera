@@ -288,4 +288,10 @@ export class UserAuthUsecases implements IUserAuthUseCases {
     const user = await this._userRepository.searchUsersForChat(userId, search, role);
     return user ? user.map(UserMapper.toBasicResponse) : null;
   }
+
+
+    async searchAllUsers(search: string): Promise<UserBasicResponseDTO[]> {
+      const user = await this._userRepository.searchAllUsers(search);
+      return user.map(UserMapper.toBasicResponse);
+    }
 }

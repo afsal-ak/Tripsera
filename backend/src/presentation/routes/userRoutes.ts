@@ -426,6 +426,7 @@ router.put(CHAT_ROOM_ROUTE.UPDATE, userAuthMiddleware, chatRoomController.update
 router.get(CHAT_ROOM_ROUTE.GET_BY_ID, userAuthMiddleware, chatRoomController.getRoomById);
 router.get(CHAT_ROOM_ROUTE.TOATAL_UNREAD_COUNT, userAuthMiddleware, chatRoomController.totalChatUnread);
 router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, userAuthMiddleware, chatRoomController.getUserRooms);
+router.get(CHAT_ROOM_ROUTE.SEARCH_USERS, userAuthMiddleware, userAuthController.searchAllUsers);
 router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware, chatRoomController.deleteRoom);
 
 //MESSAGE ROUTES

@@ -206,4 +206,22 @@ export class UserAuthController {
       next(error);
     }
   };
+  searchAllUsers = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> => {
+      try {
+        const search = (req.query.search as string) || '';
+        const users = await this._userAuthUseCases.searchAllUsers(search);
+  
+        res.status(HttpStatus.OK).json({
+          success: true,
+          message: 'Users fetched successfully',
+          data: users,
+        });
+      } catch (error) {
+        next(error);
+      }
+    };
 }
