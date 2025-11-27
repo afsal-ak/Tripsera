@@ -301,14 +301,7 @@ const BookingDetailPage = () => {
               </CardContent>
             </Card>
             <PackageDetailPickUp startPoint={pkg?.startPoint!} />
-            <div className="h-96 w-full rounded-lg overflow-hidden border">
-              {!openMap && (
-                <MapPreview
-                  locations={packageLocations}
-                  onClick={() => setOpenMap(true)}
-                />
-              )}
-            </div>
+          
 
             {/* Full screen map modal should be outside */}
             <MapModal
