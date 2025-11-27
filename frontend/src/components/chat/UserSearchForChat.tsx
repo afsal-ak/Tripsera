@@ -128,7 +128,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import { handleSearchUser } from '@/services/admin/userService';
+import { handleSearchUser } from '@/services/user/messageService';
 import { createChatRoom } from '@/services/user/messageService';
 import { useNavigate } from 'react-router-dom';
 import type { RootState } from '@/redux/store';

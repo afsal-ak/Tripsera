@@ -54,11 +54,18 @@ export const getMessagesByRoom = async (roomId: string,page:number,limit:number)
 };
 
 export const uploadFile = async (formData: FormData) => {
-  const response = await api.post('/admin/messages/upload', formData, {
+  const response = await api.post('/user/messages/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
   console.log(response, 'response chat');
+  return response.data;
+};
+
+
+
+export const handleSearchUser = async (search: string) => {
+  const response = await api.get(`/user/users/search-all?search=${search}`);
   return response.data;
 };

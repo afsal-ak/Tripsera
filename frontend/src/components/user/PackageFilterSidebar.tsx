@@ -152,7 +152,7 @@ const PackageFilterSidebar: React.FC<Props> = ({ filters, onFilterChange, onClea
 
       </aside>
 
-      {/* 🧱 Category Modal */}
+      {/*  Category Modal */}
       {showCategoryModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-2xl w-80 max-h-[80vh] overflow-y-auto relative p-5">
@@ -188,7 +188,7 @@ const PackageFilterSidebar: React.FC<Props> = ({ filters, onFilterChange, onClea
                 <li key={cat._id}>
                   <button
                     className={`w-full text-left px-3 py-2 rounded-lg transition ${localFilters.category === cat._id
-                      ? 'bg-orange-500 text-white'
+                      ? 'bg-orange text-white'
                       : 'hover:bg-orange-50 text-gray-700'
                       }`}
                     onClick={() => {
