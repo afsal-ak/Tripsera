@@ -124,7 +124,7 @@ const handleReportClick = () => {
           className="flex items-center gap-2 hover:underline hover:text-white"
         >
           <img
-            src={blogData.author?.profileImage?.url || '/default-avatar.png'}
+            src={blogData.author?.profileImage?.url || '/profile-default.jpg'}
             alt={blogData.author.username}
             className="w-8 h-8 rounded-full object-cover border border-white"
           />
