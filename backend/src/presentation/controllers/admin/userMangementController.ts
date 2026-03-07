@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IUserManagementUseCases } from '@application/useCaseInterfaces/admin/IUserManagementUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IFilter } from '@domain/entities/IFilter';
-
+import { UserMessages } from '@constants/messages/admin/UserMessages';
 export class UserManagementController {
   constructor(private _userManagementUseCases: IUserManagementUseCases) {}
 
@@ -17,7 +17,7 @@ export class UserManagementController {
       };
       const data = await this._userManagementUseCases.getUsers(page, limit, filters);
       res.status(HttpStatus.OK).json({
-        message: 'Users fetched successfully',
+        message: UserMessages.USERS_FETCHED_SUCCESS,
         data,
       });
     } catch (error) {
@@ -29,7 +29,7 @@ export class UserManagementController {
     try {
       const { userId } = req.params;
       const data = await this._userManagementUseCases.getSingleUser(userId);
-      res.status(HttpStatus.OK).json({ message: 'User fetched successfully', user: data });
+      res.status(HttpStatus.OK).json({ message:UserMessages.USER_FETCHED_SUCCESS, user: data });
     } catch (error) {
       next(error);
     }
@@ -41,7 +41,7 @@ export class UserManagementController {
       const newStatus = await this._userManagementUseCases.toggleUserBlockStatus(userId);
 
       res.status(HttpStatus.OK).json({
-        message: newStatus ? 'User blocked successfully' : 'User unblocked successfully',
+        message: newStatus ? UserMessages.USER_BLOCKED_SUCCESS : UserMessages.USER_UNBLOCKED_SUCCESS,
         isBlocked: newStatus,
       });
     } catch (error) {
@@ -60,7 +60,7 @@ export class UserManagementController {
 
       res.status(HttpStatus.OK).json({
         success: true,
-        message: 'Users fetched successfully',
+        message: UserMessages.USERS_FETCHED_SUCCESS,
         data: users,
       });
     } catch (error) {

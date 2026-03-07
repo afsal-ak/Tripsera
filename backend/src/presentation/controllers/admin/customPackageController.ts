@@ -7,6 +7,7 @@ import { CreatePackageDTO, EditPackageDTO } from '@application/dtos/PackageDTO';
 import { parseJsonFields } from '@shared/utils/parseJsonFields';
 import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
 import { ImageInfoDTO } from '@application/dtos/PackageDTO';
+import { CustomPackageMessages } from '@constants/messages/admin/CustomPackageMessages';
 export class CustomPackageController {
   constructor(private readonly _customPkgUseCases: ICustomPkgUseCases) { }
 
@@ -24,7 +25,7 @@ export class CustomPackageController {
       res.status(HttpStatus.CREATED).json({
         success: true,
         data: pkg,
-        message: 'Package updated successfully',
+        message: CustomPackageMessages.PACKAGE_STATUS_CHANGED,
       });
     } catch (error) {
       next(error);
@@ -45,7 +46,7 @@ export class CustomPackageController {
       const data = await this._customPkgUseCases.getAllRequestedCustomPkg(page, limit, filters);
       res.status(HttpStatus.OK).json({
         data,
-        message: 'Package fetched successfully',
+        message: CustomPackageMessages.PACKAGE_FETCHED,
       });
     } catch (error) {
       next(error);
@@ -66,7 +67,7 @@ export class CustomPackageController {
       const data = await this._customPkgUseCases.getApprovedCustomPackage(page, limit, filters);
       res.status(HttpStatus.OK).json({
         data,
-        message: 'Package fetched successfully',
+        message: CustomPackageMessages.PACKAGE_FETCHED,
       });
     } catch (error) {
       next(error);
@@ -81,7 +82,7 @@ export class CustomPackageController {
       const pkg = await this._customPkgUseCases.getCustomPkgById(pkgId);
       res.status(HttpStatus.OK).json({
         data: pkg,
-        message: 'Package fetched successfully',
+        message: CustomPackageMessages.PACKAGE_FETCHED,
       });
     } catch (error) {
       next(error);
@@ -94,7 +95,7 @@ export class CustomPackageController {
       const result = await this._customPkgUseCases.deleteCustomPkg(pkgId);
       res.status(HttpStatus.OK).json({
         result,
-        message: 'Package deleted successfully',
+        message: CustomPackageMessages.PACKAGE_DELETED,
       });
     } catch (error) {
       next(error);
@@ -103,10 +104,8 @@ export class CustomPackageController {
 
   createCustomPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      console.log( req.body,'custom packgea creation body');
 
       let pkgData: AdminCreateCustomPackageDTO = req.body;
-      console.log( pkgData,'custom after packgea creation body');
 
       // Parse fields that are sent as JSON strings
       pkgData = parseJsonFields(pkgData, [
@@ -118,11 +117,10 @@ export class CustomPackageController {
         'category',
       ]);
 
-       console.log("Parsed package data:", pkgData);
 
       const files = req.files as Express.Multer.File[];
       if (!files || files.length === 0) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: 'No images uploaded' });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: CustomPackageMessages.NO_IMAGES_UPLOADED });
         return;
       }
 
@@ -156,8 +154,8 @@ export class CustomPackageController {
       const createdPackage = await this._customPkgUseCases.createCustomPackage(pkgData);
 
       res.status(HttpStatus.CREATED).json({
-        message: 'Package created successfully',
         package: createdPackage,
+        message: CustomPackageMessages.PACKAGE_CREATED,
       });
     } catch (err) {
       next(err);
@@ -168,20 +166,19 @@ export class CustomPackageController {
     try {
       const { id } = req.params;
       if (!id) {
-        res.status(HttpStatus.NOT_FOUND).json({ message: 'Package ID is required' });
+        res.status(HttpStatus.NOT_FOUND).json({ message: CustomPackageMessages.PACKAGE_ID_REQUIRED });
         return;
       }
 
       const body = req.body;
       const files = req.files as Express.Multer.File[] | undefined;
-console.log(body,'custom packgea creation body');
 
       let pkgData: AdminEditCustomPackageDTO = body;
 
       pkgData = parseJsonFields(pkgData, [
         'location',
         'itinerary',
-       // 'offer',
+        // 'offer',
         'included',
         'notIncluded',
         'category',
@@ -220,9 +217,11 @@ console.log(body,'custom packgea creation body');
         newImages
       );
 
-      res
-        .status(HttpStatus.OK)
-        .json({ message: 'Package updated successfully', package: updatedPackage });
+      res.status(HttpStatus.OK)
+        .json({
+          message: CustomPackageMessages.PACKAGE_UPDATED,
+          package: updatedPackage
+        });
     } catch (error) {
       next(error);
     }

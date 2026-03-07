@@ -8,7 +8,7 @@ import { parseJsonFields } from '@shared/utils/parseJsonFields';
 import { IFilter } from '@domain/entities/IFilter';
 
 export class PackageController {
-  constructor(private _packageUseCase: IPackageUseCases) {}
+  constructor(private _packageUseCase: IPackageUseCases) { }
 
   getFullPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -21,11 +21,10 @@ export class PackageController {
         sort: (req.query.sort as string) || '',
         startDate: (req.query.startDate as string) || '',
         endDate: (req.query.endDate as string) || '',
-        customFilter:( req.query.custom as string) || ''
+        customFilter: (req.query.custom as string) || ''
       };
       const data = await this._packageUseCase.getAllPackages(page, limit, filters);
- console.log(data,'pkg data');
- 
+
       res.status(HttpStatus.OK).json({
         message: 'Package fetched successfully',
         data,
@@ -68,7 +67,7 @@ export class PackageController {
         return;
       }
 
-       
+
 
       // Upload to cloudinary
       const imageUrls = await Promise.all(
@@ -165,7 +164,7 @@ export class PackageController {
         .status(HttpStatus.OK)
         .json({ message: 'Package updated successfully', package: updatedPackage });
     } catch (error) {
-       next(error);
+      next(error);
     }
   };
 

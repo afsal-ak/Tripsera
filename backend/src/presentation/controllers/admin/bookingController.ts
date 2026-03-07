@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { IBookingUseCases } from '@application/useCaseInterfaces/admin/IBookingUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { BookingMessages } from '@constants/messages/admin/BookingMessages';
 
 export class BookingController {
-  constructor(private _bookingUseCases: IBookingUseCases) {}
+  constructor(private _bookingUseCases: IBookingUseCases) { }
 
   getAllBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -29,7 +30,7 @@ export class BookingController {
         total,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
-        message: 'Bookings fetched successfully',
+        message: BookingMessages.BOOKINGS_FETCHED,
       });
     } catch (error) {
       next(error);
@@ -48,7 +49,7 @@ export class BookingController {
 
       res.status(HttpStatus.OK).json({
         booking,
-        message: 'Booking details retrieved',
+        message: BookingMessages.BOOKING_FETCHED,
       });
     } catch (error) {
       next(error);
@@ -64,7 +65,7 @@ export class BookingController {
 
       res.status(HttpStatus.OK).json({
         booking,
-        message: 'Booking cancelled successfully',
+        message: BookingMessages.BOOKING_CANCELLED,
       });
     } catch (error) {
       next(error);
@@ -84,7 +85,7 @@ export class BookingController {
 
       res.status(HttpStatus.OK).json({
         booking,
-        message: 'Booking Confirmed successfully',
+        message: BookingMessages.BOOKING_CONFIRMED,
       });
     } catch (error) {
       next(error);
@@ -102,7 +103,10 @@ export class BookingController {
         new Date(newDate),
         note
       );
-      res.status(HttpStatus.OK).json(updatedBooking);
+      res.status(HttpStatus.OK).json({
+        booking: updatedBooking,
+        message: BookingMessages.TRAVEL_DATE_CHANGED,
+      });
     } catch (error) {
       next(error);
     }

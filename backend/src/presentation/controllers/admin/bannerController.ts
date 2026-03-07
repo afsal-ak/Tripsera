@@ -3,9 +3,10 @@ import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinary
 import { IBannerManagementUseCases } from '@application/useCaseInterfaces/admin/IBannerManagementUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { CreateBannerDTO } from '@application/dtos/BannerDTO';
+import { BannerMessages } from '@constants/messages/admin/BannerMessages';
 
 export class BannerMangementController {
-  constructor(private _bannerMangementUseCases: IBannerManagementUseCases) {}
+  constructor(private _bannerMangementUseCases: IBannerManagementUseCases) { }
 
   createBanner = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -13,7 +14,7 @@ export class BannerMangementController {
       const imagePath = req.file?.path;
 
       if (!imagePath) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: 'No file uploaded' });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: BannerMessages.NO_FILE_UPLOADED });
         return;
       }
 
@@ -25,7 +26,7 @@ export class BannerMangementController {
       };
       const createdBanner = await this._bannerMangementUseCases.createNewBanner(banner);
       res.status(HttpStatus.CREATED).json({
-        message: 'Banner Created Successfully',
+        message: BannerMessages.BANNER_CREATED,
         banner: createdBanner,
       });
     } catch (error) {
@@ -44,7 +45,7 @@ export class BannerMangementController {
       );
 
       res.status(HttpStatus.OK).json({
-        message: 'Bannner fetched successfully',
+        message: BannerMessages.BANNERS_FETCHED,
         data: banners,
         totalBanner,
         totalPages,
@@ -59,7 +60,7 @@ export class BannerMangementController {
     try {
       const { bannerId } = req.params;
       await this._bannerMangementUseCases.blockBanner(bannerId);
-      res.status(HttpStatus.OK).json({ message: 'Banner blocked successfully' });
+      res.status(HttpStatus.OK).json({ message: BannerMessages.BANNER_BLOCKED });
     } catch (error) {
       next(error);
     }
@@ -68,7 +69,7 @@ export class BannerMangementController {
     try {
       const { bannerId } = req.params;
       await this._bannerMangementUseCases.unblockBanner(bannerId);
-      res.status(HttpStatus.OK).json({ message: 'Banner unblocked successfully' });
+      res.status(HttpStatus.OK).json({ message: BannerMessages.BANNER_UNBLOCKED });
     } catch (error) {
       next(error);
     }
@@ -78,7 +79,7 @@ export class BannerMangementController {
     try {
       const { bannerId } = req.params;
       await this._bannerMangementUseCases.deleteBanner(bannerId);
-      res.status(HttpStatus.OK).json({ message: 'Banner deleted successfully' });
+      res.status(HttpStatus.OK).json({ message: BannerMessages.BANNER_DELETED });
     } catch (error) {
       next(error);
     }

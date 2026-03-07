@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { IAdminAuthUseCases } from '@application/useCaseInterfaces/admin/IAdminAuthUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { ForgotPasswordChangeDTO } from '@application/dtos/UserAuthDTO';
+import { AdminAuthMessages } from '@constants/messages/admin/AdminAuthMessages';
 
 export class AdminAuthController {
-  constructor(private _adminAuthUseCases: IAdminAuthUseCases) {}
+  constructor(private _adminAuthUseCases: IAdminAuthUseCases) { }
 
   adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -24,7 +25,7 @@ export class AdminAuthController {
       });
 
       res.status(HttpStatus.OK).json({
-        message: 'Login successful',
+        message: AdminAuthMessages.LOGIN_SUCCESS,
         admin,
         accessToken,
       });
@@ -37,7 +38,10 @@ export class AdminAuthController {
     try {
       const { email } = req.body;
       await this._adminAuthUseCases.forgotPasswordOtp(email);
-      res.status(HttpStatus.OK).json({ message: 'OTP sent to your email' });
+      res.status(HttpStatus.OK).json({
+        message: AdminAuthMessages.OTP_SENT
+      });
+
     } catch (error) {
       next(error);
     }
@@ -48,7 +52,7 @@ export class AdminAuthController {
       const { email, password, otp } = req.body;
       const adminData: ForgotPasswordChangeDTO = { email, password };
       await this._adminAuthUseCases.forgotPasswordChange(adminData, otp);
-      res.status(HttpStatus.OK).json({ message: 'Password changed successfully' });
+      res.status(HttpStatus.OK).json({ message: AdminAuthMessages.PASSWORD_CHANGED });
     } catch (error) {
       next(error);
     }
@@ -62,7 +66,7 @@ export class AdminAuthController {
         sameSite: 'none',
       });
 
-      res.status(HttpStatus.OK).json({ message: 'Admin logout successful' });
+      res.status(HttpStatus.OK).json({ message: AdminAuthMessages.LOGOUT_SUCCESS });
     } catch (error) {
       next(error);
     }

@@ -2,9 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import { IBlogUseCases } from '@application/useCaseInterfaces/admin/IBlogUseCases';
 import { IFilter } from '@domain/entities/IFilter';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { BlogMessages } from '@constants/messages/admin/BlogMessages';
 
 export class BlogController {
-  constructor(private _blogUseCases: IBlogUseCases) {}
+  constructor(private _blogUseCases: IBlogUseCases) { }
 
   getAllBlogs = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -21,8 +22,9 @@ export class BlogController {
       const data = await this._blogUseCases.getAllBlogs(page, limit, filters);
       res.status(HttpStatus.OK).json({
         data,
-        message: 'blog fetched successfully',
+        message: BlogMessages.BLOGS_FETCHED,
       });
+
     } catch (error) {
       next(error);
     }
@@ -33,7 +35,10 @@ export class BlogController {
       const blogId = req.params.blogId;
       const blog = await this._blogUseCases.getBlogById(blogId);
 
-      res.status(HttpStatus.OK).json({ blog, message: 'blog fetched successfully' });
+      res.status(HttpStatus.OK).json({
+        blog,
+        message: BlogMessages.BLOG_FETCHED,
+      });
     } catch (error) {
       next(error);
     }
@@ -43,7 +48,7 @@ export class BlogController {
     try {
       const blogId = req.params.blogId;
       await this._blogUseCases.deleteBlog(blogId);
-      res.status(HttpStatus.OK).json({ message: 'Blog deleted successfully' });
+      res.status(HttpStatus.OK).json({ message: BlogMessages.BLOG_DELETED });
     } catch (error) {
       next(error);
     }
@@ -54,7 +59,7 @@ export class BlogController {
       const blogId = req.params.blogId;
       const { isBlocked } = req.body;
       await this._blogUseCases.changeBlogStatus(blogId, isBlocked);
-      res.status(HttpStatus.OK).json({ message: 'Blog status updated' });
+      res.status(HttpStatus.OK).json({ message: BlogMessages.BLOG_STATUS_UPDATED });
     } catch (error) {
       next(error);
     }

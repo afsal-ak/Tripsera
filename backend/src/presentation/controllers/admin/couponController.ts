@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { ICouponUseCases } from '@application/useCaseInterfaces/admin/ICouponUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { CreateCouponDTO, UpdateCouponDTO } from '@application/dtos/CouponDTO';
+import { CouponMessages } from '@constants/messages/admin/CouponMessages';
 
 export class CouponController {
-  constructor(private _couponUseCase: ICouponUseCases) {}
+  constructor(private _couponUseCase: ICouponUseCases) { }
 
   createCoupon = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -12,7 +13,7 @@ export class CouponController {
       const coupon = await this._couponUseCase.createCoupon(couponData);
       res.status(HttpStatus.CREATED).json({
         coupon,
-        message: 'coupon created successfully',
+        message: CouponMessages.COUPON_CREATED,
       });
     } catch (error: any) {
       next(error);
@@ -25,7 +26,7 @@ export class CouponController {
       const coupon = await this._couponUseCase.getCouponById(id);
       res.status(HttpStatus.OK).json({
         coupon,
-        message: 'coupon fetched successfully',
+        message: CouponMessages.COUPON_FETCHED,
       });
     } catch (error) {
       next(error);
@@ -39,7 +40,7 @@ export class CouponController {
       const coupon = await this._couponUseCase.editCoupon(id, couponData);
       res.status(HttpStatus.OK).json({
         coupon,
-        message: 'coupon created successfully',
+        message: CouponMessages.COUPON_UPDATED,
       });
     } catch (error) {
       next(error);
@@ -57,7 +58,8 @@ export class CouponController {
         total,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
-        message: 'coupon fetched successfully',
+        message: CouponMessages.COUPONS_FETCHED,
+
       });
     } catch (error) {
       next(error);
@@ -71,7 +73,7 @@ export class CouponController {
 
       await this._couponUseCase.updateCouponStatus(id, isActive);
 
-      res.status(HttpStatus.OK).json({ message: 'coupon status updated successfully' });
+      res.status(HttpStatus.OK).json({ message: CouponMessages.COUPON_STATUS_UPDATED });
     } catch (error) {
       next(error);
     }
@@ -81,7 +83,7 @@ export class CouponController {
     try {
       const { id } = req.params;
       await this._couponUseCase.deleteCoupon(id);
-      res.status(HttpStatus.OK).json({ message: 'coupon deleted successfully' });
+      res.status(HttpStatus.OK).json({ message: CouponMessages.COUPON_DELETED });
     } catch (error) {
       next(error);
     }

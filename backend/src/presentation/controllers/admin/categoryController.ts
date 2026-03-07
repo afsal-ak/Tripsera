@@ -3,9 +3,10 @@ import { ICategoryUseCases } from '@application/useCaseInterfaces/admin/ICategor
 import { IFilter } from '@domain/entities/IFilter';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { CreateCategoryDTO, UpdateCategoryDTO } from '@application/dtos/CategoryDTO';
+import { CategoryMessages } from '@constants/messages/admin/CategoryMessages';
 
 export class CategoryController {
-  constructor(private _categoryUseCase: ICategoryUseCases) {}
+  constructor(private _categoryUseCase: ICategoryUseCases) { }
 
   getAllCategories = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -17,7 +18,10 @@ export class CategoryController {
         status: (req.query.status as string) || '',
       };
       const result = await this._categoryUseCase.getAllCategory({ page, limit }, filters);
-      res.status(HttpStatus.OK).json(result);
+      res.status(HttpStatus.OK).json({
+        message: CategoryMessages.CATEGORIES_FETCHED,
+        data: result
+      });
     } catch (error) {
       next(error);
     }
@@ -27,7 +31,10 @@ export class CategoryController {
     try {
       const category: CreateCategoryDTO = req.body;
       const created = await this._categoryUseCase.createCategory(category);
-      res.status(HttpStatus.CREATED).json(created);
+      res.status(HttpStatus.CREATED).json({
+        message: CategoryMessages.CATEGORY_CREATED,
+        data: created
+      });
     } catch (error) {
       next(error);
     }
@@ -38,7 +45,7 @@ export class CategoryController {
       const { id } = req.params;
       const categoryData: UpdateCategoryDTO = req.body;
       const updated = await this._categoryUseCase.editCategory(id, categoryData);
-      res.status(HttpStatus.OK).json(updated);
+      res.status(HttpStatus.OK).json({ message: CategoryMessages.CATEGORY_UPDATED, data: updated });
     } catch (error) {
       next(error);
     }
@@ -48,7 +55,7 @@ export class CategoryController {
     try {
       const { id } = req.params;
       await this._categoryUseCase.blockCategory(id);
-      res.status(HttpStatus.OK).json({ message: 'Category blocked successfully' });
+      res.status(HttpStatus.OK).json({ message: CategoryMessages.CATEGORY_BLOCKED });
     } catch (error) {
       next(error);
     }
@@ -58,7 +65,7 @@ export class CategoryController {
     try {
       const { id } = req.params;
       await this._categoryUseCase.unblockCategory(id);
-      res.status(HttpStatus.OK).json({ message: 'Category unblocked successfully' });
+      res.status(HttpStatus.OK).json({ message: CategoryMessages.CATEGORY_UNBLOCKED });
     } catch (error) {
       next(error);
     }
@@ -67,7 +74,10 @@ export class CategoryController {
   getActiveCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const result = await this._categoryUseCase.getActiveCategory();
-      res.status(HttpStatus.OK).json(result);
+      res.status(HttpStatus.OK).json({
+        message: CategoryMessages.ACTIVE_CATEGORIES_FETCHED,
+        data: result
+      });
     } catch (error) {
       next(error);
     }
@@ -77,7 +87,10 @@ export class CategoryController {
     try {
       const { id } = req.params;
       const categories = await this._categoryUseCase.findById(id);
-      res.status(HttpStatus.OK).json(categories);
+      res.status(HttpStatus.OK).json({
+        message: CategoryMessages.CATEGORY_FETCHED,
+        data: categories
+      });
     } catch (error) {
       next(error);
     }

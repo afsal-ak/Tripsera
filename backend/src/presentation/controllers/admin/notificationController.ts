@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { INotificationUseCases } from '@application/useCaseInterfaces/notification/INotificationUseCases';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { IFilter } from '@domain/entities/IFilter';
+import { NotificationMessages } from '@constants/messages/admin/NotificationMessages';
 
 export class NotificationController {
-  constructor(private _notificationUseCases: INotificationUseCases) {}
+  constructor(private _notificationUseCases: INotificationUseCases) { }
 
   getNotifications = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -24,7 +25,7 @@ export class NotificationController {
       res.status(HttpStatus.OK).json({
         data: notification,
         pagination,
-        message: 'succes',
+        message: NotificationMessages.NOTIFICATIONS_RETRIEVED,
       });
     } catch (error) {
       next(error);
@@ -35,7 +36,10 @@ export class NotificationController {
     try {
       const { id } = req.params;
       const updated = await this._notificationUseCases.markAsRead(id);
-      res.status(HttpStatus.OK).json({ updated, message: 'updated' });
+      res.status(HttpStatus.OK).json({
+        updated,
+        message: NotificationMessages.NOTIFICATION_MARKED_AS_READ,
+      });
     } catch (error) {
       next(error);
     }
@@ -45,7 +49,11 @@ export class NotificationController {
     try {
       const { id } = req.params;
       const deleted = await this._notificationUseCases.deleteNotification(id);
-      res.json({ success: deleted });
+      res.json({
+        success: deleted,
+        message: NotificationMessages.NOTIFICATION_DELETED,
+
+      });
     } catch (error) {
       next(error);
     }

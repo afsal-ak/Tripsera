@@ -7,24 +7,25 @@ import {
   mapToTopCategoryResponseDTO,
   mapToBookingChartResponseDTO,
 } from '@application/dtos/DashboardDTO';
+import { DashboardMessages } from '@constants/messages/admin/DashboardMessages';
 
 export class DashboardController {
-  constructor(private readonly _dashboardUseCases: IDashboardUseCases) {}
+  constructor(private readonly _dashboardUseCases: IDashboardUseCases) { }
 
   getDashboardSummary = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { filter, startDate, endDate } = req.query;
-       const dateRange: IDateFilter = {
+      const dateRange: IDateFilter = {
         filter: filter as DateFilter,
         startDate: startDate as string,
         endDate: endDate as string,
       };
 
       const data = await this._dashboardUseCases.getDashboardSummary(dateRange);
-       res.status(HttpStatus.OK).json({
+      res.status(HttpStatus.OK).json({
         success: true,
         data,
-        message: 'Dashboard summary fetched successfully',
+        message: DashboardMessages.DASHBOARD_SUMMARY_RETRIEVED,
       });
     } catch (error) {
       next(error);
@@ -34,7 +35,7 @@ export class DashboardController {
   getTopBookedPackages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { filter, startDate, endDate } = req.query;
-       const dateRange: IDateFilter = {
+      const dateRange: IDateFilter = {
         filter: filter as DateFilter,
         startDate: startDate as string,
         endDate: endDate as string,
@@ -44,7 +45,7 @@ export class DashboardController {
       res.status(HttpStatus.OK).json({
         success: true,
         data,
-        message: 'Top packages fetched successfully',
+        message: DashboardMessages.TOP_PACKAGES_RETRIEVED,
       });
     } catch (error) {
       next(error);
@@ -58,7 +59,7 @@ export class DashboardController {
   ): Promise<void> => {
     try {
       const { filter, startDate, endDate } = req.query;
-       const dateRange: IDateFilter = {
+      const dateRange: IDateFilter = {
         filter: filter as DateFilter,
         startDate: startDate as string,
         endDate: endDate as string,
@@ -69,7 +70,7 @@ export class DashboardController {
       res.status(HttpStatus.OK).json({
         success: true,
         data,
-        message: 'Top categories fetched successfully',
+        message: DashboardMessages.TOP_CATEGORIES_RETRIEVED,
       });
     } catch (error) {
       next(error);
@@ -79,19 +80,19 @@ export class DashboardController {
   getBookingChart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { filter, startDate, endDate } = req.query;
- 
+
       const dateRange: IDateFilter = {
         filter: filter as DateFilter,
         startDate: startDate as string,
         endDate: endDate as string,
       };
       const chart = await this._dashboardUseCases.getBookingsChartData(dateRange);
-       const data = chart.map(mapToBookingChartResponseDTO);
+      const data = chart.map(mapToBookingChartResponseDTO);
 
       res.status(HttpStatus.OK).json({
         success: true,
         data,
-        message: 'Booking Chart fetched successfully',
+        message: DashboardMessages.BOOKING_CHART_RETRIEVED,
       });
     } catch (error) {
       next(error);
