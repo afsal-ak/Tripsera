@@ -47,7 +47,8 @@ export interface ItineraryDay {
 
 export interface IPackage {
   _id?: string;
-  
+    companyId?: Types.ObjectId | string;
+
   ageOfAdult:number;
   ageOfChild?:number;
   // Basic info

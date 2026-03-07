@@ -17,6 +17,11 @@ const ReviewSchema = new Schema<ReviewDocument>(
       ref: 'Package',
       required: true,
     },
+
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company"
+    },
     packageTitle: { type: String, required: false },
 
     rating: {

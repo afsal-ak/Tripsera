@@ -14,6 +14,12 @@ const CustomPackageSchema = new Schema<CustomPackageDocument>(
       type: Schema.Types.ObjectId,
       ref: 'Users',
     },
+     companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      required: true
+
+    },
     guestInfo: {
       name: { type: String },
       email: { type: String },

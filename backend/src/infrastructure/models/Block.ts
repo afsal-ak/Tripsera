@@ -7,6 +7,10 @@ const BlockSchema = new Schema<BlockDocument>(
   {
     blocker: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     blocked: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    // companyId: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: "Company"
+    // },
     reason: { type: String, enum: ['spam', 'abuse', 'other'], default: 'other' },
     unblockedAt: { type: Date, default: null },
   },

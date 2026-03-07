@@ -17,6 +17,12 @@ const UserSchema = new Schema<IUserDocument>(
       enum: Object.values(EnumUserRole),
       default: EnumUserRole.USER,
     },
+    
+companyId: {
+  type: Schema.Types.ObjectId,
+  ref: 'Company',
+  default: null
+},
     followers: [{ type: Schema.Types.ObjectId, ref: 'Users', default: [] }],
     following: [{ type: Schema.Types.ObjectId, ref: 'Users', default: [] }],
     isPrivate: { type: Boolean, default: false },

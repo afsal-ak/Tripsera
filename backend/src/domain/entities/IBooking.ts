@@ -60,6 +60,7 @@ export interface IBooking {
   _id?: string | Types.ObjectId;
   bookingCode: string;
   userId: Types.ObjectId | string;
+    companyId?: Types.ObjectId | string;
   packageId: Types.ObjectId | string;
   packageType?:EnumPackageType,
 

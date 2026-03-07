@@ -8,6 +8,8 @@ import {
 export interface ICustomPackage {
   _id?: Types.ObjectId | string;
   userId?: Types.ObjectId | string;
+  companyId?: Types.ObjectId | string;
+
   guestInfo?: {
     name?: string;
     email?: string;

@@ -8,6 +8,7 @@ export interface IUser {
   phone?: number;
   password?: string;
   role?: EnumUserRole;
+  companyId?:string;
   isBlocked?: boolean;
   fullName?: string;
   dob?: Date;

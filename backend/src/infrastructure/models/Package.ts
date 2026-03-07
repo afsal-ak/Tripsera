@@ -220,6 +220,11 @@ type PackageDocument = IPackage & Document;
 
 const packageSchema = new Schema<PackageDocument>(
   {
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      required:true
+    },
     packageCode: { type: String, required: true, unique: true },
     title: { type: String, required: true },
     description: { type: String, required: true },

@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 export interface IBlock {
   _id?: Types.ObjectId | string;
 
+ // companyId?: Types.ObjectId|string,
   blocker: Types.ObjectId | string; // the user who blocks
   blocked: Types.ObjectId | string; // the user being blocked
 

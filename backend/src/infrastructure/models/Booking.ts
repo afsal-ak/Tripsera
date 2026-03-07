@@ -102,12 +102,17 @@ const BookingSchema = new Schema<IBookingDocument>(
     bookingCode: { type: String, required: true, unique: true },
     userId: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
     packageId: { type: Schema.Types.ObjectId, ref: 'Package', required: true },
-  packageType: {
+    packageType: {
       type: String,
       enum: Object.values(EnumPackageType),
       default: EnumPackageType.NORMAL,
     },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      required: true
 
+    },
     travelers: { type: [TravelerSchema], required: true },
     travelerHistory: { type: [TravelerHistorySchema], default: [] },
 
