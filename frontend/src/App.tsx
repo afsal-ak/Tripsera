@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import Loader from './components/Loader';
+import CompanyRoutes from './router/company/CompanyRoutes';
 
 // Lazy load route components
 const AdminRoutes = lazy(() => import('./router/admin/AdminRoutes'));
@@ -13,6 +14,7 @@ function App() {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/company/*" element={<CompanyRoutes />} />
           <Route path="/*" element={<UserRoutes />} />
         </Routes>
       </Suspense>
