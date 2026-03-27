@@ -28,6 +28,7 @@ export interface UserDetailsResponseDTO {
   referredBy?: string;
   isGoogleUser?: boolean;
   isNewsletterSubscribed?: boolean;
+  isSetupComplete?: boolean
 
 }
 
@@ -41,6 +42,8 @@ export interface UserBasicResponseDTO {
   gender?: EnumGender;
   isBlocked: boolean;
   isNewsletterSubscribed?: boolean;
+    isSetupComplete?: boolean
+
 }
 export interface AdminUserListResponseDTO {
   _id: string;

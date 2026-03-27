@@ -49,7 +49,11 @@ companyId: {
     isNewsletterSubscribed: {
       type: Boolean,
       default: false,
-    }
+    },
+     isSetupComplete: {
+      type: Boolean,
+      default: false
+    },
   },
   { timestamps: true }
 );

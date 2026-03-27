@@ -19,31 +19,35 @@ import {
   NOTIFICATION_ROUTE,
 } from 'constants/route-constants/companyRoutes';
 
-import { adminAuthMiddleware } from '@presentation/middlewares/adminAuthMiddleware';
-import { AdminAuthUseCases } from '@application/usecases/admin/adminAuthUseCases';
-import { AdminAuthController } from '@presentation/controllers/admin/adminAuthController';
+import { companyAuthMiddleware } from '@presentation/middlewares/companyAuthMiddleware';
+import { CompanyAuthUseCases } from '@application/usecases/company/companyAuthUseCases';
+import { CompanyAuthController } from '@presentation/controllers/company/CompanyAuthController';
+
 import { UserRepository } from '@infrastructure/repositories/UserRepository';
 import { OtpRepository } from '@infrastructure/repositories/OtpRepository';
-import { adminRefreshToken } from '@presentation/controllers/token/adminRefreshToken';
 import { UserManagementUseCases } from '@application/usecases/admin/userManagementUseCases';
 import { UserManagementController } from '@presentation/controllers/admin/userMangementController';
 
+import { CompanyRepository } from '@infrastructure/repositories/CompanyRepository';
+import { CompanyUseCases } from '@application/usecases/company/CompanyUseCases';
+import { CompanyController } from '@presentation/controllers/company/CompanyController';
+
 import { upload } from '@presentation/middlewares/upload';
 import { chatUpload } from '@presentation/middlewares/chatUpload';
- 
+
 import { PackageUseCases } from '@application/usecases/admin/packageUseCases';
 import { PackageController } from '@presentation/controllers/admin/packageController';
 import { PackageRepository } from '@infrastructure/repositories/PackageRepository';
- 
+
 import { BookingUseCases } from '@application/usecases/admin/bookingUseCases';
 import { BookingRepository } from '@infrastructure/repositories/BookingRepository';
 import { BookingController } from '@presentation/controllers/admin/bookingController';
 
-  
+
 import { ReviewRepository } from '@infrastructure/repositories/ReviewRepository';
 import { ReviewUseCases } from '@application/usecases/admin/reviewUseCase';
 import { ReviewController } from '@presentation/controllers/admin/reviewController';
- 
+
 import { SalesReportRepository } from '@infrastructure/repositories/salesReportRepository';
 import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
 import { SalesReportController } from '@presentation/controllers/admin/salesReportController';
@@ -84,12 +88,10 @@ const messageController = new MessageController(messageUseCases);
 const adminRepository = new UserRepository();
 const otpRepository = new OtpRepository();
 
-const adminAuthUseCases = new AdminAuthUseCases(adminRepository, otpRepository);
-const adminAuthController = new AdminAuthController(adminAuthUseCases);
 
 const userManagementUseCases = new UserManagementUseCases(adminRepository);
 const userManagementController = new UserManagementController(userManagementUseCases);
-  
+
 const packageRepository = new PackageRepository();
 const packageUseCase = new PackageUseCases(packageRepository);
 const packageController = new PackageController(packageUseCase);
@@ -97,9 +99,9 @@ const packageController = new PackageController(packageUseCase);
 const notificationRepository = new NotificationRepository();
 const notificationUseCases = new NotificationUseCases(notificationRepository, adminRepository);
 const notificationController = new NotificationController(notificationUseCases);
- 
- const walletRepository = new WalletRepository();
- 
+
+const walletRepository = new WalletRepository();
+
 const bookingRepository = new BookingRepository();
 const bookingUseCase = new BookingUseCases(
   bookingRepository,
@@ -108,11 +110,11 @@ const bookingUseCase = new BookingUseCases(
   notificationUseCases
 );
 const bookingController = new BookingController(bookingUseCase);
- 
+
 const reviewRepository = new ReviewRepository();
 const reviewUseCases = new ReviewUseCases(reviewRepository);
 const reviewController = new ReviewController(reviewUseCases);
- 
+
 const salesRepository = new SalesReportRepository();
 const salesuseCases = new SalesReportUseCase(salesRepository);
 const salesController = new SalesReportController(salesuseCases);
@@ -122,174 +124,236 @@ const reportUseCases = new ReportUseCases(reportRepository);
 const reportController = new ReportController(reportUseCases);
 
 const customPkgRepository = new CustomPackageRepository();
-const customPkgUseCases = new CustomPackageUseCases(customPkgRepository,packageRepository,notificationUseCases);
+const customPkgUseCases = new CustomPackageUseCases(customPkgRepository, packageRepository, notificationUseCases);
 const customPkgController = new CustomPackageController(customPkgUseCases);
 
 const dashboardRepository = new DashboardRepository();
 const dashboardUseCases = new DashboardUseCases(dashboardRepository);
 const dashboardController = new DashboardController(dashboardUseCases);
 
+
+
+
+
+import { userRefreshToken } from '@presentation/controllers/token/userRefreshToken';
+import { ReferralRepository } from '@infrastructure/repositories/ReferralRepository';
+
+
+
+const referralRepository = new ReferralRepository();
+
+const userRepository = new UserRepository();
+const companyAuthUseCases = new CompanyAuthUseCases(
+  userRepository,
+  otpRepository,
+  walletRepository,
+  referralRepository
+);
+const companyAuthController = new CompanyAuthController(companyAuthUseCases);
+
+const companyRepo=new CompanyRepository()
+const companyUseCases=new CompanyUseCases(companyRepo,userRepository)
+const companyController=new CompanyController(companyUseCases)
+
 const router = Router();
 
+
 // AUTH ROUTES
-router.post(AUTH_ROUTES.REFRESH_TOKEN, adminRefreshToken);
-router.post(AUTH_ROUTES.LOGIN, adminAuthController.adminLogin);
-router.post(AUTH_ROUTES.FORGOT_PASSWORD, adminAuthController.forgotPassword);
-router.post(AUTH_ROUTES.FORGOT_PASSWORD_CHANGE, adminAuthController.forgotPasswordChange);
-router.post(AUTH_ROUTES.LOGOUT, adminAuthController.adminLogout);
+router.post(AUTH_ROUTES.REFRESH_TOKEN, userRefreshToken);
+router.post(AUTH_ROUTES.PRE_REGISTER, companyAuthController.preRegister);
+router.post(AUTH_ROUTES.REGISTER, companyAuthController.register);
+router.post(AUTH_ROUTES.RESEND_OTP, companyAuthController.resendOtp);
+router.post(AUTH_ROUTES.LOGIN, companyAuthController.login);
+router.post(AUTH_ROUTES.GOOGLE_LOGIN, companyAuthController.googleLogin);
+router.post(AUTH_ROUTES.FORGOT_PASSWORD, companyAuthController.forgotPassword);
+router.post(AUTH_ROUTES.VERIFY_OTP, companyAuthController.verifyOtpForForgotPassword);
+router.post(AUTH_ROUTES.FORGOT_PASSWORD_CHANGE, companyAuthController.forgotPasswordChange);
+router.post(AUTH_ROUTES.LOGOUT, companyAuthController.userLogout);
 
-// USER MANAGEMENT
-router.get(
-  USER_MANAGEMENT_ROUTES.GET_ALL_USERS,
-  adminAuthMiddleware,
-  userManagementController.getAllUser
-);
-router.get(
-  USER_MANAGEMENT_ROUTES.SEARCH_USERS,
-  adminAuthMiddleware,
-  userManagementController.searchAllUsersForAdmin
-);
-
-router.get(
-  USER_MANAGEMENT_ROUTES.GET_SINGLE_USER,
-  adminAuthMiddleware,
-  userManagementController.getSingleUser
-);
-router.patch(
-  USER_MANAGEMENT_ROUTES.TOGGLE_BLOCK,
-  adminAuthMiddleware,
-  userManagementController.toggleBlockUser
-);
-  
-// PACKAGE ROUTES
-router.get(PACKAGE_ROUTES.GET_ALL, adminAuthMiddleware, packageController.getFullPackage);
-router.get(PACKAGE_ROUTES.GET_BY_ID, adminAuthMiddleware, packageController.getPackagesById);
 router.post(
-  PACKAGE_ROUTES.ADD,
-  adminAuthMiddleware,
-  upload.array('images', 4),
-  packageController.createPackage
+  AUTH_ROUTES.EMAIL_REQUEST_CHANGE,
+  // userAuthMiddleware,
+  companyAuthController.requestEmailChange
 );
-router.put(
-  PACKAGE_ROUTES.EDIT,
-  adminAuthMiddleware,
-  upload.array('images', 4),
-  packageController.editPackage
-);
-router.patch(PACKAGE_ROUTES.BLOCK, adminAuthMiddleware, packageController.blockPackage);
-router.patch(PACKAGE_ROUTES.UNBLOCK, adminAuthMiddleware, packageController.unblockPackage);
- 
-
-router.put(
-  BOOKING_ROUTES.CHANGE_TRAVEL_DATE,
-  adminAuthMiddleware,
-  bookingController.changeTravelDate
-);
-
-// BOOKING ROUTES
-router.get(BOOKING_ROUTES.GET_ALL, adminAuthMiddleware, bookingController.getAllBooking);
-router.get(BOOKING_ROUTES.GET_BY_ID, adminAuthMiddleware, bookingController.getBookingByIdForAdmin);
-router.put(BOOKING_ROUTES.CONFIRM, adminAuthMiddleware, bookingController.confirmBookingByAdmin);
-router.patch(BOOKING_ROUTES.CANCEL, adminAuthMiddleware, bookingController.cancelBookingByAdmin);
-
-
-//REVIEW ROUTES
-
-router.get(REVIEW_ROUTE.GET_REVIEWS, adminAuthMiddleware, reviewController.getAllReview);
-router.get(REVIEW_ROUTE.GET_BY_ID, adminAuthMiddleware, reviewController.getReviewById);
-router.patch(REVIEW_ROUTE.CHANGE_STATUS, adminAuthMiddleware, reviewController.changeReviewStatus);
-router.delete(REVIEW_ROUTE.DELETE, adminAuthMiddleware, reviewController.deleteReview);
- 
- 
-//SALES REPORT ROUTES
-
-router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT, salesController.getReportList);
-router.get(SALES_REPORT_ROUTE.SALES_REPORT_EXCEL_DOWNLOAD, salesController.downloadExcel);
-router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD, salesController.downloadPDF);
-
-//
-//REPORT ROUTES
-router.get(REPORT_ROUTE.GET_REPORT, adminAuthMiddleware, reportController.getAllReports);
-router.get(REPORT_ROUTE.GET_REPORT_BY_ID, adminAuthMiddleware, reportController.getReportById);
-router.patch(
-  REPORT_ROUTE.UPDATE_REPORT_STATUS,
-  adminAuthMiddleware,
-  reportController.updateReportStatus
-);
-
-//CUSTOM PACAKGE ROUTES
-router.get(
-  CUSTOM_PACKAGE_ROUTE.GET_ALL_REQUESTED_PKG,
-  adminAuthMiddleware,
-  customPkgController.getAllRequestedCustomPkgs
-);
-router.get(
-  CUSTOM_PACKAGE_ROUTE.GET_ALL_APPROVED_PKG,
-  adminAuthMiddleware,
-  customPkgController.getAllApprovedCustomPkgs
-);
-
-router.get(
-  CUSTOM_PACKAGE_ROUTE.GET_BY_ID,
-  adminAuthMiddleware,
-  customPkgController.getCustomPkgById
-);
-
-router.post(CUSTOM_PACKAGE_ROUTE.CREATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.createCustomPackage)
-router.put(CUSTOM_PACKAGE_ROUTE.UPDATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.editCustomPackage)
-
-router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS,adminAuthMiddleware,customPkgController.changeCustomPkgStatus);
-router.delete(  CUSTOM_PACKAGE_ROUTE.DELETE, adminAuthMiddleware,customPkgController.deleteCustomPkg);
-
-// // DASHBOARD ROUTES
-router.get(
-  DASHBOARD_ROUTE.GET_DASHBOARD_SUMMARY,
-  adminAuthMiddleware,
-  dashboardController.getDashboardSummary
-);
-router.get(
-  DASHBOARD_ROUTE.GET_TOP_PACKAGES,
-  adminAuthMiddleware,
-  dashboardController.getTopBookedPackages
-);
-router.get(
-  DASHBOARD_ROUTE.GET_TOP_CATEGORIES,
-  adminAuthMiddleware,
-  dashboardController.getTopBookedCategories
-);
-router.get(
-  DASHBOARD_ROUTE.GET_BOOKING_CHART,
-  adminAuthMiddleware,
-  dashboardController.getBookingChart
-);
-
-//CHAT ROOM ROUTES
-router.post(CHAT_ROOM_ROUTE.CREATE, adminAuthMiddleware, chatRoomController.createRoom);
-router.put(CHAT_ROOM_ROUTE.UPDATE, adminAuthMiddleware, chatRoomController.updateRoom);
-router.get(CHAT_ROOM_ROUTE.GET_BY_ID, adminAuthMiddleware, chatRoomController.getRoomById);
-router.get(CHAT_ROOM_ROUTE.TOATAL_UNREAD_COUNT, adminAuthMiddleware, chatRoomController.totalChatUnread);
-
-router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, adminAuthMiddleware, chatRoomController.getUserRooms);
-router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware, chatRoomController.deleteRoom);
-
-//MESSAGE ROUTES
-router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
 router.post(
-  MESSAGE_ROUTE.UPLOAD_MEDIA,
-  adminAuthMiddleware,
-  chatUpload.single('file'),
-  messageController.uploadMediaToChat
+  AUTH_ROUTES.EMAIL_VERIFY_CHANGE,
+  // userAuthMiddleware,
+
+  companyAuthController.verifyAndUpdateEmail
 );
+router.post(AUTH_ROUTES.PASSWORD_CHANGE,
+  //  userAuthMiddleware,
+  companyAuthController.changePassword);
+
+
 
 router.get(
-  NOTIFICATION_ROUTE.FETCH_NOTIFICATION,
-  adminAuthMiddleware,
-  notificationController.getNotifications
+  "/company-profile",
+  companyAuthMiddleware,
+  companyController.getCompanyProfile
+)
+
+
+router.get(
+  "/setup-data",
+  companyAuthMiddleware,
+  companyController.getSetupData
+)
+router.post(
+  "/setup",
+  companyAuthMiddleware,
+  upload.single("logo"),
+  companyController.setupCompany
+)
+
+router.put(
+  "/update",
+  companyAuthMiddleware,
+  companyController.updateCompany
 );
-router.patch(
-  NOTIFICATION_ROUTE.MARK_AS_READ,
-  adminAuthMiddleware,
-  notificationController.markAsRead
+
+router.put(
+  "/logo",
+  companyAuthMiddleware,
+  upload.single("logo"),
+  companyController.updateCompanyLogo
 );
+
+// router.put(
+//   "/company/update",
+//   companyAuthMiddleware,
+//   companyController.updateCompany
+// )
+
+// // PACKAGE ROUTES
+// router.get(PACKAGE_ROUTES.GET_ALL, adminAuthMiddleware, packageController.getFullPackage);
+// router.get(PACKAGE_ROUTES.GET_BY_ID, adminAuthMiddleware, packageController.getPackagesById);
+// router.post(
+//   PACKAGE_ROUTES.ADD,
+//   adminAuthMiddleware,
+//   upload.array('images', 4),
+//   packageController.createPackage
+// );
+// router.put(
+//   PACKAGE_ROUTES.EDIT,
+//   adminAuthMiddleware,
+//   upload.array('images', 4),
+//   packageController.editPackage
+// );
+// router.patch(PACKAGE_ROUTES.BLOCK, adminAuthMiddleware, packageController.blockPackage);
+// router.patch(PACKAGE_ROUTES.UNBLOCK, adminAuthMiddleware, packageController.unblockPackage);
+
+
+// router.put(
+//   BOOKING_ROUTES.CHANGE_TRAVEL_DATE,
+//   adminAuthMiddleware,
+//   bookingController.changeTravelDate
+// );
+
+// // BOOKING ROUTES
+// router.get(BOOKING_ROUTES.GET_ALL, adminAuthMiddleware, bookingController.getAllBooking);
+// router.get(BOOKING_ROUTES.GET_BY_ID, adminAuthMiddleware, bookingController.getBookingByIdForAdmin);
+// router.put(BOOKING_ROUTES.CONFIRM, adminAuthMiddleware, bookingController.confirmBookingByAdmin);
+// router.patch(BOOKING_ROUTES.CANCEL, adminAuthMiddleware, bookingController.cancelBookingByAdmin);
+
+
+// //REVIEW ROUTES
+
+// router.get(REVIEW_ROUTE.GET_REVIEWS, adminAuthMiddleware, reviewController.getAllReview);
+// router.get(REVIEW_ROUTE.GET_BY_ID, adminAuthMiddleware, reviewController.getReviewById);
+// router.patch(REVIEW_ROUTE.CHANGE_STATUS, adminAuthMiddleware, reviewController.changeReviewStatus);
+// router.delete(REVIEW_ROUTE.DELETE, adminAuthMiddleware, reviewController.deleteReview);
+
+
+// //SALES REPORT ROUTES
+
+// router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT, salesController.getReportList);
+// router.get(SALES_REPORT_ROUTE.SALES_REPORT_EXCEL_DOWNLOAD, salesController.downloadExcel);
+// router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD, salesController.downloadPDF);
+
+// //
+// //REPORT ROUTES
+// router.get(REPORT_ROUTE.GET_REPORT, adminAuthMiddleware, reportController.getAllReports);
+// router.get(REPORT_ROUTE.GET_REPORT_BY_ID, adminAuthMiddleware, reportController.getReportById);
+// router.patch(
+//   REPORT_ROUTE.UPDATE_REPORT_STATUS,
+//   adminAuthMiddleware,
+//   reportController.updateReportStatus
+// );
+
+// //CUSTOM PACAKGE ROUTES
+// router.get(
+//   CUSTOM_PACKAGE_ROUTE.GET_ALL_REQUESTED_PKG,
+//   adminAuthMiddleware,
+//   customPkgController.getAllRequestedCustomPkgs
+// );
+// router.get(
+//   CUSTOM_PACKAGE_ROUTE.GET_ALL_APPROVED_PKG,
+//   adminAuthMiddleware,
+//   customPkgController.getAllApprovedCustomPkgs
+// );
+
+// router.get(
+//   CUSTOM_PACKAGE_ROUTE.GET_BY_ID,
+//   adminAuthMiddleware,
+//   customPkgController.getCustomPkgById
+// );
+
+// router.post(CUSTOM_PACKAGE_ROUTE.CREATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.createCustomPackage)
+// router.put(CUSTOM_PACKAGE_ROUTE.UPDATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.editCustomPackage)
+
+// router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS,adminAuthMiddleware,customPkgController.changeCustomPkgStatus);
+// router.delete(  CUSTOM_PACKAGE_ROUTE.DELETE, adminAuthMiddleware,customPkgController.deleteCustomPkg);
+
+// // // DASHBOARD ROUTES
+// router.get(
+//   DASHBOARD_ROUTE.GET_DASHBOARD_SUMMARY,
+//   adminAuthMiddleware,
+//   dashboardController.getDashboardSummary
+// );
+// router.get(
+//   DASHBOARD_ROUTE.GET_TOP_PACKAGES,
+//   adminAuthMiddleware,
+//   dashboardController.getTopBookedPackages
+// );
+// router.get(
+//   DASHBOARD_ROUTE.GET_TOP_CATEGORIES,
+//   adminAuthMiddleware,
+//   dashboardController.getTopBookedCategories
+// );
+// router.get(
+//   DASHBOARD_ROUTE.GET_BOOKING_CHART,
+//   adminAuthMiddleware,
+//   dashboardController.getBookingChart
+// );
+
+// //CHAT ROOM ROUTES
+// router.post(CHAT_ROOM_ROUTE.CREATE, adminAuthMiddleware, chatRoomController.createRoom);
+// router.put(CHAT_ROOM_ROUTE.UPDATE, adminAuthMiddleware, chatRoomController.updateRoom);
+// router.get(CHAT_ROOM_ROUTE.GET_BY_ID, adminAuthMiddleware, chatRoomController.getRoomById);
+// router.get(CHAT_ROOM_ROUTE.TOATAL_UNREAD_COUNT, adminAuthMiddleware, chatRoomController.totalChatUnread);
+
+// router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, adminAuthMiddleware, chatRoomController.getUserRooms);
+// router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware, chatRoomController.deleteRoom);
+
+// //MESSAGE ROUTES
+// router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
+// router.post(
+//   MESSAGE_ROUTE.UPLOAD_MEDIA,
+//   adminAuthMiddleware,
+//   chatUpload.single('file'),
+//   messageController.uploadMediaToChat
+// );
+
+// router.get(
+//   NOTIFICATION_ROUTE.FETCH_NOTIFICATION,
+//   adminAuthMiddleware,
+//   notificationController.getNotifications
+// );
+// router.patch(
+//   NOTIFICATION_ROUTE.MARK_AS_READ,
+//   adminAuthMiddleware,
+//   notificationController.markAsRead
+// );
 
 export default router;

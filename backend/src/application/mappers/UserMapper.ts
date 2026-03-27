@@ -30,7 +30,9 @@ export abstract class UserMapper {
       referralCode: user.referralCode,
       referredBy: user.referredBy?.toString(),
       isGoogleUser: !!user.isGoogleUser,
-      isNewsletterSubscribed: user.isNewsletterSubscribed||false,
+      isNewsletterSubscribed: user.isNewsletterSubscribed || false,
+      isSetupComplete: !!user.isSetupComplete,
+
 
     };
   }
@@ -46,6 +48,8 @@ export abstract class UserMapper {
       gender: user.gender as EnumGender,
       isBlocked: !!user.isBlocked,
       isNewsletterSubscribed: !!user.isNewsletterSubscribed,
+      isSetupComplete: !!user.isSetupComplete,
+
     };
   }
 
@@ -58,6 +62,9 @@ export abstract class UserMapper {
     fullName: user.fullName,
     phone: user.phone,
     isGoogleUser: !!user.isGoogleUser,
+    isSetupComplete: !!user.isSetupComplete,
+
+
     isNewsletterSubscribed: !!user.isNewsletterSubscribed,
   });
 

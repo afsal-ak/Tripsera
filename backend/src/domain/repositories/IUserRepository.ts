@@ -7,6 +7,10 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<IUser | null>;
   findByUsername(username: string): Promise<IUser | null>;
   createUser(user: Partial<IUser>): Promise<IUser>;
+  updateUser(userId:string,user: Partial<IUser>): Promise<IUser>;
+
+
+
   updateUserPassword(email: string, password: string): Promise<IUser | null>;
   findById(id: string): Promise<IUser | null>;
   findAll(page: number, limit: number, filter: IFilter): Promise<IPaginatedResult<IUser>>;
@@ -38,14 +42,14 @@ export interface IUserRepository {
   unFollowAndFollowing(followerId: string, followingId: string): Promise<void>;
 
 
-
-
-  // newsLetterSubscribe(userId: string): Promise<IUser | null>
-
-  // newsLetterUnsubscribe(userId: string): Promise<IUser | null>
+ 
   updateNewsletterSubscription(userId: string, subscribed: boolean) :Promise<IUser|null>
   
 
   getAllNewsletterSubscribers(): Promise<IUser[]>
+
+
+  updateCompanyId(userId: string, companyId: string): Promise<void>
+
 
 }

@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import userRoutes from '@presentation/routes/userRoutes';
 import adminRoutes from '@presentation/routes/adminRoutes';
+import companyRoutes from '@presentation/routes/companyRoutes';
 import { errorHandler } from '@presentation/middlewares/errorHandler';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -90,6 +91,7 @@ process.on('uncaughtException', (error) => {
 // Routes
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/company', companyRoutes);
 
 // Error handler
 app.use(errorHandler);

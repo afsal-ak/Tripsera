@@ -6,7 +6,7 @@ export interface ICompany {
 
   name: string;
   email: string;
-  phone: string;
+  phone: number;
 
 //   ownerId: string;
   ownerId: Types.ObjectId | string;
@@ -46,7 +46,7 @@ export interface ICompany {
 
   isApproved?: boolean;
   isBlocked?: boolean;
-
+  isSetupComplete:boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

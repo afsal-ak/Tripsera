@@ -12,6 +12,10 @@ const OtpSchema = new Schema<IOtpDocument>({
     type: String,
     required: false,
   },
+   phone: {
+    type: String,
+    required: false,
+  },
   password: {
     type: String,
     required: false,

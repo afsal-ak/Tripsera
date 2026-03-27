@@ -29,6 +29,7 @@ export interface IUser {
     country?: string;
   };
   referralCode?: string;
+   isSetupComplete?: boolean;
   referredBy?: Types.ObjectId | string;
   googleId?: string;
   isGoogleUser?: boolean;

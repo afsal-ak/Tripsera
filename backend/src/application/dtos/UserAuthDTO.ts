@@ -4,6 +4,7 @@ import { IUser } from '@domain/entities/IUser';
 export interface PreRegistrationDTO {
   email: string;
   username: string;
+  phone?:number;
   password: string;
   referredReferralCode?: string;
 }
@@ -23,5 +24,6 @@ export interface LoginResponseDTO {
   phone?: number;
   profileImage?: { url: string; public_id: string };
   isGoogleUser: boolean;
+  isSetupComplete?: boolean
   isNewsletterSubscribed: boolean;
 }

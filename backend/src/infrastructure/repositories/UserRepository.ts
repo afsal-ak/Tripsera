@@ -28,6 +28,21 @@ export class UserRepository implements IUserRepository {
     return saved.toObject();
   }
 
+ async updateUser(userId: string, user: Partial<IUser>): Promise<IUser> {
+
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    userId,
+    { $set: user },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    throw new AppError(HttpStatus.NOT_FOUND, "User not found");
+  }
+
+  return updatedUser;
+}
+
   async updateUserPassword(email: string, password: string): Promise<IUser | null> {
     const updatedUser = await UserModel.findOneAndUpdate(
       { email: email },
@@ -334,4 +349,16 @@ async updateNewsletterSubscription(userId: string, subscribed: boolean):Promise<
   async getAllNewsletterSubscribers(): Promise<IUser[]> {
     return await UserModel.find({ isNewsletterSubscribed: true });
   }
+
+
+
+
+
+
+
+async updateCompanyId(userId: string, companyId: string): Promise<void> {
+  await UserModel.findByIdAndUpdate(userId, { companyId })
+}
+
+
 }

@@ -17,7 +17,7 @@ const CompanySchema = new Schema<CompanyDocument>(
     },
 
     phone: {
-      type: String,
+      type: Number,
       required: true,
     },
 
@@ -74,7 +74,10 @@ const CompanySchema = new Schema<CompanyDocument>(
       type: Boolean,
       default: false,
     },
-
+    isSetupComplete: {
+      type: Boolean,
+      default: false
+    },
     isBlocked: {
       type: Boolean,
       default: false,
