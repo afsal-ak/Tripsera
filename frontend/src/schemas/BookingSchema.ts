@@ -45,6 +45,8 @@ export const TravelerSchema = z
 export const BookingSchema = z.object({
   packageId: z.string().min(1, 'Package ID is required'),
   packageType:z.string().min(1, 'Package Type is required'),
+    companyId: z.string().min(1, 'Company ID is required'),
+
   travelDate: z.string().refine(
     (date) => {
       const selected = new Date(date);

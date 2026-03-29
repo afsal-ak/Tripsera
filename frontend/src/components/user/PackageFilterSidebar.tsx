@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCategory } from '../../services/admin/packageService';
+import { getCategory } from '../../services/user/PackageService';
 import { X } from 'lucide-react';
 
 interface ICategory {

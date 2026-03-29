@@ -54,10 +54,10 @@ useEffect(() => {
 
   const mainItems = [
     { path: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: 'categories', label: 'Categories', icon: FolderKanban },
-    { path: 'banners', label: 'Banners', icon: Image },
+    //{ path: 'categories', label: 'Categories', icon: FolderKanban },
+    //{ path: 'banners', label: 'Banners', icon: Image },
     { path: 'packages', label: 'Packages', icon: Briefcase },
-    { path: 'coupons', label: 'Coupons', icon: BadgePercent },
+    //{ path: 'coupons', label: 'Coupons', icon: BadgePercent },
     {
       label: 'Custom Packages',
       icon: Briefcase,
@@ -68,17 +68,17 @@ useEffect(() => {
     },
   ];
 
-  const userManagementItems = [
-    { path: 'users', label: 'Users', icon: User },
-    { path: 'reviews', label: 'Reviews', icon: Star },
-  ];
+  // const userManagementItems = [
+  // //  { path: 'users', label: 'Users', icon: User },
+  //  // { path: 'reviews', label: 'Reviews', icon: Star },
+  // ];
 
   const bookingItems = [
     { path: 'bookings', label: 'Bookings', icon: Calendar },
-    { path: 'blogs', label: 'Blogs', icon: BookOpen },
-    { path: 'referral', label: 'Referral', icon: Gift },
+   // { path: 'blogs', label: 'Blogs', icon: BookOpen },
+    //{ path: 'referral', label: 'Referral', icon: Gift },
     { path: 'sales-report', label: 'Sales Report', icon: FileBarChart },
-    { path: 'reports', label: 'Reports', icon: Flag },
+    //{ path: 'reports', label: 'Reports', icon: Flag },
   ];
 
   // ✅ Auto-open submenu based on current path
@@ -212,7 +212,7 @@ useEffect(() => {
 
         <nav className="p-4 flex-1 overflow-y-auto">
           {renderMenuGroup('Main', mainItems)}
-          {renderMenuGroup('User Management', userManagementItems)}
+          {/* {renderMenuGroup('User Management', userManagementItems)} */}
           {renderMenuGroup('Bookings & Reports', bookingItems)}
         </nav>
 

@@ -54,7 +54,7 @@ export interface ItineraryDay {
 }
 export interface IPackage {
   _id?: string;
-
+  companyId: string;
   title: string;
   description: string;
   price: number;
@@ -83,7 +83,7 @@ export interface IPackage {
 
   images?: File[]; // new uploads
   imageUrls?: ImageInfo[]; // existing images
-imageUrl: string;
+  imageUrl: string;
   offer?: IOffer;
 
   importantDetails?: string;

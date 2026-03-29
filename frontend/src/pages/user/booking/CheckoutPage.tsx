@@ -146,6 +146,7 @@ const CheckoutPage = () => {
     resolver: zodResolver(BookingSchema),
     defaultValues: {
       packageId: id ?? '',
+      
       travelDate: '',
       // travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
       travelers: [{ fullName: '', age: 0, gender: 'male', idType: 'aadhaar', idNumber: '' }],
@@ -207,6 +208,7 @@ const CheckoutPage = () => {
     setValue('amountPaid', amountToPay);
     setValue('couponCode', couponCode);
     setValue('discount', couponDiscount);
+    setValue('companyId', packageData?.companyId!);
     setValue('packageType',packageData?.packageType!)
 if (packageData?.departureDates) {
   if (typeof packageData.departureDates === 'string') {
@@ -278,6 +280,7 @@ if (packageData?.departureDates) {
     const rzp = new window.Razorpay(options);
     rzp.open();
   };
+console.log(packageData,'pkgdata in');
 
   const handlePayment = async (formData: BookingFormSchema) => {
     try {

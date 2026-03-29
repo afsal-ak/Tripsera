@@ -51,6 +51,8 @@ export interface IBooking {
   _id?: string;
   bookingCode: string;
   //userId:string;
+    companyId: string;
+
   packageId: {
     _id: string;
     title: string;
