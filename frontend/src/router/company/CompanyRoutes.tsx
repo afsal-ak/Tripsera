@@ -20,6 +20,8 @@ import PackageDetails from "@/pages/company/package/PackageDetail";
 import NotificationPage from "@/pages/admin/notification/Notifications";
 import ChatAdminLayout from "@/layouts/ChatAdminLayout";
 import MessageMainPage from "@/pages/admin/chat/MessageMainPage";
+import BookingList from "@/pages/company/booking/BookingsList";
+import BookingDetails from "@/pages/company/booking/BookingDetails";
 const CompanyRoutes = () => {
   return (
     <Routes>
@@ -52,6 +54,11 @@ const CompanyRoutes = () => {
           {/* Optional shared block/unblock */}
           <Route path="packages/block/:id" element={<PackageList />} />
           <Route path="packages/unblock/:id" element={<PackageList />} />
+
+
+      {/* Bookings */}
+          <Route path="bookings" element={<BookingList />} />
+          <Route path="bookings/:id" element={<BookingDetails />} />
 
 
     {/* Notifications */}
