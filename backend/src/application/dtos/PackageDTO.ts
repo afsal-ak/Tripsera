@@ -50,6 +50,7 @@ export interface ItineraryDayDTO {
 
 // Create Package DTO
 export interface CreatePackageDTO {
+  companyId:string;
   title: string;
   description: string;
   price: number;

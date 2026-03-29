@@ -1,0 +1,214 @@
+import { Request, Response, NextFunction } from 'express';
+import { ImageInfoDTO } from '@application/dtos/PackageDTO';
+import { uploadCloudinary } from '@infrastructure/services/cloudinary/cloudinaryService';
+import { IPackageUseCases } from '@application/useCaseInterfaces/company/IPackageUseCases';
+import { CreatePackageDTO, EditPackageDTO } from '@application/dtos/PackageDTO';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { parseJsonFields } from '@shared/utils/parseJsonFields';
+import { IFilter } from '@domain/entities/IFilter';
+import { getCompanyIdFromRequest } from '@shared/utils/getCompanyIdFromRequest';
+
+export class PackageController {
+  constructor(private _packageUseCase: IPackageUseCases) { }
+
+  getFullPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      let companyId =await getCompanyIdFromRequest(req)
+      console.log(companyId, 'companyID');
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const filters: IFilter = {
+        search: (req.query.search as string) || '',
+        status: (req.query.status as string) || '',
+        sort: (req.query.sort as string) || '',
+        startDate: (req.query.startDate as string) || '',
+        endDate: (req.query.endDate as string) || '',
+        customFilter: (req.query.custom as string) || ''
+      };
+      const data = await this._packageUseCase.getAllCompanyPackages(
+       companyId,
+        page,
+         limit,
+          filters
+        );
+
+      res.status(HttpStatus.OK).json({
+        message: 'Package fetched successfully',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getPackagesById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const packages = await this._packageUseCase.getSinglePackage(id);
+
+      res.status(HttpStatus.OK).json({ message: 'Package fetched successfully', packages });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  createPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      let companyId =await getCompanyIdFromRequest(req)
+      console.log(companyId, 'companyID');
+
+      let pkgData: CreatePackageDTO ={companyId,...req.body};
+
+      // Parse fields that are sent as JSON strings
+      pkgData = parseJsonFields(pkgData, [
+        'location',
+        'itinerary',
+        'offer',
+        'included',
+        'notIncluded',
+        'category',
+      ]);
+
+      // console.log("Parsed package data:", pkgData);
+
+      const files = req.files as Express.Multer.File[];
+      if (!files || files.length === 0) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: 'No images uploaded' });
+        return;
+      }
+
+
+
+      // Upload to cloudinary
+      const imageUrls = await Promise.all(
+        files.map((file) => uploadCloudinary(file.path, 'packages'))
+      );
+
+      // Add images to package DTO
+      pkgData.imageUrls = imageUrls;
+      if (pkgData.itinerary) {
+        pkgData.itinerary = pkgData.itinerary.map((d: any, idx: number) => ({
+          ...d,
+          day: idx + 1, // auto-assign day
+        }));
+      }
+      // Fix location geo: convert lat/lng strings -> numbers
+      if (pkgData.location) {
+        pkgData.location = pkgData.location.map((loc: any) => ({
+          name: loc.name,
+          geo: {
+            type: 'Point',
+            coordinates: [parseFloat(loc.lng), parseFloat(loc.lat)], // lng first, lat second
+          },
+        }));
+      }
+
+      // Create package via use case
+      const createdPackage = await this._packageUseCase.createPackage(pkgData);
+
+      res.status(HttpStatus.CREATED).json({
+        message: 'Package created successfully',
+        package: createdPackage,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  editPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+         //   let companyId =await getCompanyIdFromRequest(req)
+
+      const { id } = req.params;
+      if (!id) {
+        res.status(HttpStatus.NOT_FOUND).json({ message: 'Package ID is required' });
+        return;
+      }
+
+      const body = req.body;
+      const files = req.files as Express.Multer.File[] | undefined;
+
+      let pkgData: EditPackageDTO = body;
+
+      pkgData = parseJsonFields(pkgData, [
+        'location',
+        'itinerary',
+        'offer',
+        'included',
+        'notIncluded',
+        'category',
+      ]);
+
+      const existingImages: ImageInfoDTO[] = Array.isArray(body.existingImages)
+        ? body.existingImages
+        : body.existingImages
+          ? JSON.parse(body.existingImages)
+          : [];
+
+      const newImages: ImageInfoDTO[] = files?.length
+        ? await Promise.all(files.map((f) => uploadCloudinary(f.path, 'packages')))
+        : [];
+      if (pkgData.location) {
+        pkgData.location = pkgData.location.map((loc: any) => ({
+          name: loc.name,
+          geo: {
+            type: 'Point',
+            coordinates: [parseFloat(loc.lng), parseFloat(loc.lat)],
+          },
+        }));
+      }
+
+      if (pkgData.itinerary) {
+        pkgData.itinerary = pkgData.itinerary.map((d: any, idx: number) => ({
+          ...d,
+          day: idx + 1,
+        }));
+      }
+
+      const updatedPackage = await this._packageUseCase.editPackageData(
+        id,
+        pkgData,
+        existingImages,
+        newImages
+      );
+
+      res
+        .status(HttpStatus.OK)
+        .json({ message: 'Package updated successfully', package: updatedPackage });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  blockPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      await this._packageUseCase.block(id);
+      res.status(HttpStatus.OK).json({ message: 'Package blocked successfully' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  unblockPackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      await this._packageUseCase.unblock(id);
+      res.status(HttpStatus.OK).json({ message: 'Package unblocked successfully' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deletePackage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      await this._packageUseCase.delete(id);
+      res.status(HttpStatus.OK).json({ message: 'Package deleted successfully' });
+    } catch (error) {
+      next(error);
+    }
+  };
+}

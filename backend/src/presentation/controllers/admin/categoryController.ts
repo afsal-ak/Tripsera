@@ -18,6 +18,8 @@ export class CategoryController {
         status: (req.query.status as string) || '',
       };
       const result = await this._categoryUseCase.getAllCategory({ page, limit }, filters);
+     console.log(result,'category');
+     
       res.status(HttpStatus.OK).json({
         message: CategoryMessages.CATEGORIES_FETCHED,
         data: result
@@ -74,6 +76,8 @@ export class CategoryController {
   getActiveCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const result = await this._categoryUseCase.getActiveCategory();
+          console.log(result,'category');
+
       res.status(HttpStatus.OK).json({
         message: CategoryMessages.ACTIVE_CATEGORIES_FETCHED,
         data: result
@@ -87,6 +91,8 @@ export class CategoryController {
     try {
       const { id } = req.params;
       const categories = await this._categoryUseCase.findById(id);
+         console.log(categories,'category');
+
       res.status(HttpStatus.OK).json({
         message: CategoryMessages.CATEGORY_FETCHED,
         data: categories

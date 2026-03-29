@@ -153,6 +153,117 @@ export class PackageRepository implements IPackageRepository {
 
     return { packages, pagination };
   }
+
+
+
+  async findAllCompanyPkg(
+    companyId:string,
+    page: number,
+    limit: number,
+    filters: IFilter
+  ): Promise<{ packages: IPackage[]; pagination: PaginationInfo }> {
+    const skip = (page - 1) * limit;
+
+    const matchStage: any = {
+        companyId: new Types.ObjectId(companyId),
+
+    };
+console.log(companyId,'pacakge in compaonyIdd');
+
+    if (filters.status === 'active') matchStage.isBlocked = false;
+    else if (filters.status === 'blocked') matchStage.isBlocked = true;
+
+    if (filters.customFilter === EnumPackageType.CUSTOM) {
+      matchStage.packageType = EnumPackageType.CUSTOM;
+    } else if (filters.customFilter === EnumPackageType.NORMAL) {
+      matchStage.packageType = EnumPackageType.NORMAL;
+
+    } else if (filters.customFilter === EnumPackageType.GROUP) {
+      matchStage.packageType = EnumPackageType.GROUP;
+      console.log('groip');
+
+
+    }
+    if (filters.startDate && filters.endDate) {
+      matchStage.createdAt = {
+        $gte: new Date(filters.startDate),
+        $lte: new Date(filters.endDate),
+      };
+    }
+
+    const sortOption: Record<string, 1 | -1> = {};
+    if (filters.sort === 'asc') sortOption.createdAt = 1;
+    else sortOption.createdAt = -1;
+
+    const pipeline: any[] = [
+      { $match: matchStage },
+
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as: 'categoryDetails',
+        },
+      },
+
+      // 3️ Search filter (title, description, category name)
+      filters.search
+        ? {
+          $match: {
+            $or: [
+              { title: { $regex: filters.search, $options: 'i' } },
+              { description: { $regex: filters.search, $options: 'i' } },
+              { 'categoryDetails.name': { $regex: filters.search, $options: 'i' } },
+            ],
+          },
+        }
+        : undefined,
+
+      { $sort: sortOption },
+      { $skip: skip },
+      { $limit: limit },
+
+      {
+        $project: {
+          title: 1,
+          description: 1,
+          price: 1,
+          offer: 1,
+          durationDays: 1,
+          durationNights: 1,
+          availableSlots: 1,
+          departureDates: 1,
+          endDate: 1,
+          'categoryDetails.name': 1,
+          packageType: 1,
+          isBlocked: 1,
+          createdAt: 1,
+        },
+      },
+    ].filter(Boolean);
+
+    const [packages, totalResult] = await Promise.all([
+      PackageModel.aggregate(pipeline),
+      PackageModel.aggregate([
+        ...pipeline.filter((stage) => !('$skip' in stage) && !('$limit' in stage)),
+        { $count: 'total' },
+      ]),
+    ]);
+
+    const total = totalResult[0]?.total || 0;
+
+    const pagination: PaginationInfo = {
+      totalItems: total,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(total / limit),
+    };
+console.log(packages,'pacakge in compaony');
+
+    return { packages, pagination };
+  }
+
   async getAllUserCustomPackages(
     page: number,
     limit: number,

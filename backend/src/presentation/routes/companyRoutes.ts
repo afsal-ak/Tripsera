@@ -35,8 +35,8 @@ import { CompanyController } from '@presentation/controllers/company/CompanyCont
 import { upload } from '@presentation/middlewares/upload';
 import { chatUpload } from '@presentation/middlewares/chatUpload';
 
-import { PackageUseCases } from '@application/usecases/admin/packageUseCases';
-import { PackageController } from '@presentation/controllers/admin/packageController';
+import { PackageUseCases } from '@application/usecases/company/packageUseCases';
+import { PackageController } from '@presentation/controllers/company/packageController';
 import { PackageRepository } from '@infrastructure/repositories/PackageRepository';
 
 import { BookingUseCases } from '@application/usecases/admin/bookingUseCases';
@@ -219,29 +219,32 @@ router.put(
   companyController.updateCompanyLogo
 );
 
+
+
+
 // router.put(
 //   "/company/update",
 //   companyAuthMiddleware,
 //   companyController.updateCompany
 // )
 
-// // PACKAGE ROUTES
-// router.get(PACKAGE_ROUTES.GET_ALL, adminAuthMiddleware, packageController.getFullPackage);
-// router.get(PACKAGE_ROUTES.GET_BY_ID, adminAuthMiddleware, packageController.getPackagesById);
-// router.post(
-//   PACKAGE_ROUTES.ADD,
-//   adminAuthMiddleware,
-//   upload.array('images', 4),
-//   packageController.createPackage
-// );
-// router.put(
-//   PACKAGE_ROUTES.EDIT,
-//   adminAuthMiddleware,
-//   upload.array('images', 4),
-//   packageController.editPackage
-// );
-// router.patch(PACKAGE_ROUTES.BLOCK, adminAuthMiddleware, packageController.blockPackage);
-// router.patch(PACKAGE_ROUTES.UNBLOCK, adminAuthMiddleware, packageController.unblockPackage);
+// PACKAGE ROUTES
+router.get(PACKAGE_ROUTES.GET_ALL, companyAuthMiddleware, packageController.getFullPackage);
+router.get(PACKAGE_ROUTES.GET_BY_ID, companyAuthMiddleware, packageController.getPackagesById);
+router.post(
+  PACKAGE_ROUTES.ADD,
+  companyAuthMiddleware,
+  upload.array('images', 4),
+  packageController.createPackage
+);
+router.put(
+  PACKAGE_ROUTES.EDIT,
+  companyAuthMiddleware,
+  upload.array('images', 4),
+  packageController.editPackage
+);
+router.patch(PACKAGE_ROUTES.BLOCK, companyAuthMiddleware, packageController.blockPackage);
+router.patch(PACKAGE_ROUTES.UNBLOCK, companyAuthMiddleware, packageController.unblockPackage);
 
 
 // router.put(

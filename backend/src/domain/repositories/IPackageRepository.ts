@@ -15,11 +15,22 @@ export interface IPackageRepository {
   ): Promise<IPackage | null>;
 
   findById(id: string): Promise<IPackage | null>;
+
   findAll(
     page: number,
     limit: number,
     filters?: IFilter
   ): Promise<{ packages: IPackage[]; pagination: PaginationInfo }>;
+
+
+  findAllCompanyPkg(
+    companyId:string,
+    page: number,
+    limit: number,
+    filters?: IFilter
+  ): Promise<{ packages: IPackage[]; pagination: PaginationInfo }>;
+  
+
   countDocument(): Promise<number>;
   getActivePackages(page: number, limit: number, filter?: IPackageFilter
   ): Promise<{ package: IPackage[], pagination: PaginationInfo }>;
