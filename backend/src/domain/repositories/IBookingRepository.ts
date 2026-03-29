@@ -12,6 +12,18 @@ export interface IBookingRepository extends IBaseRepository<IBooking> {
     startDate?: string;
     endDate?: string;
   }): Promise<{ bookings: IBookingTable[]; total: number }>;
+  
+  getAllCompanyBooking(filters: {
+    companyId:string;
+    page: number;
+    limit: number;
+    packageSearch?: string;
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<{ bookings: IBookingTable[]; total: number }>;
+
+
   getAllBookingOfUser(
     userId: string,
     page: number,

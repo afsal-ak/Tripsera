@@ -39,9 +39,16 @@ import { PackageUseCases } from '@application/usecases/company/packageUseCases';
 import { PackageController } from '@presentation/controllers/company/packageController';
 import { PackageRepository } from '@infrastructure/repositories/PackageRepository';
 
-import { BookingUseCases } from '@application/usecases/admin/bookingUseCases';
+
+
+import { BookingUseCases } from '@application/usecases/company/bookingUseCases';
 import { BookingRepository } from '@infrastructure/repositories/BookingRepository';
-import { BookingController } from '@presentation/controllers/admin/bookingController';
+import { BookingController } from '@presentation/controllers/company/bookingController';
+
+
+
+
+
 
 
 import { ReviewRepository } from '@infrastructure/repositories/ReviewRepository';
@@ -247,17 +254,17 @@ router.patch(PACKAGE_ROUTES.BLOCK, companyAuthMiddleware, packageController.bloc
 router.patch(PACKAGE_ROUTES.UNBLOCK, companyAuthMiddleware, packageController.unblockPackage);
 
 
-// router.put(
-//   BOOKING_ROUTES.CHANGE_TRAVEL_DATE,
-//   adminAuthMiddleware,
-//   bookingController.changeTravelDate
-// );
+router.put(
+  BOOKING_ROUTES.CHANGE_TRAVEL_DATE,
+  companyAuthMiddleware,
+  bookingController.changeTravelDate
+);
 
-// // BOOKING ROUTES
-// router.get(BOOKING_ROUTES.GET_ALL, adminAuthMiddleware, bookingController.getAllBooking);
-// router.get(BOOKING_ROUTES.GET_BY_ID, adminAuthMiddleware, bookingController.getBookingByIdForAdmin);
-// router.put(BOOKING_ROUTES.CONFIRM, adminAuthMiddleware, bookingController.confirmBookingByAdmin);
-// router.patch(BOOKING_ROUTES.CANCEL, adminAuthMiddleware, bookingController.cancelBookingByAdmin);
+// BOOKING ROUTES
+router.get(BOOKING_ROUTES.GET_ALL, companyAuthMiddleware, bookingController.getAllCompanyBookings);
+router.get(BOOKING_ROUTES.GET_BY_ID, companyAuthMiddleware, bookingController.getBookingByIdForAdmin);
+router.put(BOOKING_ROUTES.CONFIRM, companyAuthMiddleware, bookingController.confirmBookingByAdmin);
+router.patch(BOOKING_ROUTES.CANCEL, companyAuthMiddleware, bookingController.cancelBookingByAdmin);
 
 
 // //REVIEW ROUTES

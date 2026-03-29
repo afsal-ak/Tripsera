@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IBooking ,IBookingHistory} from '@domain/entities/IBooking';
+import { IBooking, IBookingHistory } from '@domain/entities/IBooking';
 import { IBookingInput } from '@domain/entities/IBookingInput';
 import { IBookingRepository } from '@domain/repositories/IBookingRepository';
 import { BookingModel } from '@infrastructure/models/Booking';
@@ -99,6 +99,102 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
 
     return { bookings, total };
   }
+    async getAllCompanyBooking({
+    companyId,
+    page,
+    limit,
+    packageSearch,
+    status,
+    startDate,
+    endDate,
+  }: {
+      companyId: string;
+    page: number;
+    limit: number;
+    packageSearch?: string;
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<{ bookings: IBookingTable[]; total: number }> {
+    const skip = (page - 1) * limit;
+    const match: any = {
+      // companyId:companyId,
+        companyId: new Types.ObjectId(companyId),
+
+    };
+console.log(companyId,'company id in booking');
+
+    // Status filter
+    if (status && status !== 'all') {
+      match.bookingStatus = status;
+    }
+
+    // Date range filter
+    if (startDate && endDate) {
+      match.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    // Initial query
+    const aggregatePipeline: any[] = [
+      { $match: match },
+      {
+        $lookup: {
+          from: 'packages',
+          localField: 'packageId',
+          foreignField: '_id',
+          as: 'package',
+        },
+      },
+      { $unwind: '$package' },
+    ];
+
+    // Package search
+    if (packageSearch) {
+      aggregatePipeline.push({
+        $match: {
+          $or: [
+            { 'package.title': { $regex: packageSearch, $options: 'i' } },
+            { 'package.location': { $regex: packageSearch, $options: 'i' } },
+            { 'package.category': { $regex: packageSearch, $options: 'i' } },
+          ],
+        },
+      });
+    }
+
+    // Count first
+    const totalResult = await BookingModel.aggregate([...aggregatePipeline, { $count: 'total' }]);
+    const total = totalResult[0]?.total || 0;
+
+    // Add pagination and sorting
+    aggregatePipeline.push(
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          _id: 1,
+          bookingStatus: 1,
+          createdAt: 1,
+          totalAmount: 1,
+          amountPaid: 1,
+          bookedAt: 1,
+          travelers: 1,
+          packageId: '$package._id',
+          packageTitle: '$package.title',
+          packageImage: { $arrayElemAt: ['$package.imageUrls', 0] },
+        },
+      }
+    );
+
+    const bookings = await BookingModel.aggregate(aggregatePipeline);
+console.log(bookings,'booikng in compnay');
+
+    return { bookings, total };
+  }
+
 
   async getAllBookingOfUser(
     userId: string,
@@ -135,7 +231,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
     return booking ? booking : null;
   }
 
-   async findOne(data: Partial<IBooking>): Promise<IBooking | null> {
+  async findOne(data: Partial<IBooking>): Promise<IBooking | null> {
     return await BookingModel.findOne(data).lean().exec();
   }
   async findOneByUserAndPackage(userId: string, packageId: string): Promise<IBooking | null> {
@@ -212,7 +308,7 @@ export class BookingRepository extends BaseRepository<IBooking> implements IBook
     return BookingModel.findOne({ 'razorpay.orderId': orderId });
   }
   async save(booking: any): Promise<IBooking> {
- 
+
     return booking.save();
   }
   async updateById(id: string, update: any): Promise<IBooking | null> {
