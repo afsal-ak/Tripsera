@@ -10,8 +10,7 @@ import { SortOrder } from 'mongoose';
 import { EnumPackageType } from '@constants/enum/packageEnum';
 import { AppError } from '@shared/utils/AppError';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
-import { ICustomPackage } from '@domain/entities/ICustomPackage';
-
+ 
 export class PackageRepository implements IPackageRepository {
   async create(pkg: IPackage): Promise<IPackage> {
 

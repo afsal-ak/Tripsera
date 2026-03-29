@@ -158,6 +158,7 @@ export class BookingUseCases implements IBookingUseCases {
   }> {
     const {
       packageId,
+      companyId,
       travelers,
       contactDetails,
       totalAmount,
@@ -200,6 +201,8 @@ export class BookingUseCases implements IBookingUseCases {
 
     const bookingData: IBookingInput = {
       packageId: packageId.toString(),
+            companyId,
+
       //  userId,
       travelers,
       contactDetails,
@@ -242,6 +245,8 @@ export class BookingUseCases implements IBookingUseCases {
   ): Promise<{ booking?: BookingDetailResponseDTO }> {
     const {
       packageId,
+            companyId,
+
       travelers,
       contactDetails,
       totalAmount,
@@ -299,6 +304,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     const bookingData: IBookingInput = {
       packageId: packageId.toString(),
+      companyId,
       travelers,
       contactDetails,
       travelDate,

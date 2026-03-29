@@ -87,6 +87,7 @@ export interface EditPackageDTO extends Partial<CreatePackageDTO> {
 // Response DTO
 export interface PackageResponseDTO {
   _id: string;
+  companyId:string;
   title: string;
   description: string;
   price: number;
@@ -120,6 +121,8 @@ export interface PackageResponseDTO {
 
 export interface PackageTableResponseDTO {
   _id: string;
+    companyId:string;
+
   title: string;
   price: number;
   pricePerChild: number;
@@ -145,6 +148,7 @@ export interface PackageTableResponseDTO {
 
 export interface PackageCardDTO {
   _id: string;
+    companyId:string;
   title: string;
   categoryNames: string[];
   durationDays: number;

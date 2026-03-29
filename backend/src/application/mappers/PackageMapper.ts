@@ -12,6 +12,7 @@ export abstract class PackageMapper {
 
     return {
       _id: pkg._id?.toString() || '',
+      companyId:pkg.companyId?.toString()||'',
       title: pkg.title,
       description: pkg.description,
       price: pkg.price,
@@ -59,6 +60,8 @@ export abstract class PackageMapper {
 
     return {
       _id: pkg._id?.toString() || '',
+            companyId:pkg.companyId?.toString()||'',
+
       title: pkg.title,
       categoryNames,
       durationDays: pkg.durationDays,
@@ -79,6 +82,8 @@ export abstract class PackageMapper {
 
     return {
       _id: pkg._id?.toString() || '',
+            companyId:pkg.companyId?.toString()||'',
+
       title: pkg.title,
       price: pkg.price,
       pricePerChild: pkg.pricePerChild!,

@@ -12,6 +12,8 @@ export abstract class BookingMapper {
       bookingCode: booking.bookingCode,
       userId: booking.userId as string,
       packageId: booking.packageId as string,
+      companyId: booking.companyId as string,
+      
       packageTitle: booking.packageTitle || '',
       packageImage: booking?.packageImage,
       travelers: (booking.travelers as TravelerDTO[]).map((t: TravelerDTO) => ({
@@ -38,6 +40,8 @@ export abstract class BookingMapper {
       _id: booking._id!.toString(),
       bookingCode: booking.bookingCode,
       packageId: booking.packageId._id.toString(),
+            companyId: booking.companyId as string,
+
       packageTitle: booking.packageId.title,
       packageImage: booking.packageId.imageUrls?.[0] || undefined,
       totalAmount: booking.totalAmount,
@@ -56,6 +60,8 @@ export abstract class BookingMapper {
       bookingCode: booking.bookingCode,
       userId: booking.userId as string,
       packageId: booking.packageId as string,
+            companyId: booking.companyId as string,
+
       travelers: booking.travelers.map((t) => ({
         fullName: t.fullName,
         age: t.age,

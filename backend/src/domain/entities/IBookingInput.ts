@@ -3,6 +3,7 @@ import { IBooking } from './IBooking';
 export interface IBookingInput {
   bookingCode: string;
   packageId: string;
+  companyId:string;
   travelDate: Date;
 
   travelers: {

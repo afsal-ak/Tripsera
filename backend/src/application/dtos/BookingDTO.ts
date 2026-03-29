@@ -12,6 +12,7 @@ import { EnumPaymentMethod, EnumPaymentStatus } from '@constants/enum/paymentEnu
 export interface CreateBookingDTO {
   bookingCode: string;
   packageId: string;
+  companyId:string;
   travelDate: Date;
   packageType:EnumPackageType,
 
@@ -134,6 +135,8 @@ export interface BookingTableResponseDTO {
   bookingCode: string;
   userId: string;
   packageId: string;
+    companyId:string;
+
   packageTitle: string;
   packageImage?: string;
   totalAmount: number;
@@ -151,6 +154,8 @@ export interface BookingUserResponseDTO {
   _id: string;
   bookingCode: string;
   packageId: string;
+    companyId:string;
+
   packageTitle: string;
   packageImage?: string;
   totalAmount: number;
@@ -167,6 +172,8 @@ export interface BookingDetailResponseDTO {
   bookingCode: string;
   userId: string;
   packageId: string;
+    companyId:string;
+
   travelers: TravelerDTO[];
   totalAmount: number;
   discount: number;

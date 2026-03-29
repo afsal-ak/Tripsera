@@ -16,6 +16,7 @@ export class BookingController {
     try {
       const userId = getUserIdFromRequest(req);
       const data = req.body;
+console.log(data,'from booking');
 
       const result = await this._bookingUseCases.createBookingWithOnlinePayment(userId, data);
       res.status(HttpStatus.CREATED).json({
@@ -35,6 +36,7 @@ export class BookingController {
     try {
       const userId = getUserIdFromRequest(req);
       const data = req.body;
+console.log(data,'from booking');
 
       const { booking } = await this._bookingUseCases.createBookingWithWalletPayment(userId, data);
 

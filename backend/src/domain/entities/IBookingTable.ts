@@ -7,6 +7,8 @@ export interface IBookingTable {
   bookingCode: string;
   userId: string;
   packageId: string;
+        companyId: string;
+
   packageTitle?: string;
   packageImage?: string;
   travelers: TravelerDTO[];
