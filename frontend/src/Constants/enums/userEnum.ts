@@ -1,6 +1,7 @@
 export const EnumUserRole = {
   ADMIN: 'admin',
   USER: 'user',
+  COMPANY:'company'
 } as const;
 
 export type EnumUserRole = (typeof EnumUserRole)[keyof typeof EnumUserRole];
