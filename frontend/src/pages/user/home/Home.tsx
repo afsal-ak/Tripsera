@@ -14,12 +14,17 @@ import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '@/redux/store';
 import { setUser } from '@/redux/slices/userAuthSlice';
+import { useAuthModal } from '@/context/AuthModalContext';
 
 const Home = () => {
   const navigate = useNavigate();
-  const isSubscribedFromStore = useSelector((state: RootState) => state.userAuth.user?.isNewsletterSubscribed);
-  const accessToken = useSelector((state: RootState) => state.userAuth.accessToken);
+    const { openLogin } = useAuthModal();
+  
+    const { isAuthenticated, user,accessToken } = useSelector(
+      (state: RootState) => state.userAuth)
 
+  const isSubscribedFromStore = user?.isNewsletterSubscribed;
+ 
   const dispatch = useDispatch<AppDispatch>();
   const [isSubscribed, setIsSubscribed] = useState<boolean>(isSubscribedFromStore || false);
   const [packages, setPackages] = useState<IPackage[]>([]);
@@ -75,11 +80,17 @@ const Home = () => {
   }, []);
 
   const handleNewsletterToggle = async () => {
-    if (!accessToken) {
-      toast.info("Please log in to subscribe to the newsletter.");
-      setTimeout(() => navigate("/login"), 1500);
-      return;
+     const isAllowed = isAuthenticated && !user?.isBlocked;
+
+    if (!isAllowed) {
+      openLogin(); //  open modal
+      return;      //  stop navigation
     }
+    // if (!accessToken) {
+    //   toast.info("Please log in to subscribe to the newsletter.");
+    //   setTimeout(() => navigate("/login"), 1500);
+    //   return;
+    // }
     try {
       const response = await subscribeToNewsletterToggle(!isSubscribed);
       console.log(response, 'response');

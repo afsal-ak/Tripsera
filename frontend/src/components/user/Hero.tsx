@@ -10,12 +10,12 @@ interface Props {
 
 const Hero = ({ banners }: Props) => {
   const navigate = useNavigate();
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Fallback if no banners
-  const fallbackImage =
-    'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
+  const fallbackImage = '/background.jpg'
+
 
   // Auto-slide every 10 seconds
   useEffect(() => {
@@ -36,7 +36,7 @@ const Hero = ({ banners }: Props) => {
   return (
     <section className="relative h-[600px] w-full overflow-hidden">
       {/* Background images with smooth fade */}
-      <div className="absolute inset-0">
+      {/* <div className="absolute inset-0">
         {banners.map((banner, index) => (
           <img
             key={index}
@@ -48,8 +48,29 @@ const Hero = ({ banners }: Props) => {
           />
         ))}
         <div className="absolute inset-0 bg-black/30" />
-      </div>
+      </div> */}
+      <div className="absolute inset-0">
+        {banners.length > 0 ? (
+          banners.map((banner, index) => (
+            <img
+              key={index}
+              src={banner.image?.url || fallbackImage}
+              alt={banner.title}
+              onError={(e) => (e.currentTarget.src = fallbackImage)}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${index === currentIndex ? 'opacity-100' : 'opacity-0'
+                }`}
+            />
+          ))
+        ) : (
+          <img
+            src={fallbackImage}
+            alt="fallback"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
 
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
       {/* Text content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
         <div className="max-w-2xl animate-fade-in">
@@ -96,9 +117,8 @@ const Hero = ({ banners }: Props) => {
               <button
                 key={i}
                 onClick={() => setCurrentIndex(i)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  i === currentIndex ? 'bg-orange scale-125' : 'bg-white/50 hover:bg-white/80'
-                }`}
+                className={`w-3 h-3 rounded-full transition-all ${i === currentIndex ? 'bg-orange scale-125' : 'bg-white/50 hover:bg-white/80'
+                  }`}
               />
             ))}
           </div>

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handelChangePassword } from '@/services/auth/authService';
-import { toast } from 'sonner';
+ import { useAppSnackbar } from '@/hooks/useSnackbar';
 
 const NewPasswordPage = () => {
   const navigate = useNavigate();
+    const snackbar = useAppSnackbar();
+  
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formErrors, setFormErrors] = useState<{ password?: string; confirm?: string }>({});
@@ -46,11 +48,11 @@ const NewPasswordPage = () => {
     setFormErrors({});
     try {
       const response = await handelChangePassword(token, newPassword);
-      toast.success('password changed successfully');
+      snackbar.success('password changed successfully');
       localStorage.removeItem('forgotToken');
       navigate('/login');
     } catch (error: any) {
-      toast.error(error.response.data || 'Failed to reset password');
+      snackbar.error(error.response.data || 'Failed to reset password');
     }
   };
 

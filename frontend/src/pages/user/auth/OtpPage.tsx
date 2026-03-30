@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleVerifyAndRegister, handleResendOtp } from '@/services/auth/authService';
-import { toast } from 'sonner';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/ui/Input';
 import { useOtpTimer } from '@/hooks/useOtpTimer';
+import { useAppSnackbar } from '@/hooks/useSnackbar';
 const VerifyOtp = () => {
+  const snackbar = useAppSnackbar();
+
   const [otp, setOtp] = useState('');
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,6 @@ const VerifyOtp = () => {
   useEffect(() => {
     const signupEmail = localStorage.getItem('signupEmail');
 
-    console.log(signupEmail, 'emial');
     if (signupEmail) {
       setEmail(signupEmail);
     }
@@ -27,24 +28,27 @@ const VerifyOtp = () => {
 
   const handleVerify = async () => {
     if (!otp || otp.length !== 6) {
-      toast.error('Enter a valid 6-digit OTP');
+      snackbar.error('Enter a valid 6-digit OTP')
+      //toast.error('Enter a valid 6-digit OTP');
       return;
     }
     if (isExpired) {
-      toast.error('OTP expired. Please resend.');
+      snackbar.error('OTP expired. Please resend.')
+      //toast.error('OTP expired. Please resend.');
       return;
     }
 
     setLoading(true);
     try {
       await handleVerifyAndRegister(email, otp);
-      toast.success('Registration successful!');
+      
+      snackbar.success('Registration successful!');
       localStorage.removeItem('signupEmail');
       localStorage.removeItem('otp_expiry_timestamp');
 
       navigate('/login');
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'OTP verification failed');
+      snackbar.error(error?.response?.data?.message || 'OTP verification failed');
     } finally {
       setLoading(false);
     }
@@ -53,10 +57,10 @@ const VerifyOtp = () => {
     setResendLoading(true);
     try {
       await handleResendOtp(email);
-      toast.success('OTP resent to your email');
+      snackbar.success('OTP resent to your email');
       startTimer();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to resend OTP');
+      snackbar.error(error?.response?.data?.message || 'Failed to resend OTP');
     } finally {
       setResendLoading(false);
     }
@@ -107,11 +111,10 @@ const VerifyOtp = () => {
               type="button"
               onClick={handleResend}
               disabled={!isExpired || resendLoading}
-              className={`font-semibold transition ${
-                isExpired && !resendLoading
+              className={`font-semibold transition ${isExpired && !resendLoading
                   ? 'text-orange hover:underline'
                   : 'text-gray-400 cursor-not-allowed'
-              }`}
+                }`}
             >
               {resendLoading
                 ? 'Resending...'

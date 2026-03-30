@@ -28,7 +28,7 @@ export default {
           light: '#ff9a3c',
           dark: '#E64A19',
         },
-
+// background: '#FFF7ED', // very light orange tint
         background: 'hsl(0 0% 100%)',
         foreground: 'hsl(0 0% 3.9%)',
         'muted-foreground': '#6b7280',

@@ -32,7 +32,7 @@ export default function DemoSetupPage() {
 
           <div className="bg-orange-50 p-4 rounded-xl text-sm mb-6">
             <p><strong>Email:</strong> user@tripsera.com</p>
-            <p><strong>Password:</strong> User@123</p>
+            <p><strong>Password:</strong> Asd@1234</p>
           </div>
 
           <button
@@ -40,7 +40,7 @@ export default function DemoSetupPage() {
               navigate("/login", {
                 state: {
                   email: "user@tripsera.com",
-                  password: "User@123",
+                  password: "Asd@1234",
                 },
               })
             }
@@ -62,16 +62,16 @@ export default function DemoSetupPage() {
           </div>
 
           <div className="bg-orange-50 p-4 rounded-xl text-sm mb-6">
-            <p><strong>Email:</strong> admin@tripsera.com</p>
-            <p><strong>Password:</strong> Admin@123</p>
+            <p><strong>Email:</strong> admin@gmail.com</p>
+            <p><strong>Password:</strong> Asd@1234</p>
           </div>
 
           <button
             onClick={() =>
               navigate("/admin/login", {
                 state: {
-                  email: "admin@tripsera.com",
-                  password: "Admin@123",
+                  email: "admin@gmail.com",
+                  password: "Asd@1234",
                 },
               })
             }
