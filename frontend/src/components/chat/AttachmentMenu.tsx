@@ -20,7 +20,7 @@ const AttachmentMenu: React.FC<Props> = ({ onSelect, onClose }) => {
       >
         <Image size={18} /> Image
       </button>
-      <button
+      {/* <button
         onClick={() => {
           onSelect('audio');
           onClose();
@@ -28,8 +28,8 @@ const AttachmentMenu: React.FC<Props> = ({ onSelect, onClose }) => {
         className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded"
       >
         <Mic size={18} /> Audio
-      </button>
-      <button
+      </button> */}
+      {/* <button
         onClick={() => {
           onSelect('file');
           onClose();
@@ -37,7 +37,7 @@ const AttachmentMenu: React.FC<Props> = ({ onSelect, onClose }) => {
         className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded"
       >
         <File size={18} /> File
-      </button>
+      </button> */}
     </div>
   );
 };

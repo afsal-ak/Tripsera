@@ -17,8 +17,13 @@ export const MessageBubble: React.FC<Props> = ({ message, isOwn, onDelete, curre
 
   const sender = message.senderId || currentUser;
   const senderName = isOwn ? 'You' : sender?.username || 'Unknown';
-  const senderAvatar = isOwn ? currentUser?.profileImage?.url : sender?.profileImage 
-
+  // const senderAvatar = isOwn ? currentUser?.profileImage?.url : sender?.profileImage 
+const senderAvatar = isOwn
+  ? currentUser?.profileImage?.url
+  : typeof sender?.profileImage === 'string'
+    ? sender.profileImage
+    : sender?.profileImage?.url;
+    
   const isCall = message.type === 'call';
   const callInfo = message.callInfo;
 
