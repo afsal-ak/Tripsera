@@ -47,6 +47,10 @@ import { BookingController } from '@presentation/controllers/company/bookingCont
 
 
 
+import { SalesReportRepository } from '@infrastructure/repositories/salesReportRepository';
+import { SalesReportUseCase } from '@application/usecases/company/salesReportUseCase';
+import { SalesReportController } from '@presentation/controllers/company/salesReportController';
+
 
 
 
@@ -54,10 +58,6 @@ import { BookingController } from '@presentation/controllers/company/bookingCont
 import { ReviewRepository } from '@infrastructure/repositories/ReviewRepository';
 import { ReviewUseCases } from '@application/usecases/admin/reviewUseCase';
 import { ReviewController } from '@presentation/controllers/admin/reviewController';
-
-import { SalesReportRepository } from '@infrastructure/repositories/salesReportRepository';
-import { SalesReportUseCase } from '@application/usecases/admin/salesReportUseCase';
-import { SalesReportController } from '@presentation/controllers/admin/salesReportController';
 
 import { ReportRepository } from '@infrastructure/repositories/ReportRepository';
 import { ReportUseCases } from '@application/usecases/admin/reportUseCases';
@@ -267,6 +267,14 @@ router.put(BOOKING_ROUTES.CONFIRM, companyAuthMiddleware, bookingController.conf
 router.patch(BOOKING_ROUTES.CANCEL, companyAuthMiddleware, bookingController.cancelBookingByAdmin);
 
 
+//SALES REPORT ROUTES
+
+router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT,companyAuthMiddleware, salesController.getCompanyReportList);
+router.get(SALES_REPORT_ROUTE.SALES_REPORT_EXCEL_DOWNLOAD,companyAuthMiddleware, salesController.downloadExcel);
+router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD,companyAuthMiddleware, salesController.downloadPDF);
+
+
+
 // //REVIEW ROUTES
 
 // router.get(REVIEW_ROUTE.GET_REVIEWS, adminAuthMiddleware, reviewController.getAllReview);
@@ -275,11 +283,6 @@ router.patch(BOOKING_ROUTES.CANCEL, companyAuthMiddleware, bookingController.can
 // router.delete(REVIEW_ROUTE.DELETE, adminAuthMiddleware, reviewController.deleteReview);
 
 
-// //SALES REPORT ROUTES
-
-// router.get(SALES_REPORT_ROUTE.GET_SALES_REPORT, salesController.getReportList);
-// router.get(SALES_REPORT_ROUTE.SALES_REPORT_EXCEL_DOWNLOAD, salesController.downloadExcel);
-// router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD, salesController.downloadPDF);
 
 // //
 // //REPORT ROUTES

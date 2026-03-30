@@ -1,0 +1,89 @@
+import { NextFunction, Request, Response } from 'express';
+import { ISalesReportUseCase } from '@application/useCaseInterfaces/company/ISalesReportUseCses';
+import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
+import { getCompanyIdFromRequest } from '@shared/utils/getCompanyIdFromRequest';
+
+export class SalesReportController {
+  constructor(private _salesReportUseCase: ISalesReportUseCase) {}
+
+  getCompanyReportList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const companyId=getCompanyIdFromRequest(req)
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const filters = {
+        status: req.query.status as string,
+        paymentMethod: req.query.paymentMethod as string,
+        from: req.query.from as string,
+        to: req.query.to as string,
+        day: req.query.day as string,
+        week: req.query.week as string,
+        month: req.query.month as string,
+        year: req.query.year as string,
+      };
+
+      const result = await this._salesReportUseCase.getCompanyReportList(companyId,filters, page, limit);
+ 
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Sales report fetched successfully',
+        ...result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  downloadExcel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+            const companyId=getCompanyIdFromRequest(req)
+
+      const filters = {
+        status: req.query.status as string,
+        paymentMethod: req.query.paymentMethod as string,
+        from: req.query.from as string,
+        to: req.query.to as string,
+        day: req.query.day as string,
+        week: req.query.week as string,
+        month: req.query.month as string,
+        year: req.query.year as string,
+      };
+
+      const buffer = await this._salesReportUseCase.downloadExcel(companyId,filters);
+
+      res.setHeader('Content-Disposition', 'attachment; filename="sales-report.xlsx"');
+      res.setHeader(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      );
+      res.status(HttpStatus.OK).send(buffer);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  downloadPDF = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+            const companyId=getCompanyIdFromRequest(req)
+
+      const filters = {
+        status: req.query.status as string,
+        paymentMethod: req.query.paymentMethod as string,
+        from: req.query.from as string,
+        to: req.query.to as string,
+        day: req.query.day as string,
+        week: req.query.week as string,
+        month: req.query.month as string,
+        year: req.query.year as string,
+      };
+
+      const buffer = await this._salesReportUseCase.downloadPDF(companyId,filters);
+       res.setHeader('Content-Disposition', 'attachment; filename="sales-report.pdf"');
+      res.setHeader('Content-Type', 'application/pdf');
+      res.status(HttpStatus.OK).send(buffer);
+    } catch (error) {
+      next(error);
+    }
+  };
+}

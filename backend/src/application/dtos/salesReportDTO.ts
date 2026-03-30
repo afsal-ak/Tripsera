@@ -9,6 +9,7 @@ export interface SalesReportFilterDTO {
 export interface SalesReportResponseDTO {
   _id: string;
   bookingCode: string;
+  companyId?:string;
   username: string;
   packageTitle: string;
   packageCode: string;

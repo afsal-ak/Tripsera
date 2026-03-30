@@ -1,6 +1,6 @@
 import { IBooking } from '@domain/entities/IBooking';
 import { BookingModel } from '@infrastructure/models/Booking';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 import { IBookingPopulatedForReport } from '@infrastructure/db/types.ts/ISalesReportPopulated';
 import { ISalesReportRepository } from '@domain/repositories/ISalesReportRepository';
 interface FindOptions {
@@ -11,6 +11,10 @@ interface FindOptions {
 
 export class SalesReportRepository implements ISalesReportRepository {
   async count(filter: FilterQuery<IBooking>): Promise<number> {
+     
+    if (filter.companyId) {
+      filter.companyId = new Types.ObjectId(filter.companyId); 
+    }
     const baseFilter = {
       bookingStatus: 'confirmed',
       paymentStatus: 'paid',
@@ -22,6 +26,9 @@ export class SalesReportRepository implements ISalesReportRepository {
     filter: FilterQuery<IBooking>,
     options: FindOptions = {}
   ): Promise<IBookingPopulatedForReport[]> {
+     if (filter.companyId) {
+      filter.companyId = new Types.ObjectId(filter.companyId); 
+    }
     const baseFilter = {
       bookingStatus: 'confirmed',
       paymentStatus: 'paid',
@@ -47,6 +54,9 @@ export class SalesReportRepository implements ISalesReportRepository {
     filter: FilterQuery<IBooking>,
     options: FindOptions = {}
   ): Promise<IBooking[]> {
+     if (filter.companyId) {
+      filter.companyId = new Types.ObjectId(filter.companyId); 
+    }
     const baseFilter = {
       bookingStatus: 'confirmed',
       paymentStatus: 'paid',
@@ -68,6 +78,9 @@ export class SalesReportRepository implements ISalesReportRepository {
   }
 
   async calculateSummary(filter: any) {
+     if (filter.companyId) {
+      filter.companyId = new Types.ObjectId(filter.companyId); 
+    }
     const baseFilter = {
       bookingStatus: 'confirmed',
       paymentStatus: 'paid',
