@@ -16,10 +16,17 @@ import UserList from '@/components/UserList';
 import ReportForm from '../report/ReportForm';
 import type { IReportedType, ISelectedReport } from '@/types/IReport';
 import Modal from '@/components/ui/Model';
+import { useAuthModal } from '@/context/AuthModalContext';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
 const BlogDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { openLogin } = useAuthModal();
 
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.userAuth
+  );
   const [blogData, setBlogData] = useState<IBlog>();
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
@@ -43,6 +50,7 @@ const BlogDetailPage = () => {
         setLiked(response.blog?.isLiked || false);
         setLikesCount(response.blog?.likes?.length || 0);
         if (response.blog?._id) {
+
           const likesResponse = await fetchBlogLikeList(response.blog._id);
           setLikedUsers(likesResponse);
         }
@@ -55,6 +63,13 @@ const BlogDetailPage = () => {
 
   const toggleLike = async () => {
     if (!blogData?._id) return;
+
+    const isAllowed = isAuthenticated && !user?.isBlocked;
+
+    if (!isAllowed) {
+      openLogin(); //  open modal
+      return;      //  stop navigation
+    }
     try {
       if (liked) {
         await handleUnLikeBlog(blogData._id);
@@ -69,107 +84,113 @@ const BlogDetailPage = () => {
       toast.error('Something went wrong');
     }
   };
- 
-  
-const handleReportClick = () => {
-  if (blogData?._id) {
-    setSelectedReport({
-      _id: blogData._id,
-      reportedType: 'blog',
-    });
-    setShowReportModal(true);
-  }
-};
+
+
+  const handleReportClick = () => {
+    const isAllowed = isAuthenticated && !user?.isBlocked;
+
+    if (!isAllowed) {
+      openLogin(); //  open modal
+      return;      //  stop navigation
+    }
+    if (blogData?._id) {
+      setSelectedReport({
+        _id: blogData._id,
+        reportedType: 'blog',
+      });
+      setShowReportModal(true);
+    }
+  };
 
   return (
     <div className="relative max-w-[90vw] mx-auto mt-6 rounded-2xl overflow-hidden  ">
       {/* ====== COVER IMAGE CONTAINER ====== */}
       {/*  */}{/* ====== COVER IMAGE FULL WIDTH ====== */}
-    <div className="relative w-full h-[75vh]">
-  <img
-    src={blogData?.coverImage.url}
-    alt={blogData?.title}
-    className="absolute inset-0 w-full h-full object-cover"
-  />
-
-  {/* Dark overlay */}
-  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-
-  {/* Back button */}
-  <div className="absolute top-4 left-4">
-    <button
-      onClick={() => navigate(-1)}
-      className="flex items-center gap-2 bg-black/40 hover:bg-black/60 text-white px-3 py-1.5 rounded-full transition"
-    >
-      <ArrowLeft size={16} />
-      Back
-    </button>
-  </div>
-
-  {/* BLOG INFO + ACTIONS */}
-  <div className="absolute bottom-10 left-10 text-white space-y-4 max-w-3xl">
-    <motion.h1
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="text-5xl font-bold leading-tight drop-shadow-md break-words"
-    >
-      {blogData?.title}
-    </motion.h1>
-
-    {/* AUTHOR + DATE */}
-    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200">
-      {blogData?.author && (
-        <Link
-          to={`/profile/${blogData.author.username}`}
-          className="flex items-center gap-2 hover:underline hover:text-white"
-        >
-          <img
-            src={blogData.author?.profileImage?.url || '/profile-default.jpg'}
-            alt={blogData.author.username}
-            className="w-8 h-8 rounded-full object-cover border border-white"
-          />
-          <span>{blogData.author.username}</span>
-        </Link>
-      )}
-      <div className="flex items-center gap-2">
-        <Calendar size={16} />
-        <span>{new Date(blogData?.createdAt!).toDateString()}</span>
-      </div>
-    </div>
-
-    {/* LIKE + REPORT BUTTONS */}
-    <div className="flex items-center gap-3 mt-4 flex-wrap">
-      {/* Like Button */}
-      <button
-        onClick={toggleLike}
-        className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-white transition"
-      >
-        <Heart
-          size={18}
-          className={liked ? 'fill-red-500 text-red-500' : 'text-white'}
+      <div className="relative w-full h-[75vh]">
+        <img
+          src={blogData?.coverImage.url}
+          alt={blogData?.title}
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <span>{likesCount} Likes</span>
-      </button>
 
-      <button
-        onClick={() => setIsLikesModalOpen(true)}
-        className="text-sm underline hover:text-gray-300"
-      >
-        View liked users
-      </button>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-      {/*   Report Button */}
-    <button
-  onClick={handleReportClick}
-  className="flex items-center gap-2 bg-red-500/20 hover:bg-red-500/40 px-4 py-2 rounded-full text-red-300 transition"
->
-  <Flag size={16} />
-  <span>Report</span>
-</button>
+        {/* Back button */}
+        <div className="absolute top-4 left-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 bg-black/40 hover:bg-black/60 text-white px-3 py-1.5 rounded-full transition"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
+        </div>
 
-    </div>
-  </div>
-</div>
+        {/* BLOG INFO + ACTIONS */}
+        <div className="absolute bottom-10 left-10 text-white space-y-4 max-w-3xl">
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-5xl font-bold leading-tight drop-shadow-md break-words"
+          >
+            {blogData?.title}
+          </motion.h1>
+
+          {/* AUTHOR + DATE */}
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200">
+            {blogData?.author && (
+              <Link
+                to={`/profile/${blogData.author.username}`}
+                className="flex items-center gap-2 hover:underline hover:text-white"
+              >
+                <img
+                  src={blogData.author?.profileImage?.url || '/profile-default.jpg'}
+                  alt={blogData.author.username}
+                  className="w-8 h-8 rounded-full object-cover border border-white"
+                />
+                <span>{blogData.author.username}</span>
+              </Link>
+            )}
+            <div className="flex items-center gap-2">
+              <Calendar size={16} />
+              <span>{new Date(blogData?.createdAt!).toDateString()}</span>
+            </div>
+          </div>
+
+          {/* LIKE + REPORT BUTTONS */}
+          <div className="flex items-center gap-3 mt-4 flex-wrap">
+            {/* Like Button */}
+            <button
+              onClick={toggleLike}
+              className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-white transition"
+            >
+              <Heart
+                size={18}
+                className={liked ? 'fill-red-500 text-red-500' : 'text-white'}
+              />
+              <span>{likesCount} Likes</span>
+            </button>
+
+            <button
+              onClick={() => setIsLikesModalOpen(true)}
+              className="text-sm underline hover:text-gray-300"
+            >
+              View liked users
+            </button>
+
+            {/*   Report Button */}
+            <button
+              onClick={handleReportClick}
+              className="flex items-center gap-2 bg-red-500/20 hover:bg-red-500/40 px-4 py-2 rounded-full text-red-300 transition"
+            >
+              <Flag size={16} />
+              <span>Report</span>
+            </button>
+
+          </div>
+        </div>
+      </div>
 
 
       {/* ====== MAIN CONTENT ====== */}

@@ -10,6 +10,7 @@ interface Props {
 
 const Hero = ({ banners }: Props) => {
   const navigate = useNavigate();
+  
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Fallback if no banners

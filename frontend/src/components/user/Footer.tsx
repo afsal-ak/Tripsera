@@ -6,15 +6,17 @@ import { subscribeToNewsletterToggle } from '@/services/user/newsLetterService';
 import { setUser } from '@/redux/slices/userAuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '@/redux/store';
+import { useAuthModal } from '@/context/AuthModalContext';
 
 export default function Footer() {
+  const { openLogin } = useAuthModal();
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   // Global states
-  const user = useSelector((state: RootState) => state.userAuth.user);
-  const accessToken = useSelector((state: RootState) => state.userAuth.accessToken);
+  const { user, accessToken, isAuthenticated } = useSelector((state: RootState) => state.userAuth);
   const isSubscribedFromStore = useSelector(
     (state: RootState) => state.userAuth.user?.isNewsletterSubscribed
   );
@@ -28,7 +30,48 @@ export default function Footer() {
   }, [isSubscribedFromStore]);
 
   // Toggle Subscribe / Unsubscribe
+
   const handleNewsletterToggle = async () => {
+    const isAllowed = isAuthenticated && !user?.isBlocked;
+
+    if (!isAllowed) {
+      openLogin(); // 🔥 open modal
+      return;      // ❌ stop navigation
+    }
+    try {
+      setLoading(true);
+      const response = await subscribeToNewsletterToggle(!isSubscribed);
+
+      // Update both local + global state
+      const updatedSubscription = !isSubscribed;
+      setIsSubscribed(updatedSubscription);
+
+      dispatch(
+        setUser({
+          user: {
+            ...response.data,
+            isNewsletterSubscribed: updatedSubscription,
+          },
+          accessToken: accessToken!,
+        })
+      );
+
+      toast.success(
+        updatedSubscription
+          ? '🎉 Subscribed to our newsletter successfully!'
+          : 'You have unsubscribed from the newsletter.'
+      );
+    } catch (error) {
+      console.error('Newsletter toggle error:', error);
+      toast.error('Failed to update subscription status.');
+    } finally {
+      setLoading(false);
+    }
+    //navigate(`/checkout/${id}`); // ✅ allowed
+  };
+
+  // Toggle Subscribe / Unsubscribe
+  const shandleNewsletterToggle = async () => {
     if (!accessToken) {
       toast.info('Please log in to manage newsletter subscription.');
       setTimeout(() => navigate('/login'), 1000);
@@ -140,7 +183,7 @@ export default function Footer() {
 
           {/* Popular Destinations */}
           <div className="text-center sm:text-left">
-            
+
           </div>
 
           {/* Newsletter Section */}
@@ -153,19 +196,18 @@ export default function Footer() {
             <button
               onClick={handleNewsletterToggle}
               disabled={loading}
-              className={`px-6 py-2 text-sm font-medium rounded-lg shadow-md transition-colors ${
-                loading
-                  ? 'bg-gray-400 cursor-not-allowed text-white'
-                  : isSubscribed
+              className={`px-6 py-2 text-sm font-medium rounded-lg shadow-md transition-colors ${loading
+                ? 'bg-gray-400 cursor-not-allowed text-white'
+                : isSubscribed
                   ? 'bg-gray-600 hover:bg-gray-700 text-white'
                   : 'bg-orange hover:bg-orange/90 text-white'
-              }`}
+                }`}
             >
               {loading
                 ? 'Processing...'
                 : isSubscribed
-                ? 'Unsubscribe from Newsletter'
-                : 'Subscribe to Newsletter'}
+                  ? 'Unsubscribe from Newsletter'
+                  : 'Subscribe to Newsletter'}
             </button>
           </div>
         </div>

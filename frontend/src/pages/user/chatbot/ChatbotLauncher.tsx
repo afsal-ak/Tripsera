@@ -1,9 +1,27 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
+import { useAuthModal } from '@/context/AuthModalContext';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
 
 const ChatbotLauncher = () => {
   const navigate = useNavigate();
+const { openLogin } = useAuthModal();
+
+const { isAuthenticated, user } = useSelector(
+  (state: RootState) => state.userAuth
+);
+const handleClick = () => {
+  const isAllowed = isAuthenticated && !user?.isBlocked;
+
+  if (!isAllowed) {
+    openLogin(); // 🔥 open modal
+    return;      // ❌ stop navigation
+  }
+
+  navigate(`/chatbot`); //  allowed
+};
 
   return (
     <motion.div
@@ -16,7 +34,7 @@ const ChatbotLauncher = () => {
       <motion.button
         whileHover={{ scale: 1.15 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => navigate('/chatbot')}
+        onClick={handleClick}
         className="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] hover:shadow-[0_0_25px_rgba(168,85,247,0.8)] transition-all duration-300"
       >
         {/* Robot Icon */}

@@ -13,6 +13,7 @@ import type { IComment, ReplyComment } from '@/types/IComment';
 import type { RootState } from '@/redux/store';
 import { OptionsDropdown } from './OptionsDropdown ';
 import { useLoadMore } from '@/hooks/useLoadMore';
+import { useAuthModal } from '@/context/AuthModalContext';
 
 interface CommentSectionProps {
   parentId: string;
@@ -20,7 +21,12 @@ interface CommentSectionProps {
 }
 
 const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
-  const currentUser = useSelector((state: RootState) => state.userAuth.user);
+ const { openLogin } = useAuthModal();
+ 
+ const { isAuthenticated,user } = useSelector(
+   (state: RootState) => state.userAuth
+ );
+  const currentUser = user
 
   const [comments, setComments] = useState<IComment[]>([]);
   const [text, setText] = useState('');
@@ -52,7 +58,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
         setComments((prev) => [...prev, ...res.data]);
       }
     } catch (error) {
-      toast.error('Failed to fetch comments');
+     // toast.error('Failed to fetch comments');
     } finally {
       setLoading(false);
     }
@@ -79,8 +85,17 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
     }
   };
 
+
+ 
+ 
   // Add comment or reply
   const onSubmit = async (message: string, parentCommentId?: string) => {
+    const isAllowed = isAuthenticated && !user?.isBlocked;
+
+  if (!isAllowed) {
+    openLogin(); //  open modal
+    return;      //  stop navigation
+  }
     if (!message.trim()) return toast.error('Please write something');
 
     try {

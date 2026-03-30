@@ -7,16 +7,23 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import App from './App.tsx';
 import { store } from './redux/store.ts';
 import { Provider } from 'react-redux';
+import { AuthModalProvider } from './context/AuthModalContext.tsx';
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+
     <GoogleOAuthProvider clientId={clientId}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
+      <AuthModalProvider>
+
+        <Provider store={store}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </Provider>
+      </AuthModalProvider>
+
     </GoogleOAuthProvider>
+
   </StrictMode>
 );

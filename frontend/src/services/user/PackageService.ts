@@ -26,3 +26,8 @@ export const fetchPackgeById = async (id: string): Promise<IPackage> => {
   const res = await api.get(`/user/packages/${id}`);
   return res.data.packages;
 };
+
+export const getCategory = async () => {
+  const response = await api.get('/admin/category/active');
+  return response.data.data;
+};

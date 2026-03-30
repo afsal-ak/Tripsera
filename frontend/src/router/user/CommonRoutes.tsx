@@ -6,6 +6,7 @@ import BlogsPage from '@/pages/user/blog/BlogsPage';
 import BlogDetail from '@/pages/user/blog/BlogDetails';
 import About from '@/pages/user/about/About';
 import { Fragment } from 'react/jsx-runtime';
+import DemoSetupPage from '@/pages/user/DemoSetupPage';
 const CommonRoutes = (
   <Fragment>
     <Route path="/" element={<Home />} />
@@ -14,6 +15,7 @@ const CommonRoutes = (
     <Route path="/blog" element={<BlogsPage />} />
     <Route path="/blog/:slug" element={<BlogDetail />} />
     <Route path="/about" element={<About />} />
+    <Route path="/demo" element={<DemoSetupPage />} />
   </Fragment>
 );
 

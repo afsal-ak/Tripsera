@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
 import { EnumUserRole } from '@/Constants/enums/userEnum';
 import { OptionsDropdown } from '../OptionsDropdown ';
+import ProtectedLink from '../ProtectedLink';
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,12 +21,12 @@ const Navbar = () => {
 
   const notificationUnread = useSelector(
     (state: RootState) => state.notifications.unreadCount
-   );
+  );
   // const notificationUnread=0
   // const totalChatUnread = 0
   const totalChatUnread = useTotalUnreadCount(EnumUserRole.USER);
 
-   const unreadNotifications = isAuthenticated ? notificationUnread : 0;
+  const unreadNotifications = isAuthenticated ? notificationUnread : 0;
   const unreadChats = isAuthenticated ? totalChatUnread : 0;
 
   useEffect(() => {
@@ -60,17 +61,24 @@ const Navbar = () => {
               <Link to="/blog" className="text-foreground hover:text-orange transition-colors">
                 Blog
               </Link>
-              <Link
-                to="/custom-package"
+              <ProtectedLink
+                to="/custom-package" requireAuth
                 className="text-foreground hover:text-orange transition-colors"
               >
                 Custom Package
-              </Link>
-              <Link to="/chatbot" className="text-foreground hover:text-orange transition-colors">
+              </ProtectedLink>
+              <ProtectedLink to="/chatbot" requireAuth className="text-foreground hover:text-orange transition-colors">
                 Chat Bot
-              </Link><Link to="/about"
-             className="text-foreground hover:text-orange transition-colors">
+              </ProtectedLink>
+              <Link to="/about"
+                className="text-foreground hover:text-orange transition-colors">
                 About
+              </Link>
+              {/* <Link to="/demo" className="text-sm text-orange font-semibold">
+                Demo
+              </Link> */}
+              <Link to="/demo" className="bg-orange text-white px-3 py-1 rounded text-sm">
+                Demo Access
               </Link>
             </nav>
           </div>
@@ -78,24 +86,24 @@ const Navbar = () => {
           {/* Right - Icons & Auth */}
           <div className="flex items-center space-x-4">
             {/* Chat Icon */}
-            <Link to="/chat" className="relative">
+            <ProtectedLink to="/chat" requireAuth className="relative">
               <MessageCircle className="w-6 h-6 text-foreground hover:text-orange" />
               {unreadChats > 0 && (
                 <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                   {unreadChats}
                 </span>
               )}
-            </Link>
+            </ProtectedLink>
 
             {/* Notification Bell */}
-            <Link to="/notification" className="relative">
+            <ProtectedLink to="/notification" requireAuth className="relative">
               <Bell className="w-6 h-6 text-foreground hover:text-orange" />
               {unreadNotifications > 0 && (
                 <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                   {unreadNotifications}
                 </span>
               )}
-            </Link>
+            </ProtectedLink>
 
             {/* Profile / Auth Buttons */}
             {isAuthenticated ? (
@@ -178,33 +186,36 @@ const Navbar = () => {
             >
               Blog
             </Link>
-             <Link
-                to="/custom-package"
-                className="text-foreground hover:text-orange transition-colors"
-              >
-                Custom Package
-              </Link>
-            <Link
-              to="/chat"
+            <ProtectedLink requireAuth
+              to="/custom-package"
+              className="text-foreground hover:text-orange transition-colors"
+            >
+              Custom Package
+            </ProtectedLink>
+            <ProtectedLink
+              to="/chat" requireAuth
               className="block text-foreground hover:text-orange"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Chat {unreadChats > 0 && `(${unreadChats})`}
-            </Link>
-            <Link
-              to="/notification"
+            </ProtectedLink>
+            <ProtectedLink
+              to="/notification" requireAuth
               className="block text-foreground hover:text-orange"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Notifications {unreadNotifications > 0 && `(${unreadNotifications})`}
-            </Link>
-            <Link
-              to="/account/profile"
+            </ProtectedLink>
+            <ProtectedLink
+              to="/account/profile" requireAuth
               className="block text-foreground hover:text-orange"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Account
-            </Link>
+            </ProtectedLink>
+             <Link to="/demo" className="bg-orange text-white px-3 py-1 rounded text-sm">
+                Demo Access
+              </Link>
             {isAuthenticated ? (
               <button
                 onClick={() => {

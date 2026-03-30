@@ -24,9 +24,17 @@ import PackageDetailPickUp from './PackageDetailPickUp';
 import { cn } from '@/lib/utils';
 import MapModal from '@/components/MapModal';
 import MapPreview from '@/components/MapPreview';
+import { useAuthModal } from '@/context/AuthModalContext';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
 const PackageDetails = () => {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+const { openLogin } = useAuthModal();
+
+const { isAuthenticated, user } = useSelector(
+  (state: RootState) => state.userAuth
+);
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
   const [loading, setLoading] = useState(false);
@@ -106,13 +114,45 @@ const PackageDetails = () => {
   }, []);
 
 
-  const handleClick = () => {
-    navigate(`/checkout/${id}`);
-  };
+  // const handleClick = () => {
+  //   navigate(`/checkout/${id}`);
+  // };
 
-  const handleAddReview = () => {
-    navigate(`/packages/${id}/review/add`);
-  };
+const handleClick = () => {
+  const isAllowed = isAuthenticated && !user?.isBlocked;
+
+  if (!isAllowed) {
+    openLogin(); // 🔥 open modal
+    return;      // ❌ stop navigation
+  }
+
+  navigate(`/checkout/${id}`); // ✅ allowed
+};
+
+
+const handleAddReview = () => {
+  const isAllowed = isAuthenticated && !user?.isBlocked;
+
+  if (!isAllowed) {
+    openLogin(); // 🔥 open modal
+    return;      // ❌ stop navigation
+  }
+   navigate(`/packages/${id}/review/add`);
+};
+
+
+const handleSeeAllReviews = () => {
+  const isAllowed = isAuthenticated && !user?.isBlocked;
+
+  if (!isAllowed) {
+    openLogin(); // 🔥 open modal
+    return;      // ❌ stop navigation
+  }
+navigate(`/packages/${id}/review?page=1&limit=10`)
+};
+  // const handleAddReview = () => {
+  //   navigate(`/packages/${id}/review/add`);
+  // };
   const isSlotFull = pkg?.packageType === 'group' && pkg?.availableSlots! <= 0;
   const isExpired =
     (pkg?.departureDates && new Date(pkg.departureDates) < new Date()) ||
@@ -260,7 +300,8 @@ const PackageDetails = () => {
             </section>
             <PackageDetailPickUp startPoint={pkg?.startPoint!} />
              
-            <div className="h-96 w-full rounded-lg overflow-hidden border">
+            {/* <div className="h-96 w-full rounded-lg overflow-hidden border"> */}
+           <div className="h-96 w-full rounded-lg overflow-hidden border relative z-0">
               {!openMap && (
                 <MapPreview
                   locations={packageLocations}
@@ -603,7 +644,7 @@ const PackageDetails = () => {
           </div>
 
           <button
-            onClick={() => navigate(`/packages/${id}/review?page=1&limit=10`)}
+            onClick={ handleSeeAllReviews}
             className="text-orange font-semibold mt-2 hover:underline"
           >
             See all reviews →
