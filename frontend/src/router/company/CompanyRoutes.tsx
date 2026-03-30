@@ -22,6 +22,7 @@ import ChatAdminLayout from "@/layouts/ChatAdminLayout";
 import MessageMainPage from "@/pages/admin/chat/MessageMainPage";
 import BookingList from "@/pages/company/booking/BookingsList";
 import BookingDetails from "@/pages/company/booking/BookingDetails";
+import SalesReportPage from "@/pages/company/salesReport/SalesReportPage";
 const CompanyRoutes = () => {
   return (
     <Routes>
@@ -59,6 +60,8 @@ const CompanyRoutes = () => {
       {/* Bookings */}
           <Route path="bookings" element={<BookingList />} />
           <Route path="bookings/:id" element={<BookingDetails />} />
+
+          <Route path="sales-report" element={<SalesReportPage />} />
 
 
     {/* Notifications */}
