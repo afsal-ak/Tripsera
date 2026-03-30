@@ -247,8 +247,9 @@
 // export default api;
 
 import { HttpStatus } from "@/Constants/HttpStatus/HttpStatus";
-import axios, { AxiosError,type AxiosRequestConfig } from "axios";
-import { toast } from "sonner";
+import axios, { AxiosError, type AxiosRequestConfig } from "axios";
+import { warning } from "framer-motion";
+import { enqueueSnackbar } from "notistack";
 
 // Add retry flag to Axios config
 declare module "axios" {
@@ -316,7 +317,7 @@ api.interceptors.response.use(
       status === HttpStatus.FORBIDDEN &&
       message.toLowerCase().includes("blocked")
     ) {
-      toast.error("You have been blocked by the admin.");
+      enqueueSnackbar("You have been blocked by the admin.",{variant:'error'});
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       setTimeout(() => (window.location.href = "/login"), 1200);
@@ -358,11 +359,12 @@ api.interceptors.response.use(
         localStorage.removeItem(tokenKey);
 
         if (isUser) {
-          toast.error("Session expired. Please login again.");
+          enqueueSnackbar("Session expired. Please login again.", {  variant: "error",});
           setTimeout(() => (window.location.href = "/login"), 1000);
         } else if (isAdmin) {
-          toast.error("Admin session expired. Please login again.");
-          setTimeout(() => (window.location.href = "/admin/login"), 1000);
+          enqueueSnackbar("Admin session expired. Please login again.", {
+            variant: "error",
+          }); setTimeout(() => (window.location.href = "/admin/login"), 1000);
         }
 
         return Promise.reject(refreshError);
@@ -370,8 +372,17 @@ api.interceptors.response.use(
     }
 
     //  Generic error handling
-    if (status === HttpStatus.INTERNAL_SERVER_ERROR) toast.error("Something went wrong on the server.");
-    if (status === HttpStatus.NOT_FOUND) toast.error("Requested resource not found.");
+    if (message) {
+      // toast.error(message);
+    }
+    //  Generic fallback
+    else if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+      enqueueSnackbar("Something went wrong on the server.",{variant:'error'});
+    } else if (status === HttpStatus.NOT_FOUND) {
+      enqueueSnackbar("Requested resource not found.",{variant:'error'});
+    }
+    // if (status === HttpStatus.INTERNAL_SERVER_ERROR) toast.error("Something went wrong on the server.");
+    // if (status === HttpStatus.NOT_FOUND) toast.error("Requested resource not found.");
 
     return Promise.reject(error);
   }
