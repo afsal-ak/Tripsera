@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '@/redux/store';
 import { setUser } from '@/redux/slices/userAuthSlice';
 import { useAuthModal } from '@/context/AuthModalContext';
+import { fetchActivePackages } from '@/services/user/PackageService';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -50,9 +51,10 @@ const Home = () => {
   useEffect(() => {
     const loadPkgData = async () => {
       try {
-        const result = await fetchTopBookedPackages();
-        console.log(result, 'top booked packages');
-        setPackages(result);
+        // const result = await fetchTopBookedPackages();
+       const result = await fetchActivePackages({limit:4})
+       // console.log(result, 'top booked packages');
+        setPackages(result.data);
       } catch (error) {
         console.error('Failed to load home data:', error);
       }
