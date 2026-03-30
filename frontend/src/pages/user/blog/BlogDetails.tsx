@@ -19,6 +19,7 @@ import Modal from '@/components/ui/Model';
 import { useAuthModal } from '@/context/AuthModalContext';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
+import ProtectedLink from '@/components/ProtectedLink';
 const BlogDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -140,8 +141,8 @@ const BlogDetailPage = () => {
           {/* AUTHOR + DATE */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200">
             {blogData?.author && (
-              <Link
-                to={`/profile/${blogData.author.username}`}
+              <ProtectedLink
+                to={`/profile/${blogData.author.username}`} requireAuth
                 className="flex items-center gap-2 hover:underline hover:text-white"
               >
                 <img
@@ -150,7 +151,7 @@ const BlogDetailPage = () => {
                   className="w-8 h-8 rounded-full object-cover border border-white"
                 />
                 <span>{blogData.author.username}</span>
-              </Link>
+              </ProtectedLink>
             )}
             <div className="flex items-center gap-2">
               <Calendar size={16} />

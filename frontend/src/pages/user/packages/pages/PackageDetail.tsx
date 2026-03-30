@@ -83,6 +83,12 @@ const { isAuthenticated, user } = useSelector(
 
   const handleWishlist = async () => {
     if (!id || loading) return;
+     const isAllowed = isAuthenticated && !user?.isBlocked;
+
+  if (!isAllowed) {
+    openLogin(); // 🔥 open modal
+    return;      // ❌ stop navigation
+  }
     setLoading(true);
 
     try {
@@ -128,7 +134,9 @@ const handleClick = () => {
 
   navigate(`/checkout/${id}`); // ✅ allowed
 };
+  
 
+ 
 
 const handleAddReview = () => {
   const isAllowed = isAuthenticated && !user?.isBlocked;
