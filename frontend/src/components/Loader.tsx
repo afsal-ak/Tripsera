@@ -16,7 +16,7 @@ const Loader: React.FC = () => (
     </h1>
 
     {/* Loading text */}
-    <p className="text-sm text-gray-500 mt-2 animate-pulse">
+    <p className="text-sm text-gray-500 mt-2">
       Preparing your journey...
     </p>
 

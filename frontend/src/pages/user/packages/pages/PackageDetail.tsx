@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Star, MapPin, Clock, Calendar, Check, Heart, Share2 } from 'lucide-react';
+import { Star, MapPin, Clock, Calendar, Check, Heart, Share2, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 
 import type { IPackage } from '@/types/IPackage';
@@ -27,6 +27,7 @@ import MapPreview from '@/components/MapPreview';
 import { useAuthModal } from '@/context/AuthModalContext';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
+import Loader from '@/components/Loader';
 const PackageDetails = () => {
 
   const navigate = useNavigate();
@@ -169,7 +170,7 @@ navigate(`/packages/${id}/review?page=1&limit=10`)
   const isBookingDisabled: boolean = Boolean(isSlotFull || isExpired);
 
   if (!pkg) {
-    return <div className="h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="h-screen flex items-center justify-center"><Loader2/></div>;
   }
 
   const imageObjects = pkg.imageUrls ?? [];
@@ -253,48 +254,58 @@ navigate(`/packages/${id}/review?page=1&limit=10`)
             </div>
           </div>
           {/* Image Gallery */}
-          <div className="w-full  max-w-7xl  mx-auto mb-10">
-            <div className="flex flex-col items-center gap-4">
-              {/*  Image Gallery */}
-              <div className="w-full max-w-7xl mx-auto mb-10">
-                <div className="flex flex-col items-center gap-4">
-                  {/* Main Image */}
-                  <div className="w-full h-[600px] md:h-[500px] rounded-xl overflow-hidden relative">
-                    <img
-                      src={currentImage}
-                      alt={`Image ${selectedImage + 1}`}
-                      className="w-full h-full object-cover transition-all duration-300"
-                    />
-                    <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 text-sm rounded-lg">
-                      {selectedImage + 1} / {allImages.length}
-                    </div>
-                  </div>
+        <div className="w-full max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-0">
+  <div className="flex flex-col items-center gap-3 sm:gap-4">
 
-                  {/* Thumbnails */}
-                  <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 w-full">
-                    {allImages.map((image, index) => {
-                      const isSelected = selectedImage === index;
-                      return (
-                        <div
-                          key={index}
-                          onClick={() => setSelectedImage(index)}
-                          className={`relative h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${isSelected ? 'ring-2 ring-orange ring-offset-2' : 'hover:opacity-80'
-                            }`}
-                        >
-                          <img
-                            src={image}
-                            alt={`Thumbnail ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                          {isSelected && <div className="absolute inset-0 bg-orange/20" />}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
+    {/* Main Image */}
+    <div className="w-full h-[250px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-xl overflow-hidden relative bg-white flex items-center justify-center">
+      
+      <img
+        src={currentImage}
+        alt={`Image ${selectedImage + 1}`}
+        className="
+          w-full h-full
+          object-contain sm:object-cover
+          transition-all duration-300
+        "
+      />
+
+      {/* Image Counter */}
+      <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-black/60 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-lg">
+        {selectedImage + 1} / {allImages.length}
+      </div>
+    </div>
+
+    {/* Thumbnails */}
+    <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 w-full">
+      {allImages.map((image, index) => {
+        const isSelected = selectedImage === index;
+        return (
+          <div
+            key={index}
+            onClick={() => setSelectedImage(index)}
+            className={`relative h-[70px] sm:h-[80px] md:h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${
+              isSelected
+                ? 'ring-2 ring-orange ring-offset-2'
+                : 'hover:opacity-80'
+            }`}
+          >
+            <img
+              src={image}
+              alt={`Thumbnail ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+
+            {isSelected && (
+              <div className="absolute inset-0 bg-orange/20" />
+            )}
           </div>
+        );
+      })}
+    </div>
+
+  </div>
+</div>
         </div>
       </div>
       <div className="container mx-auto px-4 py-12">
