@@ -116,11 +116,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo & Info */}
           <div className="space-y-4 text-center sm:text-left">
-            <div className="flex items-center justify-center sm:justify-start space-x-1">
+            {/* <div className="flex items-center justify-center sm:justify-start space-x-1">
               <span className="text-3xl font-bold text-orange">Tripsera</span>
               <PlaneTakeoff className="text-orange w-6 h-6" />
-            </div>
-
+            </div> */}
+ <Link
+  to="/"
+  className="flex items-center gap-2 text-2xl font-bold"
+>
+  <span className="bg-gradient-to-r from-orange-500 to-orange-300 bg-clip-text text-transparent">
+    Tripsera
+  </span>
+  <PlaneTakeoff className="w-5 h-5 text-orange-500" />
+</Link>
+         
             <p className="text-gray-600 text-sm leading-relaxed">
               Discover amazing destinations and travel packages with Tripsera.
             </p>
