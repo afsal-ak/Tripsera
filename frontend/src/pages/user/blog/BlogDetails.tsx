@@ -20,12 +20,13 @@ import { useAuthModal } from '@/context/AuthModalContext';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import ProtectedLink from '@/components/ProtectedLink';
- import { useQuery } from '@tanstack/react-query';
+ import {  useQuery, useQueryClient } from '@tanstack/react-query';
 
 const BlogDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { openLogin } = useAuthModal();
+const queryClient = useQueryClient();
 
   const { isAuthenticated, user } = useSelector(
     (state: RootState) => state.userAuth
@@ -70,29 +71,65 @@ const BlogDetailPage = () => {
   //   loadBlogDetail();
   // }, [slug]);
 
-  const toggleLike = async () => {
-    if (!blogData?._id) return;
+const toggleLike = async () => {
+  if (!blogData?._id) return;
 
-    const isAllowed = isAuthenticated && !user?.isBlocked;
+  const isAllowed = isAuthenticated && !user?.isBlocked;
 
-    if (!isAllowed) {
-      openLogin(); //  open modal
-      return;      //  stop navigation
+  if (!isAllowed) {
+    openLogin();
+    return;
+  }
+
+  try {
+    if (liked) {
+      await handleUnLikeBlog(blogData._id);
+
+      setLiked(false);
+      setLikesCount((prev) => prev - 1);
+    } else {
+      await handleLikeBlog(blogData._id);
+
+      setLiked(true);
+      setLikesCount((prev) => prev + 1);
     }
-    try {
-      if (liked) {
-        await handleUnLikeBlog(blogData._id);
-        setLiked(false);
-        setLikesCount((prev) => prev - 1);
-      } else {
-        await handleLikeBlog(blogData._id);
-        setLiked(true);
-        setLikesCount((prev) => prev + 1);
-      }
-    } catch {
-      toast.error('Something went wrong');
-    }
-  };
+
+    // ✅ 🔥 IMPORTANT PART
+    queryClient.invalidateQueries({
+      queryKey: ['blogLikes', blogData._id],
+    });
+
+    queryClient.invalidateQueries({
+      queryKey: ['blog', slug],
+    });
+
+  } catch {
+    toast.error('Something went wrong');
+  }
+};
+  // const toggleLike = async () => {
+  //   if (!blogData?._id) return;
+
+  //   const isAllowed = isAuthenticated && !user?.isBlocked;
+
+  //   if (!isAllowed) {
+  //     openLogin(); //  open modal
+  //     return;      //  stop navigation
+  //   }
+  //   try {
+  //     if (liked) {
+  //       await handleUnLikeBlog(blogData._id);
+  //       setLiked(false);
+  //       setLikesCount((prev) => prev - 1);
+  //     } else {
+  //       await handleLikeBlog(blogData._id);
+  //       setLiked(true);
+  //       setLikesCount((prev) => prev + 1);
+  //     }
+  //   } catch {
+  //     toast.error('Something went wrong');
+  //   }
+  // };
 
 
 const { data, isLoading } = useQuery({
@@ -101,6 +138,13 @@ const { data, isLoading } = useQuery({
   enabled: !!slug,
   staleTime: 1000 * 60 * 5, // 5 min cache
 });
+
+const { data: likesData } = useQuery({
+  queryKey: ['blogLikes', blogData?._id],
+  queryFn: () => fetchBlogLikeList(blogData!._id),
+  enabled: !!blogData?._id, //  important
+  staleTime: 1000 * 60 * 5,
+});
 useEffect(() => {
   if (data?.blog) {
     setBlogData(data.blog);
@@ -108,6 +152,12 @@ useEffect(() => {
     setLikesCount(data.blog?.likes?.length || 0);
   }
 }, [data]);
+
+useEffect(() => {
+  if (likesData) {
+    setLikedUsers(likesData);
+  }
+}, [likesData]);
 
   const handleReportClick = () => {
     const isAllowed = isAuthenticated && !user?.isBlocked;

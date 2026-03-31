@@ -28,6 +28,7 @@ import { useAuthModal } from '@/context/AuthModalContext';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import Loader from '@/components/Loader';
+
 const PackageDetails = () => {
 
   const navigate = useNavigate();

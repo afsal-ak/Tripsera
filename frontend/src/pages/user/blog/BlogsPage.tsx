@@ -5,19 +5,19 @@ import { fetchAllPublishedBlog } from '@/services/user/blogService';
 import { useSearchParams } from 'react-router-dom';
 import { usePaginationButtons } from '@/hooks/usePaginationButtons';
 import { useDebounce } from 'use-debounce';
+import { useQuery } from '@tanstack/react-query';
 
 const BlogsPage = () => {
-  const [blogs, setBlogs] = useState<IBlog[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [totalPages, setTotalPages] = useState(1);
   const [searchBlog, setSearchBlog] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const CACHE_TIME = 1000 * 60 * 60; // 1 hour
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const limit = 6;
   const search = searchParams.get('search') || '';
 
-  //  Debounce search value (wait 500ms after user stops typing)
+  // Debounce search
   const [debouncedSearch] = useDebounce(searchBlog, 500);
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,44 +37,42 @@ const BlogsPage = () => {
     });
   };
 
+  // Update URL when search changes
+  useEffect(() => {
+    setSearchParams({
+      page: '1',
+      limit: limit.toString(),
+      ...(debouncedSearch && { search: debouncedSearch }),
+    });
+  }, [debouncedSearch]);
+
+  //  TanStack Query
+  const { data, isLoading } = useQuery({
+    queryKey: ['blogs', currentPage, search],
+    queryFn: () => fetchAllPublishedBlog(currentPage, limit, search),
+    staleTime: CACHE_TIME,
+    gcTime: CACHE_TIME,
+    placeholderData: (prev) => prev,
+  });
+
+  //  Safe data handling (FIXED)
+  const blogs: IBlog[] = data?.data || [];
+  // const totalBlogs = data?.totalBlogs ?? 0;
+  const totalPages = data?.pagination?.totalPages ?? 1;
+  // const totalPages = Math.ceil(totalBlogs / limit);
+  const loading = isLoading;
+
   const paginationButtons = usePaginationButtons({
     currentPage,
     totalPages,
     onPageChange: handlePageChange,
   });
 
-  //  When debounced search changes, update searchParams
-  useEffect(() => {
-    if (debouncedSearch || debouncedSearch === '') {
-      setSearchParams({
-        page: '1',
-        limit: limit.toString(),
-        ...(debouncedSearch && { search: debouncedSearch }),
-      });
-    }
-  }, [debouncedSearch]);
-
-  //  Fetch blogs when URL params change
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchAllPublishedBlog(currentPage, limit, search);
-        setBlogs(response.data);
-        setTotalPages(Math.ceil(response.totalBlogs / limit));
-      } catch (error) {
-        console.error('Failed to fetch blogs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlogs();
-  }, [searchParams]);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       <section className="max-w-7xl mx-auto px-4 py-12">
-        {/* Header Section */}
+
+        {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-4">
             Explore Blogs
@@ -84,7 +82,7 @@ const BlogsPage = () => {
           </p>
         </div>
 
-        {/* Search Section with Debounce */}
+        {/* Search */}
         <div className="max-w-2xl mx-auto mb-12">
           <div className="relative">
             <div className="flex flex-col sm:flex-row items-center gap-3 p-1 bg-white rounded-2xl shadow-lg border border-gray-200">
@@ -95,13 +93,10 @@ const BlogsPage = () => {
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
+
                 <input
                   type="text"
                   placeholder="Search blogs, topics, authors..."
@@ -123,7 +118,7 @@ const BlogsPage = () => {
           </div>
         </div>
 
-        {/* Blog Results Section */}
+        {/* Content */}
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="relative">
@@ -133,6 +128,7 @@ const BlogsPage = () => {
           </div>
         ) : blogs.length > 0 ? (
           <>
+            {/* Blog Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {blogs.map((blog, index) => (
                 <div
@@ -144,6 +140,8 @@ const BlogsPage = () => {
                 </div>
               ))}
             </div>
+
+            {/* ✅ Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-2 mt-12 mb-8">
                 <div className="flex items-center gap-1 p-2 bg-white rounded-xl shadow-md border border-gray-200">
@@ -160,9 +158,179 @@ const BlogsPage = () => {
             <p className="text-gray-500">Try adjusting your search terms</p>
           </div>
         )}
+
       </section>
     </div>
   );
 };
 
 export default BlogsPage;
+
+// import { useEffect, useState } from 'react';
+// import BlogCard from '@/components/user/BlogCard';
+// import type { IBlog } from '@/types/IBlog';
+// import { fetchAllPublishedBlog } from '@/services/user/blogService';
+// import { useSearchParams } from 'react-router-dom';
+// import { usePaginationButtons } from '@/hooks/usePaginationButtons';
+// import { useDebounce } from 'use-debounce';
+
+// const BlogsPage = () => {
+//   const [blogs, setBlogs] = useState<IBlog[]>([]);
+//   const [searchParams, setSearchParams] = useSearchParams();
+//   const [totalPages, setTotalPages] = useState(1);
+//   const [searchBlog, setSearchBlog] = useState('');
+//   const [loading, setLoading] = useState(false);
+
+//   const currentPage = parseInt(searchParams.get('page') || '1', 10);
+//   const limit = 6;
+//   const search = searchParams.get('search') || '';
+
+//   //  Debounce search value (wait 500ms after user stops typing)
+//   const [debouncedSearch] = useDebounce(searchBlog, 500);
+
+//   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setSearchBlog(e.target.value);
+//   };
+
+//   const handleClearSearch = () => {
+//     setSearchBlog('');
+//     setSearchParams({ page: '1', limit: limit.toString() });
+//   };
+
+//   const handlePageChange = (page: number) => {
+//     setSearchParams({
+//       page: page.toString(),
+//       limit: limit.toString(),
+//       ...(debouncedSearch && { search: debouncedSearch }),
+//     });
+//   };
+
+//   const paginationButtons = usePaginationButtons({
+//     currentPage,
+//     totalPages,
+//     onPageChange: handlePageChange,
+//   });
+
+//   //  When debounced search changes, update searchParams
+//   useEffect(() => {
+//     if (debouncedSearch || debouncedSearch === '') {
+//       setSearchParams({
+//         page: '1',
+//         limit: limit.toString(),
+//         ...(debouncedSearch && { search: debouncedSearch }),
+//       });
+//     }
+//   }, [debouncedSearch]);
+
+//   //  Fetch blogs when URL params change
+//   useEffect(() => {
+//     const fetchBlogs = async () => {
+//       setLoading(true);
+//       try {
+//         const response = await fetchAllPublishedBlog(currentPage, limit, search);
+//         setBlogs(response.data);
+//         setTotalPages(Math.ceil(response.totalBlogs / limit));
+//       } catch (error) {
+//         console.error('Failed to fetch blogs:', error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchBlogs();
+//   }, [searchParams]);
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+//       <section className="max-w-7xl mx-auto px-4 py-12">
+//         {/* Header Section */}
+//         <div className="text-center mb-12">
+//           <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-4">
+//             Explore Blogs
+//           </h1>
+//           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+//             Discover insightful articles, tutorials, and stories from our community of writers
+//           </p>
+//         </div>
+
+//         {/* Search Section with Debounce */}
+//         <div className="max-w-2xl mx-auto mb-12">
+//           <div className="relative">
+//             <div className="flex flex-col sm:flex-row items-center gap-3 p-1 bg-white rounded-2xl shadow-lg border border-gray-200">
+//               <div className="relative flex-1 w-full">
+//                 <svg
+//                   className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
+//                   fill="none"
+//                   stroke="currentColor"
+//                   viewBox="0 0 24 24"
+//                 >
+//                   <path
+//                     strokeLinecap="round"
+//                     strokeLinejoin="round"
+//                     strokeWidth={2}
+//                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+//                   />
+//                 </svg>
+//                 <input
+//                   type="text"
+//                   placeholder="Search blogs, topics, authors..."
+//                   value={searchBlog}
+//                   onChange={handleSearchInput}
+//                   className="w-full pl-12 pr-4 py-3 text-gray-700 bg-transparent border-none rounded-xl focus:outline-none focus:ring-0 placeholder-gray-400"
+//                 />
+//               </div>
+
+//               {searchBlog && (
+//                 <button
+//                   onClick={handleClearSearch}
+//                   className="px-4 py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium"
+//                 >
+//                   Clear
+//                 </button>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Blog Results Section */}
+//         {loading ? (
+//           <div className="flex justify-center items-center py-12">
+//             <div className="relative">
+//               <div className="w-12 h-12 rounded-full border-4 border-gray-200"></div>
+//               <div className="w-12 h-12 rounded-full border-4 border-blue-500 border-t-transparent animate-spin absolute top-0"></div>
+//             </div>
+//           </div>
+//         ) : blogs.length > 0 ? (
+//           <>
+//             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+//               {blogs.map((blog, index) => (
+//                 <div
+//                   key={blog._id}
+//                   className="animate-fadeIn"
+//                   style={{ animationDelay: `${index * 0.1}s` }}
+//                 >
+//                   <BlogCard blog={blog} linkPrefix="/blog" />
+//                 </div>
+//               ))}
+//             </div>
+//             {totalPages > 1 && (
+//               <div className="flex justify-center items-center gap-2 mt-12 mb-8">
+//                 <div className="flex items-center gap-1 p-2 bg-white rounded-xl shadow-md border border-gray-200">
+//                   {paginationButtons}
+//                 </div>
+//               </div>
+//             )}
+//           </>
+//         ) : (
+//           <div className="text-center py-16">
+//             <h3 className="text-xl font-semibold text-gray-600 mb-2">
+//               No blogs found for "{debouncedSearch}"
+//             </h3>
+//             <p className="text-gray-500">Try adjusting your search terms</p>
+//           </div>
+//         )}
+//       </section>
+//     </div>
+//   );
+// };
+
+// export default BlogsPage;
