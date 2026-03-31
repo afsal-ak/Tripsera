@@ -65,7 +65,7 @@ const { isOpen, closeLogin } = useAuthModal();
 
       {!isChatPage && <Footer />}
       {!isChatPage && <ChatbotLauncher />}
-      {isCheckOutPage && <WhatsAppButton adminPhone={adminPhone} />}
+      {/* {isCheckOutPage && <WhatsAppButton adminPhone={adminPhone} />} */}
 
       {/* Video Call UI */}
       {userId && incomingCallData && (
