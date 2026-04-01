@@ -63,15 +63,15 @@ const Navbar = () => {
               Tripsera
               <PlaneTakeoff className="w-6 h-6" />
             </Link> */}
-     <Link
-  to="/"
-  className="flex items-center gap-2 text-2xl font-bold"
->
-  <span className="bg-gradient-to-r from-orange-500 to-orange-300 bg-clip-text text-transparent">
-    Tripsera
-  </span>
-  <PlaneTakeoff className="w-5 h-5 text-orange-500" />
-</Link>
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-2xl font-bold"
+            >
+              <span className="bg-gradient-to-r from-orange-500 to-orange-300 bg-clip-text text-transparent">
+                Tripsera
+              </span>
+              <PlaneTakeoff className="w-5 h-5 text-orange-500" />
+            </Link>
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center space-x-8">
 
@@ -85,8 +85,8 @@ const Navbar = () => {
                   key={item.to}
                   to={item.to}
                   className={`relative pb-1 ${isActive(item.to)
-                      ? 'text-orange font-semibold'
-                      : 'hover:text-orange'
+                    ? 'text-orange font-semibold'
+                    : 'hover:text-orange'
                     }`}
                 >
                   {item.label}
@@ -100,8 +100,8 @@ const Navbar = () => {
                 to="/custom-package"
                 requireAuth
                 className={`relative pb-1 ${isActive('/custom-package')
-                    ? 'text-orange font-semibold'
-                    : 'hover:text-orange'
+                  ? 'text-orange font-semibold'
+                  : 'hover:text-orange'
                   }`}
               >
                 Custom Package
@@ -187,7 +187,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/login">
-                   <Button
+                  <Button
                     variant="outline"
                     className="border-orange text-orange hover:bg-orange hover:text-white hidden sm:flex"
                   >
@@ -246,7 +246,9 @@ const Navbar = () => {
             <ProtectedLink to="/notification" requireAuth onClick={closeMenu} className="px-2 py-2">
               Notifications ({unreadNotifications})
             </ProtectedLink>
-
+            <ProtectedLink to="/account/profile" requireAuth onClick={closeMenu} className="px-2 py-2">
+              Account
+            </ProtectedLink>
             {isAuthenticated ? (
               <button
                 onClick={() => {
