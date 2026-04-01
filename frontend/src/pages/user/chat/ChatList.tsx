@@ -23,18 +23,22 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
   const currentUserId = useSelector(
     (state: RootState) => state.userAuth.user?._id
   );
-const filteredRooms = useMemo(() => {
-  return rooms.filter((room) => {
-    const otherParticipant = room.otherUser;
+
+  // ✅ Filtered rooms based on search
+  const filteredRooms = useMemo(() => {
     const searchTerm = search.toLowerCase();
 
-    return (
-      otherParticipant?.username?.toLowerCase().includes(searchTerm) ||
-      (room.isGroup && room.name?.toLowerCase().includes(searchTerm)) ||
-      (room.lastMessageContent || '').toLowerCase().includes(searchTerm)
-    );
-  });
-}, [rooms, currentUserId, search]);
+    return rooms.filter((room) => {
+      const otherParticipant = room.otherUser;
+
+      return (
+        otherParticipant?.username?.toLowerCase().includes(searchTerm) ||
+        (room.isGroup && room.name?.toLowerCase().includes(searchTerm)) ||
+        (room.lastMessageContent || '').toLowerCase().includes(searchTerm)
+      );
+    });
+  }, [rooms, search]);
+
   const totalUnread = useTotalUnreadCount(EnumUserRole.USER);
 
   return (
@@ -50,17 +54,21 @@ const filteredRooms = useMemo(() => {
           }}
         />
       </div>
-            <ChatSearchBar value={search} onChange={setSearch} />
+
+      {/* Search */}
+      <ChatSearchBar value={search} onChange={setSearch} />
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto">
-        {rooms.length === 0 ? (
+        {filteredRooms.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-32 text-gray-500 px-4">
             <MessageCircle className="w-8 h-8 mb-2 text-gray-300" />
-            <p className="text-sm text-center">No conversations found</p>
+            <p className="text-sm text-center">
+              {search ? 'No matching conversations' : 'No conversations found'}
+            </p>
           </div>
         ) : (
-          rooms.map((room) => (
+          filteredRooms.map((room) => (
             <div
               key={room._id}
               onClick={() => onRoomSelect(room)}
