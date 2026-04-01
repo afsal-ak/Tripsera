@@ -1,5 +1,5 @@
 import type { IUser } from '@/types/IUser';
-import { Mail, MapPin, Calendar, Lock, Globe, Share2, MessageCircle } from 'lucide-react';
+import { Mail, MapPin, Calendar, Lock, Globe, Share2, MessageCircle, UserCheck, } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -7,6 +7,7 @@ import ReferralLinkBox from './ReferralLink';
 import { handleProfilePrivacy } from '@/services/user/profileService';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { useNavigate } from 'react-router-dom';
 type Props = {
   user?: IUser;
   loading: boolean;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const Dashboard = ({ user, loading, refetchUser }: Props) => {
+  const navigate = useNavigate()
   const profilePic = user?.profileImage?.url
     ? user.profileImage.url.replace('/upload/', '/upload/f_webp,q_auto/')
     : '/profile-default.jpg';
@@ -140,17 +142,19 @@ const Dashboard = ({ user, loading, refetchUser }: Props) => {
                     </Button>
                   </ConfirmDialog>
 
-                  <Button
+                  {/* <Button
                     variant="outline"
                     className="border-orange-200 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full transition-all duration-300"
                   >
                     <Share2 className="w-4 h-4 mr-2" /> Share
-                  </Button>
+                  </Button> */}
 
                   <Button
                     variant="outline"
+                    onClick={() => navigate('/chat')}
                     className="border-orange-200 text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-full transition-all duration-300"
                   >
+
                     <MessageCircle className="w-4 h-4 mr-2" /> Message
                   </Button>
                 </div>
@@ -201,28 +205,40 @@ const Dashboard = ({ user, loading, refetchUser }: Props) => {
 
         {/* Extra Info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
+          {/* <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6 text-center">
               <Calendar className="w-8 h-8 text-green-600 mx-auto mb-4" />
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Member Since</h4>
-              <p className="text-gray-600">
+              <p className="text-orange-600">
                 {user?.createdAt ? new Date(user.createdAt).toISOString().slice(0, 10) : ''}
               </p>
             </CardContent>
-          </Card>
+          </Card> */}
 
           <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6 text-center">
               <MapPin className="w-8 h-8 text-purple-600 mx-auto mb-4" />
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Location</h4>
-              <p className="text-gray-600">{user?.address?.state}</p>
+              <p className="text-gray-600">{user?.address?.state ?? 'India'}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6 text-center">
-              <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Active</Badge>
-              <h4 className="text-lg font-semibold text-gray-900 mt-2">Status</h4>
+
+              {/* ICON FIRST */}
+              <UserCheck className="w-8 h-8 text-green-600 mx-auto mb-4" />
+
+              {/* TITLE */}
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                Status
+              </h4>
+
+              {/* BADGE */}
+              <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full hover:bg-green-200">
+                Active
+              </Badge>
+
             </CardContent>
           </Card>
         </div>
