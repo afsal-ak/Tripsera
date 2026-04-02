@@ -13,6 +13,7 @@ import type { IComment, ReplyComment } from '@/types/IComment';
 import type { RootState } from '@/redux/store';
 import { OptionsDropdown } from './OptionsDropdown ';
 import { useLoadMore } from '@/hooks/useLoadMore';
+import { useAuthModal } from '@/context/AuthModalContext';
 
 interface CommentSectionProps {
   parentId: string;
@@ -20,7 +21,12 @@ interface CommentSectionProps {
 }
 
 const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
-  const currentUser = useSelector((state: RootState) => state.userAuth.user);
+  const { openLogin } = useAuthModal();
+
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.userAuth
+  );
+  const currentUser = user
 
   const [comments, setComments] = useState<IComment[]>([]);
   const [text, setText] = useState('');
@@ -52,7 +58,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
         setComments((prev) => [...prev, ...res.data]);
       }
     } catch (error) {
-      toast.error('Failed to fetch comments');
+      // toast.error('Failed to fetch comments');
     } finally {
       setLoading(false);
     }
@@ -79,8 +85,17 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
     }
   };
 
+
+
+
   // Add comment or reply
   const onSubmit = async (message: string, parentCommentId?: string) => {
+    const isAllowed = isAuthenticated && !user?.isBlocked;
+
+    if (!isAllowed) {
+      openLogin(); //  open modal
+      return;      //  stop navigation
+    }
     if (!message.trim()) return toast.error('Please write something');
 
     try {
@@ -149,6 +164,7 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
 
   return (
     <div className="flex flex-col h-[500px] bg-white rounded-t-2xl">
+      {/* <div className="flex flex-col w-full max-h-[70vh] sm:max-h-[500px] bg-white rounded-t-2xl"> */}
       {/* Comment List */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-5 scrollbar-thin scrollbar-thumb-gray-300">
         {comments.length === 0 && !loading && (
@@ -311,25 +327,46 @@ const CommentSection = ({ parentId, parentType }: CommentSectionProps) => {
       </div>
 
       {/* Main Comment Input */}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit(text);
         }}
-        className="border-t px-4 py-3 flex items-center gap-3"
+        className="border-t px-3 sm:px-4 py-3 flex items-center gap-2 w-full"
       >
+        {/* Avatar */}
         <img
           src={currentUser?.profileImage?.url || '/profile-default.jpg'}
           alt="User"
-          className="w-8 h-8 rounded-full object-cover"
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover shrink-0"
         />
+
+        {/* Input */}
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Add a comment..."
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:outline-none"
+          className="
+      flex-1 min-w-0 
+      bg-gray-100 rounded-full 
+      px-3 sm:px-4 py-2 
+      text-sm 
+      focus:outline-none
+    "
         />
-        <button type="submit" className="text-orange font-semibold text-sm hover:text-orange/80">
+
+        {/* Post Button */}
+        <button
+          type="submit"
+          className="
+      shrink-0 
+      whitespace-nowrap 
+      text-orange font-semibold 
+      text-sm 
+      px-2 sm:px-3
+    "
+        >
           Post
         </button>
       </form>

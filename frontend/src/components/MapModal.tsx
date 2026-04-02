@@ -116,8 +116,8 @@ function calcDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) ** 2;
+    Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
@@ -161,7 +161,7 @@ export default function MapModal({ open, onClose, locations }: MapModalProps) {
   if (!open) return null;
 
   const first = locations[0];
- 
+
 
   // Select 2 locations to show distance
   const toggleSelect = (i: number) => {
@@ -185,9 +185,10 @@ export default function MapModal({ open, onClose, locations }: MapModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
-      <div className="relative w-full h-full bg-white">
-
+    // <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/60 z-[9999] flex justify-center items-center">
+      {/* <div className="relative w-full h-full bg-white"> */}
+      <div className="relative w-full h-full bg-white z-[10000]">
         {/* CLOSE BUTTON */}
         <button
           className="absolute top-4 right-4 z-[9999] bg-white px-4 py-2 rounded shadow"
@@ -202,13 +203,15 @@ export default function MapModal({ open, onClose, locations }: MapModalProps) {
             {selectedDistance}
           </div>
         )}
-      {/* <Compass /> */}
+        {/* <Compass /> */}
 
         <MapContainer
           center={[first.geo.coordinates[1], first.geo.coordinates[0]]}
           zoom={first.mapZoomLevel || 8}
           scrollWheelZoom={true}
-          className="w-full h-full"
+          // className="w-full h-full"
+          className="w-full h-full z-0"
+
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <FitBounds locations={locations} />

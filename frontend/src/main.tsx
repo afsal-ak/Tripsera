@@ -7,16 +7,31 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import App from './App.tsx';
 import { store } from './redux/store.ts';
 import { Provider } from 'react-redux';
+import { AuthModalProvider } from './context/AuthModalContext.tsx';
+import ErrorBoundary from './components/ErrorBoundary.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId={clientId}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
-    </GoogleOAuthProvider>
+    <QueryClientProvider client={queryClient}>
+
+      <ErrorBoundary>
+
+        <GoogleOAuthProvider clientId={clientId}>
+          <AuthModalProvider>
+
+            <Provider store={store}>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </Provider>
+          </AuthModalProvider>
+
+        </GoogleOAuthProvider>
+      </ErrorBoundary>
+    </QueryClientProvider>
   </StrictMode>
 );

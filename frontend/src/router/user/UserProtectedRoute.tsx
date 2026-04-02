@@ -5,7 +5,7 @@ import type { RootState } from '@/redux/store';
 const UserProtectedRoutes = () => {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.userAuth);
 
-  return isAuthenticated && !user?.isBlocked ? <Outlet /> : <Navigate to="/login" replace />;
+  return isAuthenticated && !user?.isBlocked ? <Outlet /> : <Navigate to="/" replace />;
 };
 
 export default UserProtectedRoutes;

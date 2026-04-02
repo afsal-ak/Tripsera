@@ -9,7 +9,8 @@ import type { IChatRoom } from '@/types/IMessage';
 import { Button } from '@/components/ui/button';
 import { useTotalUnreadCount } from '@/hooks/useTotalUnreadCount';
 import { EnumUserRole } from '@/Constants/enums/userEnum';
-import AdminSearchForChat from '@/components/chat/AdminSearchForChat';
+import ChatSearchBar from '@/components/chat/ChatSearchBar';
+
 import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
  interface ChatListProps {
   onRoomSelect: (room: IChatRoom) => void;
@@ -57,31 +58,27 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white shadow-sm">
         <div className="p-2">
-          <ChatListHeader role="admin" totalUnread={totalUnread} />
+          {/* <ChatListHeader role="admin" totalUnread={totalUnread} /> */}
+           <ChatListHeader
+          role="admin"
+          totalUnread={totalUnread}
+          onRoomCreated={async (room) => {
+            await dispatch(fetchUserRooms({ isAdmin: true }));
+            onRoomSelect(room);
+          }}
+        />
         </div>
 
-        {/* Sort Button */}
-        <div className="px-2 pb-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setSortByUnread((prev) => !prev)}
-            className="w-full"
-          >
-            {sortByUnread ? 'Sort by Recent' : 'Sort by Unread'}
-            {sortByUnread && totalUnread > 0 && (
-              <span className="ml-2 text-red-500 font-bold">({totalUnread})</span>
-            )}
-          </Button>
-        </div>
+            <ChatSearchBar value={search} onChange={setSearch} />
+
 
         {/* Search */}
-        <AdminSearchForChat
+        {/* <AdminSearchForChat
               onRoomCreated={async (room) => {
                 await dispatch(fetchUserRooms({ isAdmin: true }));
                 onRoomSelect(room);
                }}
-            />
+            /> */}
         {/* <AdminSearchForChat onRoomCreated={() => {}} /> */}
       </div>
 

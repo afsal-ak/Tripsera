@@ -1,6 +1,7 @@
 import { HttpStatus } from "@/Constants/HttpStatus/HttpStatus";
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import { toast } from "sonner";
+import { warning } from "framer-motion";
+import { enqueueSnackbar } from "notistack";
 
 // Extend Axios config
 declare module "axios" {
@@ -84,7 +85,7 @@ api.interceptors.response.use(
       status === HttpStatus.FORBIDDEN &&
       message.toLowerCase().includes("blocked")
     ) {
-      toast.error("Your account has been blocked.");
+      enqueueSnackbar("You have been blocked by the admin.",{variant:'error'});
 
       localStorage.removeItem(tokenKey);
 
@@ -137,31 +138,38 @@ api.interceptors.response.use(
         localStorage.removeItem(tokenKey);
 
         if (isUser) {
-          toast.error("Session expired. Please login again.");
+          enqueueSnackbar("Session expired. Please login again.", {  variant: "error",});
           setTimeout(() => (window.location.href = "/login"), 1000);
-        }
-
-        if (isAdmin) {
-          toast.error("Admin session expired.");
-          setTimeout(() => (window.location.href = "/admin/login"), 1000);
+        } else if (isAdmin) {
+          enqueueSnackbar("Admin session expired. Please login again.", {
+            variant: "error",
+          }); setTimeout(() => (window.location.href = "/admin/login"), 1000);
         }
 
         if (isCompany) {
-          toast.error("Company session expired.");
-          setTimeout(() => (window.location.href = "/company/login"), 1000);
+             enqueueSnackbar("Company session expired. Please login again.", {
+            variant: "error",
+          });
+          // toast.error("Company session expired.");
+           setTimeout(() => (window.location.href = "/company/login"), 1000);
         }
 
         return Promise.reject(refreshError);
       }
     }
 
-    // ---------------- GENERIC ERRORS ----------------
-
-    if (status === HttpStatus.INTERNAL_SERVER_ERROR)
-      toast.error("Something went wrong on the server.");
-
-    if (status === HttpStatus.NOT_FOUND)
-      toast.error("Requested resource not found.");
+    //  Generic error handling
+    if (message) {
+      // toast.error(message);
+    }
+    //  Generic fallback
+    else if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+      enqueueSnackbar("Something went wrong on the server.",{variant:'error'});
+    } else if (status === HttpStatus.NOT_FOUND) {
+      enqueueSnackbar("Requested resource not found.",{variant:'error'});
+    }
+    // if (status === HttpStatus.INTERNAL_SERVER_ERROR) toast.error("Something went wrong on the server.");
+    // if (status === HttpStatus.NOT_FOUND) toast.error("Requested resource not found.");
 
     return Promise.reject(error);
   }

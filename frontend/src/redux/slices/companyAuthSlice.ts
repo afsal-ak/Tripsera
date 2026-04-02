@@ -39,13 +39,14 @@ export const loginCompany = createAsyncThunk(
   ) => {
     try {
       const { company, accessToken } = await handleCompanyLogin(email, password);
-console.log({ company, accessToken },'redux');
+// console.log({ company, accessToken },'redux');
 
       localStorage.setItem("companyAccessToken", accessToken);
 
       return { company, accessToken };
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      
+      return rejectWithValue(error.message.data);
     }
   }
 );
@@ -88,7 +89,7 @@ const companyAuthSlice = createSlice({
       .addCase(loginCompany.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-        toast.error(action.payload as string);
+       // toast.error(action.payload as string);
       });
   },
 });

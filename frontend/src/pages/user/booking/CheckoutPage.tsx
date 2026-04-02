@@ -25,9 +25,10 @@ import {
   CreditCard, Wallet, Zap, Check,
   MapPin, Clock, Users, Ticket
 } from 'lucide-react';
-import { toast } from 'sonner';
 import type { IPackage } from '@/types/IPackage';
 import { cn } from '@/lib/utils';
+import CouponList from '../coupons/CouponList';
+import { useAppSnackbar } from '@/hooks/useSnackbar';
 declare global {
   interface Window {
     Razorpay: any;
@@ -37,6 +38,7 @@ declare global {
 const CheckoutPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+      const snackbar = useAppSnackbar();
 
   const userData = useSelector((state: RootState) => state.userAuth.user);
 
@@ -52,6 +54,7 @@ const CheckoutPage = () => {
   const [finalPayableAmount, setFinalPayableAmount] = useState<number>(0); // after applying wallet + coupon
 
   const [packageData, setPackageData] = useState<IPackage>();
+  const [showCouponModal, setShowCouponModal] = useState(false);
 
   const [subtotal, setSubtotal] = useState(0);
   const [amountAfterDiscount, setAmountAfterDiscount] = useState(0);
@@ -134,6 +137,7 @@ const CheckoutPage = () => {
     };
     loadPackage();
   }, [id]);
+  const savedCheckoutData = localStorage.getItem('checkoutData');
 
   const {
     register,
@@ -144,33 +148,39 @@ const CheckoutPage = () => {
     setValue,
   } = useForm<BookingFormSchema>({
     resolver: zodResolver(BookingSchema),
-    defaultValues: {
-      packageId: id ?? '',
-      
-      travelDate: '',
-      // travelers: [{ fullName: '', age: 0, gender: 'male', id: '' }],
-      travelers: [{ fullName: '', age: 0, gender: 'male', idType: 'aadhaar', idNumber: '' }],
-      contactDetails: {
-        name: userData?.fullName || '',
-        phone: userData?.phone ? String(userData.phone) : '',
-        alternatePhone: '',
-        email: userData?.email || '',
+    defaultValues: savedCheckoutData
+      ? JSON.parse(savedCheckoutData)
+      : {
+        packageId: id ?? '',
+        travelDate: '',
+        travelers: [
+          {
+            fullName: '',
+            age: 22,
+            gender: 'male',
+            idType: 'aadhaar',
+            idNumber: '',
+          },
+        ],
+        contactDetails: {
+          name: userData?.fullName || '',
+          phone: userData?.phone ? String(userData.phone) : '',
+          alternatePhone: '',
+          email: userData?.email || '',
+        },
       },
-
-      couponCode: '',
-      discount: 0,
-      totalAmount: 0,
-      walletAmountUsed: 0,
-      amountPaid: 0,
-      useWallet: true,
-      paymentMethod: '',
-
-    },
   });
-
   const { fields, append, remove } = useFieldArray({ control, name: 'travelers' });
   const travelers = watch('travelers');
   //const paymentMethod = watch('paymentMethod');
+
+  const contactName = watch('contactDetails.name');
+
+  useEffect(() => {
+    if (contactName && travelers.length > 0) {
+      setValue(`travelers.0.fullName`, contactName);
+    }
+  }, [contactName, travelers.length, setValue]);
   const selectedPaymentMethod = watch('paymentMethod');
   useEffect(() => {
     const basePrice = packageData?.finalPrice ?? 0;
@@ -250,10 +260,12 @@ if (packageData?.departureDates) {
         const verified = await verifyRazorpayPayment(response);
 
         if (verified) {
-          toast.success('Payment successful!');
+          localStorage.removeItem('checkoutData');
+
+          snackbar.success('Payment successful!');
           navigate(`/booking-success/${booking._id}`);
         } else {
-          toast.error('Payment verification failed.');
+          snackbar.error('Payment verification failed.');
         }
       },
       modal: {
@@ -262,10 +274,10 @@ if (packageData?.departureDates) {
             await cancelUnpaidBooking(booking._id);
             navigate(`/booking-failed/${booking.bookingCode}`);
 
-            toast.info('Payment cancelled and booking marked as cancelled.');
+            snackbar.info('Payment cancelled and booking marked as cancelled.');
           } catch (error) {
             console.error('Cancel booking failed', error);
-            toast.error('Failed to cancel booking. Try again.');
+            snackbar.error('Failed to cancel booking. Try again.');
           }
         },
       },
@@ -292,10 +304,11 @@ console.log(packageData,'pkgdata in');
             ...formData,
             useWallet: true,
           });
+          localStorage.removeItem('checkoutData');
 
           navigate(`/booking-success/${res.booking._id}`);
         } else {
-          toast.error('Insufficient wallet balance.');
+          snackbar.error('Insufficient wallet balance.');
         }
       } else if (
         formData.paymentMethod === 'razorpay' ||
@@ -314,12 +327,19 @@ console.log(packageData,'pkgdata in');
 
         initiateRazorpayPayment(razorpayOrder, booking, formData);
       } else {
-        toast.error('Select a valid payment method.');
+        snackbar.error('Select a valid payment method.');
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Payment failed.');
+      snackbar.error(err?.response?.data?.message || 'Payment failed.');
     }
   };
+
+  const formValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem('checkoutData', JSON.stringify(formValues));
+  }, [formValues]);
+
   // const minAgeOfInfant = 0;
   // const maxAgeOfInfant = packageData?.ageOfChild ? packageData.ageOfChild - 1 : 2; // infants below child age
   // const minAgeOfChild = packageData?.ageOfChild ?? 2;
@@ -415,7 +435,7 @@ console.log(packageData,'pkgdata in');
                 </div>
               </CardContent>
             </Card>
-          
+
 
             <Card>
 
@@ -529,7 +549,7 @@ console.log(packageData,'pkgdata in');
                       age: 0,
                       gender: 'male',
                       idType: 'aadhaar',
-                       idNumber: '',
+                      idNumber: '',
                     })
                   }
                   className="w-full text-orange border-orange hover:bg-orange hover:text-white"
@@ -596,6 +616,7 @@ console.log(packageData,'pkgdata in');
                     >
                       Apply
                     </Button>
+
                   ) : (
                     <Button
                       type="button"
@@ -607,7 +628,19 @@ console.log(packageData,'pkgdata in');
                     </Button>
                   )}
                 </div>
+                <br />
+                <div className="flex justify-end">
 
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setShowCouponModal(true)}
+                    className="text-orange underline flex items-center gap-2"
+                  >
+                    <Ticket className="w-4 h-4" />
+                    See Available Coupons
+                  </Button>
+                </div>
                 {/* Success message */}
                 {isCouponApplied && !couponError && (
                   <p className="text-green-600 text-sm mt-2">Coupon applied successfully!</p>
@@ -817,7 +850,40 @@ console.log(packageData,'pkgdata in');
 
         </div>
       </div>
+      {showCouponModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+          <div className="bg-white w-full max-w-4xl rounded-xl shadow-lg relative max-h-[90vh] overflow-y-auto">
+
+            {/* Close Button */}
+            <button
+              onClick={() => setShowCouponModal(false)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
+            >
+              ✕
+            </button>
+
+            {/* Title */}
+            <h2 className="text-2xl font-bold text-center text-orange mt-6">
+              Available Coupons
+            </h2>
+
+            {/* Coupon List */}
+            <CouponList
+              onSelect={(code) => {
+                setCouponCode(code);
+                setShowCouponModal(false);
+
+                // optional auto apply
+                // setTimeout(() => {
+                //   handleCouponApply();
+                // }, 3000);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </form>
+
   );
 };
 

@@ -1,22 +1,32 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAdmin } from '@/redux/slices/adminAuthSlice';
 import type { AppDispatch, RootState } from '@/redux/store';
+import { useAppSnackbar } from '@/hooks/useSnackbar';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
+
+  const snackbar=useAppSnackbar()
 
   const { loading, error, isAuthenticated } = useSelector((state: RootState) => state.adminAuth);
   const accessToken = useSelector((state: RootState) => state.adminAuth.accessToken);
-  console.log({ accessToken });
+  ;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState('');
 
-  // Redirect to /home if already logged in
+
+
+  useEffect(() => {
+    if (location.state?.email && location.state?.password) {
+      setEmail(location.state.email);
+      setPassword(location.state.password);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const token = accessToken;
@@ -48,12 +58,12 @@ const AdminLogin = () => {
       const result = await dispatch(
         loginAdmin({ email: trimmedEmail, password: trimmedPassword })
       ).unwrap();
-      toast.success('Login successful');
+      snackbar.success('Login successful');
       // Redux handles setting auth, and redirect happens via useEffect
     } catch (err: any) {
       // Don't do anything here — error is already handled in Redux state
       console.error('Login error (handled in Redux):', err);
-      toast.error(err);
+      snackbar.error(err);
     }
   };
 

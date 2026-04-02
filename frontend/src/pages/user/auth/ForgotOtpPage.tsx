@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleVerifyOtp, handleForgotPassword } from '@/services/auth/authService';
-import { toast } from 'sonner';
 import { useOtpTimer } from '@/hooks/useOtpTimer';
 import { Loader2 } from 'lucide-react';
+import { useAppSnackbar } from '@/hooks/useSnackbar';
 
 const ForgotOtpPage = () => {
   const navigate = useNavigate();
+  const snackbar = useAppSnackbar();
+
+
   const { timeLeft, formattedTime, isExpired, startTimer } = useOtpTimer();
 
   const [otp, setOtp] = useState('');
@@ -29,12 +32,12 @@ const ForgotOtpPage = () => {
     e.preventDefault();
 
     if (otp.length !== 6) {
-      toast.error('Please enter a valid 6-digit OTP');
+      snackbar.error('Please enter a valid 6-digit OTP');
       return;
     }
 
     if (isExpired) {
-      toast.error('OTP expired. Please resend.');
+      snackbar.error('OTP expired. Please resend.');
       return;
     }
 
@@ -48,9 +51,9 @@ const ForgotOtpPage = () => {
       localStorage.removeItem('otp_expiry_timestamp');
 
       navigate('/forgot-password/change-password');
-      toast.success('OTP verification successful');
+      snackbar.success('OTP verification successful');
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'OTP verification failed');
+      snackbar.error(error?.response?.data?.message || 'OTP verification failed');
     } finally {
       setLoading(false);
     }
@@ -60,10 +63,10 @@ const ForgotOtpPage = () => {
     try {
       if (!email) return;
       await handleForgotPassword(email);
-      toast.success('OTP resent successfully');
+      snackbar.success('OTP resent successfully');
       startTimer();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to resend OTP');
+      snackbar.error(error?.response?.data?.message || 'Failed to resend OTP');
     }
   };
 
@@ -110,9 +113,8 @@ const ForgotOtpPage = () => {
             type="button"
             onClick={handleResend}
             disabled={!isExpired}
-            className={`font-semibold ${
-              isExpired ? 'text-orange hover:underline' : 'text-gray-400 cursor-not-allowed'
-            }`}
+            className={`font-semibold ${isExpired ? 'text-orange hover:underline' : 'text-gray-400 cursor-not-allowed'
+              }`}
           >
             {isExpired ? 'Resend' : `Resend in ${formattedTime}`}
           </button>

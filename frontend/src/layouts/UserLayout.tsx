@@ -3,16 +3,18 @@ import Navbar from '@/components/user/Navbar';
 import Footer from '@/components/user/Footer';
 import ChatbotLauncher from '@/pages/user/chatbot/ChatbotLauncher';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
-import { useSelector, useDispatch } from 'react-redux';
-import type { AppDispatch, RootState } from '@/redux/store';
+import { useSelector  } from 'react-redux';
+import type {  RootState } from '@/redux/store';
 import { useState } from 'react';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { useGlobalSocket } from '@/hooks/useGlobalSocket';
 import { VideoCallUI } from '@/components/chat/VideoCallUI';
+ import { useAuthModal } from '@/context/AuthModalContext';
+import LoginModal from '@/pages/user/auth/LoginModal';
 
 const UserLayout = () => {
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
-
+const { isOpen, closeLogin } = useAuthModal();
   const [incomingCallData, setIncomingCallData] = useState<{
     fromUserId: string;
     roomId: string;
@@ -63,7 +65,7 @@ const UserLayout = () => {
 
       {!isChatPage && <Footer />}
       {!isChatPage && <ChatbotLauncher />}
-      {isCheckOutPage && <WhatsAppButton adminPhone={adminPhone} />}
+      {/* {isCheckOutPage && <WhatsAppButton adminPhone={adminPhone} />} */}
 
       {/* Video Call UI */}
       {userId && incomingCallData && (
@@ -75,6 +77,31 @@ const UserLayout = () => {
           onClose={() => setIncomingCallData(null)}
         />
       )}
+
+    {isOpen && (
+ <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
+<div className="
+  w-full
+  max-w-lg        /* desktop width */
+  sm:max-w-xl
+  lg:max-w-3xl
+  max-h-[90vh]
+  overflow-y-auto
+  bg-white
+  rounded-2xl
+  relative
+">      
+      <button
+        onClick={closeLogin}
+        className="absolute top-3 right-3 text-gray-500 text-xl"
+      >
+        ✕
+      </button>
+
+      <LoginModal />
+    </div>
+  </div>
+)}
     </div>
   );
 };

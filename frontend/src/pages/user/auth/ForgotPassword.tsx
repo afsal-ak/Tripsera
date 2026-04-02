@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleForgotPassword } from '@/services/auth/authService';
-import { toast } from 'sonner';
+import { useAppSnackbar } from '@/hooks/useSnackbar';
 
 const ForgotPassword = () => {
+
   const navigate = useNavigate();
+  const snackbar = useAppSnackbar();
+
+
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
@@ -19,9 +23,9 @@ const ForgotPassword = () => {
       await handleForgotPassword(email);
       localStorage.setItem('forgotEmail', email);
       navigate('/forgot-password/verfy-otp');
-      toast.success('OTP sent to your email');
+      snackbar.success('OTP sent to your email');
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || error.message || 'Something went wrong');
+      snackbar.error(error?.response?.data?.message || error.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
