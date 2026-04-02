@@ -97,7 +97,7 @@ const SecurityTab = () => {
             onChange={handleEmailChange}
             placeholder="Enter new email"
           />
-          <Button type="submit" disabled={loading} className="mt-2">
+          <Button type="submit" disabled={loading} className="mt-2 text-white">
             {' '}
             {loading ? 'Loading...' : 'Send Otp'}
           </Button>
@@ -135,7 +135,7 @@ const SecurityTab = () => {
           />
           {formErrors.confirm && <p className="text-red-500 text-xs mt-1">{formErrors.confirm}</p>}
         </div>
-        <Button>{loadingPassword ? 'Loading...' : 'Change Password'}</Button>
+        <Button className=' text-white'>{loadingPassword ? 'Loading...' : 'Change Password'}</Button>
       </form>
     </div>
   );

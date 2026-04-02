@@ -65,67 +65,88 @@ const CouponList = ({ onSelect }: Props) => {
       ) : (
         <>
           {/* Coupon Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {coupons.map((coupon) => (
-              <div
-                key={coupon._id}
-                className="relative rounded-2xl shadow-md bg-gradient-to-br from-orange/10 to-white border border-orange/20 hover:shadow-lg transition-all duration-300 group overflow-hidden"
-              >
-                {/* Discount Tag */}
-                <div className="absolute top-0 right-0 bg-orange text-white text-xs px-3 py-1 rounded-bl-xl font-bold shadow-sm">
-                  {coupon.type === 'percentage'
-                    ? `${coupon.discountValue}% OFF`
-                    : `₹${coupon.discountValue} OFF`}
-                </div>
+          {/* Coupon Grid OR Empty State */}
+          {coupons.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
 
-                <div className="p-5">
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-500">Coupon Code</p>
+              {/* 🎟️ Icon */}
+              <div className="text-5xl mb-4">🎟️</div>
 
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-bold text-orange tracking-wide">
-                        {coupon.code}
-                      </h3>
+              {/* Heading */}
+              <h3 className="text-xl font-semibold text-gray-800">
+                No Coupons Available
+              </h3>
 
-                      <button
-                        onClick={() => {
-                          if (onSelect) {
-                            onSelect(coupon.code);
-                          } else {
-                            handleCopy(coupon.code);
-                          }
-                        }}
-                        className="bg-orange text-white text-xs px-3 py-1 rounded-md hover:bg-orange-dark transition-all shadow-sm active:scale-95"
-                      >
-                        {onSelect ? 'Apply' : 'Copy'}
-                      </button>
+              {/* Sub text */}
+              <p className="text-sm text-gray-500 mt-2 max-w-md">
+                There are no active coupons available at the moment.
+                Please check back later for exciting offers and discounts!
+              </p>
+
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {coupons.map((coupon) => (
+                <div
+                  key={coupon._id}
+                  className="relative rounded-2xl shadow-md bg-gradient-to-br from-orange/10 to-white border border-orange/20 hover:shadow-lg transition-all duration-300 group overflow-hidden"
+                >
+                  {/* Discount Tag */}
+                  <div className="absolute top-0 right-0 bg-orange text-white text-xs px-3 py-1 rounded-bl-xl font-bold shadow-sm">
+                    {coupon.type === 'percentage'
+                      ? `${coupon.discountValue}% OFF`
+                      : `₹${coupon.discountValue} OFF`}
+                  </div>
+
+                  <div className="p-5">
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-500">Coupon Code</p>
+
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-bold text-orange tracking-wide">
+                          {coupon.code}
+                        </h3>
+
+                        <button
+                          onClick={() => {
+                            if (onSelect) {
+                              onSelect(coupon.code);
+                            } else {
+                              handleCopy(coupon.code);
+                            }
+                          }}
+                          className="bg-orange text-white text-xs px-3 py-1 rounded-md hover:bg-orange-dark transition-all shadow-sm active:scale-95"
+                        >
+                          {onSelect ? 'Apply' : 'Copy'}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-sm text-gray-700">
+                      <p>
+                        Min Purchase:{' '}
+                        <span className="font-semibold">₹{coupon.minAmount || 0}</span>
+                      </p>
+                      <p>
+                        Max Discount:{' '}
+                        <span className="font-semibold">
+                          ₹{coupon.maxDiscountAmount || '-'}
+                        </span>
+                      </p>
+                      <p>
+                        Valid Till:{' '}
+                        <span className="font-semibold text-orange-dark">
+                          {new Date(coupon.expiryDate).toLocaleDateString()}
+                        </span>
+                      </p>
                     </div>
                   </div>
 
-                  <div className="space-y-1 text-sm text-gray-700">
-                    <p>
-                      Min Purchase:{' '}
-                      <span className="font-semibold">₹{coupon.minAmount || 0}</span>
-                    </p>
-                    <p>
-                      Max Discount:{' '}
-                      <span className="font-semibold">
-                        ₹{coupon.maxDiscountAmount || '-'}
-                      </span>
-                    </p>
-                    <p>
-                      Valid Till:{' '}
-                      <span className="font-semibold text-orange-dark">
-                        {new Date(coupon.expiryDate).toLocaleDateString()}
-                      </span>
-                    </p>
-                  </div>
+                  <div className="absolute bottom-0 left-0 w-0 h-1 bg-orange transition-all duration-500 group-hover:w-full" />
                 </div>
-
-                <div className="absolute bottom-0 left-0 w-0 h-1 bg-orange transition-all duration-500 group-hover:w-full" />
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Pagination only for page mode */}
           {!onSelect && (

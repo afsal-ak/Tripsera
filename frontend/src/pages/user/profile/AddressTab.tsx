@@ -79,7 +79,7 @@ const AddressTab = ({ user, loading, refetchUser }: Props) => {
           </div>
         </div>
         <div className="pt-4">
-          <Button type="submit" className="w-full md:w-auto">
+          <Button type="submit" className="w-full md:w-auto  text-white">
             {loading ? 'Updating...' : 'Update Address'}
           </Button>
         </div>

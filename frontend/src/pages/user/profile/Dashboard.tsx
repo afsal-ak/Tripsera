@@ -204,7 +204,7 @@ const Dashboard = ({ user, loading, refetchUser }: Props) => {
         <ReferralLinkBox referralCode={user?.referralCode || ''} />
 
         {/* Extra Info */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* <Card className="bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6 text-center">
               <Calendar className="w-8 h-8 text-green-600 mx-auto mb-4" />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Trash2, MapPin, HeartOff } from 'lucide-react';
+import { Trash2, MapPin, HeartOff, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { getAllWishlist, deleteFromWishlist } from '@/services/user/wishlistService';
@@ -53,8 +53,12 @@ const Wishlist = () => {
     onPageChange: handlePageChange,
   });
 
-  if (loading) {
-    return <p className="p-6 text-center text-gray-500 animate-pulse">Loading wishlist...</p>;
+   if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+      </div>
+    )
   }
 
   if (!wishlist.length) {
