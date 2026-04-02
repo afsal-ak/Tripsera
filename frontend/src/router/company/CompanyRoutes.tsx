@@ -6,7 +6,7 @@ import CompanySetupPage from "@/pages/company/company-setup/CompanySetupPage";
 import CompanyPrivateRoute from "./CompanyPrivateRoute";
 import CompanySetupRoute from "./CompanySetupRoute";
 
-import Dashboard from "@/pages/company/dashboard/DashboardPage";
+import CompanyDashboard from "@/pages/company/dashboard/DashboardPage";
 import CompanyProfilePage from "@/pages/company/company-setup/CompanyProfilePage";
 import CompanySignup from "@/pages/company/auth/Signup";
 import companyPublicRoutes from "./companyPublicRoutes";
@@ -42,7 +42,7 @@ const CompanyRoutes = () => {
 
       {/* Protected (only if setup completed) */}
       <Route element={<CompanyPrivateRoute />}>
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="dashboard" element={<CompanyDashboard />} />
 
           {/* Packages (shared) */}
           <Route path="packages" element={<PackageList />} />
