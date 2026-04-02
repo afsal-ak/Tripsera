@@ -68,8 +68,8 @@ import { CustomPackageUseCases } from '@application/usecases/admin/customPackage
 import { CustomPackageController } from '@presentation/controllers/admin/customPackageController';
 
 import { DashboardRepository } from '@infrastructure/repositories/DashboardRepository';
-import { DashboardUseCases } from '@application/usecases/admin/dashboardUseCases';
-import { DashboardController } from '@presentation/controllers/admin/dashboardController';
+import { DashboardUseCases } from '@application/usecases/company/dashboardUseCases';
+import { DashboardController } from '@presentation/controllers/company/dashboardController';
 
 import { ChatRoomRepository } from '@infrastructure/repositories/ChatRoomRepository';
 import { ChatRoomUseCase } from '@application/usecases/chat/chatRoomUseCases';
@@ -274,6 +274,28 @@ router.get(SALES_REPORT_ROUTE.SALES_REPORT_EXCEL_DOWNLOAD,companyAuthMiddleware,
 router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD,companyAuthMiddleware, salesController.downloadPDF);
 
 
+// // DASHBOARD ROUTES
+router.get(
+  DASHBOARD_ROUTE.GET_DASHBOARD_SUMMARY,
+  companyAuthMiddleware,
+  dashboardController.getDashboardSummary
+);
+router.get(
+  DASHBOARD_ROUTE.GET_TOP_PACKAGES,
+  companyAuthMiddleware,
+  dashboardController.getTopBookedPackages
+);
+router.get(
+  DASHBOARD_ROUTE.GET_TOP_CATEGORIES,
+  companyAuthMiddleware,
+  dashboardController.getTopBookedCategories
+);
+router.get(
+  DASHBOARD_ROUTE.GET_BOOKING_CHART,
+  companyAuthMiddleware,
+  dashboardController.getBookingChart
+);
+
 
 // //REVIEW ROUTES
 
@@ -317,28 +339,6 @@ router.get(SALES_REPORT_ROUTE.SALES_REPORT_PDF_DOWNLOAD,companyAuthMiddleware, s
 
 // router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS,adminAuthMiddleware,customPkgController.changeCustomPkgStatus);
 // router.delete(  CUSTOM_PACKAGE_ROUTE.DELETE, adminAuthMiddleware,customPkgController.deleteCustomPkg);
-
-// // // DASHBOARD ROUTES
-// router.get(
-//   DASHBOARD_ROUTE.GET_DASHBOARD_SUMMARY,
-//   adminAuthMiddleware,
-//   dashboardController.getDashboardSummary
-// );
-// router.get(
-//   DASHBOARD_ROUTE.GET_TOP_PACKAGES,
-//   adminAuthMiddleware,
-//   dashboardController.getTopBookedPackages
-// );
-// router.get(
-//   DASHBOARD_ROUTE.GET_TOP_CATEGORIES,
-//   adminAuthMiddleware,
-//   dashboardController.getTopBookedCategories
-// );
-// router.get(
-//   DASHBOARD_ROUTE.GET_BOOKING_CHART,
-//   adminAuthMiddleware,
-//   dashboardController.getBookingChart
-// );
 
 // //CHAT ROOM ROUTES
 // router.post(CHAT_ROOM_ROUTE.CREATE, adminAuthMiddleware, chatRoomController.createRoom);
