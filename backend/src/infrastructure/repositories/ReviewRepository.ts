@@ -89,11 +89,17 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
   async findAllReviews(
     page: number,
     limit: number,
-    filters: IFilter
+    filters: IFilter,
+    companyId?: string,
+
   ): Promise<{ review: IReview[]; pagination: PaginationInfo }> {
     const skip = (page - 1) * limit;
+console.log(companyId,'company id');
 
     const query: any = {};
+    if (companyId) {
+      query.companyId = companyId
+    }
 
     if (filters.search) {
       query.$or = [
@@ -166,13 +172,29 @@ export class ReviewRepository extends BaseRepository<IReview> implements IReview
     return { review, pagination };
   }
 
-  async findReviewById(reviewId: string): Promise<IReview | null> {
-    const review = await ReviewModel.findById(reviewId)
+  async findReviewById(
+    reviewId: string,
+    companyId?: string
+  ): Promise<IReview | null> {
+    const query: any = {
+      _id: reviewId
+    };
+    if (companyId) {
+      query.companyId = companyId;
+    }
+    const review = await ReviewModel.findOne(query)
       .populate('userId', 'username email')
-      .populate('packageId', 'title ')
+      .populate('packageId', 'title')
       .lean();
     return review;
   }
+  // async findReviewById(reviewId: string): Promise<IReview | null> {
+  //   const review = await ReviewModel.findById(reviewId)
+  //     .populate('userId', 'username email')
+  //     .populate('packageId', 'title ')
+  //     .lean();
+  //   return review;
+  // }
 
   async findUserReviewedAlready(userId: string, packageId: string): Promise<IReview | null> {
     return await ReviewModel.findOne({ userId: userId, packageId: packageId });

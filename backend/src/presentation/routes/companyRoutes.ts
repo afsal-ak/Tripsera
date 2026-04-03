@@ -56,8 +56,8 @@ import { SalesReportController } from '@presentation/controllers/company/salesRe
 
 
 import { ReviewRepository } from '@infrastructure/repositories/ReviewRepository';
-import { ReviewUseCases } from '@application/usecases/admin/reviewUseCase';
-import { ReviewController } from '@presentation/controllers/admin/reviewController';
+import { ReviewUseCases } from '@application/usecases/company/reviewUseCase';
+import { ReviewController } from '@presentation/controllers/company/reviewController';
 
 import { ReportRepository } from '@infrastructure/repositories/ReportRepository';
 import { ReportUseCases } from '@application/usecases/admin/reportUseCases';
@@ -297,12 +297,10 @@ router.get(
 );
 
 
-// //REVIEW ROUTES
+//REVIEW ROUTES
 
-// router.get(REVIEW_ROUTE.GET_REVIEWS, adminAuthMiddleware, reviewController.getAllReview);
-// router.get(REVIEW_ROUTE.GET_BY_ID, adminAuthMiddleware, reviewController.getReviewById);
-// router.patch(REVIEW_ROUTE.CHANGE_STATUS, adminAuthMiddleware, reviewController.changeReviewStatus);
-// router.delete(REVIEW_ROUTE.DELETE, adminAuthMiddleware, reviewController.deleteReview);
+router.get(REVIEW_ROUTE.GET_REVIEWS, companyAuthMiddleware, reviewController.getAllReview);
+router.get(REVIEW_ROUTE.GET_BY_ID, companyAuthMiddleware, reviewController.getReviewById);
 
 
 

@@ -43,6 +43,7 @@ export class ReviewUseCases implements IReviewUseCases {
       ...data,
       username: user?.username || '',
       packageTitle: packageData?.title || '',
+      companyId:packageData?.companyId||''
     };
 
     const newReview = await this._reviewRepo.create(reviewData);

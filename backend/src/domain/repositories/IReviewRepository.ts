@@ -7,7 +7,8 @@ export interface IReviewRepository extends IBaseRepository<IReview> {
   findAllReviews(
     page: number,
     limit: number,
-    filters?: IFilter
+    filters?: IFilter,
+    companyId?: string,
   ): Promise<{ review: IReview[]; pagination: PaginationInfo }>;
   findPackageReviews(
     packageId: string,
@@ -22,7 +23,7 @@ export interface IReviewRepository extends IBaseRepository<IReview> {
     page?: number,
     limit?: number
   ): Promise<{ data: IReview[]; pagination: PaginationInfo }>;
-  findReviewById(reviewId: string): Promise<IReview | null>;
+  findReviewById(reviewId: string,companyId?:string): Promise<IReview | null>;
 
   getPackageRatingSummary(
     packageId: string
