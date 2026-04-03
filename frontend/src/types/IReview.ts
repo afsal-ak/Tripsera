@@ -18,6 +18,7 @@ export interface IReview {
     email?: string;
     profileImage?: { url: string };
   };
+  companyId?:string;
   username?: string;
   profileTitle?: string;
   packageTitle?: string;

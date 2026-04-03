@@ -68,10 +68,10 @@ useEffect(() => {
     },
   ];
 
-  // const userManagementItems = [
+  const userManagementItems = [
   // //  { path: 'users', label: 'Users', icon: User },
-  //  // { path: 'reviews', label: 'Reviews', icon: Star },
-  // ];
+    { path: 'reviews', label: 'Reviews', icon: Star },
+  ];
 
   const bookingItems = [
     { path: 'bookings', label: 'Bookings', icon: Calendar },
@@ -212,7 +212,7 @@ useEffect(() => {
 
         <nav className="p-4 flex-1 overflow-y-auto">
           {renderMenuGroup('Main', mainItems)}
-          {/* {renderMenuGroup('User Management', userManagementItems)} */}
+          {renderMenuGroup('User Management', userManagementItems)}
           {renderMenuGroup('Bookings & Reports', bookingItems)}
         </nav>
 

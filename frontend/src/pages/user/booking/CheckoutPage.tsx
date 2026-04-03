@@ -37,6 +37,7 @@ declare global {
 
 const CheckoutPage = () => {
   const { id } = useParams();
+  console.log(id,'packge id')
   const navigate = useNavigate();
       const snackbar = useAppSnackbar();
 
@@ -148,10 +149,17 @@ const CheckoutPage = () => {
     setValue,
   } = useForm<BookingFormSchema>({
     resolver: zodResolver(BookingSchema),
+    // defaultValues: savedCheckoutData
+    //   ? JSON.parse(savedCheckoutData)
+    //   : {
+    //     packageId: id ?? '',
     defaultValues: savedCheckoutData
-      ? JSON.parse(savedCheckoutData)
-      : {
-        packageId: id ?? '',
+  ? {
+      ...JSON.parse(savedCheckoutData),
+      packageId: id ?? '', // ✅ override
+    }
+  : {
+      packageId: id ?? '',
         travelDate: '',
         travelers: [
           {
@@ -181,6 +189,11 @@ const CheckoutPage = () => {
       setValue(`travelers.0.fullName`, contactName);
     }
   }, [contactName, travelers.length, setValue]);
+  useEffect(() => {
+  if (id) {
+    setValue('packageId', id);
+  }
+}, [id, setValue]);
   const selectedPaymentMethod = watch('paymentMethod');
   useEffect(() => {
     const basePrice = packageData?.finalPrice ?? 0;
@@ -220,6 +233,7 @@ const CheckoutPage = () => {
     setValue('discount', couponDiscount);
     setValue('companyId', packageData?.companyId!);
     setValue('packageType',packageData?.packageType!)
+    setValue('packageId', id!);
 if (packageData?.departureDates) {
   if (typeof packageData.departureDates === 'string') {
     setValue('travelDate', packageData.departureDates);

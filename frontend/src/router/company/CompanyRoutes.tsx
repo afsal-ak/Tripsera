@@ -23,6 +23,9 @@ import MessageMainPage from "@/pages/admin/chat/MessageMainPage";
 import BookingList from "@/pages/company/booking/BookingsList";
 import BookingDetails from "@/pages/company/booking/BookingDetails";
 import SalesReportPage from "@/pages/company/salesReport/SalesReportPage";
+import ReviewList from '@/pages/company/review/ReviewList';
+import ReviewDetail from '@/pages/company/review/ReviewDetail';
+
 const CompanyRoutes = () => {
   return (
     <Routes>
@@ -38,11 +41,11 @@ const CompanyRoutes = () => {
       </Route>
 
 
-        <Route element={<CompanyLayout />}>
+      <Route element={<CompanyLayout />}>
 
-      {/* Protected (only if setup completed) */}
-      <Route element={<CompanyPrivateRoute />}>
-        <Route path="dashboard" element={<CompanyDashboard />} />
+        {/* Protected (only if setup completed) */}
+        <Route element={<CompanyPrivateRoute />}>
+          <Route path="dashboard" element={<CompanyDashboard />} />
 
           {/* Packages (shared) */}
           <Route path="packages" element={<PackageList />} />
@@ -57,14 +60,16 @@ const CompanyRoutes = () => {
           <Route path="packages/unblock/:id" element={<PackageList />} />
 
 
-      {/* Bookings */}
+          {/* Bookings */}
           <Route path="bookings" element={<BookingList />} />
           <Route path="bookings/:id" element={<BookingDetails />} />
 
           <Route path="sales-report" element={<SalesReportPage />} />
 
+          <Route path="reviews" element={<ReviewList />} />
+          <Route path="reviews/:reviewId" element={<ReviewDetail />} />
 
-    {/* Notifications */}
+          {/* Notifications */}
           <Route path="notification" element={<NotificationPage />} />
 
           {/* Chat */}
@@ -73,8 +78,8 @@ const CompanyRoutes = () => {
           </Route>
 
 
+        </Route>
       </Route>
-    </Route>
 
 
     </Routes>
