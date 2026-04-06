@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { INotification } from '@/types/INotifications';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
 
 const NotificationPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -46,8 +47,8 @@ const NotificationPage = () => {
       case 'review':
         return `/admin/reviews`;
       case 'wallet':
-        return `/admin/wallet`; 
-         case 'customPackage':
+        return `/admin/wallet`;
+      case 'customPackage':
         return `/admin/custom-packages`;
       case 'report':
         return `/admin/reports/${n.reportedId}`;
@@ -152,7 +153,7 @@ const NotificationPage = () => {
   useEffect(() => {
     dispatch(
       fetchNotifications({
-        isAdmin: true,
+        role: EnumUserRole.ADMIN,
         filters: {
           page: 1,
           limit: 10,
@@ -163,7 +164,9 @@ const NotificationPage = () => {
   }, [dispatch, filter]);
 
   const handleMarkAsRead = (id: string) => {
-    dispatch(markAsReadThunk({ id, isAdmin: true }));
+    dispatch(markAsReadThunk({
+      id, role: EnumUserRole.ADMIN,
+    }));
     setShowMenu(null);
   };
 
@@ -239,11 +242,10 @@ const NotificationPage = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  filter === f
+                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${filter === f
                     ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
+                  }`}
               >
                 {f === 'all' ? 'All' : f === 'read' ? 'Read' : 'Unread'}
                 {f === 'unRead' && unreadCount > 0 && (
@@ -389,7 +391,7 @@ const NotificationPage = () => {
                 onClick={() =>
                   dispatch(
                     fetchNotifications({
-                      isAdmin: true,
+                      role: EnumUserRole.ADMIN,
                       filters: { page, limit: 10, status: filter },
                     })
                   )

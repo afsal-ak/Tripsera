@@ -17,7 +17,7 @@ import AddPackageForm from "@/pages/company/package/AddPackageForm";
 import EditPackageForm from "@/pages/company/package/EditPackage";
 import PackageDetails from "@/pages/company/package/PackageDetail";
 
-import NotificationPage from "@/pages/admin/notification/Notifications";
+import NotificationPage from "@/pages/company/notification/Notifications";
 import ChatAdminLayout from "@/layouts/ChatAdminLayout";
 import MessageMainPage from "@/pages/admin/chat/MessageMainPage";
 import BookingList from "@/pages/company/booking/BookingsList";

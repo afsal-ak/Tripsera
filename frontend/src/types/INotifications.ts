@@ -11,6 +11,7 @@ export type IEntityType =
 export interface INotification {
   _id: string;
   userId?: string;
+  companyId?: string;
   //role: IRole,
   title: string;
   message: string;

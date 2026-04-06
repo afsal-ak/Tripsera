@@ -11,6 +11,13 @@ import {
   userMarkNotificationAsRead,
 } from '@/services/user/notificationsService';
 
+import {
+  fetchCompanyNotification,
+  companyMarkNotificationAsRead,
+} from '@/services/company/notificationsService';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
+
+
 interface NotificationState {
   items: INotification[];
   unreadCount: number;
@@ -26,38 +33,76 @@ const initialState: NotificationState = {
   loading: false,
 };
 
-// --- Fetch Notifications (Admin or User) ---
+// // --- Fetch Notifications (Admin or User) ---
+// export const fetchNotifications = createAsyncThunk<
+//   { data: INotification[]; pagination: { totalPages: number } },
+//   { isAdmin?: boolean; filters?: INotificationFilter }
+// >('notifications/fetch', async ({ isAdmin, filters }, { rejectWithValue }) => {
+//   try {
+//     const res = isAdmin
+//       ? await fetchAdminNotification(filters)
+//       : await fetchUserNotification(filters);
+
+//     return res;
+//   } catch (err: any) {
+//     return rejectWithValue(err.message || 'Failed to fetch notifications');
+//   }
+// });
 export const fetchNotifications = createAsyncThunk<
   { data: INotification[]; pagination: { totalPages: number } },
-  { isAdmin?: boolean; filters?: INotificationFilter }
->('notifications/fetch', async ({ isAdmin, filters }, { rejectWithValue }) => {
+  { role: EnumUserRole; filters?: INotificationFilter }
+>('notifications/fetch', async ({ role, filters }, { rejectWithValue }) => {
   try {
-    const res = isAdmin
-      ? await fetchAdminNotification(filters)
-      : await fetchUserNotification(filters);
+    let res;
+
+    if (role === EnumUserRole.ADMIN) {
+      res = await fetchAdminNotification(filters);
+    } else if (role === EnumUserRole.COMPANY) {
+      res = await fetchCompanyNotification(filters);
+    } else {
+      res = await fetchUserNotification(filters);
+    }
 
     return res;
   } catch (err: any) {
     return rejectWithValue(err.message || 'Failed to fetch notifications');
   }
 });
-
-// --- Mark Single Notification as Read ---
 export const markAsReadThunk = createAsyncThunk<
-  string, // return notificationId
-  { id: string; isAdmin?: boolean }
->('notifications/markAsRead', async ({ id, isAdmin }, { rejectWithValue }) => {
+  string,
+  { id: string; role: EnumUserRole }
+>('notifications/markAsRead', async ({ id, role }, { rejectWithValue }) => {
   try {
-    if (isAdmin) {
+    if (role === EnumUserRole.ADMIN) {
       await adminMarkNotificationAsRead(id);
+    } else if (role === EnumUserRole.COMPANY) {
+      await companyMarkNotificationAsRead(id);
     } else {
       await userMarkNotificationAsRead(id);
     }
+
     return id;
   } catch (err: any) {
     return rejectWithValue(err.message || 'Failed to mark notification as read');
   }
 });
+
+// // --- Mark Single Notification as Read ---
+// export const markAsReadThunk = createAsyncThunk<
+//   string, // return notificationId
+//   { id: string; isAdmin?: boolean }
+// >('notifications/markAsRead', async ({ id, isAdmin }, { rejectWithValue }) => {
+//   try {
+//     if (isAdmin) {
+//       await adminMarkNotificationAsRead(id);
+//     } else {
+//       await userMarkNotificationAsRead(id);
+//     }
+//     return id;
+//   } catch (err: any) {
+//     return rejectWithValue(err.message || 'Failed to mark notification as read');
+//   }
+// });
 
 const notificationSlice = createSlice({
   name: 'notifications',

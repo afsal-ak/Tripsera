@@ -22,14 +22,6 @@ const initialState: CompanyAuthState = {
   loading: false,
   error: null,
 };
-// const initialState: CompanyAuthState = {
-//   company: JSON.parse(localStorage.getItem("company") || "null"),
-  
-//   accessToken: localStorage.getItem("companyAccessToken"),
-//   isAuthenticated: !!localStorage.getItem("companyAccessToken"),
-//   loading: false,
-//   error: null,
-// };
 
 export const loginCompany = createAsyncThunk(
   "company/login",
@@ -39,7 +31,7 @@ export const loginCompany = createAsyncThunk(
   ) => {
     try {
       const { company, accessToken } = await handleCompanyLogin(email, password);
-// console.log({ company, accessToken },'redux');
+ console.log({ company, accessToken },'redux');
 
       localStorage.setItem("companyAccessToken", accessToken);
 

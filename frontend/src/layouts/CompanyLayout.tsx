@@ -11,8 +11,9 @@ import CompanyNavbar from '@/components/company/CompanyNavbar';
 
 const CompanyLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const companyId = useSelector((state: RootState) => state.companyAuth.company?._id);
-
+  const company = useSelector((state: RootState) => state.companyAuth.company);
+console.log(company,'companay in company layout');
+const companyId=company?.companyId
   const [incomingCallData, setIncomingCallData] = useState<{
     fromUserId: string;
     roomId: string;
@@ -43,6 +44,7 @@ const CompanyLayout = () => {
   //useChatRoomsSocket({ currentUserId: adminId });
   useNotificationSocket(companyId);
 
+  // useNotificationSocket(adminId);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);

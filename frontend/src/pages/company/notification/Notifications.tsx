@@ -30,9 +30,10 @@ const NotificationPage = () => {
   const { items, loading, totalPages, unreadCount } = useSelector(
     (state: RootState) => state.notifications
   );
-  const userId = useSelector((s: RootState) => s.userAuth.user?._id);
+  const companyId = useSelector((s: RootState) => s.companyAuth.company?.companyId);
+console.log(companyId,'company id in notification page');
 
-  useNotificationSocket(userId || '');
+  useNotificationSocket(companyId || '');
 
   const [filter, setFilter] = useState<'all' | 'read' | 'unRead'>('all');
   const [showMenu, setShowMenu] = useState<string | null>(null);
@@ -41,17 +42,21 @@ const NotificationPage = () => {
   const getNotificationLink = (n: INotification) => {
     switch (n.entityType) {
       case 'booking':
-        return `/account/my-bookings/${n.bookingId?._id || n.bookingId}`;
+        return `/company/bookings/${n.bookingId?._id || n.bookingId}`;
       case 'package':
-        return `/packages/${n.packageId}`;
+        return `/company/packages/${n.packageId}`;
+      case 'review':
+        return `/company/reviews`;
       case 'wallet':
-        return `/account/wallet`;
-      case 'follow':
-        return `/profile/${n.triggeredBy?.username}`;
-      case 'customPackage':
-        return `/account/my-custom-package/user`;
+        return `/company/wallet`; 
+         case 'customPackage':
+        return `/company/custom-packages`;
+      // case 'report':
+      //   return `/company/reports/${n.reportedId}`;
+      // case 'follow':
+      //   return `/admin/users/${n.triggeredBy}`;
       default:
-        return `/user/notifications`;
+        return `/company/notifications`;
     }
   };
 
@@ -149,10 +154,11 @@ const NotificationPage = () => {
   useEffect(() => {
     dispatch(
       fetchNotifications({
-        role: EnumUserRole.USER,
+       // isAdmin: true,
+       role: EnumUserRole.COMPANY,
         filters: {
           page: 1,
-          limit: 5,
+          limit: 10,
           status: filter === 'all' ? undefined : filter,
         },
       })
@@ -160,9 +166,7 @@ const NotificationPage = () => {
   }, [dispatch, filter]);
 
   const handleMarkAsRead = (id: string) => {
-    dispatch(markAsReadThunk({
-      id, role: EnumUserRole.USER,
-    }));
+    dispatch(markAsReadThunk({ id, role: EnumUserRole.COMPANY }));
     setShowMenu(null);
   };
 
@@ -238,10 +242,11 @@ const NotificationPage = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${filter === f
+                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  filter === f
                     ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
+                }`}
               >
                 {f === 'all' ? 'All' : f === 'read' ? 'Read' : 'Unread'}
                 {f === 'unRead' && unreadCount > 0 && (
@@ -387,8 +392,8 @@ const NotificationPage = () => {
                 onClick={() =>
                   dispatch(
                     fetchNotifications({
-                      role: EnumUserRole.USER,
-                      filters: { page, limit: 5, status: filter },
+                      role: EnumUserRole.COMPANY,
+                      filters: { page, limit: 10, status: filter },
                     })
                   )
                 }
