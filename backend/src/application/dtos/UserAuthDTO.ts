@@ -17,6 +17,7 @@ export interface ForgotPasswordChangeDTO {
 
 export interface LoginResponseDTO {
   _id: string;
+  companyId?:string,
   username: string;
   email: string;
   role: EnumUserRole;

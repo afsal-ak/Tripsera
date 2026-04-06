@@ -5,6 +5,7 @@ import { EnumNotificationType, EnumNotificationEntityType } from '@constants/enu
 export interface INotification {
   _id: string;
   userId?: Types.ObjectId;
+  companyId?:string;
   role: EnumUserRole;
   title: string;
   message: string;

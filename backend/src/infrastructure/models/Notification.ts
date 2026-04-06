@@ -7,6 +7,11 @@ type NotificationDocument = INotification & Document;
 const NotificationSchema = new Schema<NotificationDocument>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'Users' },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      required: false
+    },
     title: { type: String, required: true },
     message: { type: String, required: true },
     role: {

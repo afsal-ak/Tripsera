@@ -20,6 +20,13 @@ export interface INotificationUseCases {
     limit: number,
     filters: INotificationFilter
   ): Promise<{ notification: NotificationPopulatedResponseDTO[]; pagination: PaginationInfo }>;
+ 
+  getCompanyNotifications(
+    companyId: string,
+    page: number,
+    limit: number,
+    filters: INotificationFilter
+  ): Promise<{ notification: NotificationPopulatedResponseDTO[]; pagination: PaginationInfo }>;
 
   markAsRead(notificationId: string): Promise<NotificationResponseDTO | null>;
   deleteNotification(notificationId: string): Promise<boolean>;

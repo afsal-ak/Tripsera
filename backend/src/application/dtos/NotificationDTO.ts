@@ -4,6 +4,7 @@ import { EnumUserRole } from '@constants/enum/userEnum';
 // Create Notification DTO
 export interface CreateNotificationDto {
   userId?: string;
+  companyId?:string;
   title: string;
   role: EnumUserRole;
   message?: string;
@@ -47,6 +48,7 @@ export interface MarkAsReadDto {
 export interface NotificationResponseDTO {
   _id: string;
   userId?: string;
+ // companyId?: string;
   title: string;
   message: string;
   type: EnumNotificationType;

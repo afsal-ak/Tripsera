@@ -13,10 +13,10 @@ export interface IBookingUseCases {
 
   getBookingById(userId: string, bookingId: string): Promise<BookingDetailResponseDTO | null>;
 
-  getBookingByIdForAdmin(bookingId: string): Promise<BookingDetailResponseDTO | null>;
+  getBookingByIdForCompany(bookingId: string): Promise<BookingDetailResponseDTO | null>;
 
-  cancelBookingByAdmin(bookingId: string, reason: string): Promise<BookingDetailResponseDTO | null>;
-  confirmBookingByAdmin(bookingId: string, note: string): Promise<BookingDetailResponseDTO | null>;
+  cancelBookingByCompany(bookingId: string, reason: string): Promise<BookingDetailResponseDTO | null>;
+  confirmBookingByCompany(bookingId: string, note: string): Promise<BookingDetailResponseDTO | null>;
 
   changeTravelDate(
     bookingId: string,

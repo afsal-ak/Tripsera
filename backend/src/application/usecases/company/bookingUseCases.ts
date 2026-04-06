@@ -44,12 +44,12 @@ export class BookingUseCases implements IBookingUseCases {
     return booking ? BookingMapper.toDetailResponseDTO(booking) : null;
   }
 
-  async getBookingByIdForAdmin(bookingId: string): Promise<BookingDetailResponseDTO | null> {
+  async getBookingByIdForCompany(bookingId: string): Promise<BookingDetailResponseDTO | null> {
     const booking = await this._bookingRepo.getBookingByIdForAdmin(bookingId);
     return booking ? BookingMapper.toDetailResponseDTO(booking) : null;
   }
 
-  async cancelBookingByAdmin(
+  async cancelBookingByCompany(
     bookingId: string,
     reason: string
   ): Promise<BookingDetailResponseDTO | null> {
@@ -75,8 +75,8 @@ export class BookingUseCases implements IBookingUseCases {
         throw new AppError(HttpStatus.INTERNAL_SERVER_ERROR, 'Failed to refund wallet');
       }
 
-      const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
-
+      // const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
+const walletMessage = `Your payment of ₹${booking.amountPaid} for booking ${booking.bookingCode} has been refunded to your wallet.`;
       const pkg = await this._packageRepo.findById(booking.packageId.toString());
       if (!pkg) {
         throw new AppError(HttpStatus.NOT_FOUND, 'Package not found for this booking');
@@ -106,8 +106,8 @@ export class BookingUseCases implements IBookingUseCases {
       });
     }
 
-    const bookingMessage = `Admin Cancelled your booking  ${booking?.bookingCode} (Reason: ${reason})`;
-
+   // const bookingMessage = `Admin Cancelled your booking  ${booking?.bookingCode} (Reason: ${reason})`;
+const bookingMessage = `Your booking ${booking?.bookingCode} has been cancelled by the company. Reason: ${reason}.`;
     await this._notificationUseCases.sendNotification({
       role: EnumUserRole.USER,
       userId: userId.toString(),
@@ -124,7 +124,7 @@ export class BookingUseCases implements IBookingUseCases {
     return bookings ? BookingMapper.toDetailResponseDTO(bookings) : null;
   }
 
-  async confirmBookingByAdmin(
+  async confirmBookingByCompany(
     bookingId: string,
     note: string
   ): Promise<BookingDetailResponseDTO | null> {
@@ -139,8 +139,8 @@ export class BookingUseCases implements IBookingUseCases {
     const bkg = await this._bookingRepo.confirmBookingByAdmin(bookingId, note);
 
     const userId = booking.userId.toString();
-    const bookingMessage = `Admin Confirmed your Bokoking`;
-
+   // const bookingMessage = `Admin Confirmed your Bokoking`;
+const bookingMessage = `Your booking ${booking?.bookingCode} has been successfully confirmed by the company.`;
     await this._notificationUseCases.sendNotification({
       role: EnumUserRole.USER,
       userId: userId.toString(),

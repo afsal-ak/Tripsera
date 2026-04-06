@@ -10,10 +10,19 @@ export class NotificationSocketService {
   public initialize() {
     this._io.on('connection', (socket: Socket) => {
  
-      socket.on(SOCKET_NOTIFICATION_EVENTS.JOIN, (userId: string) => {
-        socket.join(userId);
-       });
-
+      // socket.on(SOCKET_NOTIFICATION_EVENTS.JOIN, (userId: string) => {
+      //   console.log(userId,'joined');
+        
+      //   socket.join(userId);
+      //  });
+socket.on(SOCKET_NOTIFICATION_EVENTS.JOIN, (userId: string) => {
+  if (!socket.rooms.has(userId)) {
+    socket.join(userId);
+    console.log("✅ joined:", userId);
+  } else {
+    console.log("⚠️ already joined:", userId);
+  }
+});
       socket.on(SOCKET_NOTIFICATION_EVENTS.MARK_AS_READ, async ({ notificationId, userId }) => {
         try {
           const updated = await this._notificationUseCases.markAsRead(notificationId);

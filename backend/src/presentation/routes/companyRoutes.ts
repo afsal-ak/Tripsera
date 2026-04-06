@@ -81,7 +81,7 @@ import { MessageController } from '@presentation/controllers/chat/MessageControl
 
 import { NotificationUseCases } from '@application/usecases/notification/notificationUseCases';
 import { NotificationRepository } from '@infrastructure/repositories/NotificationRepository';
-import { NotificationController } from '@presentation/controllers/admin/notificationController';
+import { NotificationController } from '@presentation/controllers/company/notificationController';
 import { WalletRepository } from '@infrastructure/repositories/WalletRepository ';
 
 const chatRoomRepository = new ChatRoomRepository();
@@ -303,6 +303,17 @@ router.get(REVIEW_ROUTE.GET_REVIEWS, companyAuthMiddleware, reviewController.get
 router.get(REVIEW_ROUTE.GET_BY_ID, companyAuthMiddleware, reviewController.getReviewById);
 
 
+//Notification Routes
+router.get(
+  NOTIFICATION_ROUTE.FETCH_NOTIFICATION,
+  companyAuthMiddleware,
+  notificationController.getNotifications
+);
+router.patch(
+  NOTIFICATION_ROUTE.MARK_AS_READ,
+  companyAuthMiddleware,
+  notificationController.markAsRead
+);
 
 // //
 // //REPORT ROUTES
@@ -356,15 +367,5 @@ router.get(REVIEW_ROUTE.GET_BY_ID, companyAuthMiddleware, reviewController.getRe
 //   messageController.uploadMediaToChat
 // );
 
-// router.get(
-//   NOTIFICATION_ROUTE.FETCH_NOTIFICATION,
-//   adminAuthMiddleware,
-//   notificationController.getNotifications
-// );
-// router.patch(
-//   NOTIFICATION_ROUTE.MARK_AS_READ,
-//   adminAuthMiddleware,
-//   notificationController.markAsRead
-// );
 
 export default router;

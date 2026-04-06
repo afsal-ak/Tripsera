@@ -56,6 +56,7 @@ export abstract class UserMapper {
   static mapToLoginResponseDTO = (user: IUser): LoginResponseDTO => ({
     _id: user._id!.toString(),
     username: user.username || '',
+    companyId:user.companyId,
     email: user.email,
     role: user.role || EnumUserRole.USER,
     profileImage: user.profileImage,

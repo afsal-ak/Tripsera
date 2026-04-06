@@ -16,26 +16,67 @@ export class NotificationUseCases implements INotificationUseCases {
   constructor(
     private readonly _notificationRepo: INotificationRepository,
     private readonly _userRepo: IUserRepository
-  ) {}
+  ) { }
 
-  async sendNotification(data: CreateNotificationDto): Promise<NotificationPopulatedResponseDTO> {
-    const notification = await this._notificationRepo.create(data);
+  // async sendNotification(data: CreateNotificationDto): Promise<NotificationPopulatedResponseDTO> {
+  //   const notification = await this._notificationRepo.create(data);
 
-     const socketService = getNotificationSocketService();
+  //   const socketService = getNotificationSocketService();
 
-    if (notification.role === EnumUserRole.ADMIN) {
-       const admins = await this._userRepo.getAllAdmins();
-      for (const admin of admins) {
- 
-        socketService.emitNotificationToUser(admin._id!.toString(), notification);
-      }
-    } else {
-       socketService.emitNotificationToUser(data.userId!.toString(), notification);
+  //   if (notification.role === EnumUserRole.ADMIN) {
+  //     const admins = await this._userRepo.getAllAdmins();
+  //     for (const admin of admins) {
+
+  //       socketService.emitNotificationToUser(admin._id!.toString(), notification);
+  //     }
+  //   } else {
+  //     socketService.emitNotificationToUser(data.userId!.toString(), notification);
+  //   }
+
+  //   return NotificationMapper.toPopulatedResponseDTO(notification);
+  // }
+async sendNotification(
+  data: CreateNotificationDto
+): Promise<NotificationPopulatedResponseDTO> {
+
+  const notification = await this._notificationRepo.create(data);
+
+  const socketService = getNotificationSocketService();
+
+  //  ADMIN
+  if (notification.role === EnumUserRole.ADMIN) {
+    const admins = await this._userRepo.getAllAdmins();
+
+    for (const admin of admins) {
+      socketService.emitNotificationToUser(
+        admin._id!.toString(),
+        notification
+      );
     }
 
-    return NotificationMapper.toPopulatedResponseDTO(notification);
+  //  COMPANY
+  } else if (notification.role === EnumUserRole.COMPANY) {
+
+    if (notification.companyId) {
+      socketService.emitNotificationToUser(
+        notification.companyId.toString(),
+        notification
+      );
+    }
+
+  //  USER
+  } else {
+
+    if (notification.userId) {
+      socketService.emitNotificationToUser(
+        notification.userId.toString(),
+        notification
+      );
+    }
   }
 
+  return NotificationMapper.toPopulatedResponseDTO(notification);
+}
   async getNotifications(
     userId: string,
     page: number,
@@ -60,7 +101,18 @@ export class NotificationUseCases implements INotificationUseCases {
       pagination: result.pagination,
     };
   }
-
+  async getCompanyNotifications(
+    companyId: string,
+    page: number,
+    limit: number,
+    filters: INotificationFilter
+  ): Promise<{ notification: NotificationPopulatedResponseDTO[]; pagination: PaginationInfo }> {
+    const result = await this._notificationRepo.findCompanyNotifications(companyId,page, limit, filters);
+    return {
+      notification: result.notification.map(NotificationMapper.toPopulatedResponseDTO),
+      pagination: result.pagination,
+    };
+  }
   async markAsRead(notificationId: string): Promise<NotificationResponseDTO | null> {
     const notification = await this._notificationRepo.markAsRead(notificationId);
     return notification ? NotificationMapper.toResponseDTO(notification) : null;

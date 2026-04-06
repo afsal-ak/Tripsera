@@ -22,4 +22,11 @@ export interface INotificationRepository {
     limit: number,
     filters?: INotificationFilter
   ): Promise<{ notification: INotificationPopulated[]; pagination: PaginationInfo }>;
+  
+  findCompanyNotifications(
+    companyId:string,
+    page: number,
+    limit: number,
+    filters?: INotificationFilter
+  ): Promise<{ notification: INotificationPopulated[]; pagination: PaginationInfo }>;
 }

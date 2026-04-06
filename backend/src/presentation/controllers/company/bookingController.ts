@@ -50,7 +50,7 @@ export class BookingController {
     try {
       const bookingId = req.params.id;
 
-      const booking = await this._bookingUseCases.getBookingByIdForAdmin(bookingId);
+      const booking = await this._bookingUseCases.getBookingByIdForCompany(bookingId);
 
       res.status(HttpStatus.OK).json({
         booking,
@@ -66,7 +66,7 @@ export class BookingController {
       const bookingId = req.params.id;
       const { reason } = req.body;
 
-      const booking = await this._bookingUseCases.cancelBookingByAdmin(bookingId, reason);
+      const booking = await this._bookingUseCases.cancelBookingByCompany(bookingId, reason);
 
       res.status(HttpStatus.OK).json({
         booking,
@@ -86,7 +86,7 @@ export class BookingController {
       const bookingId = req.params.id;
       const { notes } = req.body;
 
-      const booking = await this._bookingUseCases.confirmBookingByAdmin(bookingId, notes);
+      const booking = await this._bookingUseCases.confirmBookingByCompany(bookingId, notes);
 
       res.status(HttpStatus.OK).json({
         booking,

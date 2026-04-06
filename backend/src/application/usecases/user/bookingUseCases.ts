@@ -128,8 +128,15 @@ export class BookingUseCases implements IBookingUseCases {
     //  Notify Admins about cancellation
     const bookingMessage = `User ${user.username} cancelled booking for "${pkg.title}" (Reason: ${reason})`;
 
-    await this._notificationUseCases.sendNotification({
-      role: EnumUserRole.ADMIN,
+    const baseNotification = {
+      // title: 'New Booking',
+      // entityType: EnumNotificationEntityType.BOOKING,
+      // bookingId: booking?._id?.toString(),
+      // packageId: booking?.packageId.toString(),
+      // message,
+      // type: EnumNotificationType.SUCCESS,
+      // triggeredBy: userId,
+      // metadata: { bookingId: booking._id },
       title: 'Booking Cancelled',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking._id!.toString(),
@@ -138,7 +145,24 @@ export class BookingUseCases implements IBookingUseCases {
       type: EnumNotificationType.WARNING,
       triggeredBy: userId,
       metadata: { bookingId: booking._id, reason },
+    };
+
+    //  ADMIN
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.ADMIN,
+      
     });
+
+    //  COMPANY
+    console.log(pkg?.companyId?.toString(),'company id in booking usecse');
+    
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.COMPANY,
+      companyId: pkg?.companyId?.toString(),
+    });
+// console.log("Sending notification to:", role);
 
     const res = await this._bookingRepo.cancelBooking(userId, bookingId, reason);
     return res ? BookingMapper.toDetailResponseDTO(res) : null;
@@ -201,7 +225,7 @@ export class BookingUseCases implements IBookingUseCases {
 
     const bookingData: IBookingInput = {
       packageId: packageId.toString(),
-            companyId,
+      companyId,
 
       //  userId,
       travelers,
@@ -245,7 +269,7 @@ export class BookingUseCases implements IBookingUseCases {
   ): Promise<{ booking?: BookingDetailResponseDTO }> {
     const {
       packageId,
-            companyId,
+      companyId,
 
       travelers,
       contactDetails,
@@ -328,8 +352,8 @@ export class BookingUseCases implements IBookingUseCases {
 
     const message = `User ${user?.username} booked package ${pkg?.title})`;
     //  Save notification in DB
-    const notification = await this._notificationUseCases.sendNotification({
-      role: EnumUserRole.ADMIN,
+
+    const baseNotification = {
       title: 'New Booking',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking?._id?.toString(),
@@ -338,8 +362,45 @@ export class BookingUseCases implements IBookingUseCases {
       type: EnumNotificationType.SUCCESS,
       triggeredBy: userId,
       metadata: { bookingId: booking._id },
+    };
+
+    //  ADMIN
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.ADMIN,
     });
 
+    //  COMPANY
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.COMPANY,
+      companyId: pkg?.companyId?.toString(),
+    });
+    // const notification = await this._notificationUseCases.sendNotification({
+    //   role: EnumUserRole.ADMIN,
+    //   title: 'New Booking',
+    //   entityType: EnumNotificationEntityType.BOOKING,
+    //   bookingId: booking?._id?.toString(),
+    //   packageId: booking?.packageId.toString(),
+    //   message,
+    //   type: EnumNotificationType.SUCCESS,
+    //   triggeredBy: userId,
+    //   metadata: { bookingId: booking._id },
+    // });
+
+    // //company
+    // await this._notificationUseCases.sendNotification({
+    //   role: EnumUserRole.COMPANY,
+    //   companyId: pkg?.companyId?.toString(),
+    //   title: 'New Booking',
+    //   entityType: EnumNotificationEntityType.BOOKING,
+    //   bookingId: booking?._id?.toString(),
+    //   packageId: booking?.packageId.toString(),
+    //   message,
+    //   type: EnumNotificationType.SUCCESS,
+    //   triggeredBy: userId,
+    //   metadata: { bookingId: booking._id },
+    // });
     return { booking: BookingMapper.toDetailResponseDTO(booking) };
   }
 
@@ -387,8 +448,7 @@ export class BookingUseCases implements IBookingUseCases {
     }
     const message = `User ${user.username} initiated a booking for package ${pkg.title}.`;
 
-    const notification = await this._notificationUseCases.sendNotification({
-      role: EnumUserRole.ADMIN,
+    const baseNotification = {
       title: 'New Booking',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: booking?._id?.toString(),
@@ -397,7 +457,30 @@ export class BookingUseCases implements IBookingUseCases {
       type: EnumNotificationType.SUCCESS,
       triggeredBy: userId,
       metadata: { bookingId: booking._id },
+    };
+    //  ADMIN
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.ADMIN,
     });
+
+    //  COMPANY
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.COMPANY,
+      companyId: pkg?.companyId?.toString(),
+    });
+    // const notification = await this._notificationUseCases.sendNotification({
+    //   role: EnumUserRole.ADMIN,
+    //   title: 'New Booking',
+    //   entityType: EnumNotificationEntityType.BOOKING,
+    //   bookingId: booking?._id?.toString(),
+    //   packageId: booking?.packageId.toString(),
+    //   message,
+    //   type: EnumNotificationType.SUCCESS,
+    //   triggeredBy: userId,
+    //   metadata: { bookingId: booking._id },
+    // });
     await this._bookingRepo.updateBooking(booking._id!.toString(), booking);
   }
 
@@ -552,9 +635,8 @@ export class BookingUseCases implements IBookingUseCases {
     }
     const pkg = await this._packageRepo.findById(bookingDoc.packageId.toString());
 
-    // Notify admin about traveler removal
-    await this._notificationUseCases.sendNotification({
-      role: EnumUserRole.ADMIN,
+
+    const baseNotification = {
       title: 'Traveler Removed',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: bookingDoc._id!.toString(),
@@ -563,6 +645,20 @@ export class BookingUseCases implements IBookingUseCases {
       type: EnumNotificationType.WARNING,
       triggeredBy: userId,
       metadata: { removedTraveler, note },
+
+    };
+
+    //  ADMIN
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.ADMIN,
+    });
+
+    //  COMPANY
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.COMPANY,
+      companyId: pkg?.companyId?.toString(),
     });
 
     const booking = await this._bookingRepo.updateBooking(bookingId, bookingDoc);
@@ -663,8 +759,8 @@ export class BookingUseCases implements IBookingUseCases {
     const user = await this._userRepo.findById(userId);
     const message = `User ${user?.username} added ${travelers.length} traveler(s) to booking ${booking.bookingCode}`;
 
-    await this._notificationUseCases.sendNotification({
-      role: EnumUserRole.ADMIN,
+
+    const baseNotification = {
       title: 'Traveller Added',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: bookingId,
@@ -673,13 +769,30 @@ export class BookingUseCases implements IBookingUseCases {
       type: EnumNotificationType.INFO,
       triggeredBy: userId,
       metadata: { bookingId: booking._id },
+
+    };
+
+    //  ADMIN
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.ADMIN,
     });
+
+    //  COMPANY
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.COMPANY,
+      companyId: pkgData?.companyId?.toString(),
+    });
+
+
 
     return {
       booking: BookingMapper.toDetailResponseDTO(updatedBooking!),
       razorpayOrder,
     };
   }
+
   async addTravellerBookingWithWalletPayment(
     userId: string,
     data: AddTravellerDTO & { useWallet?: boolean }
@@ -771,8 +884,8 @@ export class BookingUseCases implements IBookingUseCases {
     const user = await this._userRepo.findById(userId);
     const message = `User ${user?.username} added ${travelers.length} traveler(s) to booking ${booking.bookingCode} using wallet`;
 
-    await this._notificationUseCases.sendNotification({
-      role: EnumUserRole.ADMIN,
+
+    const baseNotification = {
       title: 'Traveler Added',
       entityType: EnumNotificationEntityType.BOOKING,
       bookingId: bookingId,
@@ -781,7 +894,22 @@ export class BookingUseCases implements IBookingUseCases {
       type: EnumNotificationType.INFO,
       triggeredBy: userId,
       metadata: { bookingId: booking._id },
+
+    };
+
+    //  ADMIN
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.ADMIN,
     });
+
+    //  COMPANY
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.COMPANY,
+      companyId: pkgData?.companyId?.toString(),
+    });
+
 
     return {
       booking: BookingMapper.toDetailResponseDTO(updatedBooking!),
@@ -838,6 +966,31 @@ export class BookingUseCases implements IBookingUseCases {
       $inc: { rescheduleCount: 1 },
     });
 
+    const user = await this._userRepo.findById(userId);
+    const message = `${user?.username} has rescheduled the booking. New travel date: ${newTravelDate.toDateString()}.`;
+    const baseNotification = {
+      title: 'Travel Date Updated',
+      entityType: EnumNotificationEntityType.BOOKING,
+      bookingId: bookingId,
+      packageId: bookingDoc.packageId.toString(),
+      message,
+      type: EnumNotificationType.INFO,
+      triggeredBy: userId,
+      metadata: { bookingId: bookingDoc._id },
+    };
+
+    //  ADMIN
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.ADMIN,
+    });
+
+    //  COMPANY
+    await this._notificationUseCases.sendNotification({
+      ...baseNotification,
+      role: EnumUserRole.COMPANY,
+      companyId: bookingDoc?.companyId?.toString(),
+    });
     return BookingMapper.toDetailResponseDTO(updated!);
   }
 }

@@ -93,6 +93,45 @@ export class NotificationRepository implements INotificationRepository {
     return { notification: notifications as INotificationPopulated[], pagination };
   }
 
+  async findCompanyNotifications(
+    companyId: string,
+    page: number,
+    limit: number,
+    filters?: INotificationFilter
+  ): Promise<{ notification: INotificationPopulated[]; pagination: PaginationInfo }> {
+    const skip = (page - 1) * limit;
+    const query: any = { role: 'company',companyId:companyId };
+
+    if (filters?.status === 'read') query.isRead = true;
+    else if (filters?.status === 'unRead') query.isRead = false;
+
+    if (filters?.type) query.type = filters.type;
+    if (filters?.entityType) query.entityType = filters.entityType;
+
+    const [notifications, total] = await Promise.all([
+      NotificationModel.find(query)
+        .populate('userId', 'username email')
+        //.populate('companyID', 'username email')
+        .populate('packageId', 'title price')
+        .populate('bookingId', 'totalAmount status')
+        .populate('triggeredBy', 'username')
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .lean(),
+      NotificationModel.countDocuments(query),
+    ]);
+
+    const pagination: PaginationInfo = {
+      totalItems: total,
+      currentPage: page,
+      pageSize: limit,
+      totalPages: Math.ceil(total / limit),
+    };
+
+    return { notification: notifications as INotificationPopulated[], pagination };
+  }
+
   async delete(notificationId: string): Promise<boolean> {
     const result = await NotificationModel.findByIdAndDelete(notificationId);
     return !!result;
