@@ -1,6 +1,8 @@
 export interface CreateChatRoomDTO {
   name?: string; // For group chats
-  participants: string[]; // User/Admin IDs
+  participants: string[]; // User/Admin/company IDs
+    participantModels: ('Users' | 'Company')[]; // 🔥 NEW
+
   isGroup: boolean;
   createdBy: string;
 }

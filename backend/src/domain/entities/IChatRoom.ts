@@ -4,6 +4,7 @@ export interface IChatRoom {
   _id?: Types.ObjectId | string;
   name?: string;
   participants: (Types.ObjectId | string)[];
+  participantModels:(Types.ObjectId | string)[];
   createdBy: Types.ObjectId | string;
   isGroup: boolean;
   lastMessage?: Types.ObjectId | string;

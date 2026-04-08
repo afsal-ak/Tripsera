@@ -12,9 +12,84 @@ export class ChatRoomRepository extends BaseRepository<IChatRoom> implements ICh
   constructor() {
     super(ChatRoomModel);
   }
-  async createChatRoom(data: CreateChatRoomDTO): Promise<IChatRoom> {
-    return await ChatRoomModel.create(data);
+ private async detectParticipantModels(ids: string[]): Promise<('Users' | 'Company')[]> {
+
+    const users = await UserModel.find({ _id: { $in: ids } }).select('_id');
+    const companies = await CompanyModel.find({ _id: { $in: ids } }).select('_id');
+
+    const userSet = new Set(users.map(u => u._id.toString()));
+    const companySet = new Set(companies.map(c => c._id.toString()));
+
+    return ids.map(id => {
+      if (userSet.has(id)) return 'Users';
+      if (companySet.has(id)) return 'Company';
+      throw new Error(`Invalid participant id: ${id}`);
+    });
   }
+
+async createChatRoom(data: CreateChatRoomDTO) {
+
+    const participantModels = await this.detectParticipantModels(data.participants);
+
+    return await ChatRoomModel.create({
+      name: data.name,
+      participants: data.participants,
+      participantModels, // 🔥 auto set
+      isGroup: data.isGroup,
+      createdBy: data.createdBy,
+    });
+  }
+
+  async findRoomByParticipants(participants: string[], isGroup: boolean) {
+    return await ChatRoomModel.findOne({
+      participants: { $all: participants, $size: participants.length },
+      isGroup,
+    });
+  }
+
+  // async getUserChatRooms(userId: string, filter: any) {
+async getUserChatRooms(
+  userId: string,
+  filter: EnumChatRoomSort
+): Promise<IChatRoomPopulated[]> {
+
+  const query: any = { participants: userId };
+
+  if (filter === EnumChatRoomSort.UNREAD) {
+    query[`unreadCounts.${userId}`] = { $gt: 0 };
+  } else if (filter === EnumChatRoomSort.READ) {
+    query[`unreadCounts.${userId}`] = { $eq: 0 };
+  }
+
+  const rooms = await ChatRoomModel.find(query)
+    .populate('participants', '_id username name profileImage logo')
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  // 🔥 ensure type safety (important)
+  return rooms as IChatRoomPopulated[];
+}
+// async getUserChatRooms(
+//   userId: string,
+//   filter: EnumChatRoomSort
+// ): Promise<IChatRoomPopulated[]> {
+//     const query: any = { participants: userId };
+
+//     if (filter === EnumChatRoomSort.UNREAD) {
+//       query[`unreadCounts.${userId}`] = { $gt: 0 };
+//     } else if (filter ===  EnumChatRoomSort.READ) {
+//       query[`unreadCounts.${userId}`] = { $eq: 0 };
+//     }
+
+//     return await ChatRoomModel.find(query)
+//       .populate('participants', '_id username name profileImage logo')
+//       .sort({ updatedAt: -1 })
+//       .lean();
+//   }
+
+  // async createChatRoom(data: CreateChatRoomDTO): Promise<IChatRoom> {
+  //   return await ChatRoomModel.create(data);
+  // }
 
   async findOneByParticipants(senderId: string, receiverId: string): Promise<IChatRoom | null> {
     let chatRoom = await ChatRoomModel.findOne({
@@ -155,91 +230,52 @@ console.log(total,'coutnin repos');
 //     return formattedRooms;
 //   }
 
-async getUserChatRooms(
-  userId: string,
-  filter: EnumChatRoomSort
-): Promise<any[]> {
 
-  const query: any = { participants: userId };
+// async getUserChatRooms(
+//   userId: string,
+//   filter: EnumChatRoomSort
+// ): Promise<IChatRoomPopulated[]> {
 
-  console.log('\n============================');
-  console.log('🔐 Logged in UserId:', userId);
+//   const query: any = { participants: userId };
 
-  if (filter === EnumChatRoomSort.UNREAD) {
-    query[`unreadCounts.${userId}`] = { $gt: 0 };
-  } else if (filter === EnumChatRoomSort.READ) {
-    query[`unreadCounts.${userId}`] = { $eq: 0 };
-  }
+//   console.log('\n============================');
+//   console.log('🔐 Logged in UserId:', userId);
 
-  const chatRooms = await ChatRoomModel.find(query)
-    .sort({ updatedAt: -1 })
-    .lean();
+//   if (filter === EnumChatRoomSort.UNREAD) {
+//     query[`unreadCounts.${userId}`] = { $gt: 0 };
+//   } else if (filter === EnumChatRoomSort.READ) {
+//     query[`unreadCounts.${userId}`] = { $eq: 0 };
+//   }
+// const chatRooms = await ChatRoomModel.find(query).lean();
 
-  const formattedRooms = await Promise.all(
-    chatRooms.map(async (room) => {
+// const formattedRooms = await Promise.all(
+//   chatRooms.map(async (room) => {
 
-      // ✅ get participants (user + company)
-      const participants = await Promise.all(
-        room.participants.map(async (id: any) => {
+//     const participants = await Promise.all(
+//       room.participants.map(async (id: any) => {
 
-          const idStr = id.toString();
+//         // 🔍 check in UserModel
+//         let user = await UserModel.findById(id)
+//           .select('_id username profileImage')
+//           .lean();
 
-          // 🔹 check user
-          const user = await UserModel.findById(idStr)
-            .select('_id username profileImage')
-            .lean();
+//         if (user) return user;
 
-          if (user) {
-            return {
-              _id: user._id,
-              name: user.username,
-              profileImage: user.profileImage,
-              type: 'user',
-            };
-          }
+//         // 🔍 check in CompanyModel
+//         let company = await CompanyModel.findById(id)
+//           .select('_id name profileImage')
+//           .lean();
 
-          // 🔹 check company
-          const company = await CompanyModel.findById(idStr)
-            .select('_id name logo')
-            .lean();
+//         return company;
+//       })
+//     );
 
-          if (company) {
-            return {
-              _id: company._id,
-              name: company.name,
-              profileImage: company.logo,
-              type: 'company',
-            };
-          }
-
-          return null;
-        })
-      );
-
-      const validParticipants = participants.filter(Boolean);
-
-      // ✅ remove logged-in user for 1-1 chat
-      let finalParticipants = validParticipants;
-
-      if (!room.isGroup) {
-        finalParticipants = validParticipants.filter(
-          (p: any) => p._id.toString() !== userId
-        );
-      }
-
-      return {
-        _id: room._id,
-        isGroup: room.isGroup,
-        lastMessage: room.lastMessageContent,
-        unreadCount: room.unreadCounts?.[userId] || 0,
-        participants: finalParticipants,
-        updatedAt: room.updatedAt,
-      };
-    })
-  );
-
-  return formattedRooms;
-}
+//     return {
+//       ...room,
+//       participants: participants.filter(Boolean),
+//     };
+//   })
+// )}
 // async getUserChatRooms(
 //   userId: string,
 //   filter: EnumChatRoomSort
@@ -381,26 +417,68 @@ async getUserChatRooms(
 
 //   return formattedRooms;
 // }
-  async findRoomByParticipants(
-    participants: string[],
-    isGroup: boolean
-  ): Promise<IChatRoom | null> {
-    if (isGroup) {
-      // For group chat, match exact participants count and ids
-      return await ChatRoomModel.findOne({
-        isGroup: true,
-        participants: { $all: participants },
-        $expr: { $eq: [{ $size: '$participants' }, participants.length] },
-      }).populate('participants', 'username profileImage');
-    } else {
-      // For 1-on-1 chat, check if same two participants exist
-      return await ChatRoomModel.findOne({
-        isGroup: false,
-        participants: { $all: participants },
-        $expr: { $eq: [{ $size: '$participants' }, 2] }, // Ensure only two participants
-      }).populate('participants', 'username profileImage');
-    }
-  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // async findRoomByParticipants(
+  //   participants: string[],
+  //   isGroup: boolean
+  // ): Promise<IChatRoom | null> {
+  //   if (isGroup) {
+  //     // For group chat, match exact participants count and ids
+  //     return await ChatRoomModel.findOne({
+  //       isGroup: true,
+  //       participants: { $all: participants },
+  //       $expr: { $eq: [{ $size: '$participants' }, participants.length] },
+  //     }).populate('participants', 'username profileImage');
+  //   } else {
+  //     // For 1-on-1 chat, check if same two participants exist
+  //     return await ChatRoomModel.findOne({
+  //       isGroup: false,
+  //       participants: { $all: participants },
+  //       $expr: { $eq: [{ $size: '$participants' }, 2] }, // Ensure only two participants
+  //     }).populate('participants', 'username profileImage');
+  //   }
+  // }
 
   async updateChatRoom(roomId: string, data: UpdateChatRoomDTO): Promise<IChatRoom | null> {
     return await ChatRoomModel.findByIdAndUpdate(roomId, data, { new: true }).lean();

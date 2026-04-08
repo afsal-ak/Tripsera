@@ -19,21 +19,38 @@ export class ChatRoomUseCase implements IChatRoomUseCase {
   
   ) {}
 
-  async createChatRoom(data: CreateChatRoomDTO): Promise<ChatRoomFullResponseDTO | null> {
-    const existingRoom = await this._chatRoomRepo.findRoomByParticipants(
-      data.participants,
-      data.isGroup
-    );
+  // async createChatRoom(data: CreateChatRoomDTO): Promise<ChatRoomFullResponseDTO | null> {
+  //   const existingRoom = await this._chatRoomRepo.findRoomByParticipants(
+  //     data.participants,
+  //     data.isGroup
+  //   );
 
-    if (existingRoom) {
-      return ChatRoomMapper.toFullResponseDTO(existingRoom);
-    }
+  //   if (existingRoom) {
+  //     return ChatRoomMapper.toFullResponseDTO(existingRoom);
+  //   }
 
-    // Create a new room if none exists
-    const newRoom = await this._chatRoomRepo.createChatRoom(data);
-    return ChatRoomMapper.toFullResponseDTO(newRoom);
+  //   // Create a new room if none exists
+  //   const newRoom = await this._chatRoomRepo.createChatRoom(data);
+  //   return ChatRoomMapper.toFullResponseDTO(newRoom);
+  // }
+ 
+async createChatRoom(
+  data: CreateChatRoomDTO
+): Promise<ChatRoomFullResponseDTO | null> {
+
+  const existingRoom = await this._chatRoomRepo.findRoomByParticipants(
+    data.participants,
+    data.isGroup
+  );
+
+  if (existingRoom) {
+    return ChatRoomMapper.toFullResponseDTO(existingRoom);
   }
 
+  const newRoom = await this._chatRoomRepo.createChatRoom(data);
+
+  return ChatRoomMapper.toFullResponseDTO(newRoom);
+}
   async updateChatRoom(
     roomId: string,
     data: UpdateChatRoomDTO
@@ -59,19 +76,32 @@ export class ChatRoomUseCase implements IChatRoomUseCase {
    return await this._chatRoomRepo.totalChatUnread(userId)
    }
 
-  async getUserChatRooms(
-    userId: string,
-    filters?: EnumChatRoomSort
-  ): Promise<ChatRoom1to1ResponseDTO[]> {
-    console.log(1,'userid',userId);
+  // async getUserChatRooms(
+  //   userId: string,
+  //   filters?: EnumChatRoomSort
+  // ): Promise<ChatRoom1to1ResponseDTO[]> {
+  //   console.log(1,'userid',userId);
     
-    const rooms = await this._chatRoomRepo.getUserChatRooms(userId, filters);
-     console.log(2,'room',rooms);
+  //   const rooms = await this._chatRoomRepo.getUserChatRooms(userId, filters);
+  //    console.log(2,'room',rooms);
 
-    return rooms.map((room) => ChatRoomMapper.to1to1ResponseDTO(room, userId));
-  }
+  //   return rooms.map((room) => ChatRoomMapper.to1to1ResponseDTO(room, userId));
+  // }
 
-    async searchAllUsersForChat(search: string): Promise<UserChatListResponseDTO[]> {
+async getUserChatRooms(
+  userId: string,
+  filter: EnumChatRoomSort
+): Promise<ChatRoom1to1ResponseDTO[]> {
+
+  const rooms = await this._chatRoomRepo.getUserChatRooms(userId, filter);
+
+  return rooms.map(room =>
+    ChatRoomMapper.to1to1ResponseDTO(room, userId)
+  );
+}
+
+
+async searchAllUsersForChat(search: string): Promise<UserChatListResponseDTO[]> {
       const user = await this._userRepository.searchAllUsersForChat(search);
       return user.map(UserMapper.toChatUserListDTO);
     }

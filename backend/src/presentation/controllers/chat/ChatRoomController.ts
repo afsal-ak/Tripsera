@@ -10,34 +10,64 @@ export class ChatRoomController {
   constructor(private readonly _chatRoomUseCases: IChatRoomUseCase) { }
 
   // Create a new chat room
-  createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//   createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//     try {
+//       const userId = getUserIdFromRequest(req);
+
+//       const { participants, name, isGroup } = req.body;
+// console.log({participants},'participant');
+
+//       //  Ensure the current user is added to participants automatically
+//       const updatedParticipants = Array.from(new Set([...(participants || []), userId]));
+
+//       const data: CreateChatRoomDTO = {
+//         name,
+//         participants: updatedParticipants,
+//         isGroup,
+//         createdBy: userId,
+//       };
+//       const room = await this._chatRoomUseCases.createChatRoom(data);
+
+//       res.status(HttpStatus.CREATED).json({
+//         success: true,
+//         message: 'Chat room created successfully',
+//         data: room,
+//       });
+//     } catch (error) {
+//       next(error);
+//     }
+//   };
+
+
+  createRoom = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = getUserIdFromRequest(req);
-
+  
       const { participants, name, isGroup } = req.body;
-console.log({participants},'participant');
-
-      //  Ensure the current user is added to participants automatically
-      const updatedParticipants = Array.from(new Set([...(participants || []), userId]));
-
+  
+      const updatedParticipants = Array.from(
+        new Set([...(participants || []), userId])
+      );
+  
       const data: CreateChatRoomDTO = {
         name,
         participants: updatedParticipants,
         isGroup,
         createdBy: userId,
+        participantModels: [], // not needed from frontend
       };
+  
       const room = await this._chatRoomUseCases.createChatRoom(data);
-
-      res.status(HttpStatus.CREATED).json({
+  
+      res.status(201).json({
         success: true,
-        message: 'Chat room created successfully',
         data: room,
       });
+  
     } catch (error) {
       next(error);
     }
   };
-
   //  Get chat room by ID
   getRoomById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

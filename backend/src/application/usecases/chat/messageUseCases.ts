@@ -22,6 +22,7 @@ export class MessageUseCases implements IMessageUseCases {
 
   async sendMessage(data: SendMessageDTO): Promise<MessagePopulatedResponseDTO> {
     const message = await this._messageRepo.sendMessage(data);
+console.log(data,'data in msend message');
 
     const room = await this._chatRoomRepo.findById(message.roomId.toString());
     if (!room) {

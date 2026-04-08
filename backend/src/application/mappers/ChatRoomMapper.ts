@@ -23,7 +23,7 @@ export class ChatRoomMapper {
         // 🔥 handle both structures
         profileImage:
           otherUser?.profileImage?.url ||
-       //   otherUser?.logo?.url ||
+          otherUser?.logo?.url ||
           '',
       },
 
@@ -35,7 +35,20 @@ export class ChatRoomMapper {
       updatedAt: chatRoom.updatedAt,
     };
   }
-
+static toFullResponseDTO(room: IChatRoom): ChatRoomFullResponseDTO {
+    return {
+      _id: room._id!.toString(),
+      name: room.name || null,
+      isGroup: room.isGroup,
+      createdBy: room.createdBy.toString(),
+      participants: room.participants.map((p: any) => p.toString()),
+      lastMessageContent: room.lastMessageContent || null,
+      unreadCounts: room.unreadCounts || {},
+      createdAt: room.createdAt!,
+      updatedAt: room.updatedAt!,
+    };
+  }
+}
   // static to1to1ResponseDTO(
   //   chatRoom: IChatRoomPopulated,
   //   currentUserId: string
@@ -102,17 +115,4 @@ export class ChatRoomMapper {
   //       updatedAt: room.updatedAt!,
   //     };
   //   }
-  static toFullResponseDTO(room: IChatRoom): ChatRoomFullResponseDTO {
-    return {
-      _id: room._id!.toString(),
-      name: room.name || null,
-      isGroup: room.isGroup,
-      createdBy: room.createdBy.toString(),
-      participants: room.participants.map((p: any) => p.toString()),
-      lastMessageContent: room.lastMessageContent || null,
-      unreadCounts: room.unreadCounts || {},
-      createdAt: room.createdAt!,
-      updatedAt: room.updatedAt!,
-    };
-  }
-}
+  
