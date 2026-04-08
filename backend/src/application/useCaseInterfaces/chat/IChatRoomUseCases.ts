@@ -4,6 +4,7 @@ import {
   ChatRoom1to1ResponseDTO,
   ChatRoomFullResponseDTO,
 } from '@application/dtos/ChatDTO';
+import { UserChatListResponseDTO } from '@application/dtos/UserDTO';
 import { EnumChatRoomSort } from '@constants/enum/chatRoomEnum';
 
 export interface IChatRoomUseCase {
@@ -14,4 +15,6 @@ export interface IChatRoomUseCase {
    totalChatUnread(userId: string): Promise<number>
   getChatRoomById(roomId: string, userId: string): Promise<ChatRoom1to1ResponseDTO | null>;
   getUserChatRooms(userId: string, filters?: EnumChatRoomSort): Promise<ChatRoom1to1ResponseDTO[]>;
+  searchAllUsersForChat(search: string): Promise<UserChatListResponseDTO[]>;
 }
+ 

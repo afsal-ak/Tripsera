@@ -5,6 +5,8 @@ import { CreateChatRoomDTO, UpdateChatRoomDTO } from '@application/dtos/ChatDTO'
 import { EnumChatRoomSort } from '@constants/enum/chatRoomEnum';
 import { BaseRepository } from './BaseRepository';
 import { IChatRoomPopulated } from '@infrastructure/db/types.ts/IChatRoomPopulated';
+import { CompanyModel } from '@infrastructure/models/Company';
+import { UserModel } from '@infrastructure/models/User';
 
 export class ChatRoomRepository extends BaseRepository<IChatRoom> implements IChatRoomRepository {
   constructor() {
@@ -116,40 +118,269 @@ console.log(total,'coutnin repos');
 // }
 
 
-  async getUserChatRooms(userId: string, filter: EnumChatRoomSort): Promise<IChatRoomPopulated[]> {
-    const query: any = { participants: userId };
+//   async getUserChatRooms(userId: string, filter: EnumChatRoomSort): Promise<IChatRoomPopulated[]> {
+//     const query: any = { participants: userId };
 
-    if (filter === EnumChatRoomSort.UNREAD) {
-      query[`unreadCounts.${userId}`] = { $gt: 0 };
-    } else if (filter === EnumChatRoomSort.READ) {
-      query[`unreadCounts.${userId}`] = { $eq: 0 };
-    }
+//     if (filter === EnumChatRoomSort.UNREAD) {
+//       query[`unreadCounts.${userId}`] = { $gt: 0 };
+//     } else if (filter === EnumChatRoomSort.READ) {
+//       query[`unreadCounts.${userId}`] = { $eq: 0 };
+//     }
 
-    const chatRooms = await ChatRoomModel.find(query)
-      .populate('participants', '_id username profileImage')
-      .sort({ updatedAt: -1 })
-      .lean<IChatRoomPopulated[]>();
+//     const chatRooms = await ChatRoomModel.find(query)
+//       .populate('participants', '_id username profileImage')
+//       .sort({ updatedAt: -1 })
+//       .lean<IChatRoomPopulated[]>();
+// console.log(chatRooms,'chatRooms user in repo');
+// console.log(chatRooms.participants,'chatRooms user in repo');
 
-    // Format response
-    const formattedRooms = chatRooms.map((room) => {
-      if (room.isGroup) {
-        return {
-          ...room,
-          participants: room.participants,
-        };
-      }
+//     // Format response
+//     const formattedRooms = chatRooms.map((room) => {
+//       if (room.isGroup) {
+//         return {
+//           ...room,
+//           participants: room.participants,
+//         };
+//       }
+ 
+//       const otherUser = (room.participants as any[]).find((p) => p._id.toString() !== userId);
+// console.dir(otherUser,'other user in repo');
 
-      const otherUser = (room.participants as any[]).find((p) => p._id.toString() !== userId);
+//       return {
+//         ...room,
+//       //  participants: [otherUser],
+//       };
+//     });
 
-      return {
-        ...room,
-        participants: [otherUser],
-      };
-    });
+//     return formattedRooms;
+//   }
 
-    return formattedRooms;
+async getUserChatRooms(
+  userId: string,
+  filter: EnumChatRoomSort
+): Promise<any[]> {
+
+  const query: any = { participants: userId };
+
+  console.log('\n============================');
+  console.log('🔐 Logged in UserId:', userId);
+
+  if (filter === EnumChatRoomSort.UNREAD) {
+    query[`unreadCounts.${userId}`] = { $gt: 0 };
+  } else if (filter === EnumChatRoomSort.READ) {
+    query[`unreadCounts.${userId}`] = { $eq: 0 };
   }
 
+  const chatRooms = await ChatRoomModel.find(query)
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  const formattedRooms = await Promise.all(
+    chatRooms.map(async (room) => {
+
+      // ✅ get participants (user + company)
+      const participants = await Promise.all(
+        room.participants.map(async (id: any) => {
+
+          const idStr = id.toString();
+
+          // 🔹 check user
+          const user = await UserModel.findById(idStr)
+            .select('_id username profileImage')
+            .lean();
+
+          if (user) {
+            return {
+              _id: user._id,
+              name: user.username,
+              profileImage: user.profileImage,
+              type: 'user',
+            };
+          }
+
+          // 🔹 check company
+          const company = await CompanyModel.findById(idStr)
+            .select('_id name logo')
+            .lean();
+
+          if (company) {
+            return {
+              _id: company._id,
+              name: company.name,
+              profileImage: company.logo,
+              type: 'company',
+            };
+          }
+
+          return null;
+        })
+      );
+
+      const validParticipants = participants.filter(Boolean);
+
+      // ✅ remove logged-in user for 1-1 chat
+      let finalParticipants = validParticipants;
+
+      if (!room.isGroup) {
+        finalParticipants = validParticipants.filter(
+          (p: any) => p._id.toString() !== userId
+        );
+      }
+
+      return {
+        _id: room._id,
+        isGroup: room.isGroup,
+        lastMessage: room.lastMessageContent,
+        unreadCount: room.unreadCounts?.[userId] || 0,
+        participants: finalParticipants,
+        updatedAt: room.updatedAt,
+      };
+    })
+  );
+
+  return formattedRooms;
+}
+// async getUserChatRooms(
+//   userId: string,
+//   filter: EnumChatRoomSort
+// ): Promise<IChatRoomPopulated[]> {
+
+//   const query: any = { participants: userId };
+
+//   if (filter === EnumChatRoomSort.UNREAD) {
+//     query[`unreadCounts.${userId}`] = { $gt: 0 };
+//   } else if (filter === EnumChatRoomSort.READ) {
+//     query[`unreadCounts.${userId}`] = { $eq: 0 };
+//   }
+
+//   const chatRooms = await ChatRoomModel.find(query)
+//     .populate({
+//       path: 'participants',
+//       select: '_id username profileImage companyId',
+//       populate: {
+//         path: 'companyId',
+//         select: 'username name', // adjust based on your Company schema
+//       },
+//     })
+//     .sort({ updatedAt: -1 })
+//     .lean<IChatRoomPopulated[]>();
+// console.log(chatRooms,'caht room');
+
+//   const formattedRooms = chatRooms.map((room) => {
+//     if (room.isGroup) return room;
+
+//     let otherUser = (room.participants as any[]).find(
+//       (p) => p && p._id && p._id.toString() !== userId
+//     );
+
+//     console.log(otherUser, '👤 other user');
+
+//     // 🔥 FALLBACK: use company if user not found
+//     if (!otherUser) {
+//       const fallback = (room.participants as any[])[0];
+
+//       if (fallback?.companyId) {
+//         otherUser = {
+//           _id: fallback.companyId._id,
+//           username: fallback.companyId.name || 'Company',
+//           profileImage: fallback.companyId.logo || '',
+//         };
+//       }
+//     }
+
+//     return {
+//       ...room,
+//       participants: otherUser ? [otherUser] : [],
+//     };
+//   });
+
+//   return formattedRooms;
+// }
+
+
+// async getUserChatRooms(
+//   userId: string,
+//   filter: EnumChatRoomSort
+// ): Promise<IChatRoomPopulated[]> {
+
+//   const query: any = { participants: userId };
+
+//   if (filter === EnumChatRoomSort.UNREAD) {
+//     query[`unreadCounts.${userId}`] = { $gt: 0 };
+//   } else if (filter === EnumChatRoomSort.READ) {
+//     query[`unreadCounts.${userId}`] = { $eq: 0 };
+//   }
+
+//   const chatRooms = await ChatRoomModel.find(query)
+//     .populate({
+//       path: 'participants',
+//       select: '_id username profileImage companyId',
+//       populate: {
+//         path: 'companyId',
+//         select: 'name logo',
+//       },
+//     })
+//     .sort({ updatedAt: -1 })
+//     .lean<IChatRoomPopulated[]>();
+
+//   // 🔥 FULL STRUCTURE
+//   console.log('\n🔥 FULL CHAT ROOMS');
+//   console.dir(chatRooms, { depth: null });
+
+//   // 🔥 CLEAN JSON
+//   console.log('\n🔥 JSON FORMAT');
+//   console.log(JSON.stringify(chatRooms, null, 2));
+
+//   // 🔥 PARTICIPANT LEVEL DEBUG
+//   chatRooms.forEach((room, i) => {
+//     console.log(`\n📦 Room ${i}`);
+
+//     (room.participants as any[]).forEach((p, j) => {
+//       console.log(`  👤 Participant ${j}:`, {
+//         _id: p?._id?.toString(),
+//         username: p?.username,
+//         companyId: p?.companyId?._id?.toString(),
+//         companyName: p?.companyId?.name,
+//       });
+//     });
+//   });
+
+//   const formattedRooms = chatRooms.map((room) => {
+//     if (room.isGroup) return room;
+
+//     let otherUser = (room.participants as any[]).find(
+//       (p) => p && p._id && p._id.toString() !== userId
+//     );
+
+//     console.log('👉 Found otherUser:', otherUser);
+
+//     // 🔥 FALLBACK
+//     if (!otherUser) {
+//       const fallback = (room.participants as any[])[0];
+
+//       console.log('⚠️ fallback user:', fallback);
+
+//       if (fallback?.companyId) {
+//         console.log('🏢 Using company fallback:', fallback.companyId);
+
+//         otherUser = {
+//           _id: fallback.companyId._id,
+//           username: fallback.companyId.name || 'Company',
+//           profileImage: fallback.companyId.logo || '',
+//         };
+//       }
+//     }
+
+//     console.log('✅ Final otherUser:', otherUser);
+
+//     return {
+//       ...room,
+//       participants: otherUser ? [otherUser] : [],
+//     };
+//   });
+
+//   return formattedRooms;
+// }
   async findRoomByParticipants(
     participants: string[],
     isGroup: boolean

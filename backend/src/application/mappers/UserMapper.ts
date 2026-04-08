@@ -3,6 +3,7 @@ import {
   UserDetailsResponseDTO,
   AdminUserListResponseDTO,
   UserBasicResponseDTO,
+  UserChatListResponseDTO,
 } from '@application/dtos/UserDTO';
 import { EnumUserRole, EnumGender } from '@constants/enum/userEnum';
 import { LoginResponseDTO } from '@application/dtos/UserAuthDTO';
@@ -80,4 +81,17 @@ export abstract class UserMapper {
       profileImage: user.profileImage,
     };
   }
+
+   static toChatUserListDTO(user: IUser):UserChatListResponseDTO {
+        return {
+          _id: user._id!.toString(),
+          companyId:user.companyId?.toString()||'',
+          username: user.username || '',
+          email: user.email,
+          fullName: user.fullName,
+          role: user.role || EnumUserRole.USER,
+          isBlocked: !!user.isBlocked,
+          profileImage: user.profileImage,
+        };
+      }
 }

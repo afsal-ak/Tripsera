@@ -35,6 +35,10 @@ export interface IUserRepository {
   setProfilePrivacy(id: string, isPrivate: boolean): Promise<IUser | null>;
   searchUsersForChat(userId: string, search: string, role: EnumUserRole): Promise<IUser[]>;
   searchAllUsersForAdmin(search: string): Promise<IUser[]>;
+  // searchAllUsersForCompanyChat(search: string): Promise<IUser[]>;
+
+  searchAllUsersForChat(search: string): Promise<IUser[]>;
+
   searchAllUsers(search: string): Promise<IUser[]>;
 
   updateUserAddress(userId: string, addressData: Partial<IUser>): Promise<IUser | null>;

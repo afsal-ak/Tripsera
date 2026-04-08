@@ -315,6 +315,24 @@ export class UserRepository implements IUserRepository {
       .sort({ createdAt: -1 })
       .limit(20);
   }
+
+  async searchAllUsersForChat(search: string): Promise<IUser[]> {
+    const searchRegex = { $regex: search, $options: 'i' };
+
+    const query: any = { isBlocked: false };
+
+    // Apply search condition only if a search term exists
+    if (search && search.trim() !== '') {
+      query.$or = [{ username: searchRegex }, { fullName: searchRegex }, { email: searchRegex }];
+    }
+
+    // Fetch users without role restrictions
+    return UserModel.find(query)
+      .select('_id username fullName profileImage email role companyId')
+      .sort({ createdAt: -1 })
+      .limit(100);
+  
+  }
  async searchAllUsers(search: string): Promise<IUser[]> {
     const searchRegex = { $regex: search, $options: 'i' };
 

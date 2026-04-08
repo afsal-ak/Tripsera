@@ -73,7 +73,7 @@ import { DashboardController } from '@presentation/controllers/company/dashboard
 
 import { ChatRoomRepository } from '@infrastructure/repositories/ChatRoomRepository';
 import { ChatRoomUseCase } from '@application/usecases/chat/chatRoomUseCases';
-import { ChatRoomController } from '@presentation/controllers/chat/ChatRoomController';
+import { ChatRoomController } from '@presentation/controllers/company/ChatRoomController';
 
 import { MessageRepository } from '@infrastructure/repositories/MessageRepository';
 import { MessageUseCases } from '@application/usecases/chat/messageUseCases';
@@ -84,27 +84,29 @@ import { NotificationRepository } from '@infrastructure/repositories/Notificatio
 import { NotificationController } from '@presentation/controllers/company/notificationController';
 import { WalletRepository } from '@infrastructure/repositories/WalletRepository ';
 
+
+const userRepository = new UserRepository();
+const otpRepository = new OtpRepository();
+
+
+const userManagementUseCases = new UserManagementUseCases(userRepository);
+const userManagementController = new UserManagementController(userManagementUseCases);
+
 const chatRoomRepository = new ChatRoomRepository();
-const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
+const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository,userRepository);
 const chatRoomController = new ChatRoomController(chatRoomUseCase);
 
 const messageRepository = new MessageRepository();
 const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
 const messageController = new MessageController(messageUseCases);
 
-const adminRepository = new UserRepository();
-const otpRepository = new OtpRepository();
-
-
-const userManagementUseCases = new UserManagementUseCases(adminRepository);
-const userManagementController = new UserManagementController(userManagementUseCases);
 
 const packageRepository = new PackageRepository();
 const packageUseCase = new PackageUseCases(packageRepository);
 const packageController = new PackageController(packageUseCase);
 
 const notificationRepository = new NotificationRepository();
-const notificationUseCases = new NotificationUseCases(notificationRepository, adminRepository);
+const notificationUseCases = new NotificationUseCases(notificationRepository, userRepository);
 const notificationController = new NotificationController(notificationUseCases);
 
 const walletRepository = new WalletRepository();
@@ -149,7 +151,7 @@ import { ReferralRepository } from '@infrastructure/repositories/ReferralReposit
 
 const referralRepository = new ReferralRepository();
 
-const userRepository = new UserRepository();
+// const userRepository = new UserRepository();
 const companyAuthUseCases = new CompanyAuthUseCases(
   userRepository,
   otpRepository,
@@ -304,6 +306,43 @@ router.get(REVIEW_ROUTE.GET_BY_ID, companyAuthMiddleware, reviewController.getRe
 
 
 //Notification Routes
+router.get(
+  NOTIFICATION_ROUTE.FETCH_NOTIFICATION,
+  companyAuthMiddleware,
+  notificationController.getNotifications
+);
+router.patch(
+  NOTIFICATION_ROUTE.MARK_AS_READ,
+  companyAuthMiddleware,
+  notificationController.markAsRead
+);
+
+
+
+//CHAT ROOM ROUTES
+router.post(CHAT_ROOM_ROUTE.CREATE, companyAuthMiddleware, chatRoomController.createRoom);
+router.put(CHAT_ROOM_ROUTE.UPDATE, companyAuthMiddleware, chatRoomController.updateRoom);
+router.get(CHAT_ROOM_ROUTE.GET_BY_ID, companyAuthMiddleware, chatRoomController.getRoomById);
+router.get(CHAT_ROOM_ROUTE.TOATAL_UNREAD_COUNT, companyAuthMiddleware, chatRoomController.totalChatUnread);
+
+router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, companyAuthMiddleware, chatRoomController.getUserRooms);
+router.delete(CHAT_ROOM_ROUTE.DELETE, companyAuthMiddleware, chatRoomController.deleteRoom);
+
+router.get(
+  USER_MANAGEMENT_ROUTES.SEARCH_USERS,
+  companyAuthMiddleware,
+  chatRoomController.searchAllUsersForCompany
+);
+
+//MESSAGE ROUTES
+router.get(MESSAGE_ROUTE.GET_BY_ROOM, companyAuthMiddleware, messageController.getMessages);
+router.post(
+  MESSAGE_ROUTE.UPLOAD_MEDIA,
+  companyAuthMiddleware,
+  chatUpload.single('file'),
+  messageController.uploadMediaToChat
+);
+
 router.get(
   NOTIFICATION_ROUTE.FETCH_NOTIFICATION,
   companyAuthMiddleware,

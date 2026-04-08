@@ -56,7 +56,7 @@ const userRepository = new UserRepository();
 const chatRoomRepository = new ChatRoomRepository();
 const messageRepository = new MessageRepository();
 const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
-const chatRoomUseCases = new ChatRoomUseCase(chatRoomRepository);
+const chatRoomUseCases = new ChatRoomUseCase(chatRoomRepository,userRepository);
 
 const socketService = new SocketService(io, messageUseCases, chatRoomUseCases, userRepository);
 socketService.initialize();

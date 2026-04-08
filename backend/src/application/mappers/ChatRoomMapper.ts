@@ -1,30 +1,63 @@
 import { IChatRoomPopulated } from '@infrastructure/db/types.ts/IChatRoomPopulated';
 import { ChatRoom1to1ResponseDTO, ChatRoomFullResponseDTO } from '@application/dtos/ChatDTO';
 import { IChatRoom } from '@domain/entities/IChatRoom';
-
 export class ChatRoomMapper {
   static to1to1ResponseDTO(
     chatRoom: IChatRoomPopulated,
     currentUserId: string
   ): ChatRoom1to1ResponseDTO {
-    const otherUser = chatRoom.participants.find((p) => p._id!.toString() !== currentUserId);
+
+    const otherUser = chatRoom.participants.find(
+      (p: any) => p && p._id && p._id.toString() !== currentUserId
+    );
 
     return {
       _id: chatRoom._id.toString(),
+
       otherUser: {
-        _id: otherUser?._id!.toString() || '',
-        username: otherUser?.username || '',
-        profileImage: otherUser?.profileImage?.url,
+        _id: otherUser?._id?.toString() || '',
+
+        // 🔥 handle both user & company
+        username: otherUser?.username || otherUser?.name || '',
+
+        // 🔥 handle both structures
+        profileImage:
+          otherUser?.profileImage?.url ||
+       //   otherUser?.logo?.url ||
+          '',
       },
 
       lastMessageContent: chatRoom.lastMessageContent || '',
-      // unreadCount: chatRoom.unreadCounts?.[currentUserId] || 0,
-            unreadCounts: chatRoom.unreadCounts || {},
+
+      unreadCounts: chatRoom.unreadCounts || {},
 
       createdAt: chatRoom.createdAt,
       updatedAt: chatRoom.updatedAt,
     };
   }
+
+  // static to1to1ResponseDTO(
+  //   chatRoom: IChatRoomPopulated,
+  //   currentUserId: string
+  // ): ChatRoom1to1ResponseDTO {
+  //   const otherUser = chatRoom.participants.find((p) => p._id!.toString() !== currentUserId);
+
+  //   return {
+  //     _id: chatRoom._id.toString(),
+  //     otherUser: {
+  //       _id: otherUser?._id!.toString() || '',
+  //       username: otherUser?.username || '',
+  //       profileImage: otherUser?.profileImage?.url,
+  //     },
+
+  //     lastMessageContent: chatRoom.lastMessageContent || '',
+  //     // unreadCount: chatRoom.unreadCounts?.[currentUserId] || 0,
+  //           unreadCounts: chatRoom.unreadCounts || {},
+
+  //     createdAt: chatRoom.createdAt,
+  //     updatedAt: chatRoom.updatedAt,
+  //   };
+  // }
 
   //   static toGroupResponseDTO(chatRoom: IChatRoomPopulated): ChatRoomGroupResponseDTO {
   //     return {

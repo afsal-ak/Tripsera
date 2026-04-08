@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { IChatRoomUseCase } from '@application/useCaseInterfaces/chat/IChatRoomUseCases';
 import { CreateChatRoomDTO, UpdateChatRoomDTO } from '@application/dtos/ChatDTO';
-import { getUserIdFromRequest } from '@shared/utils/getUserIdFromRequest';
 import { HttpStatus } from '@constants/HttpStatus/HttpStatus';
 import { EnumChatRoomSort } from '@constants/enum/chatRoomEnum';
+import { getCompanyIdFromRequest } from '@shared/utils/getCompanyIdFromRequest';
 import { UserMessages } from '@constants/messages/admin/UserMessages';
 
 export class ChatRoomController {
@@ -12,19 +12,19 @@ export class ChatRoomController {
   // Create a new chat room
   createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = getUserIdFromRequest(req);
+      const companyId = getCompanyIdFromRequest(req);
 
       const { participants, name, isGroup } = req.body;
 console.log({participants},'participant');
 
       //  Ensure the current user is added to participants automatically
-      const updatedParticipants = Array.from(new Set([...(participants || []), userId]));
+      const updatedParticipants = Array.from(new Set([...(participants || []), companyId]));
 
       const data: CreateChatRoomDTO = {
         name,
         participants: updatedParticipants,
         isGroup,
-        createdBy: userId,
+        createdBy: companyId,
       };
       const room = await this._chatRoomUseCases.createChatRoom(data);
 
@@ -42,7 +42,7 @@ console.log({participants},'participant');
   getRoomById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const roomId = req.params.roomId;
-      const userId = getUserIdFromRequest(req);
+      const userId = getCompanyIdFromRequest(req);
 
       const room = await this._chatRoomUseCases.getChatRoomById(roomId, userId);
 
@@ -61,7 +61,7 @@ console.log({participants},'participant');
 
   totalChatUnread = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = getUserIdFromRequest(req);
+      const userId = getCompanyIdFromRequest(req);
  
       const data=await this._chatRoomUseCases.totalChatUnread(userId)
        
@@ -76,7 +76,7 @@ console.log({participants},'participant');
   }
   getUserRooms = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = getUserIdFromRequest(req);
+      const userId = getCompanyIdFromRequest(req);
 
       const filter = req.query.filter as EnumChatRoomSort | undefined;
 
@@ -135,23 +135,23 @@ console.log({participants},'participant');
     }
   };
 
-  searchUsersForChat = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-      ): Promise<void> => {
-        try {
-          const search = (req.query.search as string) || '';
-          const users = await this._chatRoomUseCases.searchAllUsersForChat(search);
-    console.log(users,'chat search');
-    
-          res.status(HttpStatus.OK).json({
-            success: true,
-            message: UserMessages.USERS_FETCHED_SUCCESS,
-            data: users,
-          });
-        } catch (error) {
-          next(error);
-        }
-      };
+
+    searchAllUsersForCompany = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> => {
+      try {
+        const search = (req.query.search as string) || '';
+        const users = await this._chatRoomUseCases.searchAllUsersForChat(search);
+  
+        res.status(HttpStatus.OK).json({
+          success: true,
+          message: UserMessages.USERS_FETCHED_SUCCESS,
+          data: users,
+        });
+      } catch (error) {
+        next(error);
+      }
+    };
 }

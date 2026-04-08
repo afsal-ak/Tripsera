@@ -54,3 +54,14 @@ export interface AdminUserListResponseDTO {
   isBlocked: boolean;
   profileImage?: { url: string; public_id: string };
 }
+
+export interface UserChatListResponseDTO {
+  _id: string;
+  username: string;
+  companyId?:string;
+  email: string;
+  fullName?: string;
+  role: EnumUserRole;
+  isBlocked: boolean;
+  profileImage?: { url: string; public_id: string };
+}

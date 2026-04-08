@@ -8,9 +8,16 @@ import {
 } from '@application/dtos/ChatDTO';
 import { EnumChatRoomSort } from '@constants/enum/chatRoomEnum';
 import { ChatRoomMapper } from '@application/mappers/ChatRoomMapper';
+import { AdminUserListResponseDTO, UserChatListResponseDTO } from '@application/dtos/UserDTO';
+ import { IUserRepository } from '@domain/repositories/IUserRepository';
+import { UserMapper } from '@application/mappers/UserMapper';
 
 export class ChatRoomUseCase implements IChatRoomUseCase {
-  constructor(private readonly _chatRoomRepo: IChatRoomRepository) {}
+  constructor(
+    private readonly _chatRoomRepo: IChatRoomRepository,
+    private readonly _userRepository:IUserRepository
+  
+  ) {}
 
   async createChatRoom(data: CreateChatRoomDTO): Promise<ChatRoomFullResponseDTO | null> {
     const existingRoom = await this._chatRoomRepo.findRoomByParticipants(
@@ -56,8 +63,16 @@ export class ChatRoomUseCase implements IChatRoomUseCase {
     userId: string,
     filters?: EnumChatRoomSort
   ): Promise<ChatRoom1to1ResponseDTO[]> {
+    console.log(1,'userid',userId);
+    
     const rooms = await this._chatRoomRepo.getUserChatRooms(userId, filters);
- 
+     console.log(2,'room',rooms);
+
     return rooms.map((room) => ChatRoomMapper.to1to1ResponseDTO(room, userId));
   }
+
+    async searchAllUsersForChat(search: string): Promise<UserChatListResponseDTO[]> {
+      const user = await this._userRepository.searchAllUsersForChat(search);
+      return user.map(UserMapper.toChatUserListDTO);
+    }
 }

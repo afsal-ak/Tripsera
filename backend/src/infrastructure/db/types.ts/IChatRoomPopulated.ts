@@ -3,7 +3,7 @@ import { IUser } from '@domain/entities/IUser';
 
 export interface IChatRoomPopulated {
   _id: Types.ObjectId | string;
-  participants: Pick<IUser, '_id' | 'username' | 'profileImage'>[];
+  participants: Pick<any, '_id' | 'username' | 'profileImage'|'name'>[];
   isGroup: boolean;
   groupName?: string;
   lastMessage?: {

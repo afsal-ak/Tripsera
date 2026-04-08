@@ -108,14 +108,6 @@ const chatbotService = new GeminiChatbotService(process.env.GEMINI_API_KEY!);
 const chatbotUseCase = new ChatbotUseCase(chatbotService);
 const chatController = new ChatController(chatbotUseCase);
 
-const chatRoomRepository = new ChatRoomRepository();
-const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository);
-const chatRoomController = new ChatRoomController(chatRoomUseCase);
-
-const messageRepository = new MessageRepository();
-const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
-const messageController = new MessageController(messageUseCases);
-
 const walletRepository = new WalletRepository();
 const walletUseCases = new WalletUseCases(walletRepository);
 const walletController = new WalletController(walletUseCases);
@@ -131,6 +123,16 @@ const userAuthUseCases = new UserAuthUsecases(
   referralRepository
 );
 const userAuthController = new UserAuthController(userAuthUseCases);
+
+
+const chatRoomRepository = new ChatRoomRepository();
+const chatRoomUseCase = new ChatRoomUseCase(chatRoomRepository,userRepository);
+const chatRoomController = new ChatRoomController(chatRoomUseCase);
+
+const messageRepository = new MessageRepository();
+const messageUseCases = new MessageUseCases(messageRepository, chatRoomRepository);
+const messageController = new MessageController(messageUseCases);
+
 
 const bannerRepository = new BannerRepository();
 const packageRepository = new PackageRepository();
@@ -426,7 +428,7 @@ router.put(CHAT_ROOM_ROUTE.UPDATE, userAuthMiddleware, chatRoomController.update
 router.get(CHAT_ROOM_ROUTE.GET_BY_ID, userAuthMiddleware, chatRoomController.getRoomById);
 router.get(CHAT_ROOM_ROUTE.TOATAL_UNREAD_COUNT, userAuthMiddleware, chatRoomController.totalChatUnread);
 router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, userAuthMiddleware, chatRoomController.getUserRooms);
-router.get(CHAT_ROOM_ROUTE.SEARCH_USERS, userAuthMiddleware, userAuthController.searchAllUsers);
+router.get(CHAT_ROOM_ROUTE.SEARCH_USERS, userAuthMiddleware, chatRoomController.searchUsersForChat);
 router.delete(CHAT_ROOM_ROUTE.DELETE, userAuthMiddleware, chatRoomController.deleteRoom);
 
 //MESSAGE ROUTES
