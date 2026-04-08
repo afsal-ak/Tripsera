@@ -37,7 +37,6 @@ const CompanyRoutes = () => {
       {/* Setup (only if NOT completed) */}
       <Route element={<CompanySetupRoute />}>
         <Route path="setup" element={<CompanySetupPage />} />
-        <Route path="company-profile" element={<CompanyProfilePage />} />
       </Route>
 
 
@@ -46,6 +45,7 @@ const CompanyRoutes = () => {
         {/* Protected (only if setup completed) */}
         <Route element={<CompanyPrivateRoute />}>
           <Route path="dashboard" element={<CompanyDashboard />} />
+        <Route path="company-profile" element={<CompanyProfilePage />} />
 
           {/* Packages (shared) */}
           <Route path="packages" element={<PackageList />} />

@@ -4,49 +4,68 @@ export const companyUpdateSchema = z.object({
 
   name: z
     .string()
-    .min(2, "Company name must be at least 2 characters"),
+    .trim()
+    .min(2, "Company name must be at least 2 characters")
+    .max(100, "Company name is too long"),
 
   email: z
     .string()
-    .email("Invalid email"),
+    .trim()
+    .email("Please enter a valid email address"),
 
   phone: z
     .string()
-    .regex(/^[6-9]\d{9}$/, "Phone must be a valid 10 digit Indian number"),
+    .trim()
+    .regex(
+      /^[6-9]\d{9}$/,
+      "Enter a valid 10-digit Indian phone number"
+    ),
 
   description: z
     .string()
-    .max(500, "Description too long")
-    .optional(),
+    .trim()
+    .max(500, "Description cannot exceed 500 characters")
+    .optional()
+    .or(z.literal("")),
 
-//   website: z
-//     .string()
-//     .url("Invalid website URL")
-//     .optional()
-//     .or(z.literal("")),
+  street: z
+    .string()
+    .trim()
+    .min(2, "Street address is required"),
 
-  street: z.string().min(2, "Street required"),
+  city: z
+    .string()
+    .trim()
+    .min(2, "City is required"),
 
-  city: z.string().min(2, "City required"),
-
-  state: z.string().min(2, "State required"),
+  state: z
+    .string()
+    .trim()
+    .min(2, "State is required"),
 
   postalCode: z
-    .string(),
-    //.regex(/^[1-9][0-9]{5}$/, "Invalid postal code"),
+    .string()
+    .trim()
+    .regex(
+      /^[1-9][0-9]{5}$/,
+      "Enter a valid 6-digit PIN code"
+    ),
 
   gstNumber: z
     .string()
-    // .regex(
-    //   /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/,
-    //   "Invalid GST number"
-   // )
+    .trim()
+    .regex(
+      /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/,
+      "Enter a valid GST number"
+    )
     .optional()
     .or(z.literal("")),
 
   licenseNumber: z
     .string()
-    .min(5, "License number too short")
+    .trim()
+    .min(5, "License number must be at least 5 characters")
+    .max(50, "License number is too long")
     .optional()
     .or(z.literal(""))
 
@@ -54,3 +73,59 @@ export const companyUpdateSchema = z.object({
 
 export type CompanyUpdateFormData =
   z.infer<typeof companyUpdateSchema>
+// import { z } from "zod"
+
+// export const companyUpdateSchema = z.object({
+
+//   name: z
+//     .string()
+//     .min(2, "Company name must be at least 2 characters"),
+
+//   email: z
+//     .string()
+//     .email("Invalid email"),
+
+//   phone: z
+//     .string()
+//     .regex(/^[6-9]\d{9}$/, "Phone must be a valid 10 digit Indian number"),
+
+//   description: z
+//     .string()
+//     .max(500, "Description too long")
+//     .optional(),
+
+// //   website: z
+// //     .string()
+// //     .url("Invalid website URL")
+// //     .optional()
+// //     .or(z.literal("")),
+
+//   street: z.string().min(2, "Street required"),
+
+//   city: z.string().min(2, "City required"),
+
+//   state: z.string().min(2, "State required"),
+
+//   postalCode: z
+//     .string(),
+//     //.regex(/^[1-9][0-9]{5}$/, "Invalid postal code"),
+
+//   gstNumber: z
+//     .string()
+//     // .regex(
+//     //   /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/,
+//     //   "Invalid GST number"
+//    // )
+//     .optional()
+//     .or(z.literal("")),
+
+//   licenseNumber: z
+//     .string()
+//     .min(5, "License number too short")
+//     .optional()
+//     .or(z.literal(""))
+
+// })
+
+// export type CompanyUpdateFormData =
+//   z.infer<typeof companyUpdateSchema>

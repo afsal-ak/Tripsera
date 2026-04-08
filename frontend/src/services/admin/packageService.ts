@@ -53,7 +53,13 @@ export const updatePackage = async (id: string, formData: FormData) => {
   }
 };
 
+// export const getCategory = async () => {
+//   const response = await api.get('/admin/category/active');
+//   return response.data;
+// };
+
+
 export const getCategory = async () => {
   const response = await api.get('/admin/category/active');
-  return response.data;
+  return response.data.data;
 };
