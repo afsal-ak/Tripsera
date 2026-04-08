@@ -80,7 +80,7 @@ export interface IMessageUserInfo {
   username?: string;
   email: string;
   phone?: string;
-  role?: 'user' | 'admin';
+  role?: 'user' | 'admin'|'company';
   isBlocked?: boolean;
   fullName?: string;
   dob?: Date;

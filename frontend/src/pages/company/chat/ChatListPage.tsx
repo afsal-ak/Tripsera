@@ -12,17 +12,17 @@ const ChatListPage = () => {
   const navigate = useNavigate();
   const { roomId } = useParams<{ roomId: string }>();
 
-  const currentUserId = useSelector((state: RootState) => state.userAuth.user?._id);
+  const currentUserId = useSelector((state: RootState) => state.companyAuth.company?.companyId);
   const { loading, error } = useSelector((state: RootState) => state.chatRoom);
-
-  // 🔌 Hook up socket events
-  if (currentUserId) {
-    useChatRoomsSocket({ currentUserId });
+  if (!currentUserId) {
+    return;
   }
+
+  useChatRoomsSocket({ currentUserId });
 
   useEffect(() => {
     if (currentUserId) {
-      dispatch(fetchUserRooms({role: EnumUserRole.USER }));
+      dispatch(fetchUserRooms({ role: EnumUserRole.COMPANY }));
     }
   }, [dispatch, currentUserId]);
 
@@ -30,7 +30,10 @@ const ChatListPage = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <ChatList onRoomSelect={(room) => navigate(`/chat/${room._id}`)} selectedRoomId={roomId} />
+    <ChatList
+      onRoomSelect={(room) => navigate(`/company/chat/${room._id}`)}
+      selectedRoomId={roomId}
+    />
   );
 };
 

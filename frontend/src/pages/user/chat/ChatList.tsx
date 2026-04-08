@@ -49,7 +49,7 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
           role="user"
           totalUnread={totalUnread}
           onRoomCreated={async (room) => {
-            await dispatch(fetchUserRooms({ isAdmin: false }));
+            await dispatch(fetchUserRooms({ role: EnumUserRole.USER }));
             onRoomSelect(room);
           }}
         />

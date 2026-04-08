@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
-import { handleSearchUser, createChatRoom } from '@/services/user/messageService';
+import { companyCreateChatRoom ,handleSearchUser} from '@/services/company/messageService';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import type { IUser } from '@/types/IUser';
@@ -12,7 +11,7 @@ interface Props {
   onRoomCreated?: (room: IChatRoom) => void;
 }
 
-export default function UserSearchForChat({
+export default function CompanySearchForChat({
   onUserSelected,
   onRoomCreated,
 }: Props) {
@@ -31,7 +30,6 @@ export default function UserSearchForChat({
           setUsers([]);
           return;
         }
-console.log(users,'suer in seacrh');
 
         setLoading(true);
         const response = await handleSearchUser(searchQuery);
@@ -48,58 +46,30 @@ console.log(users,'suer in seacrh');
   }, [searchQuery]);
 
   // 👤 Handle click
-  // const handleUserClick = async (user: IUser) => {
-  //   try {
-  //     setCreatingRoom(true);
+  const handleUserClick = async (user: IUser) => {
+    try {
+      setCreatingRoom(true);
 
-  //     const response = await createChatRoom({
-  //       participants: [user._id!],
-  //       isGroup: false,
-  //     });
+      const response = await companyCreateChatRoom({
+        participants: [user._id!],
+        isGroup: false,
+      });
 
-  //     const chatRoom: IChatRoom = response.data;
+      const chatRoom: IChatRoom = response.data;
 
-  //     onRoomCreated?.(chatRoom);
-  //     onUserSelected?.();
+      onRoomCreated?.(chatRoom);
+      onUserSelected?.();
 
-  //     // reset
-  //     setSearchQuery('');
-  //     setUsers([]);
-  //   } catch (error) {
-  //     console.error('Chat creation failed:', error);
-  //   } finally {
-  //     setCreatingRoom(false);
-  //   }
-  // };
-const handleUserClick = async (user: IUser) => {
-  try {
-    setCreatingRoom(true);
+      // reset
+      setSearchQuery('');
+      setUsers([]);
+    } catch (error) {
+      console.error('Chat creation failed:', error);
+    } finally {
+      setCreatingRoom(false);
+    }
+  };
 
-    // 👉 Decide which ID to send
-    const participantId =
-      user.role === 'company' ? user.companyId : user._id;
-
-    console.log('Selected ID:', participantId);
-
-    const response = await createChatRoom({
-      participants: [participantId!],
-      isGroup: false,
-    });
-
-    const chatRoom: IChatRoom = response.data;
-
-    onRoomCreated?.(chatRoom);
-    onUserSelected?.();
-
-    // reset
-    setSearchQuery('');
-    setUsers([]);
-  } catch (error) {
-    console.error('Chat creation failed:', error);
-  } finally {
-    setCreatingRoom(false);
-  }
-};
   return (
     <div className="w-full h-full bg-white flex flex-col">
 

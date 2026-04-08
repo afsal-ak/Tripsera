@@ -5,6 +5,7 @@ import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
 import { useChatRoomsSocket } from '@/hooks/useChatRoomsSocket ';
 import type { RootState, AppDispatch } from '@/redux/store';
 import { ChatList } from './ChatList';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
 
 const ChatListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,7 +22,7 @@ const ChatListPage = () => {
 
   useEffect(() => {
     if (currentUserId) {
-      dispatch(fetchUserRooms({ isAdmin: true }));
+      dispatch(fetchUserRooms({ role: EnumUserRole.ADMIN }));
     }
   }, [dispatch, currentUserId]);
 

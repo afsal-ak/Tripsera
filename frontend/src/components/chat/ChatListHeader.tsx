@@ -5,9 +5,11 @@ import ChatFilter from './ChatFilter';
 import UserSearchForChat from './UserSearchForChat';
 import type { IChatRoom } from '@/types/IMessage';
 import AdminSearchForChat from './AdminSearchForChat';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
+import CompanySearchForChat from './CompanySearchForChat';
 
 interface ChatListHeaderProps {
-  role: 'user' | 'admin';
+  role: 'user' | 'admin'|'company';
   totalUnread: number;
   onToggleSidebar?: () => void;
   showToggle?: boolean;
@@ -93,7 +95,7 @@ export const ChatListHeader = ({
                 }}
               />
             </div> */}
-            <div className="p-3">
+            {/* <div className="p-3">
   {role === 'user' ? (
     <UserSearchForChat
       onUserSelected={() => setIsUserSearchOpen(false)}
@@ -104,6 +106,37 @@ export const ChatListHeader = ({
     />
   ) : (
     <AdminSearchForChat
+      onUserSelected={() => setIsUserSearchOpen(false)}
+      onRoomCreated={(room) => {
+        onRoomCreated?.(room);
+        setIsUserSearchOpen(false);
+      }}
+    />
+  )}
+</div> */}
+<div className="p-3">
+  {role === EnumUserRole.USER && (
+    <UserSearchForChat
+      onUserSelected={() => setIsUserSearchOpen(false)}
+      onRoomCreated={(room) => {
+        onRoomCreated?.(room);
+        setIsUserSearchOpen(false);
+      }}
+    />
+  )}
+
+  {role === EnumUserRole.ADMIN && (
+    <AdminSearchForChat
+      onUserSelected={() => setIsUserSearchOpen(false)}
+      onRoomCreated={(room) => {
+        onRoomCreated?.(room);
+        setIsUserSearchOpen(false);
+      }}
+    />
+  )}
+
+  {role === EnumUserRole.COMPANY && (
+    <CompanySearchForChat
       onUserSelected={() => setIsUserSearchOpen(false)}
       onRoomCreated={(room) => {
         onRoomCreated?.(room);

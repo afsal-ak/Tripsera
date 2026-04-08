@@ -20,12 +20,12 @@ import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
 export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
   const dispatch=useDispatch<AppDispatch>();
   const rooms = useSelector((state: RootState) => state.chatRoom.rooms);
-  const currentUserId = useSelector((state: RootState) => state.adminAuth.admin?._id);
+  const currentUserId = useSelector((state: RootState) => state.companyAuth.company?.companyId);
 
   const [search, setSearch] = useState('');
   const [sortByUnread, setSortByUnread] = useState(false);
 
-  const totalUnread = useTotalUnreadCount(EnumUserRole.ADMIN);
+  const totalUnread = useTotalUnreadCount(EnumUserRole.COMPANY);
   console.log(totalUnread, 'coutn unread');
 
   const filteredRooms = useMemo(() => {
@@ -60,10 +60,10 @@ export const ChatList = ({ onRoomSelect, selectedRoomId }: ChatListProps) => {
         <div className="p-2">
           {/* <ChatListHeader role="admin" totalUnread={totalUnread} /> */}
            <ChatListHeader
-          role="admin"
+          role={EnumUserRole.COMPANY}
           totalUnread={totalUnread}
           onRoomCreated={async (room) => {
-            await dispatch(fetchUserRooms({ role: EnumUserRole.ADMIN }));
+            await dispatch(fetchUserRooms({ role: EnumUserRole.COMPANY }));
             onRoomSelect(room);
           }}
         />

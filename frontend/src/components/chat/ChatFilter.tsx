@@ -3,9 +3,10 @@ import { Filter as FilterIcon } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '@/redux/store';
 import { fetchUserRooms } from '@/redux/slices/chatRoomSlice';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
 
 interface Props {
-  role: 'user' | 'admin';
+  role: 'user' | 'admin'|'company';
   totalUnread: number;
 }
 
@@ -23,7 +24,7 @@ export default function ChatFilter({ role, totalUnread }: Props) {
 
     dispatch(
       fetchUserRooms({
-        isAdmin: role === 'admin',
+        role:role,
         filters: { filter: filterParam as 'all' | 'unread' | 'read' },
       })
     );

@@ -24,6 +24,8 @@ import {
   decrementTotalUnread, incrementTotalUnread
 } from '@/redux/slices/chatRoomSlice';
 import { useLoadMore } from '@/hooks/useLoadMore';
+import { EnumUserRole } from '@/Constants/enums/userEnum';
+import { companyGetChatRoomById, companyGetMessagesByRoom } from '@/services/company/messageService';
 
 interface Props {
   roomId: string;
@@ -55,11 +57,14 @@ const MessagePage = ({ roomId, user }: Props) => {
     const fetchRoom = async () => {
       if (!roomId) return;
 
-      if (user.role === 'user') {
+      if (user.role === EnumUserRole.USER) {
         const response = await getChatRoomById(roomId);
         setRoom(response.data);
-      } else if (user.role === 'admin') {
+      } else if (user.role === EnumUserRole.ADMIN) {
         const response = await adminGetChatRoomById(roomId);
+        setRoom(response.data);
+      }else if(user.role===EnumUserRole.COMPANY){
+         const response = await companyGetChatRoomById(roomId);
         setRoom(response.data);
       }
     };
@@ -73,10 +78,12 @@ const MessagePage = ({ roomId, user }: Props) => {
 
     try {
       let response: any;
-      if (user.role === 'user') {
+      if (user.role === EnumUserRole.USER) {
         response = await getMessagesByRoom(roomId, page, limit);
-      } else if (user.role === 'admin') {
+      } else if (user.role ===EnumUserRole.ADMIN) {
         response = await adminGetMessagesByRoom(roomId, page, limit);
+      } else if (user.role ===EnumUserRole.COMPANY) {
+        response = await companyGetMessagesByRoom(roomId, page, limit);
       }
 
       // response.data should have { data, pagination }

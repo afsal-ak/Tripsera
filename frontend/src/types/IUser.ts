@@ -1,10 +1,11 @@
 export interface IUser {
   _id?: string;
   username?: string;
+  companyId?:string;
   email: string;
   phone?: string;
   password?: string;
-  role?: 'user' | 'admin';
+  role?: 'user' | 'admin'|'company';
   isBlocked?: boolean;
   isPrivate?: boolean;
   fullName?: string;

@@ -18,13 +18,13 @@ import EditPackageForm from "@/pages/company/package/EditPackage";
 import PackageDetails from "@/pages/company/package/PackageDetail";
 
 import NotificationPage from "@/pages/company/notification/Notifications";
-import ChatAdminLayout from "@/layouts/ChatAdminLayout";
-import MessageMainPage from "@/pages/admin/chat/MessageMainPage";
+import MessageMainPage from "@/pages/company/chat/MessageMainPage";
 import BookingList from "@/pages/company/booking/BookingsList";
 import BookingDetails from "@/pages/company/booking/BookingDetails";
 import SalesReportPage from "@/pages/company/salesReport/SalesReportPage";
 import ReviewList from '@/pages/company/review/ReviewList';
 import ReviewDetail from '@/pages/company/review/ReviewDetail';
+import ChatCompanyLayout from "@/layouts/ChatCompanyLayout";
 
 const CompanyRoutes = () => {
   return (
@@ -73,10 +73,9 @@ const CompanyRoutes = () => {
           <Route path="notification" element={<NotificationPage />} />
 
           {/* Chat */}
-          <Route path="/chat" element={<ChatAdminLayout />}>
+         <Route path="/chat" element={<ChatCompanyLayout />}>
             <Route path=":roomId" element={<MessageMainPage />} />
           </Route>
-
 
         </Route>
       </Route>
