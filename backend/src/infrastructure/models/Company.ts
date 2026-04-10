@@ -29,7 +29,7 @@ const CompanySchema = new Schema<CompanyDocument>(
 
     description: String,
 
-    website: String,
+   // website: String,
 
     logo: {
       url: String,

@@ -4,6 +4,7 @@ import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IUserAuthUseCases } from '@application/useCaseInterfaces/user/IUserAuthUseCases';
 import { EnumUserRole } from '@constants/enum/userEnum';
 import { ICompanyAuthUseCases } from '@application/useCaseInterfaces/company/ICompanyAuthUseCases';
+import { AppError } from '@shared/utils/AppError';
 
 
 export class CompanyAuthController {
@@ -11,7 +12,7 @@ export class CompanyAuthController {
 
   preRegister = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { email, username, password,phone } = req.body;
+      const { email, username, password, phone } = req.body;
       const referredReferralCode = req.query.referralCode as string;
       await this._companyAuthUseCases.preRegistration({
         email,
@@ -71,18 +72,18 @@ export class CompanyAuthController {
       //   maxAge: MAX_AGE,
       //   path: '/',
       // });
-       res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "strict",
-      maxAge: MAX_AGE,
-      path: "/",
-    });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        maxAge: MAX_AGE,
+        path: "/",
+      });
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'Login successful',
         accessToken,
-        company:user,
+        company: user,
       });
     } catch (error) {
       next(error);
@@ -191,9 +192,15 @@ export class CompanyAuthController {
   changePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { currentPassword, newPassword } = req.body;
-      const userId = getUserIdFromRequest(req);
+      const userId = req.user?._id
+      console.log(req.user,'req.user in auth');
+      
+      if (!userId) {
+        console.log(userId, 'get userih');
 
-      await this._companyAuthUseCases.changePassword(userId, currentPassword, newPassword);
+        throw new AppError(HttpStatus.UNAUTHORIZED, 'Unauthorized');
+      }
+      await this._companyAuthUseCases.changePassword(userId.toString(), currentPassword, newPassword);
       res.status(HttpStatus.OK).json({ message: 'Password updated successfully' });
     } catch (error) {
       next(error);
@@ -217,21 +224,21 @@ export class CompanyAuthController {
     }
   };
   searchAllUsers = async (
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ): Promise<void> => {
-      try {
-        const search = (req.query.search as string) || '';
-        const users = await this._companyAuthUseCases.searchAllUsers(search);
-  
-        res.status(HttpStatus.OK).json({
-          success: true,
-          message: 'Users fetched successfully',
-          data: users,
-        });
-      } catch (error) {
-        next(error);
-      }
-    };
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const search = (req.query.search as string) || '';
+      const users = await this._companyAuthUseCases.searchAllUsers(search);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Users fetched successfully',
+        data: users,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

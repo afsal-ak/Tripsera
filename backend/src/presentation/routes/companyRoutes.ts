@@ -191,7 +191,7 @@ router.post(
   companyAuthController.verifyAndUpdateEmail
 );
 router.post(AUTH_ROUTES.PASSWORD_CHANGE,
-  //  userAuthMiddleware,
+    companyAuthMiddleware,
   companyAuthController.changePassword);
 
 

@@ -64,73 +64,74 @@ export class CompanyController {
       next(error)
     }
   }
-updateCompany = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+  
+  updateCompany = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
 
-    const userId = getUserIdFromRequest(req);
-    const data = req.body;
+      const userId = getUserIdFromRequest(req);
+      const data = req.body;
 
-    const company = await this._companyUseCases.updateCompany(
-      userId,
-      data
-    );
+      const company = await this._companyUseCases.updateCompany(
+        userId,
+        data
+      );
 
-    res.status(HttpStatus.OK).json({
-      success: true,
-      message: "Company updated successfully",
-      data: company
-    });
-
-  } catch (error) {
-    next(error);
-  }
-};
-
-
-updateCompanyLogo = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-
-  try {
-
-    const userId = getUserIdFromRequest(req);
-
-    if (!req.file) {
-      res.status(HttpStatus.BAD_REQUEST).json({
-        message: "No image uploaded"
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Company updated successfully",
+        data: company
       });
-      return;
+
+    } catch (error) {
+      next(error);
     }
-
-    const { url, public_id } = await uploadCloudinary(
-      req.file.path,
-      "companies"
-    );
-
-    const company = await this._companyUseCases.updateCompanyLogo(
-      userId,
-      { url, public_id }
-    );
-
-    res.status(HttpStatus.OK).json({
-      success: true,
-      message: "Logo updated successfully",
-      data: company
-    });
-
-  } catch (error) {
-    next(error);
-  }
-};
+  };
 
 
-    getCompanyProfile = async (
+  updateCompanyLogo = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+
+    try {
+
+      const userId = getUserIdFromRequest(req);
+
+      if (!req.file) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message: "No image uploaded"
+        });
+        return;
+      }
+
+      const { url, public_id } = await uploadCloudinary(
+        req.file.path,
+        "companies"
+      );
+
+      const company = await this._companyUseCases.updateCompanyLogo(
+        userId,
+        { url, public_id }
+      );
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Logo updated successfully",
+        data: company
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+  getCompanyProfile = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -141,12 +142,12 @@ updateCompanyLogo = async (
       const data = req.body
 
       const company = await this._companyUseCases.getCompanyProfile(
-        userId,      
+        userId,
       )
 
       res.status(HttpStatus.OK).json({
         success: true,
-        message:'Company data fetched successfully',
+        message: 'Company data fetched successfully',
         data: company
       })
 
