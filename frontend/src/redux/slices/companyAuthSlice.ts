@@ -37,8 +37,11 @@ export const loginCompany = createAsyncThunk(
 
       return { company, accessToken };
     } catch (error: any) {
+      console.log(error,'in redux company');
       
-      return rejectWithValue(error.message.data);
+       const errorMessage = error?.response?.data?.message || error.message || 'Login failed';
+      return rejectWithValue(errorMessage);
+      // return rejectWithValue(error.message.data);
     }
   }
 );

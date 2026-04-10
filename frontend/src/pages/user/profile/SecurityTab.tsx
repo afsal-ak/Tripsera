@@ -126,7 +126,7 @@ const SecurityTab = () => {
           )}
         </div>
         <div>
-          <Label htmlFor="confirm password">Coonfirm Password</Label>
+          <Label htmlFor="confirm password">Confirm Password</Label>
           <Input
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}

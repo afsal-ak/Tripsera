@@ -25,7 +25,7 @@ import SalesReportPage from "@/pages/company/salesReport/SalesReportPage";
 import ReviewList from '@/pages/company/review/ReviewList';
 import ReviewDetail from '@/pages/company/review/ReviewDetail';
 import ChatCompanyLayout from "@/layouts/ChatCompanyLayout";
-
+// import PasswordChangeModal from "@/pages/company/PasswordChangePage";
 const CompanyRoutes = () => {
   return (
     <Routes>
@@ -46,7 +46,6 @@ const CompanyRoutes = () => {
         <Route element={<CompanyPrivateRoute />}>
           <Route path="dashboard" element={<CompanyDashboard />} />
         <Route path="company-profile" element={<CompanyProfilePage />} />
-
           {/* Packages (shared) */}
           <Route path="packages" element={<PackageList />} />
           <Route path="packages/add" element={<AddPackageForm />} />

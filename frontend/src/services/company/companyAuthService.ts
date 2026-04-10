@@ -68,6 +68,12 @@ export const handleCompanyChangePassword = async (token: string, password: strin
   return response.data;
 };
 
+
+
+export const passwordChange = async (currentPassword: string, newPassword: string) => {
+  const response = await api.post('/company/password/change', { currentPassword, newPassword });
+  return response.data;
+};
 /* ---------------- LOGOUT ---------------- */
 
 export const handleCompanyLogout = async (): Promise<void> => {

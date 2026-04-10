@@ -72,6 +72,8 @@ useEffect(() => {
   // //  { path: 'users', label: 'Users', icon: User },
     { path: 'reviews', label: 'Reviews', icon: Star },
     { path: 'company-profile', label: 'company-profile', icon: Star },
+    { path: 'password-change', label: 'password-change', icon: Star },
+    
   ];
 
   const bookingItems = [

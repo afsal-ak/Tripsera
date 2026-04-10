@@ -2,8 +2,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
-
-import {
+ import {
   companyUpdateSchema,
   type CompanyUpdateFormData
 } from "@/schemas/companyUpdateSchema"
@@ -16,10 +15,13 @@ import {
 
 import ImageCropper from "@/components/ImageCropper"
 import { useImageUpload } from "@/hooks/useImageUpload"
+import PasswordChangeModal from "../PasswordChangePage"
 
 export default function CompanyProfilePage() {
+
   const [loading, setLoading] = useState(false)
   const [companyLogo, setCompanyLogo] = useState<string | null>(null)
+  const [openPasswordModal, setOpenPasswordModal] = useState(false);
 
   const {
     register,
@@ -165,19 +167,30 @@ export default function CompanyProfilePage() {
     <div className="max-w-4xl mx-auto py-10 px-4">
 
       {/* HEADER */}
-      <h2 className="text-3xl font-bold mb-8 text-gray-800">
-        Company Profile
-      </h2>
+        {/* HEADER (FIXED) */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-800">
+          Company Profile
+        </h2>
 
-      {/* ---------------- LOGO ---------------- */}
-      <div className="bg-white shadow-sm border rounded-xl p-6 mb-8">
+        <button
+          onClick={() => setOpenPasswordModal(true)}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+        >
+          Change Password
+        </button>
+      </div>
+
+      {/* ---------------- LOGO (CENTERED) ---------------- */}
+      <div className="bg-white shadow-sm border rounded-xl p-6 mb-8 text-center">
+
         <h3 className="font-semibold text-lg mb-4">
           Company Logo
         </h3>
 
-        <div className="flex items-center gap-6 flex-wrap">
+        <div className="flex flex-col items-center gap-4">
 
-          <div className="w-24 h-24 rounded-lg overflow-hidden border">
+          <div className="w-28 h-28 rounded-full overflow-hidden border">
             {logoPreview ? (
               <img
                 src={logoPreview}
@@ -190,24 +203,23 @@ export default function CompanyProfilePage() {
             )}
           </div>
 
-          <div className="space-y-3">
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              onChange={handleImageChange}
-              className="block text-sm"
-            />
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            className="text-sm"
+          />
 
-            {croppedImages.length > 0 && (
-              <button
-                onClick={handleLogoUpdate}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
-              >
-                Upload Logo
-              </button>
-            )}
-          </div>
+          {croppedImages.length > 0 && (
+            <button
+              onClick={handleLogoUpdate}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
+            >
+              Upload Logo
+            </button>
+          )}
+
         </div>
       </div>
 
@@ -328,6 +340,10 @@ export default function CompanyProfilePage() {
           {loading ? "Updating..." : "Update Company"}
         </button>
       </form>
+      <PasswordChangeModal
+  open={openPasswordModal}
+  onClose={() => setOpenPasswordModal(false)}
+/>
     </div>
   )
 }

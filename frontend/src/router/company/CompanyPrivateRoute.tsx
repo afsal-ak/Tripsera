@@ -8,14 +8,16 @@ const CompanyPrivateRoute = () => {
 
   if (!accessToken) {
     return <Navigate to="/company/login" replace />;
-  }
-
-  // 🚀 If setup NOT complete → force setup page
-  if (!company?.isSetupComplete) {
+  }else if(!company?.isSetupComplete){
     return <Navigate to="/company/setup" replace />;
+
   }
 
-  // ✅ Setup done → allow access (dashboard etc)
+  //  If setup NOT complete → force setup page
+  // if (!company?.isSetupComplete) {
+  // }
+
+  //  Setup done → allow access (dashboard etc)
   return <Outlet />;
 };
 
