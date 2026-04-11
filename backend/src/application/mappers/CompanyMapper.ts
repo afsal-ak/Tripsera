@@ -6,13 +6,14 @@ export const mapCompanyToDTO = (
 ): CompanyFullResponseDTO => {
 
   return {
-    id: company._id!.toString(),
+    _id: company._id!.toString(),
 
     name: company.name,
     email: company.email,
     phone: company.phone,
 
-    ownerId: company.ownerId.toString(),
+    // ownerId: company.ownerId.toString(),
+  ownerId: company.ownerId  as any,
 
     description: company.description,
     website: company.website,

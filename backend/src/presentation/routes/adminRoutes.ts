@@ -91,7 +91,13 @@ import { MessageController } from '@presentation/controllers/chat/MessageControl
 import { NotificationUseCases } from '@application/usecases/notification/notificationUseCases';
 import { NotificationRepository } from '@infrastructure/repositories/NotificationRepository';
 import { NotificationController } from '@presentation/controllers/admin/notificationController';
+import { CompanyRepository } from '@infrastructure/repositories/CompanyRepository';
+import { CompanyUseCases } from '@application/usecases/admin/CompanyUseCases';
+import { CompanyController } from '@presentation/controllers/admin/companyController';
 
+const companyRepo=new CompanyRepository()
+const companyUseCases=new CompanyUseCases(companyRepo)
+const companyController=new CompanyController(companyUseCases)
 
 const adminRepository = new UserRepository();
 const otpRepository = new OtpRepository();
@@ -374,5 +380,22 @@ router.patch(
   adminAuthMiddleware,
   notificationController.markAsRead
 );
+
+
+router.get("/companies", adminAuthMiddleware,companyController.getCompanies);
+router.get("/companies/:companyId",adminAuthMiddleware, companyController.findByID);
+
+router.patch("/companies/approve/:companyId", 
+  companyController.approveCompany
+);
+
+router.patch("/companies/block/:companyId",adminAuthMiddleware,
+  companyController.blockCompany
+);
+
+router.patch("/companies/unblock/:companyId", adminAuthMiddleware,
+  companyController.unblockCompany
+);
+
 
 export default router;

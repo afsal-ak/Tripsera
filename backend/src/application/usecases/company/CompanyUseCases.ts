@@ -66,7 +66,9 @@ export class CompanyUseCases implements ICompanyUseCases {
     await this._userRepository.updateCompanyId(userId, company._id!.toString())
 
     return {
-      id: company._id!.toString(),
+      // id: company._id!.toString(),
+
+      _id: company._id!.toString(),
       name: company.name,
       email: company.email,
       phone: company.phone,

@@ -21,7 +21,7 @@ export interface CreateCompanyDTO {
 export interface UpdateCompanyDTO {
   name?: string;
   phone?: number;
-  email?:string;
+  email?: string;
   description?: string;
   website?: string;
 
@@ -34,15 +34,19 @@ export interface UpdateCompanyDTO {
   };
 }
 export interface CompanyResponseDTO {
-  id: string
+  _id: string
   name: string
   email: string
   phone: number
   ownerId: string,
-  isSetupComplete?:boolean
+  isApproved?: boolean
+  isBlocked?: boolean
+  isSetupComplete?: boolean
 }
+
+
 export interface CompanyFullResponseDTO {
-  id: string
+  _id: string
   name: string
   email: string
   phone: number
@@ -90,21 +94,20 @@ export interface CompanyFullResponseDTO {
   createdAt?: Date
   updatedAt?: Date
 }
-// export interface CreateCompanyDTO {
-//   name: string;
-//   email: string;
-//   phone: string;
-//   description?: string;
-//   website?: string;
 
-//   address?: {
-//     street?: string;
-//     city?: string;
-//     state?: string;
-//     country?: string;
-//     postalCode?: string;
-//   };
 
-//   gstNumber?: string;
-//   licenseNumber?: string;
-// }
+
+export interface ICompanyFilterDTO {
+  search?: string;
+  isApproved?: boolean;
+  isBlocked?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export interface ICompanyListResponseDTO {
+  companies: CompanyFullResponseDTO[];
+  total: number;
+  page: number;
+  totalPages: number;
+}

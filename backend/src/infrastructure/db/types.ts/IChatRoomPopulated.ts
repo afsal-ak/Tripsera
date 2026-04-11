@@ -21,6 +21,8 @@ export interface IChatRoomPopulated {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
 // import { Types } from 'mongoose';
 // import { IUser } from '@domain/entities/IUser';
 

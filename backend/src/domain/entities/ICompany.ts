@@ -2,7 +2,8 @@ import { Types } from 'mongoose';
 
 
 export interface ICompany {
-  _id?: string;
+  // _id?: string;
+  _id?: Types.ObjectId | string;
 
   name: string;
   email: string;
