@@ -197,6 +197,8 @@ import CreateCustomPackagePage from '@/pages/admin/cutomPackage/CreateCustomPack
 import CustomApprovedPkg from '@/pages/admin/cutomPackage/CustomApprovedPkg';
 
 import MultiRoleRoute from "../MultiRoleRoute";
+import AdminCompanyPage from '@/pages/admin/company/AdminCompanyPage';
+import AdminCompanyDetailsPage from '@/pages/admin/company/AdminCompanyDetailsPage';
 
 const AdminRoutes = () => {
   return (
@@ -240,12 +242,17 @@ const AdminRoutes = () => {
           <Route path="reports/:reportId" element={<ReportDetails />} />
           <Route path="custom-packages" element={<CustomPackagePage />} />
           <Route path="custom-packages/:pkgId" element={<CustomPackageDetails />} />
-<Route path="custom-package/create/:customId" element={<CreateCustomPackagePage />} />
-<Route path="custom-packages/approved" element={<CustomApprovedPkg />} />
+          <Route path="custom-package/create/:customId" element={<CreateCustomPackagePage />} />
+          <Route path="custom-packages/approved" element={<CustomApprovedPkg />} />
           <Route path="notification" element={<NotificationPage />} />
+
+
+          <Route path="company" element={<AdminCompanyPage />} />
+          <Route path="company/:companyId" element={<AdminCompanyDetailsPage />} />
 
           <Route path="/chat" element={<ChatAdminLayout />}>
             <Route path=":roomId" element={<MessageMainPage />} />
+            
           </Route>
         </Route>
       </Route>

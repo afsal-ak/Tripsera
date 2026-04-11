@@ -71,6 +71,9 @@ useEffect(() => {
   const userManagementItems = [
     { path: 'users', label: 'Users', icon: User },
     { path: 'reviews', label: 'Reviews', icon: Star },
+    { path: 'company', label: 'Company', icon: Star },
+
+    
   ];
 
   const bookingItems = [
