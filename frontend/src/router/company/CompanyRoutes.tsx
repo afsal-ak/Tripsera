@@ -25,6 +25,10 @@ import SalesReportPage from "@/pages/company/salesReport/SalesReportPage";
 import ReviewList from '@/pages/company/review/ReviewList';
 import ReviewDetail from '@/pages/company/review/ReviewDetail';
 import ChatCompanyLayout from "@/layouts/ChatCompanyLayout";
+import CustomPackagePage from "@/pages/company/cutomPackage/CustomPackagePage";
+import CustomPackageDetails from "@/pages/company/cutomPackage/CustomPackageDetailsPage";
+import CreateCustomPackagePage from "@/pages/company/cutomPackage/CreateCustomPackagePage";
+import CustomApprovedPkg from "@/pages/company/cutomPackage/CustomApprovedPkg";
 // import PasswordChangeModal from "@/pages/company/PasswordChangePage";
 const CompanyRoutes = () => {
   return (
@@ -67,6 +71,11 @@ const CompanyRoutes = () => {
 
           <Route path="reviews" element={<ReviewList />} />
           <Route path="reviews/:reviewId" element={<ReviewDetail />} />
+
+ <Route path="custom-packages" element={<CustomPackagePage />} />
+          <Route path="custom-packages/:pkgId" element={<CustomPackageDetails />} />
+          <Route path="custom-package/create/:customId" element={<CreateCustomPackagePage />} />
+          <Route path="custom-packages/approved" element={<CustomApprovedPkg />} />
 
           {/* Notifications */}
           <Route path="notification" element={<NotificationPage />} />

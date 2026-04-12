@@ -13,6 +13,8 @@ export const getCustomPkgById = async (packageId: string) => {
 };
 
 export const createCustomPkg = async (data: CustomPkgFormSchema) => {
+  console.log(data,'cstm pkg send data');
+  
   const response = await api.post(`/user/custom-package/create`, data);
   return response;
 };

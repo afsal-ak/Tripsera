@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const customPkgSchema = z.object({
+companyId: z.string().min(1, "Company ID is required"),
   destination: z.string().trim().min(3, { message: 'Destination must be at least 3 characters' }),
   startingPoint: z.string().trim().min(3, { message: 'startingPoint must be at least 3 characters' }),
   

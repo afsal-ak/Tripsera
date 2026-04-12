@@ -28,15 +28,15 @@ import { useAuthModal } from '@/context/AuthModalContext';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import Loader from '@/components/Loader';
-
+import AddCustomPkgForm from '../../customPkg/AddCustomPackageForm';
 const PackageDetails = () => {
 
   const navigate = useNavigate();
-const { openLogin } = useAuthModal();
+  const { openLogin } = useAuthModal();
 
-const { isAuthenticated, user } = useSelector(
-  (state: RootState) => state.userAuth
-);
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.userAuth
+  );
   const { id } = useParams();
   const [pkg, setPkg] = useState<IPackage | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,6 +46,8 @@ const { isAuthenticated, user } = useSelector(
   const [ratingSummary, setRatingSummary] = useState<IRating>();
   const [openMap, setOpenMap] = useState(false);
   const packageLocations = pkg?.location || [];
+
+  const [isOpenCustomPkgAddForm, setIsOpenCustomPkgAddForm] = useState(false)
 
   useEffect(() => {
     if (!id) {
@@ -85,12 +87,12 @@ const { isAuthenticated, user } = useSelector(
 
   const handleWishlist = async () => {
     if (!id || loading) return;
-     const isAllowed = isAuthenticated && !user?.isBlocked;
+    const isAllowed = isAuthenticated && !user?.isBlocked;
 
-  if (!isAllowed) {
-    openLogin(); // 🔥 open modal
-    return;      // ❌ stop navigation
-  }
+    if (!isAllowed) {
+      openLogin(); // 🔥 open modal
+      return;      // ❌ stop navigation
+    }
     setLoading(true);
 
     try {
@@ -126,40 +128,40 @@ const { isAuthenticated, user } = useSelector(
   //   navigate(`/checkout/${id}`);
   // };
 
-const handleClick = () => {
-  const isAllowed = isAuthenticated && !user?.isBlocked;
+  const handleClick = () => {
+    const isAllowed = isAuthenticated && !user?.isBlocked;
 
-  if (!isAllowed) {
-    openLogin(); // 🔥 open modal
-    return;      // ❌ stop navigation
-  }
+    if (!isAllowed) {
+      openLogin(); // 🔥 open modal
+      return;      // ❌ stop navigation
+    }
 
-  navigate(`/checkout/${id}`); // ✅ allowed
-};
-  
-
- 
-
-const handleAddReview = () => {
-  const isAllowed = isAuthenticated && !user?.isBlocked;
-
-  if (!isAllowed) {
-    openLogin(); // 🔥 open modal
-    return;      // ❌ stop navigation
-  }
-   navigate(`/packages/${id}/review/add`);
-};
+    navigate(`/checkout/${id}`); // ✅ allowed
+  };
 
 
-const handleSeeAllReviews = () => {
-  const isAllowed = isAuthenticated && !user?.isBlocked;
 
-  if (!isAllowed) {
-    openLogin(); // 🔥 open modal
-    return;      // ❌ stop navigation
-  }
-navigate(`/packages/${id}/review?page=1&limit=10`)
-};
+
+  const handleAddReview = () => {
+    const isAllowed = isAuthenticated && !user?.isBlocked;
+
+    if (!isAllowed) {
+      openLogin(); // 🔥 open modal
+      return;      // ❌ stop navigation
+    }
+    navigate(`/packages/${id}/review/add`);
+  };
+
+
+  const handleSeeAllReviews = () => {
+    const isAllowed = isAuthenticated && !user?.isBlocked;
+
+    if (!isAllowed) {
+      openLogin(); // 🔥 open modal
+      return;      // ❌ stop navigation
+    }
+    navigate(`/packages/${id}/review?page=1&limit=10`)
+  };
   // const handleAddReview = () => {
   //   navigate(`/packages/${id}/review/add`);
   // };
@@ -171,7 +173,7 @@ navigate(`/packages/${id}/review?page=1&limit=10`)
   const isBookingDisabled: boolean = Boolean(isSlotFull || isExpired);
 
   if (!pkg) {
-    return <div className="h-screen flex items-center justify-center"><Loader2/></div>;
+    return <div className="h-screen flex items-center justify-center"><Loader2 /></div>;
   }
 
   const imageObjects = pkg.imageUrls ?? [];
@@ -255,58 +257,57 @@ navigate(`/packages/${id}/review?page=1&limit=10`)
             </div>
           </div>
           {/* Image Gallery */}
-        <div className="w-full max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-0">
-  <div className="flex flex-col items-center gap-3 sm:gap-4">
+          <div className="w-full max-w-7xl mx-auto mb-6 sm:mb-10 px-2 sm:px-0">
+            <div className="flex flex-col items-center gap-3 sm:gap-4">
 
-    {/* Main Image */}
-    <div className="w-full h-[250px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-xl overflow-hidden relative bg-white flex items-center justify-center">
-      
-      <img
-        src={currentImage}
-        alt={`Image ${selectedImage + 1}`}
-        className="
+              {/* Main Image */}
+              <div className="w-full h-[250px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-xl overflow-hidden relative bg-white flex items-center justify-center">
+
+                <img
+                  src={currentImage}
+                  alt={`Image ${selectedImage + 1}`}
+                  className="
           w-full h-full
           object-contain sm:object-cover
           transition-all duration-300
         "
-      />
+                />
 
-      {/* Image Counter */}
-      <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-black/60 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-lg">
-        {selectedImage + 1} / {allImages.length}
-      </div>
-    </div>
+                {/* Image Counter */}
+                <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-black/60 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-lg">
+                  {selectedImage + 1} / {allImages.length}
+                </div>
+              </div>
 
-    {/* Thumbnails */}
-    <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 w-full">
-      {allImages.map((image, index) => {
-        const isSelected = selectedImage === index;
-        return (
-          <div
-            key={index}
-            onClick={() => setSelectedImage(index)}
-            className={`relative h-[70px] sm:h-[80px] md:h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${
-              isSelected
-                ? 'ring-2 ring-orange ring-offset-2'
-                : 'hover:opacity-80'
-            }`}
-          >
-            <img
-              src={image}
-              alt={`Thumbnail ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
+              {/* Thumbnails */}
+              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 w-full">
+                {allImages.map((image, index) => {
+                  const isSelected = selectedImage === index;
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={`relative h-[70px] sm:h-[80px] md:h-[96px] overflow-hidden rounded-lg cursor-pointer transition-all duration-200 ${isSelected
+                        ? 'ring-2 ring-orange ring-offset-2'
+                        : 'hover:opacity-80'
+                        }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
 
-            {isSelected && (
-              <div className="absolute inset-0 bg-orange/20" />
-            )}
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-orange/20" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
           </div>
-        );
-      })}
-    </div>
-
-  </div>
-</div>
         </div>
       </div>
       <div className="container mx-auto px-4 py-12">
@@ -319,9 +320,9 @@ navigate(`/packages/${id}/review?page=1&limit=10`)
               <p className="text-muted-foreground text-lg leading-relaxed">{pkg.description}</p>
             </section>
             <PackageDetailPickUp startPoint={pkg?.startPoint!} />
-             
+
             {/* <div className="h-96 w-full rounded-lg overflow-hidden border"> */}
-           <div className="h-96 w-full rounded-lg overflow-hidden border relative z-0">
+            <div className="h-96 w-full rounded-lg overflow-hidden border relative z-0">
               {!openMap && (
                 <MapPreview
                   locations={packageLocations}
@@ -596,13 +597,21 @@ navigate(`/packages/${id}/review?page=1&limit=10`)
                         : "Book Now"}
                   </Button>
 
+                  {/* <AddCustomPkgForm companyId={pkg.companyId} isOpen={true} /> */}
 
                   <Button
+                  onClick={()=>setIsOpenCustomPkgAddForm(true)}
+                    variant="outline"
+                    className="w-full border-orange text-orange hover:bg-orange hover:text-white py-3"
+                  >
+                    Request Custom Package
+                  </Button>
+                  {/* <Button
                     variant="outline"
                     className="w-full border-orange text-orange hover:bg-orange hover:text-white py-3"
                   >
                     Contact Us
-                  </Button>
+                  </Button> */}
                 </div>
 
               </CardContent>
@@ -664,7 +673,7 @@ navigate(`/packages/${id}/review?page=1&limit=10`)
           </div>
 
           <button
-            onClick={ handleSeeAllReviews}
+            onClick={handleSeeAllReviews}
             className="text-orange font-semibold mt-2 hover:underline"
           >
             See all reviews →
@@ -681,6 +690,11 @@ navigate(`/packages/${id}/review?page=1&limit=10`)
           </div>
         </section>
       </div>
+      <AddCustomPkgForm
+       companyId={pkg.companyId}
+        isOpen={isOpenCustomPkgAddForm} 
+        onClose={()=>setIsOpenCustomPkgAddForm(false)}
+        />
     </div>
   );
 };

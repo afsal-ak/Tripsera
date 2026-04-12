@@ -1,5 +1,7 @@
 export interface ICustomPackage {
   id: string;
+    companyId:string;
+
   userId: {
     username?: string;
     email?: string;
@@ -34,6 +36,7 @@ export interface ICustomPackage {
 export interface ICustomAdminPackage {
   id: string;
   userId: string;
+  companyId:string;
   guestInfo?: {
     name?: string;
     email?: string;
