@@ -64,8 +64,8 @@ import { ReportUseCases } from '@application/usecases/admin/reportUseCases';
 import { ReportController } from '@presentation/controllers/admin/reportController';
 
 import { CustomPackageRepository } from '@infrastructure/repositories/CustomPackageRepository';
-import { CustomPackageUseCases } from '@application/usecases/admin/customPackageUseCases';
-import { CustomPackageController } from '@presentation/controllers/admin/customPackageController';
+import { CustomPackageUseCases } from '@application/usecases/company/customPackageUseCases';
+import { CustomPackageController } from '@presentation/controllers/company/customPackageController';
 
 import { DashboardRepository } from '@infrastructure/repositories/DashboardRepository';
 import { DashboardUseCases } from '@application/usecases/company/dashboardUseCases';
@@ -364,47 +364,31 @@ router.patch(
 //   reportController.updateReportStatus
 // );
 
-// //CUSTOM PACAKGE ROUTES
-// router.get(
-//   CUSTOM_PACKAGE_ROUTE.GET_ALL_REQUESTED_PKG,
-//   adminAuthMiddleware,
-//   customPkgController.getAllRequestedCustomPkgs
-// );
-// router.get(
-//   CUSTOM_PACKAGE_ROUTE.GET_ALL_APPROVED_PKG,
-//   adminAuthMiddleware,
-//   customPkgController.getAllApprovedCustomPkgs
-// );
+//CUSTOM PACAKGE ROUTES
+router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_ALL_REQUESTED_PKG,
+  companyAuthMiddleware,
+  customPkgController.getAllRequestedCustomPkgs
+);
+router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_ALL_APPROVED_PKG,
+  companyAuthMiddleware,
+  customPkgController.getAllApprovedCustomPkgs
+);
 
-// router.get(
-//   CUSTOM_PACKAGE_ROUTE.GET_BY_ID,
-//   adminAuthMiddleware,
-//   customPkgController.getCustomPkgById
-// );
+router.get(
+  CUSTOM_PACKAGE_ROUTE.GET_BY_ID,
+  companyAuthMiddleware,
+  customPkgController.getCustomPkgById
+);
 
-// router.post(CUSTOM_PACKAGE_ROUTE.CREATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.createCustomPackage)
-// router.put(CUSTOM_PACKAGE_ROUTE.UPDATE,adminAuthMiddleware,upload.array('images', 4),customPkgController.editCustomPackage)
+router.post(CUSTOM_PACKAGE_ROUTE.CREATE,companyAuthMiddleware,upload.array('images', 4),customPkgController.createCustomPackage)
+router.put(CUSTOM_PACKAGE_ROUTE.UPDATE,companyAuthMiddleware,upload.array('images', 4),customPkgController.editCustomPackage)
 
-// router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS,adminAuthMiddleware,customPkgController.changeCustomPkgStatus);
-// router.delete(  CUSTOM_PACKAGE_ROUTE.DELETE, adminAuthMiddleware,customPkgController.deleteCustomPkg);
+router.put(CUSTOM_PACKAGE_ROUTE.CHANGE_STATUS,companyAuthMiddleware,customPkgController.changeCustomPkgStatus);
+router.delete(  CUSTOM_PACKAGE_ROUTE.DELETE, companyAuthMiddleware,customPkgController.deleteCustomPkg);
 
-// //CHAT ROOM ROUTES
-// router.post(CHAT_ROOM_ROUTE.CREATE, adminAuthMiddleware, chatRoomController.createRoom);
-// router.put(CHAT_ROOM_ROUTE.UPDATE, adminAuthMiddleware, chatRoomController.updateRoom);
-// router.get(CHAT_ROOM_ROUTE.GET_BY_ID, adminAuthMiddleware, chatRoomController.getRoomById);
-// router.get(CHAT_ROOM_ROUTE.TOATAL_UNREAD_COUNT, adminAuthMiddleware, chatRoomController.totalChatUnread);
 
-// router.get(CHAT_ROOM_ROUTE.GET_USER_ROOMS, adminAuthMiddleware, chatRoomController.getUserRooms);
-// router.delete(CHAT_ROOM_ROUTE.DELETE, adminAuthMiddleware, chatRoomController.deleteRoom);
-
-// //MESSAGE ROUTES
-// router.get(MESSAGE_ROUTE.GET_BY_ROOM, adminAuthMiddleware, messageController.getMessages);
-// router.post(
-//   MESSAGE_ROUTE.UPLOAD_MEDIA,
-//   adminAuthMiddleware,
-//   chatUpload.single('file'),
-//   messageController.uploadMediaToChat
-// );
 
 
 export default router;

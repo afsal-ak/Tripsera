@@ -16,6 +16,8 @@ export class CustomPackageController {
         ...req.body,
         userId,
       };
+      console.log(data,'custom');
+
       const result = await this._customPkgUseCases.createCutomPkg(data);
       console.log(result, 'custom pkg resposnse');
 

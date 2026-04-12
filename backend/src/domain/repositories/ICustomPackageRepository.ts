@@ -7,11 +7,14 @@ export interface ICustomPackageRepository extends IBaseRepository<ICustomPackage
   getAllRequestedCustomPkg(
     page: number,
     limit: number,
-    filters?: IFilter
+    filters?: IFilter,
+    companyId?: string
   ): Promise<{ data: ICustomPackage[]; pagination: PaginationInfo }>;
 
   changeStatusAndResponse(
     pkgId: string,
-    data: Partial<ICustomPackage>
+    data: Partial<ICustomPackage>,
+    companyId?: string
+
   ): Promise<ICustomPackage | null>;
 }

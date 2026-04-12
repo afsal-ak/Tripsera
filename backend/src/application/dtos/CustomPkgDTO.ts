@@ -7,6 +7,7 @@ import { Types } from 'mongoose';
 
 export interface CreateCustomPkgDTO {
   userId?: Types.ObjectId;
+  companyId:string;
   guestInfo?: { name?: string; email?: string; phone?: string };
   destination: string;
   startingPoint: string;
@@ -109,7 +110,12 @@ export interface AdminCreateCustomPackageDTO extends CreatePackageDTO {
   customReqId: Types.ObjectId
  }
 
+export interface CompanyCreateCustomPackageDTO extends CreatePackageDTO {
+  createdFor: Types.ObjectId;  // link to user
+  customReqId: Types.ObjectId
+ }
 export interface AdminEditCustomPackageDTO extends Partial<AdminCreateCustomPackageDTO> { }
+export interface CompanyEditCustomPackageDTO extends Partial<CompanyCreateCustomPackageDTO> { }
 
 
 export interface OfferDTO {
