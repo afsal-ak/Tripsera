@@ -28,6 +28,6 @@ export const fetchPackgeById = async (id: string): Promise<IPackage> => {
 };
 
 export const getCategory = async () => {
-  const response = await api.get('/admin/category/active');
+  const response = await api.get('/user/category/active');
   return response.data.data;
 };

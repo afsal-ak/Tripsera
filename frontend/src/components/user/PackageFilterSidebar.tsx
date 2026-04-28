@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCategory } from '../../services/admin/packageService';
+import { getCategory } from '../../services/user/PackageService';
 import { X } from 'lucide-react';
 
 interface ICategory {
@@ -74,7 +74,8 @@ const PackageFilterSidebar: React.FC<Props> = ({ filters, onFilterChange, onClea
             onClick={() => setShowCategoryModal(true)}
             className="w-full border border-border rounded-lg px-3 py-2 text-left text-sm bg-gray-50 hover:bg-gray-100 transition"
           >
-            {category.find((cat) => cat._id === localFilters.category)?.name || 'All Categories'}
+            {category?.find?.((cat) => cat._id === localFilters.category)?.name|| 'All Categories'}
+            {/* {category.find((cat) => cat._id === localFilters.category)?.name || 'All Categories'} */}
           </button>
         </div>
 

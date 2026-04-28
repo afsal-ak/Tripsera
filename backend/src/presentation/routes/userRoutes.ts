@@ -101,6 +101,7 @@ import { NewsLetterSubscribeController } from '@presentation/controllers/user/ne
 import { NewsLetterSubscriceUseCases } from '@application/usecases/user/newsLetterSubscribeUseCases';
 
 import { DashboardRepository } from '@infrastructure/repositories/DashboardRepository';
+import { CategoryRepository } from '@infrastructure/repositories/CategoryRepository';
 
 const dashboardRepository=new DashboardRepository();
 
@@ -134,7 +135,9 @@ const userAuthController = new UserAuthController(userAuthUseCases);
 
 const bannerRepository = new BannerRepository();
 const packageRepository = new PackageRepository();
-const homeUseCases = new HomeUseCases(packageRepository,bannerRepository,dashboardRepository);
+const categoryRepository=new CategoryRepository();
+
+const homeUseCases = new HomeUseCases(packageRepository,bannerRepository,categoryRepository,dashboardRepository);
 const homeController = new HomeController(homeUseCases);
 
 const wishlistRepository = new WishlistRepository();
@@ -245,6 +248,9 @@ router.get(
 router.get(HOME_ROUTES.HOME, optionalAuthMiddleware, homeController.getHome);
 router.get(HOME_ROUTES.PACKAGES, optionalAuthMiddleware, homeController.getActivePackages);
 router.get(HOME_ROUTES.PACKAGE_BY_ID, optionalAuthMiddleware, homeController.getPackagesById);
+
+router.get(HOME_ROUTES.GET_ACTIVE_CATEGORY, homeController.getActiveCategory);
+
 router.get(
   HOME_ROUTES.TOP_BOOKED_PACKAGES,
   optionalAuthMiddleware,

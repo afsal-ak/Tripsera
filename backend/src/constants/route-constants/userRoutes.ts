@@ -19,6 +19,7 @@ export const HOME_ROUTES = {
   PACKAGES: '/packages',
   PACKAGE_BY_ID: '/packages/:id',
   TOP_BOOKED_PACKAGES: '/home/top-booked-packages',
+  GET_ACTIVE_CATEGORY:'/category/active'
 }; 
 //router.get('/packages/:id', homeController.getPackagesById);
 

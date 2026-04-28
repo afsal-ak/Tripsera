@@ -8,12 +8,16 @@ import { BannerMapper } from '@application/mappers/BannerMapper';
 import { IPackageFilter } from '@domain/entities/IPackageFilter';
 import { IPaginatedResult } from '@domain/entities/IPaginatedResult';
 import { IDashboardRepository } from '@domain/repositories/IDashboardRepository';
+import { CategoryResponseDTO } from '@application/dtos/CategoryDTO';
+import { CategoryMapper } from '@application/mappers/CategoryMapper';
+import { ICategoryRepository } from '@domain/repositories/ICategoryRepository';
 
 
 export class HomeUseCases implements IHomeUseCases {
   constructor(
     private _packageRepo: IPackageRepository,
     private _bannerRepo: IBannerRepository,
+    private _categoryRepo:ICategoryRepository,
     private _dashboardRepo: IDashboardRepository
   ) { }
 
@@ -37,6 +41,11 @@ export class HomeUseCases implements IHomeUseCases {
     const pkg = await this._packageRepo.findById(id);
     return PackageMapper.toResponseDTO(pkg!);
   }
+  async getActiveCategory(): Promise<CategoryResponseDTO[]> {
+    const cat = await this._categoryRepo.getActiveCategory();
+    return cat.map(CategoryMapper.toResponseDTO);
+  }
+
 
   async getTopBookedPackagesForUser(limit = 10): Promise<PackageResponseDTO[]> {
     const topPackages = await this._dashboardRepo.getTopBookedPackagesForUser(limit);

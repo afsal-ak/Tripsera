@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { HttpStatus } from 'constants/HttpStatus/HttpStatus';
 import { IHomeUseCases } from '@application/useCaseInterfaces/user/IHomeUseCases';
 import { IPackageFilter } from '@domain/entities/IPackageFilter';
+import { CategoryMessages } from '@constants/messages/admin/CategoryMessages';
 
 export class HomeController {
   constructor(private _homeUseCases: IHomeUseCases) { }
@@ -47,6 +48,17 @@ export class HomeController {
     }
   };
 
+  getActiveCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const result = await this._homeUseCases.getActiveCategory();
+      res.status(HttpStatus.OK).json({
+        message: CategoryMessages.ACTIVE_CATEGORIES_FETCHED,
+        data: result
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
   getTopBookedPackagesForUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;

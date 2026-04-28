@@ -1,3 +1,4 @@
+import { CategoryResponseDTO } from '@application/dtos/CategoryDTO';
 import { PackageResponseDTO,PackageCardDTO } from '@application/dtos/PackageDTO';
 import { IBanner } from '@domain/entities/IBanner';
 import { IPackageFilter } from '@domain/entities/IPackageFilter';
@@ -14,6 +15,7 @@ export interface IHomeUseCases {
   >;
 
   getPackageById(id: string): Promise<PackageResponseDTO | null>;
+  getActiveCategory(): Promise<CategoryResponseDTO[]>;
 
    getTopBookedPackagesForUser(limit?: number): Promise<PackageResponseDTO[]>;
 
