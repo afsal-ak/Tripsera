@@ -13,12 +13,12 @@ export const fetchCategoriesData = async (
     status,
   };
   const response = await api.get(`/admin/categories`, { params });
-  return response.data;
+  return response.data.data;
 };
 
 export const getCategoryById = async (id: string) => {
   const response = await api.get(`/admin/category/${id}`);
-  return response.data;
+  return response.data.data;
 };
 
 export const createCategory = async (data: { name: string; isBlocked: boolean }) => {
